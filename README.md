@@ -1,0 +1,1 @@
+# plugins-stylish-cost-calculator
