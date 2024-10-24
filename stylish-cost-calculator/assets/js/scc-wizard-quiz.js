@@ -485,72 +485,78 @@ function showModal( modalElementSelector, modalContentData, isFirstModal = false
 			fragment.remove();
 		} );
 	}
-	const choicesContent = buildChoicesContent( currentStep );
-	// registering tooltip for the modal contents
-	choicesContent.find( '[title]' ).each( ( index, element ) => {
-		const tooltip = new bootstrap.Tooltip( element );
-	} );
-	choicesWrapper.append( choicesContent );
-	modalNode.append( modalContent );
-	if ( isFirstModal ) {
-		const cardChoices = modalNode.find( '.card' );
-		cardChoices.attr( 'data-next-step', 2 );
-		cardChoices.attr( 'data-max-steps', 5 );
-		modalNode.find( '#scc-setup-wizard-first-step-next-btn' ).on( 'click', handleQuizBtnClick );
-	}
-	const modalActionBtn = modalNode.find( '.scc-setup-wizard-button' );
-	const modalInputFields = modalNode.find( 'input:not([data-element-suggestion]):not(:text)' );
-	const modalInputElementSuggestions = modalNode.find( 'input[data-element-suggestion]' );
-	modalActionBtn.on( 'click', handleQuizBtnClick );
-	modalInputFields.on( 'change', ( evt ) => {
-		if ( currentStep === 1 && evt.target.type === 'checkbox' ) {
-			const businessNameWrapper = modalContent.find( '#businessNameWrapper' )[ 0 ];
-			const businessDescriptionWrapper = modalContent.find( '#businessDescriptionWrapper' )[ 0 ];
-			//const industryTypeWrapper = modalContent.find( '#industryTypeWrapper' )[ 0 ];
-			const selectedChoices = [ ...evt.target.closest( '.row' ).querySelectorAll( 'input:checked' ) ].filter( ( z ) => z !== evt.target );
-			// deselecting the other choices
-			selectedChoices.forEach( ( choice ) => {
-				choice.checked = false;
-				quizAnswersStore[ 'step' + currentStep ][ choice.name ] = false;
-			} );
-			if ( selectedChoices.length > 0 ) {
-				quizAnswersStore[ 'step' + currentStep ][ evt.target.name ] = true;
-				return;
-			}
-			if ( evt.target.checked ) {
-				businessNameWrapper.classList.remove( 'd-none' );
-			} else {
-				businessNameWrapper.classList.add( 'd-none' );
-				businessDescriptionWrapper.classList.add( 'd-none' );
-				//industryTypeWrapper.classList.add( 'd-none' );
-				document.querySelector( '#scc-setup-wizard-first-step-next-btn' ).classList.add( 'd-none' );
-			}
+	try{
+		const choicesContent = buildChoicesContent( currentStep );
+
+		// registering tooltip for the modal contents
+		choicesContent.find( '[title]' ).each( ( index, element ) => {
+			const tooltip = new bootstrap.Tooltip( element );
+		} );
+		choicesWrapper.append( choicesContent );
+		modalNode.append( modalContent );
+		if ( isFirstModal ) {
+			const cardChoices = modalNode.find( '.card' );
+			cardChoices.attr( 'data-next-step', 2 );
+			cardChoices.attr( 'data-max-steps', 5 );
+			modalNode.find( '#scc-setup-wizard-first-step-next-btn' ).on( 'click', handleQuizBtnClick );
 		}
-		updateQuizAnswersStore( evt, 'step' + currentStep );
-	} );
-	modalNode.find( 'input:text,  textarea' ).each( ( index, element ) => {
-		element.addEventListener( 'input', ( evt ) => {
+		const modalActionBtn = modalNode.find( '.scc-setup-wizard-button' );
+		const modalInputFields = modalNode.find( 'input:not([data-element-suggestion]):not(:text)' );
+		const modalInputElementSuggestions = modalNode.find( 'input[data-element-suggestion]' );
+		modalActionBtn.on( 'click', handleQuizBtnClick );
+		modalInputFields.on( 'change', ( evt ) => {
+			if ( currentStep === 1 && evt.target.type === 'checkbox' ) {
+				const businessNameWrapper = modalContent.find( '#businessNameWrapper' )[ 0 ];
+				const businessDescriptionWrapper = modalContent.find( '#businessDescriptionWrapper' )[ 0 ];
+				//const industryTypeWrapper = modalContent.find( '#industryTypeWrapper' )[ 0 ];
+				const selectedChoices = [ ...evt.target.closest( '.row' ).querySelectorAll( 'input:checked' ) ].filter( ( z ) => z !== evt.target );
+				// deselecting the other choices
+				selectedChoices.forEach( ( choice ) => {
+					choice.checked = false;
+					quizAnswersStore[ 'step' + currentStep ][ choice.name ] = false;
+				} );
+				if ( selectedChoices.length > 0 ) {
+					quizAnswersStore[ 'step' + currentStep ][ evt.target.name ] = true;
+					return;
+				}
+				if ( evt.target.checked ) {
+					businessNameWrapper.classList.remove( 'd-none' );
+				} else {
+					businessNameWrapper.classList.add( 'd-none' );
+					businessDescriptionWrapper.classList.add( 'd-none' );
+					//industryTypeWrapper.classList.add( 'd-none' );
+					document.querySelector( '#scc-setup-wizard-first-step-next-btn' ).classList.add( 'd-none' );
+				}
+			}
 			updateQuizAnswersStore( evt, 'step' + currentStep );
 		} );
-	} );
-	modalInputElementSuggestions.on( 'change', ( evt ) => {
-		updateQuizAnswersStore( evt, 'elementSuggestions' );
-	} );
-	// If the 'modalInputElementSuggestions' variable has length, it is a final result modal
-	// And we set all of the choices to checked state
-	if ( modalInputElementSuggestions.length > 0 ) {
-		modalInputElementSuggestions.each( ( index, element ) => {
-			triggerCheckboxChange( element );
+		modalNode.find( 'input:text,  textarea' ).each( ( index, element ) => {
+			element.addEventListener( 'input', ( evt ) => {
+				updateQuizAnswersStore( evt, 'step' + currentStep );
+			} );
 		} );
-		modalInputFields.each( ( index, element ) => {
-			triggerCheckboxChange( element );
+		modalInputElementSuggestions.on( 'change', ( evt ) => {
+			updateQuizAnswersStore( evt, 'elementSuggestions' );
 		} );
+		// If the 'modalInputElementSuggestions' variable has length, it is a final result modal
+		// And we set all of the choices to checked state
+		if ( modalInputElementSuggestions.length > 0 ) {
+			modalInputElementSuggestions.each( ( index, element ) => {
+				triggerCheckboxChange( element );
+			} );
+			modalInputFields.each( ( index, element ) => {
+				triggerCheckboxChange( element );
+			} );
+		}
+		const quizModal = bootstrap.Modal.getOrCreateInstance( modalNode.get( 0 ) );
+		quizModal.show();
+		if ( currentStep === 1 ) {
+			//initiateIndustryChoices();
+		}
+	} catch ( error ) {
+		//console.error( error );
 	}
-	const quizModal = bootstrap.Modal.getOrCreateInstance( modalNode.get( 0 ) );
-	quizModal.show();
-	if ( currentStep === 1 ) {
-		//initiateIndustryChoices();
-	}
+
 }
 
 function send_setup_wizard_data_and_build( srcBtn, filteredFeaturesAndSuggestions ) {
@@ -812,24 +818,36 @@ function startSetupWizard() {
 }
 
 function sccAiAssistedSetupWizUpdateProgress() {
-	const textarea = document.getElementById( 'scc-ai-assisted-setup-wiz-business-description' );
-	const progressBar = document.getElementById( 'scc-ai-assisted-setup-wiz-progress-bar' );
-	const nextButton = document.getElementById( 'scc-setup-wizard-first-step-next-btn' );
-	const charCount = textarea.value.length;
+    const textarea = document.getElementById('scc-ai-assisted-setup-wiz-business-description');
+    const progressBar = document.getElementById('scc-ai-assisted-setup-wiz-progress-bar');
+    const nextButton = document.getElementById('scc-setup-wizard-first-step-next-btn');
+    const charCount = textarea?.value?.length || 0;
 
-	let progress = ( charCount / 100 ) * 100;
-	progress = Math.min( progress, 100 );
-	progressBar.style.width = progress + '%';
+    let progress = (charCount / 100) * 100;
+    progress = Math.min(progress, 100);
 
-	progressBar.classList.remove( 'scc-ai-count-red', 'scc-ai-count-orange', 'scc-ai-count-green' );
+    if (progressBar && progressBar.style) {
+        progressBar.style.width = `${progress}%`;
+    }
 
-	if ( charCount < 33 ) {
-		progressBar.classList.add( 'scc-ai-count-red' );
-		nextButton.disabled = true;
-	} else if ( charCount >= 33 && charCount < 66 ) {
-		progressBar.classList.add( 'scc-ai-count-orange' );
-		nextButton.disabled = false;
-	} else if ( charCount >= 66 ) {
-		progressBar.classList.add( 'scc-ai-count-green' );
-	}
+    if (progressBar && progressBar.classList && nextButton) {
+        progressBar.classList.remove('scc-ai-count-red', 'scc-ai-count-orange', 'scc-ai-count-green');
+
+        if (charCount < 33) {
+            progressBar.classList.add('scc-ai-count-red');
+            if (nextButton) {
+                nextButton.disabled = true;
+            }
+        } else if (charCount >= 33 && charCount < 66) {
+            progressBar.classList.add('scc-ai-count-orange');
+            if (nextButton) {
+                nextButton.disabled = false;
+            }
+        } else if (charCount >= 66) {
+            progressBar.classList.add('scc-ai-count-green');
+            if (nextButton) {
+                nextButton.disabled = false;
+            }
+        }
+    }
 }

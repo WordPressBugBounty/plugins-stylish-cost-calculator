@@ -881,7 +881,6 @@ const sccAiUtils = {
 
 	// this function is used to detect sliders, date or any multiplier element in the calculator data schema
 	updateMultiplierGUI: ( schema ) => {
-		
 		if ( ! schema ) {
 			return;
 		}
@@ -893,6 +892,10 @@ const sccAiUtils = {
 				const elementCount = subsection.element ? subsection.element?.length : 0;
 				subsection.element.forEach( ( element ) => {
 					let elementIsMultiplier = false;
+					let noCostElement = false;
+					if ( element.type === 'comment box' || element.type === 'signature box' || element.type === 'file upload' || element.type === 'texthtml' ) {
+						noCostElement = true;
+					}
 					if ( element.type === 'slider' ) {
 						elementIsMultiplier = true;
 						multiplier = true;
@@ -927,7 +930,12 @@ const sccAiUtils = {
 						if ( elementContainer ) {
 							const connectorExtraClass = multiplier ? 'scc-invert-element-connector' : '';
 							const html = `<div class="scc-line-hider"></div><div class="scc-element-connector-line scc-link-line ${ connectorExtraClass }"></div>`;
-							elementContainer.insertAdjacentHTML( 'afterbegin', html );
+							const htmlNoCost = `<div class="scc-line-hider"></div>`;
+							if ( ! noCostElement ) {
+								elementContainer.insertAdjacentHTML( 'afterbegin', html );
+							} else {
+								elementContainer.insertAdjacentHTML( 'afterbegin', htmlNoCost );
+							}
 						}
 					}
 					// Add Line if the element is a multiplier and does not have a link line
@@ -947,6 +955,8 @@ const sccAiUtils = {
 						}
 					}
 				} );
+
+				// Out of subsection loop
 				subsectionArea.querySelectorAll( '.scc-line-hider' ).forEach( ( line ) => {
 					line.classList.remove( 'scc-first-element-subsection' );
 					line.classList.remove( 'scc-last-element-subsection' );
@@ -955,16 +965,53 @@ const sccAiUtils = {
 				const elements = subsectionArea.querySelectorAll( '.elements_added' );
 
 				if ( elements.length > 0 ) {
-					const firstElement = elements[ 0 ].querySelector( '.scc-line-hider' );
-					const lastElement = elements[ elements.length - 1 ].querySelector( '.scc-line-hider' );
+					const noCostElementTypes = [ 'comment box', 'signature box', 'file upload', 'texthtml' ];
 
-					if ( firstElement ) {
-						firstElement.classList.add( 'scc-first-element-subsection' );
+					let firstCostElementIndex = 0;
+					let lastCostElementIndex = elements.length - 1;
+					const isNoCostElement = ( elementType ) => noCostElementTypes.includes( elementType );
+					for ( let i = 0; i < elements.length; i++ ) {
+						const elementType = elements[ i ].querySelector( '[data-element-setup-type]' )?.getAttribute( 'data-element-setup-type' );
+						if ( ! isNoCostElement( elementType ) ) {
+							firstCostElementIndex = i;
+							break;
+						}
 					}
 
-					if ( lastElement ) {
-						lastElement.classList.add( 'scc-last-element-subsection' );
+					for ( let i = elements.length - 1; i >= 0; i-- ) {
+						const elementType = elements[ i ].querySelector( '[data-element-setup-type]' )?.getAttribute( 'data-element-setup-type' );
+						if ( ! isNoCostElement( elementType ) ) {
+							lastCostElementIndex = i;
+							break;
+						}
 					}
+
+					elements.forEach( ( element, index ) => {
+						const lineHider = element.querySelector( '.scc-line-hider' );
+						const elementType = element.querySelector( '[data-element-setup-type]' )?.getAttribute( 'data-element-setup-type' );
+
+						if ( isNoCostElement( elementType ) ) {
+							if ( index > firstCostElementIndex && index < lastCostElementIndex ) {
+								element.querySelectorAll( '.scc-line-hider' ).forEach( ( hider ) => hider.remove() );
+							} else {
+								lineHider?.classList.add( 'scc-no-cost-element' );
+							}
+						} else {
+							if ( index === firstCostElementIndex ) {
+								lineHider?.classList.add( 'scc-first-element-subsection' );
+							}
+							if ( index === lastCostElementIndex ) {
+								lineHider?.classList.add( 'scc-last-element-subsection' );
+							}
+						}
+
+						if ( index < firstCostElementIndex ) {
+							lineHider?.classList.add( 'scc-first-element-subsection-no-cost' );
+						}
+						if ( index > lastCostElementIndex ) {
+							lineHider?.classList.add( 'scc-last-element-subsection-no-cost' );
+						}
+					} );
 				}
 				if ( multiplier && elementCount > 1 ) {
 					subsectionArea.querySelectorAll( '.scc-link-line' ).forEach( ( line ) => {

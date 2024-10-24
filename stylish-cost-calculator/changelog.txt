@@ -1,3 +1,17 @@
+= 7.9.8 - 2024-10-24
+
+**Frontend Changes**:
+Fixed: Mandatory slider element not working properly
+
+**Editing Page Changes**:
+Updated: New settings layout in calculator settings
+Fixed: GUI Fixes to the editing page
+
+**Dashboard Changes**:
+Updated: Calculator template list
+Updated: Currency format helper/Informative tooltip
+Fixed: PHP and JS errors after installation
+
 = 7.9.7 - 2024-09-24
 Updated: AI Wizard UX in the cost calculator editor
 

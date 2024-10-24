@@ -380,7 +380,7 @@ class Stylish_Cost_Calculator_Edit_Page {
         ];
         $el       = (object) meks_wp_parse_args( $el, $defaults );
         ?>
-		<div class="scc-element-content" value="selectoption" style="
+		<div class="scc-element-content" data-element-setup-type="<?php echo esc_attr( $el->type ); ?>" value="selectoption" style="
 		<?php
         if ( ! $this->is_from_ajax ) {
             echo 'display:none;';
@@ -706,7 +706,7 @@ class Stylish_Cost_Calculator_Edit_Page {
         $el       = (object) meks_wp_parse_args( $el, $defaults );
         ob_start();
         ?>
-	<div class="scc-element-content checkbox-content" value="selectoption" style="
+	<div class="scc-element-content checkbox-content" data-element-setup-type="<?php echo esc_attr( $el->type ); ?>" value="selectoption" style="
 		<?php
         if ( ! $this->is_from_ajax ) {
             echo 'display:none;';
@@ -1200,7 +1200,7 @@ class Stylish_Cost_Calculator_Edit_Page {
         $el       = (object) meks_wp_parse_args( $el, $defaults );
         ob_start();
         ?>
-		<div class="scc-element-content" value="selectoption" style="
+		<div class="scc-element-content" data-element-setup-type="<?php echo esc_attr( $el->type ); ?>" value="selectoption" style="
 		<?php
         if ( ! $this->is_from_ajax ) {
             echo 'display:none;';
@@ -1296,7 +1296,7 @@ class Stylish_Cost_Calculator_Edit_Page {
         $el       = (object) meks_wp_parse_args( $el, $defaults );
         ob_start();
         ?>
-		<div class="scc-element-content" value="selectoption" style="
+		<div class="scc-element-content" data-element-setup-type="<?php echo esc_attr( $el->type ); ?>" value="selectoption" style="
 		<?php
         if ( ! $this->is_from_ajax ) {
             echo 'display:none;';
@@ -2022,7 +2022,7 @@ class Stylish_Cost_Calculator_Edit_Page {
         $el       = (object) wp_parse_args( $el, $defaults );
         ob_start();
         ?>
-		<div class="scc-element-content dropdown-content" value="selectoption" style="
+		<div class="scc-element-content dropdown-content" data-element-setup-type="<?php echo esc_attr( $el->type ); ?>" value="selectoption" style="
 		<?php
         if ( ! $this->is_from_ajax ) {
             echo 'display:none;';
@@ -2055,7 +2055,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 			<a onclick="addOptiontoSelect(this)" class="crossnadd" style="margin-top:5px;margin-bottom:20px;">+ Item </a>
 				</div>
 		</div>
-		<div class="scc-element-content" value="selectoption" style="
+		<div class="scc-element-content"  value="selectoption" style="
 		<?php
         if ( ! $this->is_from_ajax ) {
             echo 'display:none;';

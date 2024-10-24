@@ -73,7 +73,7 @@
         {
             "id": "656",
             "name": "Loan Calculator",
-            "description": "Sample loan calculator to calculate the monthly payment including the interesting.\n\nYou can find the formula by expanding the \\\\\\'Variable Math\\\\\\' element.",
+            "description": "Sample loan calculator to calculate the monthly payment including the interesting.\n\nYou can find the formula by expanding the \\\\\\'Advanced Pricing Formula\\\\\\' element.",
             "order": "0",
             "accordion": "false",
             "showSectionTotal": "false",

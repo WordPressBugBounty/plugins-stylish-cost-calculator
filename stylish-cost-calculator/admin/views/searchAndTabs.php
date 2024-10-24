@@ -1022,247 +1022,30 @@ for ( $n = 1; $n <= 100; $n++ ) {
 													</div>
 												</div><!-- End Total Price Range Settings -->
 											</div><!-- End Total Price SECTION -->
-											<div class="row col-md-12 scc-cal-settings-row scc-detailed-list-pdf-settings" style="margin-left:1px;">
-												<!-- Start Detailed List Section-->
-												<span class="scc-calc-settings-title" id="Detailed-List-PDF-Settings">Detailed List & PDF Settings</span>
+											<div class="row col-md-12 scc-cal-settings-row scc-setting-subsection scc-total-price-settings">
+												<span class="scc-calc-settings-title" id="Total-Price-Settings">Custom Style</span>
 												<hr class="scc-calc-settings-hr">
-												<!-- Start Detailed List Title Toggle Button -->
-												<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
+												<!-- Start SCC Total Price Style View -->
+												<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 scc-vcenter">
 													<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-														<label id="labe_removetitle" class="scc-calc-settings-lbl">Show <b>Title</b>
-															<i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-title-info-tt" data-bs-original-title="" title="" style="margin-right:5px">
-																<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
-															</i></label>
-													</div>
-													<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-														<label class="scc-switch">
-															<div class="scc-switch">
-																<input type="checkbox" name="scc_remove_detailed_list_title" placeholder="" value="scc_remove_detailed_list_title" id="scc_remove_detailed_list_title" class="form-control"
-																	<?php
-																	if ($f1->removeTitle !== 'true') {
-																		echo 'checked';
-																	}
-																	?>>
-																<span class="slider round"></span>
-															</div>
-														</label>
-													</div>
-												</div><!-- End Detailed List Title Toggle Button -->
-												<!--turn off unit price column -->
-												<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
-													<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-														<label id="label_turnoffprice" class="scc-calc-settings-lbl">Show <b>Unit Price</b> Column
-															<i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-unit-price-column-tt" data-bs-original-title="" title="" style="margin-right:5px">
+														<label id="label_email_template" class="scc-calc-settings-lbl">Add Custom Styles <i class="material-icons-outlined more-settings-info me-1" data-setting-tooltip-type="custom-css-tt" data-bs-original-title="" title="">
 																<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
 															</i>
+															<span class="scc-text-secondary">(New)</span>
 														</label>
 													</div>
-													<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-														<label class="scc-switch">
-															<div class="scc-switch">
-																<input type="checkbox" value="turn_off_save_icon" name="scc_no_unit_col" id="scc_no_unit_col" class="form-control"
-																	<?php
-																	if ($f1->turnoffUnit !== 'true') {
-																		echo 'checked';
-																	}
-																	?>>
-																<span class="slider round"></span>
-															</div>
-														</label>
-													</div>
-												</div><!-- end of turn off unit price column -->
-												<!--turn off qty column -->
-												<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
-													<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-														<label id="label_turnoffqty" class="scc-calc-settings-lbl">Show <b>Quantity</b> Column
-															<i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-quantity-column-tt" data-bs-original-title="" title="" style="margin-right:5px">
-																<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
-															</i>
-														</label>
-													</div>
-													<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-														<label class="scc-switch">
-															<div class="scc-switch">
-																<input type="checkbox" value="turn_off_save_icon" name="scc_no_qty_col" id="scc_no_qty_col" class="form-control"
-																	<?php
-																	if ($f1->turnoffQty !== 'true') {
-																		echo 'checked';
-																	}
-																	?>>
-																<span class="slider round"></span>
-															</div>
-														</label>
-													</div>
-												</div><!-- end of turn off qty column -->
-												<!--turn off price column -->
-												<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
-													<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-														<label id="label_turnoffprice" class="scc-calc-settings-lbl">Show <b>Price</b> Column
-															<i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-price-column-tt" data-bs-original-title="" title="" style="margin-right:5px">
-																<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
-															</i>
-														</label>
-													</div>
-													<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-														<label class="scc-switch">
-															<div class="scc-switch">
-																<input type="checkbox" disabled value="show_price_column" name="show_price_column" id="show_price_column" class="form-control"
-																	<?php
-																	if (isset($f1->show_price_column) && $f1->show_price_column) {
-																		echo 'checked';
-																	}
-																	?>>
-																<span class="slider round scc-disabled-premium-toggle"></span>
-															</div>
-														</label>
-													</div>
-												</div><!-- end of turn off price column -->
-												<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
-													<!--turn off save icon -->
-													<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-														<label id="label_turnoffsave" class="scc-calc-settings-lbl">Show <b>Save</b> Icon <i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-save-icon-tt" data-bs-original-title="" title="" style="margin-right:5px">
-																<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
-															</i></label>
-													</div>
-													<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-														<label class="scc-switch">
-															<div class="scc-switch">
-																<input type="checkbox" name="scc_save_icon" placeholder="" value="turn_off_save_icon" id="scc_save_icon" class="form-control scc_save_icon"
-																	<?php
-																	if ($f1->turnoffSave !== 'true') {
-																		echo 'checked';
-																	}
-																	?>>
-																<span class="slider round"></span>
-															</div>
-														</label>
-													</div>
-												</div><!-- end of turn off save icon -->
-												<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
-													<!-- Start Turn Off Tax Display -->
-													<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-														<label id="label_turnofftax" class="scc-calc-settings-lbl">Show <b>Tax</b> Amount <i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-tax-display-tt" data-bs-original-title="" title="" style="margin-right:5px">
-																<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
-															</i></label>
-													</div>
-													<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-														<label class="scc-switch">
-															<div class="scc-switch">
-																<input type="checkbox" name="turn_off_tax" placeholder="" value="turn_off_tax" id="turn_off_tax" class="form-control"
-																	<?php
-																	if ($f1->turnoffTax !== 'true') {
-																		echo 'checked';
-																	}
-																	?>>
-																<span class="slider round"></span>
-															</div>
-														</label>
-													</div>
-												</div><!-- End of Turn Off Tax Display -->
-												<!-- Start of invoice ID toggle -->
-												<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
-													<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-														<label for="show_invoice_number" class="scc-calc-settings-lbl">Show <b>Invoice Number</b> <i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-invoice-number-tt" data-bs-original-title="" title="" style="margin-right:5px">
-																<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
-															</i></label>
-													</div>
-													<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-														<label class="scc-switch">
-															<div class="scc-switch">
-																<input type="checkbox" name="show_invoice_number" id="show_invoice_number" onchange="javascript:sccBackendUtils.handleSettingsToggleCheckbox(this)" class="form-control"
-																	<?php
-																	if (isset($scc_invoice_settings) && $scc_invoice_settings['enabled'] == 1) {
-																		echo 'checked';
-																	}
-																	?>>
-																<span class="slider round"></span>
-															</div>
-														</label>
-													</div>
-												</div><!-- End of invoice ID toggle -->
-												<!-- Start of invoice start number -->
-												<div class="row col-md-12 scc-cal-settings-row scc-vcenter 
-											<?php
-											if (isset($scc_invoice_settings) && $scc_invoice_settings['enabled'] != 1) {
-												echo 'd-none';
-											}
-											?>
-											">
-													<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-														<label for="invoice_starting_number" class="scc-calc-settings-lbl"><b>Invoice Number</b> Starting Number <i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="invoice-number-starting-tt" data-bs-original-title="" title="" style="margin-right:5px">
-																<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
-															</i></label>
-													</div>
-													<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-														<div style="padding:0" class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-															<input type="number" disabled name="invoice_starting_number" id="invoice_starting_number" class="form-control" value="<?php echo isset($scc_invoice_settings) ? esc_attr($scc_invoice_settings['startingNumber']) : ''; ?>" style="max-width:70px;min-height: 40px;padding-right: 5px;border:2px solid #F0F0F0;">
-														</div>
-													</div>
-												</div><!-- End of invoice start number -->
-												<!-- Start of invoice placement -->
-												<div class="row col-md-12 scc-cal-settings-row scc-vcenter 
-											<?php
-											if (isset($scc_invoice_settings) && $scc_invoice_settings['enabled'] != 1) {
-												echo 'd-none';
-											}
-											?>
-											">
-													<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-														<label for="invoice_placement" class="scc-calc-settings-lbl"><b>Invoice</b> Placement <i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="invoice-placement-tt" data-bs-original-title="" title="" style="margin-right:5px">
-																<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
-															</i></label>
-													</div>
-													<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-
-														<?php if (isset($scc_invoice_settings)) { ?>
-															<select name="invoice_placement" id="invoice_placement" class="form-control" style="height:40px;">
-																<option class="form-control" value="right" <?php selected($scc_invoice_settings['placement'], 'right'); ?>>Right</option>
-																<option class="form-control" value="left" <?php selected($scc_invoice_settings['placement'], 'left'); ?>>Left</option>
-															</select>
-														<?php } ?>
-													</div>
-												</div><!-- End of invoice placement -->
-
-
-												<!-- Start Show User Details on Detailed List & PDF -->
-												<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
-													<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-														<label for="show_invoice_number" class="scc-calc-settings-lbl">Show <b>User Details</b> on Detailed List & PDF <i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-user-details-detailed-list-pdf-tt" data-bs-original-title="" title="" style="margin-right:5px">
-																<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
-															</i></label>
-													</div>
-													<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-														<label class="scc-switch">
-															<div class="scc-switch">
-																<input type="checkbox" id="toggle-build-quote"
-																	<?php
-																	echo ($f1->ShowFormBuilderOnDetails != 'false') ? 'checked' : '';
-
-																	if ($isSCCFreeVersion) {
-																		echo 'disabled';
-																	}
-																	?>
-																	onchange="toggleFormBuilderOnDetails(this)" class="form-control">
-																<span class="slider round scc-disabled-premium-toggle"></span>
-															</div>
-														</label>
+													<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+														<i class="material-icons text-primary scc-custom-code-setup 
+																			<?php
+																			if ($isSCCFreeVersion) {
+																				echo 'disabled';
+																			}
+																			?>
+																			" role="button" data-event-type="custom-css" data-custom-code="<?php echo isset($scc_custom_css_config_array['css']) ? esc_attr($scc_custom_css_config_array['css']) : ''; ?>">
+															<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['edit']); ?></span>
+														</i>
 													</div>
 												</div>
-												<!-- End Show User Details on Detailed List & PDF -->
-
-
-												<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
-													<!--Start of Any Global Settings Button-->
-													<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-														<label id="label_footern" class="scc-calc-settings-lbl">Footer Notes <i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="footer-notes-tt" data-bs-original-title="" title="" style="margin-right:5px">
-																<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
-															</i></label>
-													</div>
-													<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-														<a href="/wp-admin/admin.php?page=scc-global-settings" target="_blank" class="scc-calc-settings-btn">In Global Settings</a>
-													</div>
-												</div>
-												<!--End of Any Global Settings Button-->
 											</div>
 											<!--End of Detailed List Section-->
 										</div>
@@ -1277,48 +1060,299 @@ for ( $n = 1; $n <= 100; $n++ ) {
 			<!--Start Left Section-->
 			<div class="col-md-6" style="padding-right:0px">			
 						<!-- Start Custom CSS Settings -->
-			<div class="clearfix more-settings-section col-md-12 no-sub-section scc-webhook-events-section" id="scc-custom-code">
-				<div class="accordion mt-2" id="calc-settings-modal-accordion7">
-					<div class="accordion-item" >
-						<h2 class="accordion-header">
-						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#calc-settings-modal-item7" aria-expanded="true" aria-controls="calc-settings-modal-item">
-							<div class="sccsubtitle scc_email_quote_label">								
-								<svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-									<path fill-rule="evenodd" clip-rule="evenodd" d="M23.018 20C23.6645 20.006 24.164 19.775 24.521 19.3835C24.887 18.9815 25.25 18.2405 25.25 17C25.2497 15.3473 24.7531 13.7327 23.8244 12.3656C22.8957 10.9984 21.5778 9.94176 20.0414 9.33246C18.5051 8.72316 16.8212 8.58935 15.2079 8.94836C13.5947 9.30737 12.1264 10.1426 10.9934 11.3459C9.86049 12.5493 9.11506 14.0651 8.85376 15.6971C8.59247 17.329 8.82735 19.0018 9.52798 20.4987C10.2286 21.9956 11.3627 23.2475 12.7832 24.0923C14.2037 24.937 15.8452 25.3357 17.495 25.2365C17.3956 24.7983 17.3424 24.3508 17.336 23.9015C17.3258 23.0989 17.5875 22.3165 18.0785 21.6815C18.6575 20.942 19.4585 20.537 20.2505 20.3105C21.035 20.09 21.9545 20 23 20H23.018ZM23 22.25C25.49 22.2695 27.5 20.375 27.5 17C27.5 14.9233 26.8842 12.8932 25.7304 11.1665C24.5767 9.4398 22.9368 8.09399 21.0182 7.29927C19.0996 6.50455 16.9884 6.29661 14.9516 6.70176C12.9148 7.1069 11.0438 8.10693 9.57538 9.57538C8.10693 11.0438 7.1069 12.9148 6.70176 14.9516C6.29661 16.9884 6.50455 19.0996 7.29927 21.0182C8.09399 22.9368 9.4398 24.5767 11.1665 25.7304C12.8932 26.8842 14.9233 27.5 17 27.5C20.285 27.5 20.0165 26.255 19.7405 24.98C19.4495 23.633 19.151 22.25 23 22.25ZM18.5 12.5C18.5 12.8978 18.342 13.2794 18.0607 13.5607C17.7794 13.842 17.3978 14 17 14C16.6022 14 16.2206 13.842 15.9393 13.5607C15.658 13.2794 15.5 12.8978 15.5 12.5C15.5 12.1022 15.658 11.7206 15.9393 11.4393C16.2206 11.158 16.6022 11 17 11C17.3978 11 17.7794 11.158 18.0607 11.4393C18.342 11.7206 18.5 12.1022 18.5 12.5ZM21.5 16.625C21.8978 16.625 22.2794 16.467 22.5607 16.1857C22.842 15.9044 23 15.5228 23 15.125C23 14.7272 22.842 14.3456 22.5607 14.0643C22.2794 13.783 21.8978 13.625 21.5 13.625C21.1022 13.625 20.7206 13.783 20.4393 14.0643C20.158 14.3456 20 14.7272 20 15.125C20 15.5228 20.158 15.9044 20.4393 16.1857C20.7206 16.467 21.1022 16.625 21.5 16.625ZM14.375 15.125C14.375 15.5228 14.217 15.9044 13.9357 16.1857C13.6544 16.467 13.2728 16.625 12.875 16.625C12.4772 16.625 12.0956 16.467 11.8143 16.1857C11.533 15.9044 11.375 15.5228 11.375 15.125C11.375 14.7272 11.533 14.3456 11.8143 14.0643C12.0956 13.783 12.4772 13.625 12.875 13.625C13.2728 13.625 13.6544 13.783 13.9357 14.0643C14.217 14.3456 14.375 14.7272 14.375 15.125ZM13.625 21.5C14.0228 21.5 14.4044 21.342 14.6857 21.0607C14.967 20.7794 15.125 20.3978 15.125 20C15.125 19.6022 14.967 19.2206 14.6857 18.9393C14.4044 18.658 14.0228 18.5 13.625 18.5C13.2272 18.5 12.8456 18.658 12.5643 18.9393C12.283 19.2206 12.125 19.6022 12.125 20C12.125 20.3978 12.283 20.7794 12.5643 21.0607C12.8456 21.342 13.2272 21.5 13.625 21.5Z" fill="currentColor"/>
-								</svg>
-								<span>CUSTOM STYLE</span> SETTINGS
+			
+						<!--Start PDF settings -->
+						<div class="clearfix more-settings-section col-md-12 no-sub-section scc-pdf-settings-section">
+							<div class="accordion mt-2" id="calc-settings-modal-accordion3">
+								<div class="accordion-item">
+									<h2 class="accordion-header">
+										<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#calc-settings-modal-item3" aria-expanded="true" aria-controls="calc-settings-modal-item">
+											<div class="sccsubtitle scc_email_quote_label">
+												<svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M19 7H11C10.4696 7 9.96086 7.21071 9.58579 7.58579C9.21071 7.96086 9 8.46957 9 9V25C9 25.5304 9.21071 26.0391 9.58579 26.4142C9.96086 26.7893 10.4696 27 11 27H23C23.5304 27 24.0391 26.7893 24.4142 26.4142C24.7893 26.0391 25 25.5304 25 25V13L19 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+													<path d="M19 7V13H25" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+													<path d="M21 18H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+													<path d="M21 22H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+													<path d="M15 14H14H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+												</svg>
+												<span>DETAIL LIST & PDF</span> SETTINGS
+											</div>
+										</button>
+									</h2>
+									<div id="calc-settings-modal-item3" class="accordion-collapse collapse" data-bs-parent="#calc-settings-modal-accordion3">
+										<div class="accordion-body">
+											<div class="row col-md-12 scc-cal-settings-row">
+												<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-left:10px">
+													<!--Start of Any Global Settings Button-->
+													<div class="scc-vcenter ms-2">
+														<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+															<label id="label_pdffont" class="scc-calc-settings-lbl">PDF Font Style <i class="material-icons-outlined more-settings-info me-1" data-setting-tooltip-type="pdf-font-style-tt" data-bs-original-title="" title="">
+																	<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
+																</i></label>
+														</div>
+														<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="padding:0">
+															<a href="/wp-admin/admin.php?page=scc-global-settings#scc_pdf_settings" target="_blank" class="scc-calc-settings-btn">In Global Settings</a>
+														</div>
+													</div>
+													<div class="scc-vcenter ms-2">
+														<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+															<label id="label_pdfdate" class="scc-calc-settings-lbl">PDF Date Format <i class="material-icons-outlined more-settings-info me-1" data-setting-tooltip-type="pdf-date-format-tt" data-bs-original-title="" title="">
+																	<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
+																</i></label>
+														</div>
+														<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="padding:0">
+															<a href="/wp-admin/admin.php?page=scc-global-settings#scc_pdf_settings" target="_blank" class="scc-calc-settings-btn">In Global Settings</a>
+														</div>
+													</div>
+
+													<!-- Start Detailed List Section-->
+													<!-- Start Detailed List Title Toggle Button -->
+													<div class="row col-md-12 scc-cal-settings-row scc-vcenter" style="margin-top:24px">
+														<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+															<label id="labe_removetitle" class="scc-calc-settings-lbl">Show <b>Title</b>
+																<i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-title-info-tt" data-bs-original-title="" title="" style="margin-right:5px">
+																	<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
+																</i></label>
+														</div>
+														<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+															<label class="scc-switch">
+																<div class="scc-switch">
+																	<input type="checkbox" name="scc_remove_detailed_list_title" placeholder="" value="scc_remove_detailed_list_title" id="scc_remove_detailed_list_title" class="form-control"
+																		<?php
+																		if ($f1->removeTitle !== 'true') {
+																			echo 'checked';
+																		}
+																		?>>
+																	<span class="slider round"></span>
+																</div>
+															</label>
+														</div>
+													</div><!-- End Detailed List Title Toggle Button -->
+													<!--turn off unit price column -->
+													<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
+														<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+															<label id="label_turnoffprice" class="scc-calc-settings-lbl">Show <b>Unit Price</b> Column
+																<i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-unit-price-column-tt" data-bs-original-title="" title="" style="margin-right:5px">
+																	<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
+																</i>
+															</label>
+														</div>
+														<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+															<label class="scc-switch">
+																<div class="scc-switch">
+																	<input type="checkbox" value="turn_off_save_icon" name="scc_no_unit_col" id="scc_no_unit_col" class="form-control"
+																		<?php
+																		if ($f1->turnoffUnit !== 'true') {
+																			echo 'checked';
+																		}
+																		?>>
+																	<span class="slider round"></span>
+																</div>
+															</label>
+														</div>
+													</div><!-- end of turn off unit price column -->
+													<!--turn off qty column -->
+													<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
+														<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+															<label id="label_turnoffqty" class="scc-calc-settings-lbl">Show <b>Quantity</b> Column
+																<i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-quantity-column-tt" data-bs-original-title="" title="" style="margin-right:5px">
+																	<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
+																</i>
+															</label>
+														</div>
+														<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+															<label class="scc-switch">
+																<div class="scc-switch">
+																	<input type="checkbox" value="turn_off_save_icon" name="scc_no_qty_col" id="scc_no_qty_col" class="form-control"
+																		<?php
+																		if ($f1->turnoffQty !== 'true') {
+																			echo 'checked';
+																		}
+																		?>>
+																	<span class="slider round"></span>
+																</div>
+															</label>
+														</div>
+													</div><!-- end of turn off qty column -->
+													<!--turn off price column -->
+													<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
+														<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+															<label id="label_turnoffprice" class="scc-calc-settings-lbl">Show <b>Price</b> Column
+																<i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-price-column-tt" data-bs-original-title="" title="" style="margin-right:5px">
+																	<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
+																</i>
+															</label>
+														</div>
+														<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+															<label class="scc-switch">
+																<div class="scc-switch">
+																	<input type="checkbox" disabled value="show_price_column" name="show_price_column" id="show_price_column" class="form-control"
+																		<?php
+																		if (isset($f1->show_price_column) && $f1->show_price_column) {
+																			echo 'checked';
+																		}
+																		?>>
+																	<span class="slider round scc-disabled-premium-toggle"></span>
+																</div>
+															</label>
+														</div>
+													</div><!-- end of turn off price column -->
+													<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
+														<!--turn off save icon -->
+														<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+															<label id="label_turnoffsave" class="scc-calc-settings-lbl">Show <b>Save</b> Icon <i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-save-icon-tt" data-bs-original-title="" title="" style="margin-right:5px">
+																	<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
+																</i></label>
+														</div>
+														<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+															<label class="scc-switch">
+																<div class="scc-switch">
+																	<input type="checkbox" name="scc_save_icon" placeholder="" value="turn_off_save_icon" id="scc_save_icon" class="form-control scc_save_icon"
+																		<?php
+																		if ($f1->turnoffSave !== 'true') {
+																			echo 'checked';
+																		}
+																		?>>
+																	<span class="slider round"></span>
+																</div>
+															</label>
+														</div>
+													</div><!-- end of turn off save icon -->
+													<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
+														<!-- Start Turn Off Tax Display -->
+														<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+															<label id="label_turnofftax" class="scc-calc-settings-lbl">Show <b>Tax</b> Amount <i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-tax-display-tt" data-bs-original-title="" title="" style="margin-right:5px">
+																	<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
+																</i></label>
+														</div>
+														<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+															<label class="scc-switch">
+																<div class="scc-switch">
+																	<input type="checkbox" name="turn_off_tax" placeholder="" value="turn_off_tax" id="turn_off_tax" class="form-control"
+																		<?php
+																		if ($f1->turnoffTax !== 'true') {
+																			echo 'checked';
+																		}
+																		?>>
+																	<span class="slider round"></span>
+																</div>
+															</label>
+														</div>
+													</div><!-- End of Turn Off Tax Display -->
+													<!-- Start of invoice ID toggle -->
+													<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
+														<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+															<label for="show_invoice_number" class="scc-calc-settings-lbl">Show <b>Invoice Number</b> <i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-invoice-number-tt" data-bs-original-title="" title="" style="margin-right:5px">
+																	<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
+																</i></label>
+														</div>
+														<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+															<label class="scc-switch">
+																<div class="scc-switch">
+																	<input type="checkbox" name="show_invoice_number" id="show_invoice_number" onchange="javascript:sccBackendUtils.handleSettingsToggleCheckbox(this)" class="form-control"
+																		<?php
+																		if (isset($scc_invoice_settings) && $scc_invoice_settings['enabled'] == 1) {
+																			echo 'checked';
+																		}
+																		?>>
+																	<span class="slider round"></span>
+																</div>
+															</label>
+														</div>
+													</div><!-- End of invoice ID toggle -->
+													<!-- Start of invoice start number -->
+													<div class="row col-md-12 scc-cal-settings-row scc-vcenter 
+																						<?php
+																						if (isset($scc_invoice_settings) && $scc_invoice_settings['enabled'] != 1) {
+																							echo 'd-none';
+																						}
+																						?>
+																						">
+														<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+															<label for="invoice_starting_number" class="scc-calc-settings-lbl"><b>Invoice Number</b> Starting Number <i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="invoice-number-starting-tt" data-bs-original-title="" title="" style="margin-right:5px">
+																	<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
+																</i></label>
+														</div>
+														<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+															<div style="padding:0" class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+																<input type="number" disabled name="invoice_starting_number" id="invoice_starting_number" class="form-control" value="<?php echo isset($scc_invoice_settings) ? esc_attr($scc_invoice_settings['startingNumber']) : ''; ?>" style="max-width:70px;min-height: 40px;padding-right: 5px;border:2px solid #F0F0F0;">
+															</div>
+														</div>
+													</div><!-- End of invoice start number -->
+													<!-- Start of invoice placement -->
+													<div class="row col-md-12 scc-cal-settings-row scc-vcenter 
+																						<?php
+																						if (isset($scc_invoice_settings) && $scc_invoice_settings['enabled'] != 1) {
+																							echo 'd-none';
+																						}
+																						?>
+																						">
+														<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+															<label for="invoice_placement" class="scc-calc-settings-lbl"><b>Invoice</b> Placement <i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="invoice-placement-tt" data-bs-original-title="" title="" style="margin-right:5px">
+																	<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
+																</i></label>
+														</div>
+														<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+
+															<?php if (isset($scc_invoice_settings)) { ?>
+																<select name="invoice_placement" id="invoice_placement" class="form-control" style="height:40px;">
+																	<option class="form-control" value="right" <?php selected($scc_invoice_settings['placement'], 'right'); ?>>Right</option>
+																	<option class="form-control" value="left" <?php selected($scc_invoice_settings['placement'], 'left'); ?>>Left</option>
+																</select>
+															<?php } ?>
+														</div>
+													</div><!-- End of invoice placement -->
+
+
+													<!-- Start Show User Details on Detailed List & PDF -->
+													<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
+														<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+															<label for="show_invoice_number" class="scc-calc-settings-lbl">Show <b>User Details</b> on Detailed List & PDF <i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-user-details-detailed-list-pdf-tt" data-bs-original-title="" title="" style="margin-right:5px">
+																	<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
+																</i></label>
+														</div>
+														<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+															<label class="scc-switch">
+																<div class="scc-switch">
+																	<input type="checkbox" id="toggle-build-quote"
+																		<?php
+																		echo ($f1->ShowFormBuilderOnDetails != 'false') ? 'checked' : '';
+
+																		if ($isSCCFreeVersion) {
+																			echo 'disabled';
+																		}
+																		?>
+																		onchange="toggleFormBuilderOnDetails(this)" class="form-control">
+																	<span class="slider round scc-disabled-premium-toggle"></span>
+																</div>
+															</label>
+														</div>
+													</div>
+													<!-- End Show User Details on Detailed List & PDF -->
+
+
+													<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
+														<!--Start of Any Global Settings Button-->
+														<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+															<label id="label_footern" class="scc-calc-settings-lbl">Footer Notes <i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="footer-notes-tt" data-bs-original-title="" title="" style="margin-right:5px">
+																	<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
+																</i></label>
+														</div>
+														<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+															<a href="/wp-admin/admin.php?page=scc-global-settings" target="_blank" class="scc-calc-settings-btn">In Global Settings</a>
+														</div>
+													</div>
+													<!--End of Any Global Settings Button-->
+
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
 							</div>
-						</button>
-						</h2>
-						<div id="calc-settings-modal-item7" class="accordion-collapse collapse" data-bs-parent="#calc-settings-modal-accordion7">
-							<div class="accordion-body">
-							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-						<div class="scc-vcenter">
-							<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-								<label id="label_email_template" class="scc-calc-settings-lbl">Add Custom Styles <i class="material-icons-outlined more-settings-info me-1" data-setting-tooltip-type="custom-css-tt" data-bs-original-title="" title="">
-									<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
-								</i>
-								<span class="scc-text-secondary">(New)</span>
-								</label>
-							</div>
-							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
-								<i class="material-icons text-primary scc-custom-code-setup 
-								<?php
-    if ( $isSCCFreeVersion ) {
-        echo 'disabled';
-    }
-?>
-								" role="button" data-event-type="custom-css" data-custom-code="<?php echo isset($scc_custom_css_config_array['css']) ? esc_attr(  $scc_custom_css_config_array['css'] ) : ''; ?>" >
-									<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['edit'] ); ?></span>
-								</i>
-							</div>
-						</div>
-					</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+						</div><!-- End Blue Section - PDF Options -->
+
+						<!--End PDF settings -->
 			<div class="clearfix more-settings-section col-md-12 scc-currency-tax-settings-section">
 				<!-- Start Accordion -->
 				<div class="accordion mt-2" id="calc-settings-modal-accordion2">
@@ -1573,59 +1607,7 @@ if ( isset($allow_currency_switching) && $f1->allow_currency_switching ) {
 
 				</div><!-- End Currency label Toggle Button 2 -->
 			</div><!-- End Blue Section - Currency & Tax-->
-			<div class="clearfix more-settings-section col-md-12 no-sub-section scc-pdf-settings-section">
-			<div class="accordion mt-2" id="calc-settings-modal-accordion3">
-				<div class="accordion-item" >
-						<h2 class="accordion-header">
-						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#calc-settings-modal-item3" aria-expanded="true" aria-controls="calc-settings-modal-item">
-							<div class="sccsubtitle scc_email_quote_label">
-								<svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-									<path d="M19 7H11C10.4696 7 9.96086 7.21071 9.58579 7.58579C9.21071 7.96086 9 8.46957 9 9V25C9 25.5304 9.21071 26.0391 9.58579 26.4142C9.96086 26.7893 10.4696 27 11 27H23C23.5304 27 24.0391 26.7893 24.4142 26.4142C24.7893 26.0391 25 25.5304 25 25V13L19 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-									<path d="M19 7V13H25" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-									<path d="M21 18H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-									<path d="M21 22H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-									<path d="M15 14H14H13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-								</svg>
-								<span>PDF</span> SETTINGS
-							</div>
-						</button>
-						</h2>
-						<div id="calc-settings-modal-item3" class="accordion-collapse collapse" data-bs-parent="#calc-settings-modal-accordion3">
-						<div class="accordion-body">
-						<div class="row col-md-12 scc-cal-settings-row">
-					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-left:10px">
-					<!--Start of Any Global Settings Button-->
-					<div class="scc-vcenter ms-2">
-					<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-						<label id="label_pdffont" class="scc-calc-settings-lbl">PDF Font Style <i class="material-icons-outlined more-settings-info me-1" data-setting-tooltip-type="pdf-font-style-tt" data-bs-original-title="" title="">
-									<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
-								</i></label>
-					</div>
-					<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="padding:0">
-						<a href="/wp-admin/admin.php?page=scc-global-settings#scc_pdf_settings" target="_blank" class="scc-calc-settings-btn">In Global Settings</a>
-					</div>
-					</div>
-					<div class="scc-vcenter ms-2">
-						<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-							<label id="label_pdfdate" class="scc-calc-settings-lbl">PDF Date Format <i class="material-icons-outlined more-settings-info me-1" data-setting-tooltip-type="pdf-date-format-tt" data-bs-original-title="" title="">
-									<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
-								</i></label>
-						</div>
-						<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6" style="padding:0">
-							<a href="/wp-admin/admin.php?page=scc-global-settings#scc_pdf_settings" target="_blank" class="scc-calc-settings-btn">In Global Settings</a>
-						</div>
-					</div>
-					</div>
-				</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			</div><!-- End Blue Section - PDF Options -->
-			</div>
-		<!--END Left Section-->
-		<!--Start right Section-->
-		<div class="col-md-6" style="padding-right:0px">
+			
 			<div class="clearfix more-settings-section col-md-12 no-sub-section scc-email-setting-section">
 				<!-- Start Blue Section - Email Settings -->
 				<div class="accordion mt-2" id="calc-settings-modal-accordion4">
@@ -1776,6 +1758,10 @@ if ( isset( $f1->add_user_files_to_email_attachment ) && intval( $f1->add_user_f
 					</div>
 				</div>
 			</div><!-- End Blue Section - Email Settings -->
+			</div>
+		<!--END Left Section-->
+		<!--Start right Section-->
+		<div class="col-md-6" style="padding-right:0px">
 			<!-- Start Text Message (SMS) Settings -->
 			<div class="clearfix more-settings-section col-md-12 no-sub-section scc-text-message-settings-section">
 				<div class="accordion mt-2" id="calc-settings-modal-accordion5">

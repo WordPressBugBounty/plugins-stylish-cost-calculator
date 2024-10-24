@@ -13020,6 +13020,14 @@ label.scc-accordion_switch_button {
 	left: -17px;
 	top: -2px;
   }
+  .subsection-area .scc-first-element-subsection-no-cost{
+	position: absolute;
+	width: 2px;
+	background: white;
+	left: -17px;
+	top: -2px;
+	height: calc(100% + 60px);
+  }
   .subsection-area .scc-last-element-subsection{
 	content: "";
 	position: absolute;
@@ -13028,6 +13036,14 @@ label.scc-accordion_switch_button {
 	background: white;
 	left: -17px;
 	bottom: -2px;
+  }
+  .subsection-area .scc-last-element-subsection-no-cost{
+	position: absolute;
+	width: 2px;
+	background: white;
+	left: -17px;
+	bottom: -2px;
+	height: calc(100% + 30px);
   }
   .elements_added{
    margin-left: 25px;

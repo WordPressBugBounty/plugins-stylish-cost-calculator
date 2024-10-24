@@ -1096,8 +1096,9 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 										<div class="btn-backend-text">Signature Box</div>
 									</button>
 									<br>
-									<span style="font-size:13px;margin-top:5px;">Add 1 or more elements to this subsection</span>
+									<p style="font-size:13px;margin-top:5px;">Add 1 or more elements to this subsection</p>
 									<input class="scc_custom_math_checkbox" type="checkbox" style="display:none;" />
+									<a href="https://stylishcostcalculator.com/test-drive-premium/" target="_blank">Test Drive The Premium Feature today on the Playground</a>
 								</div>
 							</div>
 							<?php
@@ -3421,8 +3422,9 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		subs += '											<div class="btn-backend-text">Signature Box</div>'
 		subs += '									   </button>'
 		subs += '                                      <br>'
-		subs += '                                      <span style="font-size:13px;margin-top:5px;">Add 1 or more elements to this subsection</span>'
+		subs += '                                      <p style="font-size:13px;margin-top:5px;">Add 1 or more elements to this subsection</p>'
 		subs += '                                      <input class="scc_custom_math_checkbox" type="checkbox" style="display:none;" />'
+		subs += '                                      <a href="https://stylishcostcalculator.com/test-drive-premium/" target="_blank">Test Drive The Premium Feature today on the Playground</a>  '
 		subs += '                                  </div>'
 		subs += '                            </div>'
 		return subs;
@@ -3587,8 +3589,9 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		section += '																		<div class="btn-backend-text">Signature Box</div>'
 		section += '																	</button>'
 		section += '                                    <br>'
-		section += '                                    <span style="font-size:13px;margin-top:5px;">Add 1 or more elements to this subsection</span>'
+		section += '                                    <p style="font-size:13px;margin-top:5px;">Add 1 or more elements to this subsection</p>'
 		section += '                                    <input class="scc_custom_math_checkbox" type="checkbox" style="display:none;" />'
+		section += '                                    <a href="https://stylishcostcalculator.com/test-drive-premium/" target="_blank">Test Drive The Premium Feature today on the Playground</a>  '
 		section += '                                </div>'
 		section += '                            </div>'
 		section += '                                                <div class="boardOption1">'

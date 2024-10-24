@@ -2002,11 +2002,21 @@ function verifiedMandatoryItems(calcId) {
 		let ee_i = []
 		ee_i[calcId] = []
 		itemsArray[calcId].forEach(iar => {
-			if (iar.id_element) {
-				ee_i[ca].push(iar.id_element)
-			}
-			if (iar.element_id) {
-				ee_i[ca].push(iar.element_id)
+			if ( iar.type !== 'slider' ) {
+				if ( iar.id_element ) {
+					ee_i[ ca ].push( iar.id_element );
+				}
+				if ( iar.element_id ) {
+					if ( iar.type === 'qtn-image' ) {
+						if ( iar.qtn > 0 ) {
+							ee_i[ ca ].push( iar.element_id );
+						}
+					} else {
+						ee_i[ ca ].push( iar.element_id );
+					}
+				}
+			} else if ( parseFloat( iar.qtn ) !== 0 ) {
+				ee_i[ ca ].push( iar.id_element );
 			}
 		});
 		return ee_i
