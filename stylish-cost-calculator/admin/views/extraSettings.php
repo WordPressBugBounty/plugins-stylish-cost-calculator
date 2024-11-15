@@ -7,111 +7,20 @@ global $current_user;
 $df_scc_user_name = ! empty( $current_user->display_name ) ? $current_user->display_name : $current_user->user_login;
 ?>
 <!-- FOR LATER -->
+ <!-- Payments modal -->
+<div class="scc-dashboard-modal modal fade" id="paymentSettingsModal" tabindex="-1" aria-labelledby="paymentSettingsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="wordingsModalLabel">Payment Settings</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pb-4">
 
-<div class="row mt-2 scc-no-gutter">
-	<div class="scc-calculator-settings-bottom scc-col-xs-12 scc-col-md-7 scc-col-lg-7 clearfix">
-		<!-- START CALCULATOR SETTINGS SECTION -->
-		<div class="editing-action-cards action-quoteform scc-calc-settings-bottom mb-0 py-0">
-			<div class="row gx-0">
-				<i class="material-icons col-md-1 scc-vcenter" style="width: 3.33%">keyboard_arrow_right</i>
-				<div id="calc-settings-accordion" class="card-content mb-0 col-md-11">
-					<h3>Settings</h3>
-				</div>
-			</div>
-			<div class="card-action-btns mx-3 mb-3 d-none">
-				<p>Customize your settings from the options below.</p>
-				<div class="payment-options-wrapper p-2 mb-3">
-				<div class="col-xs-12 col-md-12 col-lg-12">
-		<button id="btn_dfscc_tab_font_settings_" class="btn btn-cards" data-bs-toggle="modal" data-bs-target="#settingsModal">
-			<span>Font Settings</span>
-		</button>
-		<button id="btn_dfscc_tab_calculator_" class="btn btn-cards" data-bs-toggle="modal" data-bs-target="#settingsModal1">
-			<span>Calculator Settings</span>
-		</button>
-		<button id="btn_dfscc_tab_translations_" class="btn btn-cards"  data-bs-toggle="modal" data-bs-target="#settingsModal2">
-			<span>Wordings</span>
-		</button>
-		<a href="<?php echo admin_url( 'admin.php?page=scc-coupons-management' ); ?>">
-			<button class="btn btn-cards">
-				<span>Coupon Codes</span>
-				<span class="material-icons-outlined">navigate_next</span>
-			</button></a>
-		<!-- CHANGE STATIC LINK -->            
-
-	</div>
-				</div>
-			</div>
-		</div>
-		<!-- END CALCULATOR SETTINGS SECTION -->
-		<!-- QUOTE FORM SECTION -->
-		<div class="editing-action-cards action-quoteform scc-quote-form-settings mb-0 py-0">
-			<div class="row gx-0">
-				<i class="material-icons col-md-1 scc-vcenter" style="width: 3.33%">keyboard_arrow_right</i>
-				<div class="card-content mb-0 col-md-11">
-					<h3>Email Quote | Form Builder</h3>
-				</div>
-			</div>
-			<div class="card-action-btns mx-3 mb-3 d-none
-			<?php
-            if ( $isSCCFreeVersion ) {
-                echo 'disabled use-tooltip-child-nodes';
-            }
-?>
-			">
-				<div class="btns-container d-inline-block">
-				<?php foreach ( $formFieldsArray as $fieldIndex => $fieldValue ) { ?>
-					<?php
-        $fieldKey   = array_keys( $fieldValue )[0];
-				    $fieldProps = $fieldValue[ $fieldKey ];
-				    ?>
-					<button class="btn btn-cards disabled" data-btn-fieldtype="custom" data-field-key="<?php echo esc_attr( $fieldKey ); ?>">
-						<span><?php echo esc_attr( $fieldProps['name'] ); ?></span>
-						<i class="scc-icon-formbuilder material-icons" data-form-builder-action-type="edit">edit</i>
-					</button>
-				<?php } ?>
-				</div>
-				<button class="btn btn-cards btn-plus 
-				<?php
-                if ( $isSCCFreeVersion ) {
-                    echo 'disabled';
-                }
-?>
-				" data-btn-fieldtype="more-fields" onclick="doFormFieldsSetup(this, event, <?php echo $isSCCFreeVersion ? 'false' : 'true'; ?>)">
-					<span class="material-icons">done</span>+
-				</button>
-				
-				<div class="scc-form-checkbox" style="margin: 10px 0 0 0">
-				<label class="scc-accordion_switch_button" for="toggle-build-quote">
-					<input type="checkbox" id="toggle-build-quote" 
-					<?php
-    echo $ShowFormBuilderOnDetails ? 'checked' : '';
-
-if ( $isSCCFreeVersion ) {
-    echo 'disabled';
-}
-?>
-					 onchange="toggleFormBuilderOnDetails(this)">
-					<span class="scc-accordion_toggle_button round"></span>
-				</label>
-				<span><label for="toggle-build-quote" class="lblExtraSettingsEditCalc" data-setting-tooltip-type="require-acceptance-tt" data-bs-original-title="" title="">Require acceptance (GDPR/Terms & Conditions)
-				<i class="material-icons-outlined with-tooltip"  style="margin-right:5px">help_outline</i></label>
-				</span>
-			</div>
-			</div>
-		</div>
-		<!-- END FORM SECTION -->
-		<!-- Start Payment processing section -->
+	  		<!-- Start Payment processing section -->
 		<div class="editing-action-cards action-payment scc-payment-settings mb-0 py-0">
-			<div class="row gx-0">
-				<i class="material-icons col-md-1 scc-vcenter" style="width: 3.33%">keyboard_arrow_right</i>
-				<div class="card-content mb-0 col-md-11">
-					<h3>Payment Options</h3>
-				</div>
-			</div>
-			<div class="card-action-btns mx-3 d-none has-checkmark
+			<div class="card-action-btns mx-3 has-checkmark
 			<?php
-            /* if ( $isSCCFreeVersion ) {
-                echo 'use-tooltip-child-nodes';} */
 ?>
 			"
 >
@@ -161,29 +70,86 @@ if ( $isSCCFreeVersion ) {
 			</div>
 
 		</div><!-- End Payment processing section -->
-		<!-- Start New save section -->
-		<div class="editing-action-cards action-save">
-			<div class="card-action-btns">
-				<div class="d-inline-block scc-save-btn-cont" data-setting-tooltip-type="" data-bs-original-title="">
-					<button class="btn btn-cards-primary d-inline-flex align-items-center scc-bottom-save-btn" onclick="saveDataFields()" style="background-color:#314AF3;color:white">
-						<i class="scc-btn-spinner scc-save-btn-spinner scc-d-none"></i>Save
+
+
+
+	  </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Form builder modal -->
+<div class="scc-dashboard-modal modal fade" id="formBuilderModal" tabindex="-1" aria-labelledby="formBuilderModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="wordingsModalLabel">Email Quote | Form Builder</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pb-4">
+
+		<!-- QUOTE FORM SECTION -->
+		<div class="editing-action-cards action-quoteform scc-quote-form-settings mb-0 py-0">
+			<div class="card-action-btns mx-3 mb-3
+			<?php
+            if ( $isSCCFreeVersion ) {
+                echo 'disabled use-tooltip-child-nodes';
+            }
+?>
+			">
+				<div class="btns-container d-inline-block">
+				<?php foreach ( $formFieldsArray as $fieldIndex => $fieldValue ) { ?>
+					<?php
+        $fieldKey   = array_keys( $fieldValue )[0];
+				    $fieldProps = $fieldValue[ $fieldKey ];
+				    ?>
+					<button class="btn btn-cards disabled" data-btn-fieldtype="custom" data-field-key="<?php echo esc_attr( $fieldKey ); ?>">
+						<span><?php echo esc_attr( $fieldProps['name'] ); ?></span>
+						<i class="scc-icon-formbuilder material-icons" data-form-builder-action-type="edit">edit</i>
 					</button>
+				<?php } ?>
 				</div>
-				<button class="btn btn-cards 
+				<button class="btn btn-cards btn-plus 
 				<?php
                 if ( $isSCCFreeVersion ) {
-                    echo 'use-premium-tooltip';
+                    echo 'disabled';
                 }
 ?>
-				" onclick="downloadBackup(<?php echo $isSCCFreeVersion ? 'false' : 'true'; ?>)">Backup</button>
-				<a href="javascript:void(0)">
-					<button class="btn btn-cards use-premium-tooltip">Restore</button>
-				</a>
+				" data-btn-fieldtype="more-fields" onclick="doFormFieldsSetup(this, event, <?php echo $isSCCFreeVersion ? 'false' : 'true'; ?>)">
+					<span class="material-icons">done</span>+
+				</button>
+				
+				<div class="scc-form-checkbox" style="margin: 10px 0 0 0">
+				<label class="scc-accordion_switch_button" for="toggle-build-quote">
+					<input type="checkbox" id="toggle-build-quote" 
+					<?php
+    echo $ShowFormBuilderOnDetails ? 'checked' : '';
+
+if ( $isSCCFreeVersion ) {
+    echo 'disabled';
+}
+?>
+					 onchange="toggleFormBuilderOnDetails(this)">
+					<span class="scc-accordion_toggle_button round"></span>
+				</label>
+				<span><label for="toggle-build-quote" class="lblExtraSettingsEditCalc" data-setting-tooltip-type="require-acceptance-tt" data-bs-original-title="" title="">Require acceptance (GDPR/Terms & Conditions)
+				<i class="material-icons-outlined with-tooltip"  style="margin-right:5px">help_outline</i></label>
+				</span>
 			</div>
-			<!-- helper elements -->
-			<a id="downloadAnchorElem"></a>
-		</div><!-- End New save section -->
-	</div>
+			</div>
+		</div>
+		<!-- END FORM SECTION -->
+
+
+
+	  </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-2 scc-no-gutter">
 </div>
 <div id="yourNameModal" style="display:none">
 	<h4 style="font-weight: bolder;">Add New Field</h4>

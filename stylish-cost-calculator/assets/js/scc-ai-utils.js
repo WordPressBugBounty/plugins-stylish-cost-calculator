@@ -119,7 +119,9 @@ const sccAiUtils = {
 			const title = 'Intelligent Element Suggester';
 			const customMessage = 'What are you trying to calculate?';
 			sccAiUtils.enableInputsAiWizard( button, chat );
-			sccAiUtils.startAiWizardChat( menu, aiOptionType, title, customMessage );
+			if ( ! chat.querySelector( '.scc-ai-chat-bubble-wizard' ) ) {
+				sccAiUtils.startAiWizardChat( menu, aiOptionType, title, customMessage );
+			}
 		}
 		if ( aiOptionType === 'setup-wizard' ) {
 			sccAiUtils.aiWizardStatus = 'scc-ai-wizard-setup-wizard';
@@ -754,6 +756,9 @@ const sccAiUtils = {
 	},
 	toggleAiWizardPanel: ( event = null ) => {
 		const panel = sccAiUtils.aiWizardMenu;
+		if ( ! panel ) {
+			return;
+		}
 		// Get the current panel
 		if ( event ) {
 			event.preventDefault();
@@ -1044,6 +1049,17 @@ const sccAiUtils = {
 			newLine.className = 'scc-element-connector-line scc-link-line scc-hidden';
 		}
 		element.appendChild( newLine );
+	},
+	openIntelligentElementSuggester: () => {
+		const aiWizardMenu = document.querySelector( '.scc-ai-wizard-menu' );
+		if ( aiWizardMenu.classList.contains( 'scc-hidden' ) ) {
+			sccAiUtils.toggleAiWizardPanel( null );
+		}
+
+		const suggesterButton = document.getElementById( 'scc-ai-wizard-suggest-element' );
+		if ( suggesterButton ) {
+			suggesterButton.click();
+		}
 	},
 };
 

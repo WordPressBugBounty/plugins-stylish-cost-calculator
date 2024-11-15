@@ -7,7 +7,7 @@ $scc_is_free_version = defined( 'STYLISH_COST_CALCULATOR_VERSION' );
   <div class="row justify-content-center p-5">
     <div>
         <h1 class="text-center"><b>Welcome! &#128075;</b></h1>
-        <p class="text-center mb-4"><b>Le's build a new calculator</b></p>
+        <p class="text-center mb-4"><b>Let's build a new calculator</b></p>
     </div>
     <div class="pb-4 d-flex scc-new-calculator-action-container scc-buttons-vertical">
         <button id="scc-start-setup-wizard-button" class="scc-new-calculator-action-btn scc-action-button-primary" type="button" data-btn-action="startSetupWizard"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['ai-wizard'] ); ?></span> AI-Powered Setup</button>

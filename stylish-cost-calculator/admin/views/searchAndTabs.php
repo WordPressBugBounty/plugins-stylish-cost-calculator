@@ -13,13 +13,12 @@ if ( ! $f1->translation ) {
 $translateArray = json_decode( stripslashes( $translateArray ) );
 
 ?>
-<div id="calc-editor-wrapper" class="row">
-	<div class="col-12">
+<div id="calc-editor-wrapper" class="row ps-4" style="max-width: 100%;">
+	<div class="scc-editing-page-menu-panel row ms-0 ps-0 pe-0 col-12">
 		<!-- Calculator Title User Input-->
-		<div class="row">
 		<input type="text" id="id_form_input" value="<?php echo intval( $f1->id ); ?>" hidden>
-		<div class="col-lg-6 col-md-6 col-xs-8 ms-2 my-4 scc-edit-calculator-name" style="display:inherit">
-			<div class="col-lg-8 col-md-8 col-xs-8 d-inline-block" style="min-width: 600px; margin-right: 10px;">
+		<div class="col-lg-6 col-md-6 col-xs-8 my-4 scc-edit-calculator-name pe-4" style="display:inherit">
+			<div class="col-lg-8 col-md-8 col-xs-8 d-inline-block" style="margin-right: 10px;">
 				<input type="text" class="input_pad" id="costcalculatorname" placeholder="Enter the name of this calculator" value="<?php echo esc_attr( $f1->formname ); ?>" />
 			</div>
 			<!---SAVE BUTTON-->
@@ -30,8 +29,9 @@ $translateArray = json_decode( stripslashes( $translateArray ) );
 						<?php echo scc_get_kses_extended_ruleset( $this->scc_icons['close'] ); ?>
 					</button>
 					<div class="scc-embed-tip-wrapper">
-						<h3 class="scc-embed-tips-title">Embed to Page</h3>
-						<div class="scc-embed-field-container mt-3">
+						<h3 class="scc-embed-tips-title mb-3">Embed to Page</h3>
+						<div id="cache_plugin_alert_wrapper" class="d-none"></div>
+						<div class="scc-embed-field-container">
 							<h3 class="scc-embed-field-label">Calculator Form <a href="<?php echo esc_attr( SCC_HELPDESK_LINKS['troubleshoot-embedding-to-webpage'] ); ?>" target="_blank"><i class="material-icons-outlined">help_outline</i></a></h3>
 							<div class="position-relative">
 								<div class="scc-embed-field">[scc_calculator type='text' idvalue='<?php echo intval( $f1->id ); ?>']</div>
@@ -61,19 +61,69 @@ $translateArray = json_decode( stripslashes( $translateArray ) );
 						</div>
 					</div>
 				</div>
-
+			
 			</div>
 			<div class="col-lg-2 col-md-2 col-xs-2 text-end scc-save-btn-cont" data-setting-tooltip-type="" data-bs-original-title="">
-				<button class="btn btn-primary m-0  d-inline-flex align-items-center align-items-center  scc-top-save-btn" onClick="saveDataFields()">
-					<i class="scc-btn-spinner scc-save-btn-spinner scc-d-none"></i> Save
-				</button>
+			<!-- saveDataFields() -->
+				<button class="btn btn-primary m-0 d-flex align-items-center scc-top-save-btn" onClick="saveDataFields()" ><i class="scc-btn-spinner scc-save-btn-spinner scc-d-none ms-0"></i>Save</button>
+				<div class="scc-menu-dropdown">
+					<button id="scc-calculator-settings-menu-button" class="scc-dropbtn" onclick="sccToggleMenuDropdown( this, event )" ><span class="scc-icn-wrapper">
+							<?php echo scc_get_kses_extended_ruleset( $scc_icons['settings'] ); ?>
+						</span></button>
+					<div class="scc-menu-dropdown-content scc-hidden">
+						<a class="scc-font-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
+							<?php echo scc_get_kses_extended_ruleset( $scc_icons['edit-3'] ); ?>
+						</span> Font Settings</a>
+						<hr>
+						<a class="scc-calculator-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal1" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
+							<?php echo scc_get_kses_extended_ruleset( $scc_icons['tool'] ); ?>
+						</span> Calculator Settings</a>
+						<hr>
+						<a class="scc-calculator-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#formBuilderModal" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
+							<?php echo scc_get_kses_extended_ruleset( $scc_icons['mail'] ); ?>
+						</span> Form Builder</a>
+						<hr>
+						<a class="scc-calculator-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#paymentSettingsModal" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
+							<?php echo scc_get_kses_extended_ruleset( $scc_icons['dollar-sign'] ); ?>
+						</span> Payment Settings</a>
+						<hr>
+						<a class="scc-wordings-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal2" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
+							<?php echo scc_get_kses_extended_ruleset( $scc_icons['file-text'] ); ?>
+						</span> Wordings</a>
+						<hr>
+						<a class="scc-coupon-codes-dropdown" href="<?php echo esc_url( admin_url( 'admin.php?page=scc-coupons-management' ) ); ?>"><span class="scc-icn-wrapper">
+							<?php echo scc_get_kses_extended_ruleset( $scc_icons['percent'] ); ?>
+						</span> Coupon Codes</a>
+						<hr>
+						<a class="scc-global-settings-dropdown" href="<?php echo esc_url( admin_url( 'admin.php?page=scc-global-settings' ) ); ?>"><span class="scc-icn-wrapper">
+							<?php echo scc_get_kses_extended_ruleset( $scc_icons['settings'] ); ?>
+						</span> Global Settings</a>
+					</div>
+				</div>
+			</div>
+		<!--END Save Button-->
+		</div>
+		<div class="col-md-6 my-4">
+			<div class="scc-editing-page-menu-right">
+				<a class="btn scc-editing-page-button-white ms-3 use-tooltip" <?php
+    if ( $isSCCFreeVersion ) {
+        echo 'use-premium-tooltip';
+    }
+?>
+				" 
+					<?php
+if ( $isSCCFreeVersion ) {
+    echo "onclick='event.preventDefault();'";
+}
+?> data-setting-tooltip-type="quote-screen-tt" data-bs-original-title title href="<?php echo ! $isSCCFreeVersion ? admin_url( "admin.php?page=scc-quote-management-screen&id={$f1->id}" ) : 'javascript:void()'; ?>"  data-bs-original-title="View Quotes" title="View Quotes"><span class="scc-icn-wrapper">
+							<?php echo scc_get_kses_extended_ruleset( $scc_icons['bar-chart-2'] ); ?>
+						</span> Quotes</a>
+						<button class="btn scc-editing-page-button-white ms-3 use-tooltip" data-setting-tooltip-type="download-backup-tt" data-bs-original-title title onclick="downloadBackup(false)" title="Download Backup"><span class="scc-icn-wrapper">
+							<?php echo scc_get_kses_extended_ruleset( $scc_icons['download'] ); ?>
+						</span></button>
 			</div>
 		</div>
-		<!--END SAVE BUTTON-->
-		</div>
 		<!--END-->
-
-		<!---EMBED BUTTON-->
 	</div>
 </div>
 

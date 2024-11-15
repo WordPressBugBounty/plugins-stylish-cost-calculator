@@ -551,7 +551,19 @@ function showModal( modalElementSelector, modalContentData, isFirstModal = false
 		const quizModal = bootstrap.Modal.getOrCreateInstance( modalNode.get( 0 ) );
 		quizModal.show();
 		if ( currentStep === 1 ) {
-			//initiateIndustryChoices();
+			quizModal._element.addEventListener( 'hidden.bs.modal', () => {
+				const modalsActive = document.querySelectorAll( '.quiz-modal.show' ).length;
+				// reset the quizAnswersStore
+				if ( modalsActive === 0 ) {
+					Object.keys( quizAnswersStore.step1 ).forEach( ( key ) => {
+						if (typeof(quizAnswersStore.step1[ key ]) === 'boolean') {
+							quizAnswersStore.step1[ key ] = false;
+						} else {
+							quizAnswersStore.step1[ key ] = '';
+						}
+					} );
+				}
+			} );
 		}
 	} catch ( error ) {
 		//console.error( error );

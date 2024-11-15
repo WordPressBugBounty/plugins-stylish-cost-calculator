@@ -88,34 +88,6 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 						<div class="scc-pane-title">Calculator Builder</div>
 						<div class="scc-pane-description">Edit your calculator preferences</div>
 					</div>
-					<div class="col-2">
-						<div class="scc-menu-dropdown">
-							<button id="scc-calculator-settings-menu-button" class="scc-dropbtn" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
-									<?php echo scc_get_kses_extended_ruleset( $scc_icons['menu'] ); ?>
-								</span></button>
-							<div class="scc-menu-dropdown-content scc-hidden">
-								<a class="scc-font-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
-									<?php echo scc_get_kses_extended_ruleset( $scc_icons['edit-3'] ); ?>
-								</span> Font Settings</a>
-								<hr>
-								<a class="scc-calculator-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal1" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
-									<?php echo scc_get_kses_extended_ruleset( $scc_icons['tool'] ); ?>
-								</span> Calculator Settings</a>
-								<hr>
-								<a class="scc-wordings-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal2" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
-									<?php echo scc_get_kses_extended_ruleset( $scc_icons['file-text'] ); ?>
-								</span> Wordings</a>
-								<hr>
-								<a class="scc-coupon-codes-dropdown" href="<?php echo esc_url( admin_url( 'admin.php?page=scc-coupons-management' ) ); ?>"><span class="scc-icn-wrapper">
-									<?php echo scc_get_kses_extended_ruleset( $scc_icons['percent'] ); ?>
-								</span> Coupon Codes</a>
-								<hr>
-								<a class="scc-global-settings-dropdown" href="<?php echo esc_url( admin_url( 'admin.php?page=scc-global-settings' ) ); ?>"><span class="scc-icn-wrapper">
-									<?php echo scc_get_kses_extended_ruleset( $scc_icons['settings'] ); ?>
-								</span> Global Settings</a>
-							</div>
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -291,7 +263,7 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 												<input type="text" class="input_id_element" value="<?php echo intval( $el->id ); ?>" hidden>
 												<div class="elements_added_v2">
 													<div class="element-icon">
-														<i class="far fa-list-alt" style="font-size:25px;"></i>
+													<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['scc-dropdown'] ); ?></span>
 													</div>
 													<div class="element-title-desc" onclick="javascript:collapseElementTitle(this)" style="cursor: pointer;">
 														<div class="title-desc-wrapper">
@@ -367,9 +339,9 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 												<div class="elements_added_v2">
 													<div class="element-icon">
 														<?php if ( $checkboxIcon == 'use-material-simple-btn' ) { ?>
-															<span class="material-icons-outlined" style="font-size:25px;">smart_button</span>
+															<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['scc-button'] ); ?></span>
 														<?php } else { ?>
-															<i class="<?php echo esc_attr( $checkboxIcon ); ?>" style="font-size:25px;"></i>
+															<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['scc-checkbox'] ); ?></span>
 														<?php } ?>
 													</div>
 													<div class="element-title-desc" onclick="javascript:collapseElementTitle(this)" style="cursor: pointer;">
@@ -395,7 +367,7 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 												<input type="text" class="input_id_element" value="<?php echo intval( $el->id ); ?>" hidden>
 												<div class="elements_added_v2">
 													<div class="element-icon">
-														<i class="fas fa-comment" style="font-size:25px;"></i>
+													<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['message-circle'] ); ?></span>
 													</div>
 													<div class="element-title-desc" onclick="javascript:collapseElementTitle(this)" style="cursor: pointer;">
 														<div class="title-desc-wrapper">
@@ -420,7 +392,7 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 												<input type="text" class="input_id_element" value="<?php echo intval( $el->id ); ?>" hidden>
 												<div class="elements_added_v2">
 													<div class="element-icon">
-														<i class="material-icons" style="font-size:25px;">exposure</i>
+													<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['scc-quantity'] ); ?></span>
 													</div>
 													<div class="element-title-desc" onclick="javascript:collapseElementTitle(this)" style="cursor: pointer;">
 														<div class="title-desc-wrapper">
@@ -987,7 +959,7 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 												<input type="text" class="input_id_element" value="<?php echo intval( $el->id ); ?>" hidden>
 												<div class="elements_added_v2">
 													<div class="element-icon">
-														<i class="fas fa-sliders-h" style="font-size:25px;"></i>
+													<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['scc-slider'] ); ?></span>
 													</div>
 													<div class="element-title-desc" onclick="javascript:collapseElementTitle(this)" style="cursor: pointer;">
 														<div class="title-desc-wrapper">
@@ -1011,94 +983,98 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 									<!-- ELEMENTS SHOWS HERE -->
 								</div>
 								<!-- BUTTONS AREA -->
-								<div class="scc-col-md-12 scc-col-xs-12">
-									<label class="scc_label_2" style="margin-top:15px;margin-right: 0px !important;padding: 8px;margin-top: 20px;border-radius:6px;">
-										<a style="" class="add-element-btn save_button" onclick="togglebuttonsadd(this)">
-											+ Add Element
-										</a>
-									</label>
-								</div>
-								<div class="df_scc_groupbuttonsadd scc-col-md-12 scc-col-xs-12" style="margin:15px; display:none ">
-								<button class="scc_button btn-backend" onclick="addSliderElement(this)">
-										<div class="scc-slider-tooltip-panel use-tooltip" data-setting-tooltip-type="slider-disabled-tt" data-bs-original-title="" title=""></div>
-										<i class="scc-btn-spinner scc-d-none"></i>
-										<i class="fas fa-sliders-h" style="padding-top:3px;"></i>
-										<div class="btn-backend-text">Slider</div>
-									</button>
-									<button value="number_input" class="scc_button btn-backend" onclick="addQuantityBox(this)">
-										<i class="scc-btn-spinner scc-d-none"></i>
-										<i class="material-icons" style="padding-top:3px;">exposure</i>
-										<div class="btn-backend-text">Quantity Box</div>
-									</button>
-									<button value="dropdowninput" class="scc_button btn-backend" onclick="addDropdownMenuElement(this)">
-										<i class="scc-btn-spinner scc-d-none"></i>
-										<i class="far fa-list-alt" style="padding-top:3px;"></i>
-										<div class="btn-backend-text">Dropdown</div>
-									</button>
-									<button value="switchinput" class="scc_button btn-backend" onclick="addCheckboxElement(this,1)">
-										<i class="scc-btn-spinner scc-d-none"></i>
-										<i class="far fa-check-square" style="padding-top:3px;"></i>
-										<div class="btn-backend-text">Checkbox</div>
-									</button>
-									<!--<button value="switchinput" class="scc_button btn-backend" onclick="addCheckboxElement(this,3)"><i class="fas fa-toggle-off" style="padding-top:3px;"></i>
-										<div class="btn-backend-text">Toggle Switch</div>
-									</button>-->
-									<button value="switchinput" class="scc_button btn-backend" onclick="addCheckboxElement(this,6)">
-										<i class="scc-btn-spinner scc-d-none"></i>
-										<i class="far fa-rectangle-wide" style="border:1px solid black;margin-top:5px;width:26px;height: 9px;background-color: white;"></i>
-										<div class="btn-backend-text">Simple Button</div>
-									</button>
-									<button value="switchinput" class="scc_button btn-backend  with-tooltip" data-element-tooltip-type="image-buttons-tt" data-bs-original-title="" onclick="addCheckboxElement(this,8)">
-										<i class="scc-btn-spinner scc-d-none"></i>
-										<i class="fas fa-image" style="margin-top:3px;"></i>
-										<div class="btn-backend-text">Image Button </div>
-									</button>
-									<input class="inputoption_slidchk" type="checkbox" onClick="addSlider(this)" style="display:none;" />
-									<button class="scc_button btn-backend with-tooltip" data-element-tooltip-type="custom-math-tt" data-bs-original-title="" onclick="addCustomMath(this)">
-										<i class="scc-btn-spinner scc-d-none"></i>
-										<i class="fas fa-calculator" style="padding-top:3px;"></i>
-										<div class="btn-backend-text">Fee & Discount Adjuster</div>
-									</button>
-									<button value="custom_code" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="variable-math-tt" data-bs-original-title="" onclick="addTextHtml(this)">
-										<i class="scc-btn-spinner scc-d-none"></i>
-										<i class="fas fa-calculator" style="padding-top:3px;"></i>
-										<div class="btn-backend-text">Advanced Pricing Formula</div>
-									</button>
-									<button value="file_input" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="file-upload-tt" data-bs-original-title="" onclick="addFileUpload(this)">
-										<i class="scc-btn-spinner scc-d-none"></i>
-										<i class="fas fa-paperclip" style="padding-top:3px;"></i>
-										<div class="btn-backend-text">File Upload</div>
-									</button>
-									<button value="custom_code" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="date-picker-tt" data-bs-original-title="" onclick="addTextHtml(this)">
-										<i class="scc-btn-spinner scc-d-none"></i>
-										<i class="fas fa-calendar-alt" style="padding-top:3px;"></i>
-										<div class="btn-backend-text">Date Picker</div>
-									</button>
-									<button value="distance" class="scc_button btn-backend with-tooltip"  data-element-tooltip-type="distance-cost-tt" data-bs-original-title="" >
-										<i class="scc-btn-spinner scc-d-none"></i>
-										<i class="fas fa-map-marker-alt" style="padding-top:3px;margin-left:0;"></i>
-										<div class="btn-backend-text">Distance-Based Cost</div>
-									</button>
-									<input class="inputoption_slidchk" type="checkbox" onClick="addSlider(this)" style="display:none;" />
-									<button value="comment_input" class="scc_button btn-backend" onclick="addCommentBoxElement(this)">
-										<i class="scc-btn-spinner scc-d-none"></i>
-										<i class="fas fa-comment" style="padding-top:3px;"></i>
-										<div class="btn-backend-text">Comment Box</div>
-									</button>
-									<button value="custom_code" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="text-html-field-tt" data-bs-original-title="" onclick="addTextHtml(this)">
-										<i class="scc-btn-spinner scc-d-none"></i>
-										<i class="fas fa-code" style="padding-top:3px;"></i>
-										<div class="btn-backend-text">Text/HTML Field</div>
-									</button>
-									<button value="signature_box" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="signature-box-tt" data-bs-original-title="" onclick="">
-										<i class="scc-btn-spinner scc-d-none"></i>
-										<i class="fas fa-signature" style="padding-top:3px;"></i>
-										<div class="btn-backend-text">Signature Box</div>
-									</button>
-									<br>
-									<p style="font-size:13px;margin-top:5px;">Add 1 or more elements to this subsection</p>
-									<input class="scc_custom_math_checkbox" type="checkbox" style="display:none;" />
-									<a href="https://stylishcostcalculator.com/test-drive-premium/" target="_blank">Test Drive The Premium Feature today on the Playground</a>
+								<div class="row scc-add-element-actions-row">
+									<div class="scc-col-md-12 scc-col-xs-12">
+										<label class="scc_label_2 scc-add-element-btn-container">
+											<a style="" class="add-element-btn save_button" onclick="togglebuttonsadd(this)">
+												+ Add Element
+											</a>
+										</label>
+									</div>
+									<div class="df_scc_groupbuttonsadd scc-col-md-12 scc-col-xs-12" style="margin:15px; display:none ">
+									<button class="scc_button btn-backend" onclick="addSliderElement(this)">
+											<div class="scc-slider-tooltip-panel use-tooltip" data-setting-tooltip-type="slider-disabled-tt" data-bs-original-title="" title=""></div>
+											<i class="scc-btn-spinner scc-d-none"></i>
+											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['scc-slider'] ); ?></span>
+											<div class="btn-backend-text">Slider</div>
+										</button>
+										<button value="number_input" class="scc_button btn-backend" onclick="addQuantityBox(this)">
+											<i class="scc-btn-spinner scc-d-none"></i>
+											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['scc-quantity'] ); ?></span>
+											<div class="btn-backend-text">Quantity Box</div>
+										</button>
+										<button value="dropdowninput" class="scc_button btn-backend" onclick="addDropdownMenuElement(this)">
+											<i class="scc-btn-spinner scc-d-none"></i>
+											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['scc-dropdown'] ); ?></span>
+											<div class="btn-backend-text">Dropdown</div>
+										</button>
+										<button value="switchinput" class="scc_button btn-backend" onclick="addCheckboxElement(this,1)">
+											<i class="scc-btn-spinner scc-d-none"></i>
+											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['scc-checkbox'] ); ?></span>
+											<div class="btn-backend-text">Checkbox</div>
+										</button>
+										<button value="switchinput" class="scc_button btn-backend" onclick="addCheckboxElement(this,6)">
+											<i class="scc-btn-spinner scc-d-none"></i>
+											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['scc-button'] ); ?></span>
+											<div class="btn-backend-text">Simple Button</div>
+										</button>
+										<button value="switchinput" class="scc_button btn-backend  with-tooltip" data-element-tooltip-type="image-buttons-tt" data-bs-original-title="" onclick="addCheckboxElement(this,8)">
+											<i class="scc-btn-spinner scc-d-none"></i>
+											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['image'] ); ?></span>
+											<div class="btn-backend-text">Image Button </div>
+										</button>
+										<input class="inputoption_slidchk" type="checkbox" onClick="addSlider(this)" style="display:none;" />
+										<button class="scc_button btn-backend with-tooltip" data-element-tooltip-type="custom-math-tt" data-bs-original-title="" onclick="addCustomMath(this)">
+											<i class="scc-btn-spinner scc-d-none"></i>
+											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['percent'] ); ?></span>
+											<div class="btn-backend-text">Fee & Discount Adjuster</div>
+										</button>
+										<button value="custom_code" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="variable-math-tt" data-bs-original-title="" onclick="addTextHtml(this)">
+											<i class="scc-btn-spinner scc-d-none"></i>
+											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['scc-math'] ); ?></span>
+											<div class="btn-backend-text">Advanced Pricing Formula</div>
+										</button>
+										<button value="file_input" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="file-upload-tt" data-bs-original-title="" onclick="addFileUpload(this)">
+											<i class="scc-btn-spinner scc-d-none"></i>
+											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['paperclip'] ); ?></span>
+											<div class="btn-backend-text">File Upload</div>
+										</button>
+										<button value="custom_code" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="date-picker-tt" data-bs-original-title="" onclick="addTextHtml(this)">
+											<i class="scc-btn-spinner scc-d-none"></i>
+											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['calendar'] ); ?></span>
+											<div class="btn-backend-text">Date Picker</div>
+										</button>
+										<button value="distance" class="scc_button btn-backend with-tooltip"  data-element-tooltip-type="distance-cost-tt" data-bs-original-title="" >
+											<i class="scc-btn-spinner scc-d-none"></i>
+											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['map-pin'] ); ?></span>
+											<div class="btn-backend-text">Distance-Based Cost</div>
+										</button>
+										<input class="inputoption_slidchk" type="checkbox" onClick="addSlider(this)" style="display:none;" />
+										<button value="comment_input" class="scc_button btn-backend" onclick="addCommentBoxElement(this)">
+											<i class="scc-btn-spinner scc-d-none"></i>
+											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['message-circle'] ); ?></span>
+											<div class="btn-backend-text">Comment Box</div>
+										</button>
+										<button value="custom_code" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="text-html-field-tt" data-bs-original-title="" onclick="addTextHtml(this)">
+											<i class="scc-btn-spinner scc-d-none"></i>
+											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['scc-code'] ); ?></span>
+											<div class="btn-backend-text">Text/HTML Field</div>
+										</button>
+										<button value="signature_box" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="signature-box-tt" data-bs-original-title="" onclick="">
+											<i class="scc-btn-spinner scc-d-none"></i>
+											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['signature'] ); ?></span>
+											<div class="btn-backend-text">Signature Box</div>
+										</button>
+										<button value="" class="scc_button btn-backend" onclick="sccAiUtils.openIntelligentElementSuggester();">
+											<i class="scc-btn-spinner scc-d-none"></i>
+											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['ai-wizard'] ); ?></span>
+											<div class="btn-backend-text">AI Suggested Element</div>
+										</button>
+										<br>
+										<p style="font-size:13px;margin-top:5px;">Add 1 or more elements to this subsection</p>
+										<input class="scc_custom_math_checkbox" type="checkbox" style="display:none;" />
+										<a href="https://stylishcostcalculator.com/test-drive-premium/" target="_blank">Test Drive The Premium Feature today on the Playground</a>
+									</div>
 								</div>
 							</div>
 							<?php
@@ -1117,9 +1093,11 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
             }
 ?>
 		</div>
-		<div class="scc-col-xs-6 scc-col-lg-12 scc-col-md-12 clearfix" style="width:100% !important; padding-left:0px !important;">
-			<label class="scc-col-xs-12 scc-col-lg-12 scc-col-md-12 add-section-btn" style="max-width: 985px;">
-				<a href="javascript:void(0)" onclick="addSectionSubsectionElement()" style="border-radius:6px;padding:8px;background:#314af3;color:white" class="crossnadd2 scc_new_sec">+ Add Section </a>
+		<div class="scc-col-xs-6 scc-col-lg-12 scc-col-md-12 clearfix scc-new-section-btn-row position-relative">
+			<label class="scc-col-xs-12 scc-col-lg-12 scc-col-md-12 add-section-btn scc-new-section-btn-container">
+				<a href="javascript:void(0)" onclick="addSectionSubsectionElement()"  class="crossnadd2 scc_new_sec scc-new-section-btn use-tooltip" data-bs-original-title="Add Section">
+					<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['plus'] ); ?></span>
+				</a>
 			</label>
 		</div>
 	</div>
@@ -1135,7 +1113,7 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 						<div id="dock-to-bottom" title="Dock the preview pane to the bottom" data-dock-mode="bottom" role="button" onclick="handlePreviewDockMode(this, 'bottom', event)" class="use-tooltip m-0 btn"><?php echo scc_get_kses_extended_ruleset( $scc_icons['dock-to-bottom'] ); ?></div>
 						<div id="dock-to-right" title="Dock the preview pane to the right" data-dock-mode="right" role="button" onclick="handlePreviewDockMode(this, 'right', event)" class="use-tooltip m-0 btn"><?php echo scc_get_kses_extended_ruleset( $scc_icons['dock-to-right'] ); ?></div>
 					</div>
-					<button class="btn btn-disabled scc-refresh-button scc-hidden ms-3" disabled onclick="sccBackendUtils.refreshPreview(this)"
+					<button class="btn btn-disabled scc-refresh-button scc-hidden ms-3 use-tooltip" disabled onclick="sccBackendUtils.refreshPreview(this)"
 						data-element-type="quantity-box">
 						<span class="scc-saving-element-msg scc-hidden"></span>
 						<span class="scc-saving-element-btn-text scc-hidden">
@@ -1926,10 +1904,11 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 */
 	function addSliderElement(element) {
 		// showLoadingChanges()
-		var subContainer = jQuery(element).parent().parent().find(".subsection-area.BodyOption")
-		var idSub = jQuery(element).parent().parent().find(".input_subsection_id").val()
+		var subsectionContainer = jQuery(element).parent().parent().parent()
+		var subContainer = subsectionContainer.find(".subsection-area.BodyOption")
+		var idSub = subsectionContainer.find(".input_subsection_id").val()
 		var containerButtons = jQuery(element).parent()
-		var count = jQuery(element).parent().parent().find(".elements_added").length + 1
+		var count = subsectionContainer.find(".elements_added").length + 1
 
 		//these variables are used to hightlight the first slider added on the subsection
 		let subsection = element.closest('.boardOption')
@@ -2231,10 +2210,11 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 */
 	function addQuantityBox(element) {
 		// showLoadingChanges()
-		var subContainer = jQuery(element).parent().parent().find(".subsection-area.BodyOption")
-		var idSub = jQuery(element).parent().parent().find(".input_subsection_id").val()
-		var containerButtons = jQuery(element).parent()
-		var count = jQuery(element).parent().parent().find(".elements_added").length + 1
+		var subsectionContainer = jQuery(element).parent().parent().parent()
+		var subContainer = subsectionContainer.find(".subsection-area.BodyOption")
+		var idSub = subsectionContainer.find(".input_subsection_id").val()
+		var containerButtons = jQuery(element)
+		var count = subsectionContainer.find(".elements_added").length + 1
 		jQuery.ajax({
 			url: ajaxurl,
 			cache: false,
@@ -2384,10 +2364,11 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 */
 	function addCommentBoxElement(element) {
 		// showLoadingChanges()
-		var subContainer = jQuery(element).parent().parent().find(".subsection-area.BodyOption")
-		var idSub = jQuery(element).parent().parent().find(".input_subsection_id").val()
+		var subsectionContainer = jQuery(element).parent().parent().parent()
+		var subContainer = subsectionContainer.find(".subsection-area.BodyOption")
+		var idSub = subsectionContainer.find(".input_subsection_id").val()
 		var containerButtons = jQuery(element).parent()
-		var count = jQuery(element).parent().parent().find(".elements_added").length + 1
+		var count = subsectionContainer.find(".elements_added").length + 1
 		jQuery.ajax({
 			url: ajaxurl,
 			cache: false,
@@ -2434,10 +2415,11 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 */
 	function addCheckboxElement(element, type) {
 		// showLoadingChanges()
-		var subContainer = jQuery(element).parent().parent().find(".subsection-area.BodyOption")
-		var idSub = jQuery(element).parent().parent().find(".input_subsection_id").val()
+		var subsectionContainer = jQuery(element).parent().parent().parent()
+		var subContainer = subsectionContainer.find(".subsection-area.BodyOption")
+		var idSub = subsectionContainer.find(".input_subsection_id").val()
 		var containerButtons = jQuery(element).parent()
-		var count = jQuery(element).parent().parent().find(".elements_added").length + 1
+		var count = subsectionContainer.find(".elements_added").length + 1
 		jQuery.ajax({
 			url: ajaxurl,
 			cache: false,
@@ -2626,10 +2608,12 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 */
 	function addDropdownMenuElement(element) {
 		// showLoadingChanges()
-		var subContainer = jQuery(element).parent().parent().find(".subsection-area.BodyOption")
-		var idSub = jQuery(element).parent().parent().find(".input_subsection_id").val()
+		var subsectionContainer = jQuery(element).parent().parent().parent()
+		console.log(subsectionContainer)
+		var subContainer = subsectionContainer.find(".subsection-area.BodyOption")
+		var idSub = subsectionContainer.find(".input_subsection_id").val()
 		var containerButtons = jQuery(element).parent()
-		var count = jQuery(element).parent().parent().find(".elements_added").length + 1
+		var count = subsectionContainer.find(".elements_added").length + 1
 		jQuery.ajax({
 			url: ajaxurl,
 			cache: false,
@@ -2919,11 +2903,10 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 */
 	function addSubSectionElement(element) {
 		showLoadingChanges()
-		// var tag = jQuery(element).parent().parent().parent().find(".boardOption").last().css("background-color","red")
 		var containerAfter = jQuery(element).closest(".fieldDatatoAdd").parent().find(".boardOption").last() //ADD AFTER THIS
 		var numberofsubsections = jQuery(element).parent().parent().parent(".fieldDatatoAdd").find(".boardOption").length;
 		var ordersubsection = numberofsubsections + 1;
-		var sectionid = jQuery(element).parent().parent().parent().parent().find(".id_section_class").val();
+		var sectionid = jQuery(element).closest(".scc-section-container").find(".id_section_class").val();
 		jQuery.ajax({
 			url: ajaxurl,
 			cache: false,
@@ -3365,67 +3348,84 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		subs += '                                                                        <!-- ELEMENTS SHOWS HERE -->'
 		subs += '                                </div>'
 		subs += '                                 <!-- BUTTONS AREA -->'
+		subs += '                                <div class="row scc-add-element-actions-row">'
 		subs += '                                  <div class="scc-col-md-12 scc-col-xs-12">'
-		subs += '                                      <label class="scc_label_2" style="margin-top:15px;margin-right: 0px !important;padding: 8px;margin-top: 20px;border-radius:6px;">'
+		subs += '                                      <label class="scc_label_2 scc-add-element-btn-container">'
 		subs += '                                          <a class="add-element-btn save_button" onclick="togglebuttonsadd(this)">'
 		subs += '                                              + Add Element'
 		subs += '                                          </a>'
 		subs += '                                      </label>'
 		subs += '                                  </div>'
 		subs += '                                  <div class="df_scc_groupbuttonsadd scc-col-md-12 scc-col-xs-12" style="margin:15px; display:none ">'
-		subs += '                                      <button class="scc_button btn-backend" onclick="addSliderElement(this)"><div class="scc-slider-tooltip-panel use-tooltip" data-setting-tooltip-type="slider-disabled-tt" data-bs-original-title="" title=""></div><i class="scc-btn-spinner scc-d-none"></i><i class="fas fa-sliders-h" style="padding-top:3px;font-size:13px;"></i>'
+		subs += '                                      <button class="scc_button btn-backend" onclick="addSliderElement(this)"><div class="scc-slider-tooltip-panel use-tooltip" data-setting-tooltip-type="slider-disabled-tt" data-bs-original-title="" title=""></div><i class="scc-btn-spinner scc-d-none"></i>'
+		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-slider'] ); ?></span>'
 		subs += '                                          <div class="btn-backend-text">Slider</div>'
 		subs += '                                      </button>'
-		subs += '                                      <button value="number_input" class="scc_button btn-backend" onclick="addQuantityBox(this)"><i class="scc-btn-spinner scc-d-none"></i><i class="material-icons" style="padding-top:3px;font-size:13px;">exposure</i>'
+		subs += '                                      <button value="number_input" class="scc_button btn-backend" onclick="addQuantityBox(this)"><i class="scc-btn-spinner scc-d-none"></i>'
+		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-quantity'] ); ?></span>'
 		subs += '                                          <div class="btn-backend-text">Quantity Box</div>'
 		subs += '                                      </button>'
-		subs += '                                      <button value="dropdowninput" class="scc_button btn-backend" onclick="addDropdownMenuElement(this)"><i class="scc-btn-spinner scc-d-none"></i><i class="far fa-list-alt" style="padding-top:3px;font-size:13px;"></i>'
+		subs += '                                      <button value="dropdowninput" class="scc_button btn-backend" onclick="addDropdownMenuElement(this)"><i class="scc-btn-spinner scc-d-none"></i>'
+		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-dropdown'] ); ?></span>'
 		subs += '                                          <div class="btn-backend-text">Dropdown</div>'
 		subs += '                                      </button>'
-		subs += '                                      <button value="switchinput" class="scc_button btn-backend" onclick="addCheckboxElement(this,1)"><i class="scc-btn-spinner scc-d-none"></i><i class="far fa-check-square" style="padding-top:3px;font-size:13px;"></i>'
+		subs += '                                      <button value="switchinput" class="scc_button btn-backend" onclick="addCheckboxElement(this,1)"><i class="scc-btn-spinner scc-d-none"></i>'
+		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-checkbox'] ); ?></span>'
 		subs += '                                          <div class="btn-backend-text">Checkbox</div>'
 		subs += '                                      </button>'
-		subs += '                                      <button value="switchinput" class="scc_button btn-backend" onclick="addCheckboxElement(this,3)"><i class="scc-btn-spinner scc-d-none"></i><i class="fas fa-toggle-off" style="padding-top:3px;font-size:13px;"></i>'
-		subs += '                                          <div class="btn-backend-text">Toggle Switch</div>'
-		subs += '                                      </button>'
-		subs += '                                      <button value="switchinput" class="scc_button btn-backend" onclick="addCheckboxElement(this,6)"><i class="scc-btn-spinner scc-d-none"></i><i class="far fa-rectangle-wide" style="margin-top:5px;font-size:13px;width:26px;height: 9px;background-color: white;"></i>'
+		subs += '                                      <button value="switchinput" class="scc_button btn-backend" onclick="addCheckboxElement(this,6)"><i class="scc-btn-spinner scc-d-none"></i>'
+		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-button'] ); ?></span>'
 		subs += '                                          <div class="btn-backend-text">Simple Button </div>'
 		subs += '                                      </button>'
-		subs += '                                    <button value="switchinput" class="scc_button btn-backend scc-premium-element" onclick="addCheckboxElement(this,8)"><i class="scc-btn-spinner scc-d-none"></i><i class="fas fa-image" style="font-size:13px;"></i>'
+		subs += '                                    <button value="switchinput" class="scc_button btn-backend scc-premium-element" onclick="addCheckboxElement(this,8)">'
+		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['image'] ); ?></span>'
 		subs += '                                        <div class="btn-backend-text">Image Button </div>'
 		subs += '                                    </button>'
-		subs += '                                      <button class="scc_button btn-backend scc-premium-element" onclick="addCustomMath(this)"><i class="scc-btn-spinner scc-d-none"></i><i class="fas fa-calculator" style="padding-top:3px;font-size:13px;"></i>'
+		subs += '                                      <button class="scc_button btn-backend scc-premium-element" onclick="addCustomMath(this)"><i class="scc-btn-spinner scc-d-none"></i>'
+		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['percent'] ); ?></span>'
 		subs += '                                          <div class="btn-backend-text">Fee & Discount Adjuster</div>'
 		subs += '                                      </button>'
-		subs += '										<button value="custom_code" class="scc_button btn-backend scc-premium-element" onclick="addTextHtml(this)"><i class="scc-btn-spinner scc-d-none"></i><i class="fas fa-calculator" style="padding-top:3px;font-size:13px;"></i>'
+		subs += '										<button value="custom_code" class="scc_button btn-backend scc-premium-element" onclick="addTextHtml(this)"><i class="scc-btn-spinner scc-d-none"></i>'
+		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-math'] ); ?></span>'
 		subs += '											<div class="btn-backend-text">Advanced Pricing Formula</div>'
 		subs += '										</button>'
 		subs += '                                      <input class="inputoption_slidchk scc-premium-element" type="checkbox" onClick="addSlider(this)" style="display:none;" />'
-		subs += '                                      <button value="file_input" class="scc_button btn-backend" onclick="addFileUpload(this)"><i class="scc-btn-spinner scc-d-none"></i><i class="fas fa-paperclip" style="padding-top:3px;font-size:13px;"></i>'
+		subs += '                                      <button value="file_input" class="scc_button btn-backend" onclick="addFileUpload(this)"><i class="scc-btn-spinner scc-d-none"></i>'
+		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['paperclip'] ); ?></span>'
 		subs += '                                          <div class="btn-backend-text">File Upload</div>'
 		subs += '                                      </button>'
-		subs += ' 										<button value="custom_code" class="scc_button btn-backend scc-premium-element" onclick="addTextHtml(this)"><i class="scc-btn-spinner scc-d-none"></i><i class="fas fa-calendar-alt" style="padding-top:3px;font-size:13px;"></i>'
+		subs += ' 										<button value="custom_code" class="scc_button btn-backend scc-premium-element" onclick="addTextHtml(this)"><i class="scc-btn-spinner scc-d-none"></i>'
+		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['calendar'] ); ?></span>'
 		subs += '											<div class="btn-backend-text">Date Picker</div>'
 		subs += '										</button>'
 		subs += '										<button value="distance" class="scc_button btn-backend scc-premium-element" >'
 		subs += '											<i class="scc-btn-spinner scc-d-none"></i>'
-		subs += '											<i class="fas fa-map-marker-alt" style="padding-top:3px;margin-left:0;"></i>'
+		subs += '											 <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['map-pin'] ); ?></span>'
 		subs += '											<div class="btn-backend-text">Distance-Based Cost</div>'
 		subs += '										</button>'
-		subs += '                                      <button value="custom_code" class="scc_button btn-backend scc-premium-element" onclick="addTextHtml(this)"><i class="scc-btn-spinner scc-d-none"></i><i class="fas fa-code" style="padding-top:3px;font-size:13px;"></i>'
+		subs += '                                      <button value="custom_code" class="scc_button btn-backend scc-premium-element" onclick="addTextHtml(this)"><i class="scc-btn-spinner scc-d-none"></i>'
+		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-code'] ); ?></span>'
 		subs += '                                          <div class="btn-backend-text">Text/HTML Field</div>'
 		subs += '                                      </button>'
-		subs += '                                      <button value="comment_input" class="scc_button btn-backend" onclick="addCommentBoxElement(this)"><i class="scc-btn-spinner scc-d-none"></i><i class="fas fa-comment" style="padding-top:3px;font-size:13px;"></i>'
+		subs += '                                      <button value="comment_input" class="scc_button btn-backend" onclick="addCommentBoxElement(this)"><i class="scc-btn-spinner scc-d-none"></i>'
+		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['message-circle'] ); ?></span>'
 		subs += '                                          <div class="btn-backend-text">Comment Box</div>'
 		subs += '                                      </button>'
-		subs += '									   <button value="signature_box" class="scc_button btn-backend scc-premium-element" onclick=""><i class="scc-btn-spinner scc-d-none"></i><i class="fas fa-signature" style="padding-top:3px;"></i>'
-		subs += '											<div class="btn-backend-text">Signature Box</div>'
+		subs += '									   <button value="signature_box" class="scc_button btn-backend scc-premium-element" onclick=""><i class="scc-btn-spinner scc-d-none"></i>'
+		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['signature'] ); ?></span>'
+		subs += '                                          <div class="btn-backend-text">Signature Box</div>'
 		subs += '									   </button>'
+		subs += '                                      <button value="signature_box" class="scc_button btn-backend" onclick="sccAiUtils.openIntelligentElementSuggester();">'
+		subs += '                                          <i class="scc-btn-spinner scc-d-none"></i>'
+		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['ai-wizard'] ); ?></span>'
+		subs += '                                          <div class="btn-backend-text">AI Suggested Element</div>'
+		subs += '                                      </button>'
 		subs += '                                      <br>'
 		subs += '                                      <p style="font-size:13px;margin-top:5px;">Add 1 or more elements to this subsection</p>'
 		subs += '                                      <input class="scc_custom_math_checkbox" type="checkbox" style="display:none;" />'
 		subs += '                                      <a href="https://stylishcostcalculator.com/test-drive-premium/" target="_blank">Test Drive The Premium Feature today on the Playground</a>  '
 		subs += '                                  </div>'
+		subs += '                                </div>'
 		subs += '                            </div>'
 		return subs;
 	}
@@ -3507,8 +3507,9 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		section += '                                                                        <!-- ELEMENTS SHOWS HERE -->'
 		section += '                                </div>'
 		section += '                                <!-- BUTTONS AREA -->'
+		section += '                                <div class="row scc-add-element-actions-row">'
 		section += '                                <div class="scc-col-md-12 scc-col-xs-12">'
-		section += '                                    <label class="scc_label_2" style="margin-top:15px;margin-right: 0px !important;padding: 8px;margin-top: 20px;border-radius:6px;">'
+		section += '                                    <label class="scc_label_2  scc-add-element-btn-container">'
 		section += '                                        <a class="add-element-btn save_button" onclick="togglebuttonsadd(this)">'
 		section += '                                            + Add Element'
 		section += '                                        </a>'
@@ -3518,75 +3519,80 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		section += '																	<button class="scc_button btn-backend" onclick="addSliderElement(this)">'
 		section += '																		<div class="scc-slider-tooltip-panel use-tooltip" data-setting-tooltip-type="slider-disabled-tt" data-bs-original-title="" title=""></div>'
 		section += '																			<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																			<i class="fas fa-sliders-h" style="padding-top:3px;"></i>'
+		section += '																			<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['sliders'] ); ?></span>'
 		section += '																		<div class="btn-backend-text">Slider</div>'
 		section += '																	</button>'
 		section += '																	<button value="number_input" class="scc_button btn-backend" onclick="addQuantityBox(this)">'
 		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																	  <i class="material-icons" style="padding-top:3px;">exposure</i>'
+		section += '																	  <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-quantity'] ); ?></span>'
 		section += '	                                  <div class="btn-backend-text">Quantity Box</div>'
 		section += '                                  </button>'
 		section += '																	<button value="dropdowninput" class="scc_button btn-backend" onclick="addDropdownMenuElement(this)">'
 		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<i class="far fa-list-alt" style="padding-top:3px;"></i>'
+		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-dropdown'] ); ?></span>'
 		section += '																		<div class="btn-backend-text">Dropdown</div>'
 		section += '																	</button>'
 		section += '																	<button value="switchinput" class="scc_button btn-backend" onclick="addCheckboxElement(this,1)">'
 		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<i class="far fa-check-square" style="padding-top:3px;"></i>'
+		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-checkbox'] ); ?></span>'
 		section += '																		<div class="btn-backend-text">Checkbox</div>'
 		section += '																	</button>'
 		section += '																	<button value="switchinput" class="scc_button btn-backend" onclick="addCheckboxElement(this,6)">'
 		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<i class="far fa-rectangle-wide" style="border:1px solid black;margin-top:5px;width:26px;height: 9px;background-color: white;"></i>'
+		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-button'] ); ?></span>'
 		section += '																		<div class="btn-backend-text">Simple Button</div>'
 		section += '																	</button>'
 		section += '																	<button value="switchinput" class="scc_button btn-backend  with-tooltip" data-element-tooltip-type="image-buttons-tt" data-bs-original-title="" onclick="addCheckboxElement(this,8)">'
 		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<i class="fas fa-image" style="margin-top:3px;"></i>'
+		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['image'] ); ?></span>'
 		section += '																		<div class="btn-backend-text">Image Button </div>'
 		section += '																	</button>'
 		section += '																	<input class="inputoption_slidchk" type="checkbox" onClick="addSlider(this)" style="display:none;" />'
 		section += '																	<button class="scc_button btn-backend with-tooltip" data-element-tooltip-type="custom-math-tt" data-bs-original-title="" onclick="addCustomMath(this)">'
 		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<i class="fas fa-calculator" style="padding-top:3px;"></i>'
+		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['percent'] ); ?></span>'
 		section += '																		<div class="btn-backend-text">Fee & Discount Adjuster</div>'
 		section += '																	</button>'
 		section += '																	<button value="custom_code" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="variable-math-tt" data-bs-original-title="" onclick="addTextHtml(this)">'
 		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<i class="fas fa-calculator" style="padding-top:3px;"></i>'
+		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-math'] ); ?></span>'
 		section += '																		<div class="btn-backend-text">Advanced Pricing Formula</div>'
 		section += '																	</button>'
 		section += '																	<button value="file_input" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="file-upload-tt" data-bs-original-title="" onclick="addFileUpload(this)">'
 		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<i class="fas fa-paperclip" style="padding-top:3px;"></i>'
+		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['paperclip'] ); ?></span>'
 		section += '																		<div class="btn-backend-text">File Upload</div>'
 		section += '																	</button>'
 		section += '																	<button value="custom_code" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="date-picker-tt" data-bs-original-title="" onclick="addTextHtml(this)">'
 		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<i class="fas fa-calendar-alt" style="padding-top:3px;"></i>'
+		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['calendar'] ); ?></span>'
 		section += '																		<div class="btn-backend-text">Date Picker</div>'
 		section += '																	</button>'
 		section += '																	<button value="distance" class="scc_button btn-backend with-tooltip"  data-element-tooltip-type="distance-cost-tt" data-bs-original-title="" >'
 		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<i class="fas fa-map-marker-alt" style="padding-top:3px;margin-left:0;"></i>'
+		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['map-pin'] ); ?></span>'
 		section += '																		<div class="btn-backend-text">Distance-Based Cost</div>'
 		section += '																	</button>'
 		section += '																	<input class="inputoption_slidchk" type="checkbox" onClick="addSlider(this)" style="display:none;" />'
 		section += '																	<button value="comment_input" class="scc_button btn-backend" onclick="addCommentBoxElement(this)">'
 		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<i class="fas fa-comment" style="padding-top:3px;"></i>'
+		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['message-circle'] ); ?></span>'
 		section += '																		<div class="btn-backend-text">Comment Box</div>'
 		section += '																		</button>'
 		section += '																	<button value="custom_code" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="text-html-field-tt" data-bs-original-title="" onclick="addTextHtml(this)">'
 		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<i class="fas fa-code" style="padding-top:3px;"></i>'
+		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-code'] ); ?></span>'
 		section += '																		<div class="btn-backend-text">Text/HTML Field</div>'
 		section += '																	</button>'
 		section += '																	<button value="signature_box" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="signature-box-tt" data-bs-original-title="" onclick="">'
 		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<i class="fas fa-signature" style="padding-top:3px;"></i>'
+		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['signature'] ); ?></span>'
 		section += '																		<div class="btn-backend-text">Signature Box</div>'
+		section += '																	</button>'
+		section += '																	<button value="signature_box" class="scc_button btn-backend" onclick="sccAiUtils.openIntelligentElementSuggester();">'
+		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
+		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['ai-wizard'] ); ?></span>'
+		section += '																		<div class="btn-backend-text">AI Suggested Element</div>'
 		section += '																	</button>'
 		section += '                                    <br>'
 		section += '                                    <p style="font-size:13px;margin-top:5px;">Add 1 or more elements to this subsection</p>'

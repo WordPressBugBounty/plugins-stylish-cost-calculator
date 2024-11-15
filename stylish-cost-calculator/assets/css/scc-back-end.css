@@ -17,6 +17,7 @@
 	--scc-disabled-input-background-color: #f6f7f7;
 	--scc-disabled-input-border-color: #dcdcde;
 	--scc-menu-button-background: #E5E6FC;
+	--scc-color-primary-dark: #273ccd;
 }
 
 #wpwrap {
@@ -7642,6 +7643,7 @@ input:checked + .slider:before {
 	font-weight: 900
 }
 
+
 .btn-backend {
 	background-color: rgb(248, 249, 255);
 	!important;
@@ -7850,9 +7852,11 @@ span.scc_plug_ver {
 	line-height: 27px;
 	padding: 10px 35px;
 	border-radius: 8px;
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
 	width: 90%;
-    justify-content: center;
-}
+	justify-content: center;
+  }
 .scc-top-embed-button {
 	height: 100%;
 	font-weight: 600;
@@ -9961,14 +9965,20 @@ ul.scc-edit-nav-items>li:last-child>.dropdown-menu {
 }
 
 button.scc_button.btn-backend {
-	background: #dbdffd;
+	background: white;
+	border: 2px solid #dbdffd;
 	margin-bottom: 10px;
 	font-weight: bold;
-	position:relative;
+	box-shadow:  0 5px 4px rgba(219, 223, 253, 0.5);
+	transition: box-shadow 0.3s ease;
+  }
+button.scc_button.btn-backend:hover {
+	box-shadow: 0 1px 2px rgba(219, 223, 253, 0.9);
 }
 
 button.scc_button.btn-backend.ed-btn-disabled::after,
-.wizard-card li.requires-premium a b::after {
+.wizard-card li.requires-premium a b::after, 
+.scc-premium-mark-over-button::after {
   content: "\f3a5";
   font-family: "Font Awesome 5 Free";
   font-weight: 400;
@@ -10541,7 +10551,10 @@ textarea {
     align-items: center;
     cursor: pointer;
 }
-
+.elements_added_v2 .scc-icn-wrapper svg {
+    height: 24px;
+    width: 24px;
+}
 
 .element-title-desc {
 	width: 100%;
@@ -11314,6 +11327,7 @@ input.dd-item-def-checkbox:disabled {
 	justify-content: end;
 	box-shadow: -7px 0px 0px -6px var(--scc-input-field-border-color);
 	min-width: 140px;
+	flex-basis: content;
   }
   .scc-embed-wrapper{
 	min-width: 140px;
@@ -11461,23 +11475,24 @@ i.material-icons-outlined.more-settings-info {
 .scc-menu-dropdown {
 	position: relative;
 	display: flex;
-	margin-top: 5px;
 	justify-content: end;
 }
 .scc-dropbtn {
-	background-color: #E5E6FC;
-	color: #314AF3;
+	background-color: var(--scc-color-primary-dark);
+	color: white;
 	padding: 5px;
 	font-size: 16px;
 	cursor: pointer;
 	border: none;
-	border-radius: 50px;
 	width: 50px;
-	height: 50px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-}
+	border-top-right-radius: 8px;
+	border-bottom-right-radius: 8px;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+  }
 .scc-dropbtn .scc-icn-wrapper svg{
 	width: 25px;
 	height:25px;
@@ -11493,6 +11508,7 @@ i.material-icons-outlined.more-settings-info {
 	border-radius:10px;
 	padding: 10px;
 	top: 60px;
+	text-align: left;
 }
 .scc-menu-dropdown-content hr {
 	margin: 0px;
@@ -13130,3 +13146,86 @@ label.scc-accordion_switch_button {
 	border-left: none;
 	left: 8px;
   }
+
+  .scc-editing-page-menu-panel{
+	background: #fff;
+	border-radius: var(--scc-btn-border-radius);
+  }
+
+  .scc-editing-page-menu-right{
+	display: flex;
+	align-items: center;
+	justify-content: right;
+  }
+  .scc-editing-page-button-white{
+	height: 100%;
+	font-weight: 600;
+	font-size: 17px;
+	line-height: 27px;
+	padding: 10px 20px;
+	border-radius: 8px;
+	border: 1px solid var(--scc-divider-border-color);
+	justify-content: center;
+	background: white;
+	margin: 0;
+	box-shadow: none !important;
+	font-weight: 600;
+  }
+  
+  .scc-add-element-btn-container{
+	margin-right: 0px !important;
+	padding: 15px;
+	border-radius:6px;
+	width: 100%;
+  }
+  .scc-add-element-btn-container .add-element-btn{
+	width: 100%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+  }
+  .scc-add-element-actions-row{
+	width: 95%;
+	margin: 0;
+	outline: 2px solid var(--scc-input-field-border-color);
+	outline-style: dashed;
+	border-radius: var(--scc-btn-border-radius);
+	margin: 20px;
+	background: var(--scc-div-light-color);
+  }
+  .scc-new-section-btn{
+	background: var(--scc-color-primary);
+	width: 40px;
+	height: 40px;
+	display: flex;
+	position: absolute;
+	left: calc(50% - 20px);
+	border-radius: 50%;
+	justify-content: center;
+	align-items: center;
+	color: white !important;
+	top: -19.5px;
+  }
+  .scc-new-section-btn .scc-icn-wrapper{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0;
+  }
+  .scc-new-section-btn-container{
+	width: 100%;
+	position: absolute;
+	padding: 0;
+	background: var(--scc-color-primary);
+	height: 2px;
+	width: calc(100% - 31px);
+	top: -15px;
+	max-width: 1070px;
+  }
+  .scc-section-container{
+	padding-bottom: 25px;
+  }
+  .scc-new-section-btn-row{
+	margin-bottom: 80px;
+  }
+  

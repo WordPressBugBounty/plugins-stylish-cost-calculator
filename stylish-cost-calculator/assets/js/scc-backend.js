@@ -165,7 +165,6 @@ const sccBackendUtils = {
 	disableSaveBtnAjax: (status, element = null) => { //Handles the state of the save button when elements of the form are saved with ajax
 		const elm = JSON.stringify(element);
 		let topSaveBtn = document.querySelector(".scc-top-save-btn");
-		let bottomSaveBtn = document.querySelector(".scc-bottom-save-btn");
 		let elementBox = '';
 		if(element){
 		elementBox = element.closest('.elements_added');
@@ -181,9 +180,6 @@ const sccBackendUtils = {
 		topSaveBtn.setAttribute("disabled", "");
 		topSaveBtn.style.paddingLeft = "20px";
 		topSaveBtn.style.paddingRight = "20px";
-		bottomSaveBtn.setAttribute("disabled", "");
-		bottomSaveBtn.style.paddingLeft = "20px";
-		bottomSaveBtn.style.paddingRight = "20px";
 		document.querySelectorAll(".scc-save-btn-cont").forEach((el) => {
 			el.setAttribute("data-bs-original-title", "<h5>Saving changes</h5>");
 			el.setAttribute("data-setting-tooltip-type","disabled-save-button-tt");
@@ -214,9 +210,6 @@ const sccBackendUtils = {
 		topSaveBtn.removeAttribute("disabled");
 		topSaveBtn.style.paddingLeft = "35px";
 		topSaveBtn.style.paddingRight = "35px";
-		bottomSaveBtn.removeAttribute("disabled");
-		bottomSaveBtn.style.paddingLeft = "35px";
-		bottomSaveBtn.style.paddingRight = "35px";
 		document.querySelectorAll(".scc-save-btn-cont").forEach((el) => {
 			el.setAttribute("data-bs-original-title", "");
 			el.setAttribute("data-setting-tooltip-type","");
@@ -1641,6 +1634,24 @@ const updateBackendSideConfigWithDebounce = _.debounce( sccBackendUtils.updateBa
 const premiumMessage = '<span class="scc-premium-msg"><i class="material-icons scc-icon-tooltips pe-1">info_outline</i> You need to purchase a <b><a class="scc-text-orange px-1" href="https://stylishcostcalculator.com/" >premium license</a></b> to edit this feature.</span>'
 /* Tool Tip for added Settings*/
 const settingTooltips = {
+	'download-backup-tt': {
+		msg: `<h5 class='text-start'>Download <strong>Backup</strong></h5>
+		<p class='text-start mt-2'>Download a backup of your calculator instance to restore it in the future.</p>
+		<div class="example-description text-start">
+		  <br>
+		  <a href="${ sccHelpdeskLinks[ 'feature-backup-restore' ] }" target="_blank"><div class="btn btn-primary btn-lg">Learn More</div></a>
+		${premiumMessage}
+		</div>`,
+	},
+	'restore-backup-tt': {
+		msg: `<h5 class='text-start'>Restore <strong>Backup</strong></h5>
+		<p class='text-start mt-2'>Restore a backup of your calculator instance.</p>
+		<div class="example-description text-start">
+		  <br>
+		  <a href="${ sccHelpdeskLinks[ 'feature-backup-restore' ] }" target="_blank"><div class="btn btn-primary btn-lg">Learn More</div></a>
+		${premiumMessage}
+		</div>`,
+	},
 	'element-multiplier-tt': {
 		msg: `<h5 class='text-start'>Modifier <strong>Element</strong></h5>
 		<p class='text-start mt-2'>This element is multiplying the quantity of the rest of the elements in the subsection by the selected quantity. You can only have one multiplier element per subsection.</p>

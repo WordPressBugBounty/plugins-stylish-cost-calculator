@@ -85,6 +85,7 @@ define(
         'troubleshoot-members-portal-change-info' => 'https://help.stylishcostcalculator.com/en/article/members-portal-how-do-i-change-my-email-address-or-payment-method-1jtzz16/',
         'troubleshoot-wp-memory-limit'            => 'https://help.stylishcostcalculator.com/en/article/wp-memory-limit-or-the-email-quote-gets-stuck-at-90-15ndy53/',
         'tutorial-slider-sections-subsections'    => 'https://help.stylishcostcalculator.com/en/article/important-understanding-the-math-of-a-slider-sections-vs-subsections-1c10sjj/',
+        'feature-backup-restore'                 => 'https://help.stylishcostcalculator.com/en/article/backup-restore-backup-your-calculator-instance-or-transfer-your-calculator-to-another-site-154ny5y/',
         ]
 );
 
