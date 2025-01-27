@@ -13229,3 +13229,141 @@ label.scc-accordion_switch_button {
 	margin-bottom: 80px;
   }
   
+  /* Footer  */
+
+.scc-footer-container{
+	width: 100%;
+	background: #F8F9FF;
+}
+.scc-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    background: #fff;
+	filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.11));
+    margin-top: 30px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+	margin-left: 1.5rem;
+	margin-right: 1.5rem;
+	margin-top: 3rem;
+}
+
+.scc-footer-left,
+.scc-footer-center,
+.scc-footer-right {
+    flex: 0.8;
+}
+.scc-footer-right{
+    flex: 2;
+	justify-content: center;
+    display: flex
+;
+}
+.scc-plugin-info-text{
+    text-align: left;
+}
+.scc-plugin-info-text p{
+    margin-top: 0px;
+}
+.scc-footer-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.scc-footer-links li {
+    margin-bottom: 10px;
+}
+
+.scc-footer-links a {
+    text-decoration: none;
+    color: #1d2327;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.scc-footer-links .dashicons {
+    color: #2271b1;
+}
+
+.scc-social-links {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+.scc-footer-links a:focus{
+    box-shadow: none !important;
+}
+
+.scc-social-link {
+    text-decoration: none;
+    color: #1d2327;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.scc-plugin-info {
+    text-align: right;
+}
+.scc-footer-plugin-logos-container{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.scc-footer-plugin-logos {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #1d2327;
+    background: #e8ecf1;
+	min-height: 53px;
+}
+.scc-footer-links-title{
+    font-weight: 700;
+    margin-bottom: 15px;
+    display: block;
+    font-size: 14px;
+}
+
+.scc-footer-plugin-logos img {
+    width: 120px;
+}
+.scc-footer-links i{
+    color: var(--scc-color-primary);
+	display: flex;
+    align-items: center;
+}
+.scc-emoji {
+    font-size: 1.2em;
+}
+.scc-footer-logo img{
+    width: 180px;
+    max-width: 180px;
+}
+.scc-footer-logo a{
+    display: inline-flex;
+    align-items: center;
+}
+.scc-footer-links svg{
+    width: 24px;
+    height: 24px;
+	fill: var(--scc-color-primary);
+}
+#wpfooter{
+    display: none;
+}
+#wpbody-content{
+    padding-bottom: 0px !important;
+}
+/* End footer */

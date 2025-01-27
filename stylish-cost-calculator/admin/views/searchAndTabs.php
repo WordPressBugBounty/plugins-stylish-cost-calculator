@@ -1510,7 +1510,7 @@ if ( $f1->symbol == '1' ) {
                                     }
 ?>
 										selected>
-										<?php echo _( 'Not rounded' ); ?>
+										<?php echo __( 'Not rounded', 'scc' ); ?>
 									</option>
 									<option
 										value="nearest_tenth"
@@ -1520,7 +1520,7 @@ if ( isset($scc_price_rounding_config_array) && $scc_price_rounding_config_array
 }
 ?>
 										>
-										<?php echo _( 'Nearest Tenth (e.g. $12.57 -> $12.6)' ); ?>
+										<?php echo __( 'Nearest Tenth (e.g. $12.57 -> $12.6)', 'scc' ); ?>
 									</option>
 									<option
 										value="nearest_whole_number"
@@ -1530,7 +1530,7 @@ if ( isset($scc_price_rounding_config_array) && $scc_price_rounding_config_array
 }
 ?>
 										>
-										<?php echo _( 'Nearest Whole Number (e.g. $20.61 -> $21)' ); ?>
+										<?php echo __( 'Nearest Whole Number (e.g. $20.61 -> $21)', 'scc' ); ?>
 									</option>
 									<option
 										value="nearest_tens"
@@ -1540,7 +1540,7 @@ if ( isset($scc_price_rounding_config_array) && $scc_price_rounding_config_array
 }
 ?>
 										>
-										<?php echo _( 'Nearest Tens (e.g. $27.20 -> $30)' ); ?>
+										<?php echo __( 'Nearest Tens (e.g. $27.20 -> $30)', 'scc' ); ?>
 									</option>
 									<option
 										value="nearest_hundreds"
@@ -1550,7 +1550,7 @@ if ( isset($scc_price_rounding_config_array) && $scc_price_rounding_config_array
 }
 ?>
 										>
-										<?php echo _( 'Nearest Hundreds (e.g. $165 -> $200)' ); ?>
+										<?php echo __( 'Nearest Hundreds (e.g. $165 -> $200)', 'scc' ); ?>
 									</option>
 									<option
 										value="nearest_thousands"
@@ -1560,7 +1560,7 @@ if ( isset($scc_price_rounding_config_array) && $scc_price_rounding_config_array
 }
 ?>
 										>
-										<?php echo _( 'Nearest Thousands (e.g. $1741.89 -> $2000)' ); ?>
+										<?php echo __( 'Nearest Thousands (e.g. $1741.89 -> $2000)', 'scc' ); ?>
 									</option>	
 								</select>
 							</div>

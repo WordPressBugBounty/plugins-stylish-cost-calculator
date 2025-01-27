@@ -1,3 +1,16 @@
+= 8.0.2 - 2025-01-23
+
+**Dashboard Changes**:
+Fixed: Errors related to settings translation
+Improved: Security and compatibility improvements
+Updated: GUI updates on footer and navigation bar
+
+
+= 8.0.1 - 2024-12-02
+
+**Dashboard Changes**:
+Updated: Members Portal links and license usage information
+
 = 8.0.0 - 2024-11-14
 
 **Editing Page Changes**:

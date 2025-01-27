@@ -47,109 +47,132 @@ if ( get_current_screen()->base !== 'stylish-cost-calculator_page_scc-tabs' ) {
 </script>
 <?php } ?>
 </div> <!--Closing Main Content Container-->
-<div class="row ms-0 align-items-center bg-white mt-5 py-4 justify-content-center w-100" id="scc-footer">
-	<div class="row w-100">
-		<div class="col-md-3">
-			<a href="https://stylishcostcalculator.com/" class="scc-footer logo">
-				<img src="<?php echo esc_url( SCC_URL . 'assets/images/scc-logo.png' ); ?>" class="img-responsive1" style="padding-bottom:10px;max-width: 160px" alt="Image">
-			</a>
+
+<div class="scc-footer-container">
+	<div class="scc-footer">
+		<div class="scc-footer-left">
+			<div class="scc-footer-logo">
+				<a href="https://www.stylishcostcalculator.com/" class="scc-footer-logo-link" target="_blank">
+					<img src="<?php echo esc_url(SCC_URL . 'assets/images/scc-logo.png'); ?>" alt="Stylish Cost Calculator">
+				</a>
+			</div>
 		</div>
-		<div class="col-md-3">
-			<ul class="list-group">
+		
+		<div class="scc-footer-center">
+			<div>
+				<span class="scc-footer-links-title">Helpful Links</span>
+			</div>
+			<ul class="scc-footer-links">
 				<li>
-					<a href="<?php echo esc_url( SCC_HELPDESK_LINKS['helpdesk-home'] ); ?>" target="_blank">
+					<a href="<?php echo esc_url( SCC_HELPDESK_LINKS['helpdesk-home'] ); ?>">						
 						<i class="material-icons-outlined">book</i>
 						<span>User Guides</span>
 					</a>
 				</li>
-				<li>
-					<a href="https://stylishcostcalculator.com/support/" target="_blank">
-						<i class="material-icons-outlined">support</i>
-						<span>Submit A Ticket</span>
-					</a>
-				</li>
-				<li>
-					<a href="https://stylishcostcalculator.com/poll/new-features/" target="_blank" rel="noopener noreferrer">
-						<i class="material-icons-outlined">chat_bubble_outline</i>
-						<span>Request A New Feature</span>
-					</a>
-				</li>
+				<li><a href="<?php echo esc_url( SCC_HELPDESK_LINKS['helpdesk-video-tutorials'] ); ?>"><i class="material-icons-outlined">support</i>
+				<span>Submit A Ticket</span></a></li>
+				<li><a href="https://stylishcostcalculator.com/pricing-plans/">
+					<i class="material-icons-outlined">diamond</i>
+					<span>Pricing</span>
+				</a></li>
 			</ul>
 		</div>
-		<div class="col-md-2">
-			<ul class="list-group">
+		<div class="scc-footer-center">
+			<div>
+				<span class="scc-footer-links-title">Follow Us</span>
+			</div>
+			<ul class="scc-footer-links">
 				<li>
-					<a href="https://www.facebook.com/Stylish-Cost-Calculator-WordPress-Plugin-354068492335430" target="_blank" rel="noopener noreferrer">
-						<i class="material-icons-outlined">
-							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['facebook'] ); ?></span>
-						</i>
+					<a href="https://www.facebook.com/Stylish-Cost-Calculator-WordPress-Plugin-354068492335430" target="_blank">						
+						<i class="material-icons-outlined">facebook</i>
 						<span>Facebook</span>
 					</a>
 				</li>
-				<li>
-					<a href="https://www.youtube.com/c/StylishCostCalculator" target="_blank" rel="noopener noreferrer">
-						<i class="material-icons-outlined">
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Pro 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"/></svg>
-						</i>
-						<span>YouTube</span>
-					</a>
-				</li>
+				<li><a href="https://www.youtube.com/c/StylishCostCalculator" target="_blank">						
+					<i class="material-icons-outlined">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"/></svg>
+					</i>
+					<span>YouTube</span>
+				</a></li>
 			</ul>
 		</div>
-		<div class="col-md-4">
-			<?php if ( isset( $_REQUEST['id_form'] ) ) { ?>
-				<ul class="scc-edit-nav-items">
-					<li><a class="scc-nav-with-icons"
-							href="<?php echo esc_url( admin_url( 'admin.php?page=scc-tabs' ) ); ?>"><i
-								class="fas fa-plus"></i>Add New</a></li>
-					<li><a class="scc-nav-with-icons"
-							href="<?php echo esc_url( admin_url( 'admin.php?page=scc-list-all-calculator-forms' ) ); ?>"><i
-								class="far fa-edit"></i>Edit Existing</a></li>
-					<li class="dropdown">
-						<a class="dropdown-toggle scc-nav-with-icons" data-bs-toggle="dropdown" role="button"
-							aria-haspopup="true" aria-expanded="false"><i class="far fa-comment"></i>Feedback <span
-								class="caret"></span></a>
-						<ul class="dropdown-menu">
-							<li><a target="_blank" href="https://stylishcostcalculator.com/how-can-we-be-better/">Send
-									Feedback</a></li>
-							<li><a target="_blank" href="https://stylishcostcalculator.com/poll/new-features/">Suggest
-									Feature</a></li>
-						</ul>
-					</li>
+		
+		<div class="scc-footer-right">
 
-					<li class="dropdown">
-						<a class="dropdown-toggle scc-nav-with-icons" data-bs-toggle="dropdown" role="button"
-							aria-haspopup="true" aria-expanded="false"><i class="far fa-life-ring"></i>Support <span
-								class="caret"></span></a>
-						<ul class="dropdown-menu">
-							<li><a target="_blank"
-									href="<?php echo esc_url(SCC_HELPDESK_LINKS['helpdesk-home']);?>">User Guides</a>
-							</li>
-							<li><a target="_blank"
-									href="<?php echo esc_url(SCC_HELPDESK_LINKS['helpdesk-video-tutorials']);?>">Video
-									Guides</a></li>
-							<li><a target="_blank"
-									href="<?php echo esc_url( admin_url( 'admin.php?page=scc-diagnostics' ) ); ?>">Diagnostic</a>
-							</li>
-							<li><a target="_blank"
-									href="<?php echo esc_url(SCC_HELPDESK_LINKS['helpdesk-troubleshooting']);?>">Troubleshooting</a>
-							</li>
-							<li><a target="_blank" href="https://stylishcostcalculator.com/support/">Contact Support</a>
-							</li>
-							<li><a target="_blank" href="https://members.stylishcostcalculator.com/">Member's Portal</a>
-							</li>
-						</ul>
-					</li>
-				</ul>
-			<?php } else { ?>
-				<p>Do you like this plugin?<br/>We have many more 😍</p>
-			<a href="https://stylishpricelist.com/" class="scc-header">
-				<img src="<?php echo esc_url( SCC_URL . 'assets/images/promotions/SPL-Logo-2-1.svg' ); ?>" class="img-responsive1" style="padding-bottom:20px;max-width: 160px" alt="Image">
-			</a>
-				<?php } ?>
-		</div>
+		<?php if ( isset( $_REQUEST['id_form'] ) ) { ?>
+					<ul class="scc-edit-nav-items">
+						<li><a class="scc-nav-with-icons"
+								href="<?php echo esc_url( admin_url( 'admin.php?page=scc-tabs' ) ); ?>"><i
+									class="fas fa-plus"></i>Add New</a></li>
+						<li><a class="scc-nav-with-icons"
+								href="<?php echo esc_url( admin_url( 'admin.php?page=scc-list-all-calculator-forms' ) ); ?>"><i
+									class="far fa-edit"></i>Edit Existing</a></li>
+						<li class="dropdown">
+							<a class="dropdown-toggle scc-nav-with-icons" data-bs-toggle="dropdown" role="button"
+								aria-haspopup="true" aria-expanded="false"><i class="far fa-comment"></i>Feedback <span
+									class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a target="_blank" href="https://stylishcostcalculator.com/how-can-we-be-better/">Send
+										Feedback</a></li>
+								<li><a target="_blank" href="https://stylishcostcalculator.com/poll/new-features/">Suggest
+										Feature</a></li>
+							</ul>
+						</li>
+
+						<li class="dropdown">
+							<a class="dropdown-toggle scc-nav-with-icons" data-bs-toggle="dropdown" role="button"
+								aria-haspopup="true" aria-expanded="false"><i class="far fa-life-ring"></i>Support <span
+									class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a target="_blank"
+										href="<?php echo esc_url(SCC_HELPDESK_LINKS['helpdesk-home']);?>">User Guides</a>
+								</li>
+								<li><a target="_blank"
+										href="<?php echo esc_url(SCC_HELPDESK_LINKS['helpdesk-video-tutorials']);?>">Video
+										Guides</a></li>
+								<li><a target="_blank"
+										href="<?php echo esc_url( admin_url( 'admin.php?page=scc-diagnostics' ) ); ?>">Diagnostic</a>
+								</li>
+								<li><a target="_blank"
+										href="<?php echo esc_url(SCC_HELPDESK_LINKS['helpdesk-troubleshooting']);?>">Troubleshooting</a>
+								</li>
+								<li><a target="_blank" href="https://stylishcostcalculator.com/support/">Contact Support</a>
+								</li>
+								<li><a target="_blank" href="https://members.stylishcostcalculator.com/">Member's Portal</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				<?php } else { ?>
+					<div class="scc-footer-right">
+			
+						<div class="scc-plugin-info">
+							<div class="scc-plugin-info-text">
+								<p class="scc-footer-links-title">Do you like this plugin? <span class="scc-emoji">😊</span> We have many more:</p>
+							</div>
+							<div class="scc-footer-plugin-logos-container">    
+								<a href="https://stylishpricelist.com/" target="_blank" class="scc-footer-plugin-logos">
+									<img src="<?php echo esc_url(SCC_URL . 'assets/images/spl-logo.webp'); ?>" alt="Stylish Price List" title="Stylish Price List">
+								</a>
+								<a href="https://seo-ai-audit-tool.designful.ca/" target="_blank" class="scc-footer-plugin-logos">
+									<img src="<?php echo esc_url(SCC_URL . 'assets/images/saat-logo.png'); ?>" alt="SEO AI Audit Tool" title="SEO AI Audit Tool">
+								</a>
+								<a href="https://wordpress.org/plugins/smart-table-builder/" target="_blank" class="scc-footer-plugin-logos">
+									<img src="<?php echo esc_url(SCC_URL . 'assets/images/stb-logo.png'); ?>" alt="Smart Table Builder" title="Smart Table Builder">
+								</a>
+								<a href="#" target="_blank" class="scc-footer-plugin-logos">
+									<img src="<?php echo esc_url(SCC_URL . 'assets/images/hdh-logo.png'); ?>" alt="Help Desk Hero" title="Help Desk Hero">
+								</a>
+							</div>
+					</div>
+					<?php } ?>
+
+
+
 	</div>
 </div>
+
+
 <style type="text/css">
 	.scc-new .clearfix {
 		clear: both;

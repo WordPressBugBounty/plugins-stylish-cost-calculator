@@ -3387,7 +3387,7 @@ function settings_scc_() {
 
 }
 function settings_el() {
-	let u = document.querySelector('.scc-footer.logo').getAttribute('href') + '?utm_source=inside-plugin&utm_medium=wordpress&utm_content=buy-premium-cta-banner'
+	let u = document.querySelector('.scc-footer-logo-link').getAttribute('href') + '?utm_source=inside-plugin&utm_medium=wordpress&utm_content=buy-premium-cta-banner'
 	let cont = document.createElement('li')
 	let p = document.createElement('span')
 	p.classList.add('free_version')
@@ -3439,7 +3439,7 @@ function disableGlobalSettingsSection(arr) {
 		"backdrop-filter": "blur(1px)",
 		"padding-right": "30px"
 	}
-	let u = document.querySelector('.scc-footer.logo').getAttribute('href') + '?utm_source=inside-plugin&utm_medium=wordpress&utm_content=buy-premium-cta-banner'
+	let u = document.querySelector('.scc-footer-logo-link').getAttribute('href') + '?utm_source=inside-plugin&utm_medium=wordpress&utm_content=buy-premium-cta-banner'
 	arr.forEach(e => {
 		var cont = document.querySelectorAll('.accordion-body')[e]
 		cont.style.position = 'relative'
