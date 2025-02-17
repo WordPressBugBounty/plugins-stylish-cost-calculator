@@ -2018,17 +2018,17 @@ function verifiedMandatoryItems(calcId) {
 		ids[ca] = []
 		mandatoryElements[ca].forEach(m1 => {
 			//check if element is visible, if not visible is not mandatory 
-			let e = document.querySelector('#ssc-elmt-' + m1).style.display == 'none'
+			let e = document.querySelector('#ssc-elmt-' + m1)?.style.display == 'none'
 			if (jQuery.inArray(m1, o[ca]) == -1 && !e) {
 				ids[ca].push(m1)
 			}
 		});
 		return ids
 	}
-	//mandatories ids not selected
+
 	for (let i = 0; i < oppo[calcId].length; i++) {
 		const currentElement = document.querySelector( '#ssc-elmt-' + oppo[ calcId ][ i ] );
-
+		
 		const alertDangerElement = currentElement.querySelector( '.scc-mandatory-msg' );
 		if ( alertDangerElement ) {
 			alertDangerElement.classList.remove( 'scc-hidden' );
@@ -2063,7 +2063,15 @@ function mandatory_elements() {
 		sections.forEach(s => {
 			s.subsection.forEach(su => {
 				su.element.forEach(e => {
-					if (e.mandatory == "1") {
+					if (e.mandatory == "1" 
+						&& e.type != "date" 
+						&& e.type != "texthtml" 
+						&& e.type != "math" 
+						&& e.type != "distance"
+						&& e.type != "custom math"
+						&& e.type != "signature"
+						&& e.type != "file upload"
+					) {
 						mandatories[calcId].push(e.id);
 					}
 				});

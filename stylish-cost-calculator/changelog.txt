@@ -1,3 +1,11 @@
+= 8.0.3 - 2025-02-17
+
+**Frontend Changes**:
+Fixed: Mandatory element issues
+
+**Backend Changes**:
+Improved: Security and compatibility improvements
+
 = 8.0.2 - 2025-01-23
 
 **Dashboard Changes**:
