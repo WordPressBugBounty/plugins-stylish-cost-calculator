@@ -1,3 +1,12 @@
+= 8.0.4 - 2025-04-09
+
+**Dashboard Changes**:
+Added: Calculator list button to edit page header
+Updated: Footer links and images
+
+**Backend Changes**:
+Improved: Security improvements
+
 = 8.0.3 - 2025-02-17
 
 **Frontend Changes**:
@@ -12,7 +21,6 @@ Improved: Security and compatibility improvements
 Fixed: Errors related to settings translation
 Improved: Security and compatibility improvements
 Updated: GUI updates on footer and navigation bar
-
 
 = 8.0.1 - 2024-12-02
 

@@ -160,8 +160,8 @@ if ( get_current_screen()->base !== 'stylish-cost-calculator_page_scc-tabs' ) {
 								<a href="https://wordpress.org/plugins/smart-table-builder/" target="_blank" class="scc-footer-plugin-logos">
 									<img src="<?php echo esc_url(SCC_URL . 'assets/images/stb-logo.png'); ?>" alt="Smart Table Builder" title="Smart Table Builder">
 								</a>
-								<a href="#" target="_blank" class="scc-footer-plugin-logos">
-									<img src="<?php echo esc_url(SCC_URL . 'assets/images/hdh-logo.png'); ?>" alt="Help Desk Hero" title="Help Desk Hero">
+								<a href="https://stylishcostcalculator.com" target="_blank" class="scc-footer-plugin-logos">
+									<img src="<?php echo esc_url(SCC_URL . 'assets/images/scc-logo.png'); ?>" alt="Stylish Cost Calculator" title="Stylish Cost Calculator">
 								</a>
 							</div>
 					</div>

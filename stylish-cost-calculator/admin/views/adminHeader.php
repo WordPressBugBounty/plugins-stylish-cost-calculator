@@ -460,7 +460,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<?php
     if ( ! empty( $f1 ) ) {
         ?>
-						<li><a class="scc-nav-with-icons" onclick="event.preventDefault();" href="#" data-setting-tooltip-type="quote-screen-tt" data-bs-original-title="" title=""><i class="fas fa-list-ul"></i> View Quotes</a></li>
+					<li><a class="scc-nav-with-icons"
+							href="<?php echo admin_url( 'admin.php?page=scc-list-all-calculator-forms' ); ?>">
+							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['edit'] ); ?></span>
+							All Forms</a>
+					</li>
 						<?php
     }
 ?>
