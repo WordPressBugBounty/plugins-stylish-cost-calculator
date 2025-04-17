@@ -177,10 +177,6 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 					</div>
 					<!-- DESCRIPTION -->
 					<div class="description_section_no_edit_container" style="">
-						<!--<div class="scc-col-md-1" style="padding:0px;margin-right:5px;">
-							<img style="cursor: pointer;float:right" onclick="toggleEditDescription(this)" src="<?php echo esc_url( SCC_URL . '/assets/images/pen-blue.png' ); ?>" width="15">
-							<i class="material-icons-outlined more-settings-info" title="You can add html tags: h4,br,b,i,'ul,li,hr" style="color:#314af3;cursor:pointer">info</i>
-						</div>-->
 						<div class="scc-col-md-10" style="padding:0px" onclick="toggleEditDescription(this)">
 							<i class="fa fa-pen text-primary"></i>
 							<p class="description_section_no_edit d-inline">

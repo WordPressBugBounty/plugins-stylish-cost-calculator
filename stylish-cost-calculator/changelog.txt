@@ -1,3 +1,9 @@
+= 8.0.5 - 2025-04-16
+
+Updated: Uninstall feedback modal behavior
+Fixed: PHP Errors and warnings
+Updated: Support up to WordPress 6.8
+
 = 8.0.4 - 2025-04-09
 
 **Dashboard Changes**:

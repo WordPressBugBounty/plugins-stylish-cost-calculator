@@ -21,7 +21,6 @@ class SCC_Notifications {
                 break;
 
             default:
-                // code...
                 break;
         }
 

@@ -3,6 +3,10 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 class Stylish_Cost_Calculator_Diagnostic {
+    protected $db;
+    protected $apiConnection;
+    protected $apiAppseroConnection;
+    protected $apiSccConnection;
 
     public static function init() {
     }

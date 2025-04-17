@@ -270,12 +270,7 @@ include 'partials/template-loader-page.php';
 	}
 
 	.choices-wrapper .form-check {
-		/* padding: 15px; */
 		box-shadow: 0px 0px 10px #2b2b2b15;
-		/* margin-top: 10px;
-		margin-left: -5px;
-    	margin-right: 10px;
-		border-radius: 5px; */
 	}
 
 	.question-desc-text::first-letter {

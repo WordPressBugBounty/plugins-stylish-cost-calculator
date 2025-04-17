@@ -108,7 +108,7 @@ class PageEditTabs extends PagesBreadcrumbs {
 
 	private function updateCalculatorUsageStat() {
 		if ( get_option( 'df-scc-save-count', null ) !== null ) {
-			$save_count = get_option( 'df-scc-save-count' );
+			$save_count = intval( get_option( 'df-scc-save-count' ) );
 			update_option( 'df-scc-save-count', ( $save_count + 1 ) );
 		} else {
 			update_option( 'df-scc-save-count', 0 );

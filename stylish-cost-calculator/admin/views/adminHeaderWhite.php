@@ -323,7 +323,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</a>
 				<span class="scc_plug_ver">
 					<?php
-// $opt = get_option('df_scclk_opt');
                     if ( $isSCCFreeVersion ) {
                         echo 'Free';
                     } else {

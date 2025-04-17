@@ -324,6 +324,32 @@ class UninstallSurveyModal {
 								}
 							});
 						});
+						modal.on('click', 'a.wd-dr-button-secondary', function(e) {
+							e.preventDefault();
+							var button = $(this);
+							if ( button.hasClass('disabled') ) {
+								return;
+							}
+							var $radio = 1;
+							var $input = 'deactivation button clicked';
+							$.ajax({
+								url: '<?php echo esc_url_raw( add_query_arg( [ 'action' => 'df_scc_uninstall_survey', 'nonce' => wp_create_nonce( 'uninstall-df-scc-calculator-page' ) ], admin_url( 'admin-ajax.php' ) ) ); ?>',
+								type: 'POST',
+                                contentType: 'application/json',
+								data: JSON.stringify({
+									answer: $radio,
+									comment: $input,
+									site: window.location.origin
+								}),
+								beforeSend: function() {
+									button.addClass('disabled');
+									button.text('Processing...');
+								},
+								complete: function() {
+									window.location.href = deactivateLink;
+								}
+							});
+						});
 					});
 				}(jQuery));
 			</script>
