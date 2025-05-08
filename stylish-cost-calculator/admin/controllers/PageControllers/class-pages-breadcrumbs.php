@@ -16,6 +16,8 @@ class PagesBreadcrumbs {
         if ( is_admin() ) {
             wp_register_script( 'scc-bootstrap-min2', SCC_URL . 'lib/bootstrap/bootstrap.bundle.min.js', [ 'jquery' ], '5.1.3', true );
             wp_register_style( 'scc-bootstrap-min2', SCC_URL . 'lib/bootstrap/bootstrap.min.css', '5.1.3' );
+            wp_register_script( 'scc-marked', SCC_URL . 'lib/marked/marked.min.js', [], STYLISH_COST_CALCULATOR_VERSION, true );
+            wp_enqueue_script( 'scc-marked' );
             wp_register_style( 'scc-back-end', SCC_URL . 'assets/css/scc-back-end.css', [], STYLISH_COST_CALCULATOR_VERSION );
             wp_register_script( 'scc-sweet-alert', SCC_URL . 'lib/sweetalert2/sweetalert2.min.js', [ 'jquery' ], STYLISH_COST_CALCULATOR_VERSION, true );
             wp_register_style( 'scc-sweet-alert', SCC_URL . 'lib/sweetalert2/sweetalert2.min.css', [], STYLISH_COST_CALCULATOR_VERSION );
@@ -45,9 +47,6 @@ class PagesBreadcrumbs {
             wp_register_style( 'scc-tom-select-backend', SCC_URL . 'lib/tom-select/tom-select.css', [], STYLISH_COST_CALCULATOR_VERSION );
             wp_enqueue_script( 'scc-tom-select-backend' );
             wp_enqueue_style( 'scc-tom-select-backend' );
-
-            wp_register_script( 'scc-marked', SCC_URL . 'lib/marked/marked.min.js', [], STYLISH_COST_CALCULATOR_VERSION, true );
-            wp_enqueue_script( 'scc-marked' );
             wp_register_script( 'scc-ai-utils', SCC_URL . 'assets/js/scc-ai-utils.js', [], STYLISH_COST_CALCULATOR_VERSION, true );
             wp_enqueue_script( 'scc-ai-utils' );
         }

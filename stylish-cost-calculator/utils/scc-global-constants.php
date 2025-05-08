@@ -41,6 +41,7 @@ define(
         'feature-payment-option-stripe'           => 'https://help.stylishcostcalculator.com/en/article/stripe-integration-everything-to-know-al2492/',
         'feature-stripe-subscriptions'            => 'https://help.stylishcostcalculator.com/en/article/stripe-subscriptions-a-complete-guide-325hot/',
         'feature-require-acceptance'              => 'https://help.stylishcostcalculator.com/en/article/acceptance-box-a-complete-guide-1e2ilkc/',
+        'feature-scc-ai-wizard'                   => 'https://help.stylishcostcalculator.com/en/article/scc-ai-wizard-everything-you-need-to-know-about-our-ai-tool-xuijt/',
         'feature-twilio-console'                  => 'https://www.twilio.com/console',
         'element-mandatory-elements'              => 'https://help.stylishcostcalculator.com/en/article/required-fields-a-complete-guide-175ii48/',
         'feature-conditional-logic'               => 'https://help.stylishcostcalculator.com/en/article/conditional-logic-a-complete-guide-1nlqkzj/',

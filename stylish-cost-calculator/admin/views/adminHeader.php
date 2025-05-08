@@ -19,11 +19,20 @@ $scc_screen       = get_current_screen();
 	.scc-background-primary{
 		background-color: #314af3;
 	}
+	.scc-background-primary-dark{
+		background-color: #15216C;
+	}
 	.scc-main-header-container{
 		border-radius: 10px;
 		filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.11));
 		display: inline-flex;
-		z-index:1;
+		z-index:2;
+		width: 100%;
+		padding-right: 0 !important;
+    	padding-left: 0 !important;
+		margin-right: auto !important;
+    	margin-left: auto !important;
+		align-items: center !important;
 	}
 	.scc-header-logo-col{
 		border-top-left-radius: 9px;
@@ -31,7 +40,7 @@ $scc_screen       = get_current_screen();
 		display: inline-flex;
 		position: relative;
 		height: 110px;
-		background: white;
+		width:40%;
 	}
 	.scc-header-ellipse{
 		position: absolute;
@@ -57,7 +66,7 @@ $scc_screen       = get_current_screen();
 	
 	}
 	.scc-page-name-and-desc{
-		padding-left: 70px !important;
+		padding-left: 30px !important;
 		color: white;
 		display: flex;
 		align-items: center;
@@ -65,10 +74,26 @@ $scc_screen       = get_current_screen();
 	.scc-header-menu-col .scc-top-nav-container .scc-icn-wrapper svg {
     	background-color: transparent;
 	}
+
+	.scc-top-nav-container .scc-menu-dropdown-content .scc-icn-wrapper svg{
+		width: 18px;
+		height: 18px;
+	}
 	.scc-custom-version-info{
 		display: flex;
 		align-items: center;
 		z-index: 1;
+	}
+	.dropdown-toggle.scc-minimal-header-icon::after{
+		display: none;
+	}
+	.scc-header-logo-white{
+		background-color: white;
+		border-radius: 8px;
+		padding: 5px;
+	}
+	.scc-header-logo-white img{
+		object-fit: contain;
 	}
 	.scc-smiling-loader:root {
 		--hue: 223;
@@ -299,6 +324,16 @@ $scc_screen       = get_current_screen();
 		width: 18px;
 	}
 
+  .scc-calculator-name-container{
+    display: flex !important;
+    align-items: center;
+  }
+  .scc-calculator-name-container svg{
+    width: 20px;
+    height: 20px;
+    color: white;
+  }
+
 	@keyframes scc-sk-chase {
 		100% {
 			transform: rotate(360deg);
@@ -366,37 +401,48 @@ $scc_screen       = get_current_screen();
     do_action( 'scc_render_try_demo_notices' );
 } ?>
 <div class="row ms-0 align-items-center scc-background-transparent p-4 justify-content-center w-100">
-	<div class="scc-background-primary scc-main-header-container align-items-center col-12 mx-auto px-0 w-100">
-		<div class="scc-header-logo-col bg-white p-3">
-			<img class="scc-header-ellipse" src="<?php
-                    echo esc_url( SCC_URL . 'assets/images/scc-ellipse.svg' ); ?>
-	" alt="">
-			<div class="scc-custom-version-info align-middle">
-				<a href="https://stylishcostcalculator.com/" class="scc-header">
+	<div class="scc-background-primary-dark scc-main-header-container align-items-center col-12 mx-auto px-0 w-100">
+		<div class="scc-header-logo-col p-3">
+			<div class="scc-custom-version-info align-middle w-100">
+				<?php if ( isset( $_REQUEST['id_form'] ) || $scc_screen->base === 'toplevel_page_scc-tabs' ) { ?>
+					<a class="text-decoration-none text-white" href="<?php echo admin_url(); ?>">
+						<button class="btn scc-btn-header-back py-2 me-3">
+							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['chevron-left'] ); ?></span>
+						</button>
+					</a>
+				<?php
+                }
+				?>
+				<a href="https://stylishcostcalculator.com/" class="scc-header scc-header-logo-white">
 					<img src="
-						<?php
-                        echo esc_url( SCC_URL . 'assets/images/scc-logo.png' );
+					<?php
+                    echo esc_url( SCC_URL . 'assets/images/scc-icon.png' );
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 ?>
-									" class="img-responsive1" style="padding-bottom:20px;max-width: 200px" alt="Image">
+									" class="img-responsive1" style="max-width: 60px"
+						alt="Stylish Cost Calculator Logo">
+						<span class="scc-free-badge-header">
+								Free
+						</span>
 				</a>
-				<span class="scc_plug_ver">
-					<?php
-// $opt = get_option('df_scclk_opt');
-                    if ( $isSCCFreeVersion ) {
-                        echo 'Free';
-                    } else {
-                        echo 'Premium';
-                    }
-?>
-				</span>
+
+				<?php if ( isset( $_REQUEST['page'] ) && $_REQUEST['page'] === 'scc_edit_items' && isset( $f1 ) ) { ?>
+				<div class="col-lg-8 col-md-8 col-xs-8 d-inline-flex scc-calculator-name-container" style="margin-right: 10px;">
+					<input type="text" id="id_form_input" value="<?php echo intval( $f1->id ); ?>" hidden>
+					<input type="text" class="input_pad" id="costcalculatorname" placeholder="Enter the name of this calculator" value="<?php echo esc_attr( wp_unslash( $f1->formname ) ); ?>" />
+					<span class="scc-icon-wrapper" style="margin-top:-10px; max-width: 24px;width: 24px;"><?php echo scc_get_kses_extended_ruleset( $scc_icons['edit-2'] ); ?></span>
+				</div>
+				<?php } ?>
 			</div>
 		</div>
 		<div class="scc-header-menu-col scc-navbar p-3">
-		<div class="scc-page-name-and-desc">
+			<?php 
+			// if ( isset( $_REQUEST['page'] ) && $_REQUEST['page'] !== 'scc_edit_items' ) { 
+			?>
+			<div class="scc-page-name-and-desc">
 				<div>
 				<?php
                 switch ( $scc_screen->base ) {
@@ -412,7 +458,10 @@ if ( ! defined( 'ABSPATH' ) ) {
                         if ( $quotes_from_id !== 0 ) {
                             global $wpdb;
                             $name = $wpdb->get_results( $wpdb->prepare( "SELECT formname FROM {$wpdb->prefix}df_scc_forms WHERE id = %d", $quotes_from_id ) );
-                            echo '<div class="scc-page-desc">' . esc_html( $name[0]->formname ) . '</div>';
+
+                            if ( !empty( $name ) ) {
+                                echo '<div id="calculator-name" class="scc-page-desc">' . esc_html( $name[0]->formname ) . '</div>';
+                            }
                         } else {
                             echo '<div class="scc-page-desc w-100">Quote Management Dashboard</div>';
                         }
@@ -431,7 +480,11 @@ if ( ! defined( 'ABSPATH' ) ) {
                         break;
 
                     case 'stylish-cost-calculator_page_scc-coupons-management':
-                        echo '<div class="scc-page-title">Coupon Generator & Editor (Premium Feature)</div>';
+                        echo '<div class="scc-page-title">Coupon Generator & Editor</div>';
+                        break;
+
+                    case 'admin_page_scc-coupons-management':
+                        echo '<div class="scc-page-title">Coupon Generator & Editor</div>';
                         break;
 
                     case 'stylish-cost-calculator_page_scc-diagnostics':
@@ -454,94 +507,195 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 				
 			</div>
+			<?php 
+			// } 
+			?>
 			<div class="scc-top-nav-container">
-				<ul class="scc-edit-nav-items-2"></ul>
+			
 				<ul class="scc-edit-nav-items">
-				<?php
-    if ( ! empty( $f1 ) ) {
-        ?>
-					<li><a class="scc-nav-with-icons"
-							href="<?php echo admin_url( 'admin.php?page=scc-list-all-calculator-forms' ); ?>">
-							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['edit'] ); ?></span>
-							All Forms</a>
+					<li class="dropdown">
+
+						<a class="dropdown-toggle scc-minimal-header-icon scc-nav-with-icons" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<span class="scc-icn-wrapper use-tooltip" title="Help & Support"><?php echo scc_get_kses_extended_ruleset( $scc_icons['help-circle'] ); ?></span>
+						</a>
+						<ul class="dropdown-menu scc-multilevel-dropdown-menu">
+							<li><a class="dropdown-item" target="_blank" href="<?php echo esc_url( SCC_HELPDESK_LINKS['helpdesk-home'] ); ?>">User Guides</a></li>
+							<li><a class="dropdown-item" target="_blank" href="<?php echo esc_url( SCC_HELPDESK_LINKS['helpdesk-video-tutorials'] ); ?>">Video Guides</a></li>
+							<li><a class="dropdown-item" target="_blank" href="<?php echo admin_url( 'admin.php?page=scc-diagnostics' ); ?>">Diagnostic</a></li>
+							<li><a class="dropdown-item" target="_blank" href="<?php echo esc_url( SCC_HELPDESK_LINKS['helpdesk-troubleshooting'] ); ?>">Troubleshooting</a></li>
+							<li><a class="dropdown-item" target="_blank" href="https://stylishcostcalculator.com/support/">Contact Support</a></li>
+							<li><a class="dropdown-item" target="_blank" href="https://members.stylishcostcalculator.com/">Member's Portal</a></li>
+						</ul>
 					</li>
-						<?php
-    }
-?>
-				<?php if ( isset( $_REQUEST['page'] ) && $_REQUEST['page'] === 'scc_edit_items' && isset( $_REQUEST['id_form'] ) ) { ?>
-					<li class="dropdown ">
+					<?php if ( isset( $_REQUEST['id_form'] ) ) { ?>
+						<li>
+							<a class="scc-nav-with-icons use-tooltip" href="<?php echo admin_url( 'admin.php?page=scc-list-all-calculator-forms' ); ?>" title="All Forms">
+								<span class="scc-icn-wrapper use-tooltip" title="All Forms"><?php echo scc_get_kses_extended_ruleset( $scc_icons['list'] ); ?></span>
+							</a>
+						</li>
+
+					<?php } ?>	
+
+					<?php if ( isset( $_REQUEST['page'] ) && $_REQUEST['page'] === 'scc_edit_items' ) { ?>
+
+						<li>
+							<a class="scc-nav-with-icons use-tooltip use-premium-tooltip" onclick="event.preventDefault();" href="<?php echo ! $isSCCFreeVersion ? admin_url( "admin.php?page=scc-quote-management-screen&id={$f1->id}" ) : 'javascript:void()'; ?>" data-setting-tooltip-type="quote-screen-tt" data-bs-original-title="View Quotes" title="View Quotes">
+								<span class="scc-icn-wrapper use-tooltip" title="Quotes & Leads"><?php echo scc_get_kses_extended_ruleset( $scc_icons['bar-chart-2'] ); ?></span>
+							</a>
+
+						</li>
+						<li class="dropdown">
+						
+							<a class="dropdown-toggle scc-minimal-header-icon scc-nav-with-icons" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<span class="scc-icn-wrapper use-tooltip" title="Backup & Restore"><?php echo scc_get_kses_extended_ruleset( $scc_icons['upload-cloud'] ); ?></span>
+							</a>
+							<ul class="dropdown-menu scc-multilevel-dropdown-menu">
+								<li><button class="dropdown-item use-tooltip" data-setting-tooltip-type="restore-backup-tt" data-bs-original-title="" title="" target="_blank" onclick="javascript:void()">
+								<span class="scc-icn-wrapper me-2"><?php echo scc_get_kses_extended_ruleset( $scc_icons['rotate-cw'] ); ?></span>	
+								Restore Backup</button></li>
+								<li><button class="dropdown-item use-tooltip" data-setting-tooltip-type="download-backup-tt" data-bs-original-title="" title="" target="_blank" onclick="downloadBackup(false)" >
+									<span class="scc-icn-wrapper me-2"><?php echo scc_get_kses_extended_ruleset( $scc_icons['download'] ); ?></span>	
+								Download Backup</button></li>
+							</ul>
+						</li>
+						
+
+					<!-- <li class="dropdown ">
 						<a class="dropdown-toggle scc-nav-with-icons" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['navigation'] ); ?></span>
+							<span class="scc-icn-wrapper"><!?php echo scc_get_kses_extended_ruleset( $scc_icons['navigation'] ); ?></span>
 							Guided Tours <span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu scc-multilevel-dropdown-menu">
-							<li><a class="dropdown-item scc-calculator-tour-link" data-tour-type="editing-page" href="#"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['navigation'] ); ?></span> Knowing the editing page</a></li>
-							<li><a class="dropdown-item scc-calculator-tour-link" data-tour-type="font-settings" href="#"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['navigation'] ); ?> Customizing Font Settings</a></li>
-							<li><a class="dropdown-item scc-calculator-tour-link" data-tour-type="calculator-settings" href="#"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['navigation'] ); ?> Customizing Calculator Settings</a></li>
-							<li><a class="dropdown-item scc-calculator-tour-link" data-tour-type="wordings" href="#"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['navigation'] ); ?> Customizing Wordings</a></li>
-							<li><a class="dropdown-item scc-calculator-tour-link" data-tour-type="email-quote-settings" href="#"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['navigation'] ); ?> Customizing Email Quote Form</a></li>
-							<li><a class="dropdown-item scc-calculator-tour-link" data-tour-type="payment-options" href="#"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['navigation'] ); ?> Setup Payment Options</a></li>
+							<li><a class="dropdown-item scc-calculator-tour-link" data-tour-type="editing-page" href="#"><span class="scc-icn-wrapper"><!?php echo scc_get_kses_extended_ruleset( $scc_icons['navigation'] ); ?></span> Knowing the editing page</a></li>
+							<li><a class="dropdown-item scc-calculator-tour-link" data-tour-type="font-settings" href="#"><span class="scc-icn-wrapper"><!?php echo scc_get_kses_extended_ruleset( $scc_icons['navigation'] ); ?> Customizing Font Settings</a></li>
+							<li><a class="dropdown-item scc-calculator-tour-link" data-tour-type="calculator-settings" href="#"><span class="scc-icn-wrapper"><!?php echo scc_get_kses_extended_ruleset( $scc_icons['navigation'] ); ?> Customizing Calculator Settings</a></li>
+							<li><a class="dropdown-item scc-calculator-tour-link" data-tour-type="wordings" href="#"><span class="scc-icn-wrapper"><!?php echo scc_get_kses_extended_ruleset( $scc_icons['navigation'] ); ?> Customizing Wordings</a></li>
+							<li><a class="dropdown-item scc-calculator-tour-link" data-tour-type="email-quote-settings" href="#"><span class="scc-icn-wrapper"><!?php echo scc_get_kses_extended_ruleset( $scc_icons['navigation'] ); ?> Customizing Email Quote Form</a></li>
+							<li><a class="dropdown-item scc-calculator-tour-link" data-tour-type="payment-options" href="#"><span class="scc-icn-wrapper"><!?php echo scc_get_kses_extended_ruleset( $scc_icons['navigation'] ); ?> Setup Payment Options</a></li>
 						</ul>
-					</li>
+					</li> -->
 					<?php } ?>
 					<?php if ( $scc_screen->base === 'toplevel_page_scc-tabs' ) { ?>
 					<li><a class="scc-nav-with-icons"
 							href="<?php echo admin_url( 'admin.php?page=scc-list-all-calculator-forms' ); ?>">
-							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['edit'] ); ?></span>
-							All Forms</a>
+							<span class="scc-icn-wrapper use-tooltip" title="All Forms"><?php echo scc_get_kses_extended_ruleset( $scc_icons['list'] ); ?></span>
+							</a>
 					</li>
 					<li><a class="scc-nav-with-icons"
 							href="<?php echo admin_url( 'admin.php?page=scc-global-settings' ); ?>">
-							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['settings'] ); ?></span>
-							Global Settings</a>
+							<span class="scc-icn-wrapper use-tooltip" title="Global Settings"><?php echo scc_get_kses_extended_ruleset( $scc_icons['settings'] ); ?></span>
 					</li>
 					<?php } ?>
-					<li class="dropdown">
-						<a class="dropdown-toggle scc-nav-with-icons" data-bs-toggle="dropdown" role="button"
-							aria-haspopup="true" aria-expanded="false"><span class="scc-icn-wrapper <?php echo ( $scc_screen->base === 'toplevel_page_scc-tabs' ) ? 'scc-margin-menu' : ''; ?>"><?php echo scc_get_kses_extended_ruleset( $scc_icons['life-buoy'] ); ?></span>Support <span
-								class="caret"></span></a>
-						<ul class="dropdown-menu scc-multilevel-dropdown-menu">
-							<li><a class="dropdown-item" target="_blank"
-									href="<?php echo esc_url(SCC_HELPDESK_LINKS['helpdesk-home']);?>">User Guides</a>
-							</li>
-							<li><a class="dropdown-item" target="_blank"
-									href="<?php echo esc_url(SCC_HELPDESK_LINKS['helpdesk-video-tutorials']);?>">Video
-									Guides</a></li>
-							<li><a class="dropdown-item" target="_blank"
-									href="<?php echo esc_url( admin_url( 'admin.php?page=scc-diagnostics' ) ); ?>">Diagnostic</a>
-							</li>
-							<li><a class="dropdown-item" target="_blank"
-									href="<?php echo esc_url(SCC_HELPDESK_LINKS['helpdesk-troubleshooting']);?>">Troubleshooting</a>
-							</li>
-							<li><a class="dropdown-item" target="_blank" href="https://stylishcostcalculator.com/support/">Contact Support</a>
-							</li>
-							<li><a class="dropdown-item" target="_blank" href="https://members.stylishcostcalculator.com/">Member's Portal</a>
-							</li>
-						</ul>
+					<?php if ( $scc_screen->base === 'stylish-cost-calculator_page_scc-quote-management-screen' && isset( $_GET['id'] ) ) {
+					    $quotes_from_id = absint( $_GET['id'] );
+					    ?>
+					<li><a class="scc-nav-with-icons"
+							href="<?php echo admin_url( "admin.php?page=scc_edit_items&id_form={$quotes_from_id}" ); ?>">
+							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['edit'] ); ?></span>
 					</li>
+					<?php } ?>
+					
 				</ul>
-				<?php if ( isset( $_REQUEST['id_form'] ) || $scc_screen->base === 'toplevel_page_scc-tabs'  ) { ?>
-				<a class="text-decoration-none text-white" href="<?php echo admin_url(); ?>">
-					<button class="btn btn-default py-2 me-3">
-						<span class="scc-b-has-icon-left">WP Dashboard</span>
-						<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-corner-down-left"><polyline points="9 10 4 15 9 20"></polyline><path d="M20 4v7a4 4 0 0 1-4 4H4"></path></svg>
+				<a id="downloadAnchorElem"></a>
+				<?php if ( isset( $_REQUEST['page'] ) && $_REQUEST['page'] === 'scc_edit_items' ) { ?>
+				<div class="scc-embed-wrapper">
+					<button class="btn btn-default py-2 me-3" onclick="sccBackendUtils.toggleEmbedToPagePanel(this);">
+						<span class="scc-icn-wrapper me-2"><?php echo scc_get_kses_extended_ruleset( $scc_icons['code'] ); ?> </span> Embed
 					</button>
-				</a>
-				<?php }
+					<div id="df_scc_tabembed_" class="scc-embed-tip-container scc-hidden">
+						<button class="scc-embed-close-button" onclick="sccBackendUtils.toggleEmbedToPagePanel(this);">
+							<?php echo scc_get_kses_extended_ruleset( $scc_icons['close'] ); ?>
+						</button>
+						<div class="scc-embed-tip-wrapper">
+							<h3 class="scc-embed-tips-title mb-3">Embed to Page</h3>
+							<div id="cache_plugin_alert_wrapper" class="d-none"></div>
+							<div class="scc-embed-field-container">
+								<h3 class="scc-embed-field-label">Calculator Form <a href="<?php echo esc_attr( SCC_HELPDESK_LINKS['troubleshoot-embedding-to-webpage'] ); ?>" target="_blank"><i class="material-icons-outlined">help_outline</i></a></h3>
+								<div class="position-relative">
+									<div class="scc-embed-field">[scc_calculator type='text' idvalue='<?php echo intval( $f1->id ); ?>']</div>
+									<button class="scc-copy-embed-button" onclick="sccBackendUtils.copyEmbedsToClipboard(this);" ><?php echo scc_get_kses_extended_ruleset( $scc_icons['copy'] ); ?></button>
+									<span class="scc-ai-copy-message-confirmation scc-hidden" >Copied!</span>
+								</div>
+							</div>
+							<div class="scc-embed-field-container">
+								<h3 class="scc-embed-field-label">Custom Calculator Total <a href="<?php echo esc_attr( SCC_HELPDESK_LINKS['feature-custom-totals'] ); ?>" target="_blank"><i class="material-icons-outlined">help_outline</i></a></h3>
+								<div class="position-relative">
+									<div class="scc-embed-field">[scc_calculator-total type='text' idvalue='<?php echo intval( $f1->id ); ?>']</div>
+									<button class="scc-copy-embed-button" onclick="sccBackendUtils.copyEmbedsToClipboard(this);" ><?php echo scc_get_kses_extended_ruleset( $scc_icons['copy'] ); ?></button>
+									<span class="scc-ai-copy-message-confirmation scc-hidden" >Copied!</span>
+								</div>
+							</div>
+							<div class="scc-embed-field-container">
+								<h3 class="scc-embed-field-label">Floating Itemized List <a href="<?php echo esc_attr( SCC_HELPDESK_LINKS['feature-floating-itemized-list'] ); ?>" target="_blank"><i class="material-icons-outlined">help_outline</i></a></h3>
+								<div class="position-relative">
+									<div class="scc-embed-field">[scc_calculator-detail type='text' idvalue='<?php echo intval( $f1->id ); ?>']</div>
+									<button class="scc-copy-embed-button" onclick="sccBackendUtils.copyEmbedsToClipboard(this);" ><?php echo scc_get_kses_extended_ruleset( $scc_icons['copy'] ); ?></button>
+									<span class="scc-ai-copy-message-confirmation scc-hidden" >Copied!</span>
+								</div>
+							</div>
+							<hr>
+							<div class="scc-embed-tip-footer d-flex">
+								<i class="material-icons-outlined ">help_outline</i> <span>Copy and paste this shortcode <a href="<?php echo esc_attr( SCC_HELPDESK_LINKS['troubleshoot-embedding-to-webpage'] ); ?>" target="_blank"><b>properly</b></a> into a code, text, shortcode, or shortblock widget within your page builder. Do not use the visual text box.</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<?php } ?>
 
+				<div class="col-lg-2 col-md-2 col-xs-2 text-end scc-save-btn-cont <?php echo ( isset( $_REQUEST['page'] ) && $_REQUEST['page'] === 'scc_edit_items' ) ? '' : 'scc-hidden'; ?>" 
+					data-setting-tooltip-type="" data-bs-original-title="">
+					<button class="btn scc-btn-green m-0 d-flex align-items-center scc-top-save-btn me-3" onClick="saveDataFields()" ><i class="scc-btn-spinner scc-save-btn-spinner scc-d-none ms-0"></i>Save</button>
+					<div class="scc-menu-dropdown">
+						<button id="scc-calculator-settings-menu-button scc-btn-primary-dark" class="scc-dropbtn" onclick="sccToggleMenuDropdown( this, event )" ><span class="scc-icn-wrapper">
+								<?php echo scc_get_kses_extended_ruleset( $scc_icons['settings'] ); ?>
+							</span></button>
+						<div class="scc-menu-dropdown-content scc-hidden">
+							<a class="scc-font-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#fontSettingsModal" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
+								<?php echo scc_get_kses_extended_ruleset( $scc_icons['edit-3'] ); ?>
+							</span> Font Settings</a>
+							<hr>
+							<a class="scc-calculator-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#calculatorSettingsModal" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
+								<?php echo scc_get_kses_extended_ruleset( $scc_icons['tool'] ); ?>
+							</span> Calculator Settings</a>
+							<hr>
+							<a class="scc-calculator-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#formBuilderModal" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
+								<?php echo scc_get_kses_extended_ruleset( $scc_icons['mail'] ); ?>
+							</span> Form Builder</a>
+							<hr>
+							<a class="scc-calculator-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#paymentSettingsModal" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
+								<?php echo scc_get_kses_extended_ruleset( $scc_icons['dollar-sign'] ); ?>
+							</span> Payment Settings</a>
+							<hr>
+							<a class="scc-wordings-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#wordingsModal" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
+								<?php echo scc_get_kses_extended_ruleset( $scc_icons['file-text'] ); ?>
+							</span> Wordings</a>
+							<hr>
+							<a class="scc-coupon-codes-dropdown" href="<?php echo esc_url( admin_url( 'admin.php?page=scc-coupons-management' ) ); ?>"><span class="scc-icn-wrapper">
+								<?php echo scc_get_kses_extended_ruleset( $scc_icons['percent'] ); ?>
+							</span> Coupon Codes</a>
+							<hr>
+							<a class="scc-global-settings-dropdown" href="<?php echo esc_url( admin_url( 'admin.php?page=scc-global-settings' ) ); ?>"><span class="scc-icn-wrapper">
+								<?php echo scc_get_kses_extended_ruleset( $scc_icons['settings'] ); ?>
+							</span> Global Settings</a>
+						</div>
+					</div>
+				</div>
+				<!--END Save Button-->
+
+				<?php
 				if ( $scc_screen->base === 'stylish-cost-calculator_page_scc-list-all-calculator-forms' ) {
-				    printf(
-				        '<div class="row m-0"><div class="row m-0 col-md-12"><a class="text-decoration-none text-white" href="%s"><button class="btn btn-default py-2 me-3" ><span class="scc-b-has-icon-left">%s</span><span class="scc-icn-wrapper" id="ssc-nav-icon-wrapper"> %s</span></button></a></div></div>',
-				        menu_page_url( 'scc-tabs', false ),
-				        __( 'Add New Calculator', 'textdomain' ),
-				        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><path d="M12 5v14M5 12h14"></path></svg>'
-				    );
+					printf(
+						'<div class="row m-0 ps-0"><div class="row m-0 col-md-12 ps-0"><a class="text-decoration-none text-white ps-0" href="%s"><button class="btn btn-default py-2 me-3" ><span class="scc-b-has-icon-left">%s</span><span class="scc-icn-wrapper" id="ssc-nav-icon-wrapper"> %s</span></button></a></div></div>',
+						menu_page_url( 'scc-tabs', false ),
+						__( 'Add New Calculator', 'textdomain' ),
+						'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><path d="M12 5v14M5 12h14"></path></svg>'
+					);
 				} ?>
-
 			</div>
 		</div>
+		<?php do_action( 'scc-edit-page' ); ?>
 	</div>
-	</div>
+</div>
 	<div class="container-fluid col-12" id="settings-tabs-wrapper">
 		<!--Main Content Container-->
 		<div id="debug_messages_wrapper" class="d-none"></div>

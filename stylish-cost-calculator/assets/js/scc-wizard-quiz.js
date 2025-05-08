@@ -11,7 +11,6 @@ const modalLeads = {
 window.addEventListener( 'DOMContentLoaded', ( event ) => {
 	// removing WordPress's forms.css file, for
 	// document.getElementById('forms-css')?.remove();
-	svgCollection = JSON.parse( document.getElementById( 'svgCollection' )?.textContent || '[]' );
 	// parsing query parameters
 	const urlParams = new URLSearchParams( window.location.search );
 	if ( urlParams.has( 'open-wizard' ) ) {
@@ -220,6 +219,8 @@ window.addEventListener( 'DOMContentLoaded', ( event ) => {
 			quizAnswersStore[ step ][ stepChoices.key ] = false;
 		} );
 	} );
+	svgCollection = JSON.parse( document.getElementById( 'svgCollection' )?.textContent || '[]' );
+	window.svgCollection = svgCollection;
 } );
 
 // function filterResultPageElementSuggestion(elements) {
@@ -485,90 +486,130 @@ function showModal( modalElementSelector, modalContentData, isFirstModal = false
 			fragment.remove();
 		} );
 	}
-	try{
-		const choicesContent = buildChoicesContent( currentStep );
+	const choicesContent = buildChoicesContent( currentStep );
+	// registering tooltip for the modal contents
+	choicesContent.find( '[title]' ).each( ( index, element ) => {
+		const tooltip = new bootstrap.Tooltip( element );
+	} );
+	choicesWrapper.append( choicesContent );
+	modalNode.append( modalContent );
 
-		// registering tooltip for the modal contents
-		choicesContent.find( '[title]' ).each( ( index, element ) => {
-			const tooltip = new bootstrap.Tooltip( element );
-		} );
-		choicesWrapper.append( choicesContent );
-		modalNode.append( modalContent );
-		if ( isFirstModal ) {
-			const cardChoices = modalNode.find( '.card' );
-			cardChoices.attr( 'data-next-step', 2 );
-			cardChoices.attr( 'data-max-steps', 5 );
-			modalNode.find( '#scc-setup-wizard-first-step-next-btn' ).on( 'click', handleQuizBtnClick );
+	if ( currentStep === 1 ) {
+		// Pre-fill Website URL
+		const websiteUrlInput = modalNode.find('#websiteUrl')[0];
+		if (websiteUrlInput && !websiteUrlInput.value && typeof quizAnswersStore !== 'undefined' && quizAnswersStore.step1 && !quizAnswersStore.step1['website-url']) {
+			websiteUrlInput.value = window.location.origin;
+			quizAnswersStore.step1['website-url'] = window.location.origin;
+			// Also update the store immediately
+			updateQuizAnswersStore({ currentTarget: websiteUrlInput }, 'step1');
 		}
-		const modalActionBtn = modalNode.find( '.scc-setup-wizard-button' );
-		const modalInputFields = modalNode.find( 'input:not([data-element-suggestion]):not(:text)' );
-		const modalInputElementSuggestions = modalNode.find( 'input[data-element-suggestion]' );
-		modalActionBtn.on( 'click', handleQuizBtnClick );
-		modalInputFields.on( 'change', ( evt ) => {
-			if ( currentStep === 1 && evt.target.type === 'checkbox' ) {
-				const businessNameWrapper = modalContent.find( '#businessNameWrapper' )[ 0 ];
-				const businessDescriptionWrapper = modalContent.find( '#businessDescriptionWrapper' )[ 0 ];
-				//const industryTypeWrapper = modalContent.find( '#industryTypeWrapper' )[ 0 ];
-				const selectedChoices = [ ...evt.target.closest( '.row' ).querySelectorAll( 'input:checked' ) ].filter( ( z ) => z !== evt.target );
-				// deselecting the other choices
-				selectedChoices.forEach( ( choice ) => {
-					choice.checked = false;
-					quizAnswersStore[ 'step' + currentStep ][ choice.name ] = false;
-				} );
-				if ( selectedChoices.length > 0 ) {
-					quizAnswersStore[ 'step' + currentStep ][ evt.target.name ] = true;
-					return;
-				}
-				if ( evt.target.checked ) {
-					businessNameWrapper.classList.remove( 'd-none' );
-				} else {
-					businessNameWrapper.classList.add( 'd-none' );
-					businessDescriptionWrapper.classList.add( 'd-none' );
-					//industryTypeWrapper.classList.add( 'd-none' );
-					document.querySelector( '#scc-setup-wizard-first-step-next-btn' ).classList.add( 'd-none' );
-				}
+
+		// Pre-fill Business Name from Domain
+		const businessNameInput = modalNode.find('#businessName')[0];
+		if (businessNameInput && !businessNameInput.value && typeof quizAnswersStore !== 'undefined' && quizAnswersStore.step1 && !quizAnswersStore.step1['business-name']) {
+			let domain = window.location.hostname;
+			// Remove www.
+			domain = domain.replace(/^www\./, '');
+			// Remove TLD (.com, .org, etc.)
+			const parts = domain.split('.');
+			if (parts.length > 1) {
+				parts.pop(); // Remove the last part (TLD)
+				domain = parts.join('.');
 			}
-			updateQuizAnswersStore( evt, 'step' + currentStep );
-		} );
-		modalNode.find( 'input:text,  textarea' ).each( ( index, element ) => {
-			element.addEventListener( 'input', ( evt ) => {
-				updateQuizAnswersStore( evt, 'step' + currentStep );
-			} );
-		} );
-		modalInputElementSuggestions.on( 'change', ( evt ) => {
-			updateQuizAnswersStore( evt, 'elementSuggestions' );
-		} );
-		// If the 'modalInputElementSuggestions' variable has length, it is a final result modal
-		// And we set all of the choices to checked state
-		if ( modalInputElementSuggestions.length > 0 ) {
-			modalInputElementSuggestions.each( ( index, element ) => {
-				triggerCheckboxChange( element );
-			} );
-			modalInputFields.each( ( index, element ) => {
-				triggerCheckboxChange( element );
-			} );
+			// Replace hyphens with spaces and capitalize
+			let businessName = domain.replace(/-/g, ' ');
+			businessName = businessName.charAt(0).toUpperCase() + businessName.slice(1);
+			// Capitalize after spaces
+			businessName = businessName.replace(/\s(.)/g, function(match, char) {
+				return ' ' + char.toUpperCase();
+			});
+
+			businessNameInput.value = businessName;
+			quizAnswersStore.step1['business-name'] = businessName;
+			// Also update the store immediately
+			updateQuizAnswersStore({ currentTarget: businessNameInput }, 'step1');
 		}
-		const quizModal = bootstrap.Modal.getOrCreateInstance( modalNode.get( 0 ) );
-		quizModal.show();
-		if ( currentStep === 1 ) {
-			quizModal._element.addEventListener( 'hidden.bs.modal', () => {
-				const modalsActive = document.querySelectorAll( '.quiz-modal.show' ).length;
-				// reset the quizAnswersStore
-				if ( modalsActive === 0 ) {
-					Object.keys( quizAnswersStore.step1 ).forEach( ( key ) => {
-						if (typeof(quizAnswersStore.step1[ key ]) === 'boolean') {
-							quizAnswersStore.step1[ key ] = false;
-						} else {
-							quizAnswersStore.step1[ key ] = '';
-						}
-					} );
-				}
-			} );
-		}
-	} catch ( error ) {
-		//console.error( error );
+
+		// Initial check for AI button visibility after pre-filling
+		updateQuizAnswersStore({ currentTarget: businessNameInput }, 'step1'); 
 	}
 
+	if ( isFirstModal ) {
+		const cardChoices = modalNode.find( '.card' );
+		cardChoices.attr( 'data-next-step', 2 );
+		cardChoices.attr( 'data-max-steps', 5 );
+		modalNode.find( '#scc-setup-wizard-first-step-next-btn' ).on( 'click', handleQuizBtnClick );
+	}
+	const modalActionBtn = modalNode.find( '.scc-setup-wizard-button' );
+	const modalInputFields = modalNode.find( 'input:not([data-element-suggestion]):not(:text)' );
+	const modalInputElementSuggestions = modalNode.find( 'input[data-element-suggestion]' );
+	modalActionBtn.on( 'click', handleQuizBtnClick );
+	modalInputFields.on( 'change', ( evt ) => {
+		if ( currentStep === 1 && evt.target.type === 'checkbox' ) {
+			const businessNameWrapper = modalContent.find( '#businessNameWrapper' )[ 0 ];
+			const websiteUrlWrapper = modalContent.find( '#websiteUrlWrapper' )[ 0 ];
+			const aiRetrievalWrapper = modalContent.find( '#aiRetrievalWrapper' )[ 0 ];
+			const businessDescriptionWrapper = modalContent.find( '#businessDescriptionWrapper' )[ 0 ];
+			//const industryTypeWrapper = modalContent.find( '#industryTypeWrapper' )[ 0 ];
+			const selectedChoices = [ ...evt.target.closest( '.row' ).querySelectorAll( 'input:checked' ) ].filter( ( z ) => z !== evt.target );
+			// deselecting the other choices
+			selectedChoices.forEach( ( choice ) => {
+				choice.checked = false;
+				quizAnswersStore[ 'step' + currentStep ][ choice.name ] = false;
+			} );
+			if ( selectedChoices.length > 0 ) {
+				quizAnswersStore[ 'step' + currentStep ][ evt.target.name ] = true;
+			}
+			if ( evt.target.checked ) {
+				businessNameWrapper.classList.remove( 'd-none' );
+				websiteUrlWrapper.classList.remove( 'd-none' );
+				aiRetrievalWrapper.classList.remove( 'd-none' );
+			} else {
+				businessNameWrapper.classList.add( 'd-none' );
+				websiteUrlWrapper.classList.add( 'd-none' );
+				aiRetrievalWrapper.classList.add( 'd-none' );
+				businessDescriptionWrapper.classList.add( 'd-none' );
+				document.querySelector( '#scc-setup-wizard-first-step-next-btn' ).classList.add( 'd-none' );
+			}
+		}
+		updateQuizAnswersStore( evt, 'step' + currentStep );
+	} );
+	modalNode.find( 'input:text,  textarea' ).each( ( index, element ) => {
+		element.addEventListener( 'input', ( evt ) => {
+			updateQuizAnswersStore( evt, 'step' + currentStep );
+		} );
+	} );
+	modalInputElementSuggestions.on( 'change', ( evt ) => {
+		updateQuizAnswersStore( evt, 'elementSuggestions' );
+	} );
+	// If the 'modalInputElementSuggestions' variable has length, it is a final result modal
+	// And we set all of the choices to checked state
+	if ( modalInputElementSuggestions.length > 0 ) {
+		modalInputElementSuggestions.each( ( index, element ) => {
+			triggerCheckboxChange( element );
+		} );
+		modalInputFields.each( ( index, element ) => {
+			triggerCheckboxChange( element );
+		} );
+	}
+	const quizModal = bootstrap.Modal.getOrCreateInstance( modalNode.get( 0 ) );
+	quizModal.show();
+	if ( currentStep === 1 ) {
+		quizModal._element.addEventListener( 'hidden.bs.modal', () => {
+			const modalsActive = document.querySelectorAll( '.quiz-modal.show' ).length;
+			// reset the quizAnswersStore
+			if ( modalsActive === 0 ) {
+				Object.keys( quizAnswersStore.step1 ).forEach( ( key ) => {
+					if (typeof(quizAnswersStore.step1[ key ]) === 'boolean') {
+						quizAnswersStore.step1[ key ] = false;
+					} else {
+						quizAnswersStore.step1[ key ] = '';
+					}
+				} );
+			}
+		} );
+		//initiateIndustryChoices();
+	}
 }
 
 function send_setup_wizard_data_and_build( srcBtn, filteredFeaturesAndSuggestions ) {
@@ -790,14 +831,25 @@ function updateQuizAnswersStore( evt, inputOriginStep ) {
 	}
 	quizAnswersStore[ inputOriginStep ][ inputField.name ] = inputField.type === 'checkbox' ? inputField.checked : inputField.value;
 	if ( inputOriginStep === 'step1' ) {
-		if ( inputField.name === 'business-name' && inputField.value.length > 0 ) {
-			document.querySelector( '#businessDescriptionWrapper' ).classList.remove( 'd-none' );
+		// Show/Hide AI Retrieval button based on Name and URL having values
+		const businessNameHasValue = quizAnswersStore[ inputOriginStep ][ 'business-name' ]?.length > 0;
+		const websiteUrlHasValue = quizAnswersStore[ inputOriginStep ][ 'website-url' ]?.length > 0;
+		const aiRetrievalWrapper = document.querySelector( '#aiRetrievalWrapper' );
+		const descriptionWrapper = document.querySelector( '#businessDescriptionWrapper' ); // Keep description hidden initially
+
+		if(businessNameHasValue && websiteUrlHasValue) {
+			aiRetrievalWrapper.classList.remove( 'd-none' );
+		} else {
+			aiRetrievalWrapper.classList.add( 'd-none' );
+			descriptionWrapper.classList.add( 'd-none' ); // Hide description if name/url cleared
 		}
-		if ( inputField.name === 'business-name' && inputField.value.length === 0 ) {
-			document.querySelector( '#businessDescriptionWrapper' ).classList.add( 'd-none' );
-		}
-		const bothFieldsFulfilled = quizAnswersStore[ inputOriginStep ][ 'business-name' ]?.length && quizAnswersStore[ inputOriginStep ][ 'business-description' ]?.length;
-		if ( bothFieldsFulfilled ) {
+
+		// Show/Hide Continue button based on all three fields having values
+		const allFieldsFulfilled = businessNameHasValue &&
+			websiteUrlHasValue &&
+			quizAnswersStore[ inputOriginStep ][ 'business-description' ]?.length > 0;
+
+		if ( allFieldsFulfilled ) {
 			document.querySelector( '#scc-setup-wizard-first-step-next-btn' ).classList.remove( 'd-none' );
 		} else {
 			document.querySelector( '#scc-setup-wizard-first-step-next-btn' ).classList.add( 'd-none' );
@@ -813,7 +865,7 @@ function showTemplateChoices() {
 
 function startSetupWizard() {
 	const currentStep = 1;
-	isFinalStep = false;
+	const isFinalStep = false;
 	showModal( 'quizModal', {
 		title: 'AI-Powered Setup',
 		subtitle: `Step ${ currentStep } of 5`,
@@ -827,39 +879,232 @@ function startSetupWizard() {
 		wrapper.classList.add( 'scc-p-relative' );
 	}
 	sccAiAssistedSetupWizUpdateProgress();
+	sccDisplayBusinessInfoMessage();
 }
 
 function sccAiAssistedSetupWizUpdateProgress() {
-    const textarea = document.getElementById('scc-ai-assisted-setup-wiz-business-description');
-    const progressBar = document.getElementById('scc-ai-assisted-setup-wiz-progress-bar');
-    const nextButton = document.getElementById('scc-setup-wizard-first-step-next-btn');
-    const charCount = textarea?.value?.length || 0;
+	const textarea = document.getElementById('scc-ai-assisted-setup-wiz-business-description');
+	const preview = document.getElementById('scc-ai-assisted-setup-wiz-business-description-preview');
+	const progressBar = document.getElementById('scc-ai-assisted-setup-wiz-progress-bar');
+	if (!textarea || !progressBar || !preview) {
+		return;
+	}
 
-    let progress = (charCount / 100) * 100;
-    progress = Math.min(progress, 100);
+	const textLength = textarea.value.trim().length;
+	const minLength = 100; // Minimum required length
+	const progress = Math.min((textLength / minLength) * 100, 100);
+	progressBar.style.width = progress + '%';
 
-    if (progressBar && progressBar.style) {
-        progressBar.style.width = `${progress}%`;
-    }
+	// Update color based on progress
+	if (progress < 33) {
+		progressBar.style.backgroundColor = '#dc3545'; // Red
+	} else if (progress < 66) {
+		progressBar.style.backgroundColor = '#ffc107'; // Yellow
+	} else {
+		progressBar.style.backgroundColor = '#198754'; // Green
+	}
 
-    if (progressBar && progressBar.classList && nextButton) {
-        progressBar.classList.remove('scc-ai-count-red', 'scc-ai-count-orange', 'scc-ai-count-green');
+	// Render Markdown preview only if the preview tab is active or becomes active
+    const previewTabPane = document.getElementById('preview-tab-pane');
+    const isPreviewActive = previewTabPane && previewTabPane.classList.contains('show');
 
-        if (charCount < 33) {
-            progressBar.classList.add('scc-ai-count-red');
-            if (nextButton) {
-                nextButton.disabled = true;
-            }
-        } else if (charCount >= 33 && charCount < 66) {
-            progressBar.classList.add('scc-ai-count-orange');
-            if (nextButton) {
-                nextButton.disabled = false;
-            }
-        } else if (charCount >= 66) {
-            progressBar.classList.add('scc-ai-count-green');
-            if (nextButton) {
-                nextButton.disabled = false;
-            }
+	// Free version uses marked as an object while pro uses a function
+    if (isPreviewActive && typeof marked === 'object') {
+        try {
+            preview.innerHTML = marked.parse(textarea.value);
+        } catch (error) {
+            console.error("Error parsing Markdown:", error);
+            preview.textContent = textarea.value; // Fallback to plain text on error
         }
+    } else if (isPreviewActive) { // Only show error if preview tab is active
+		console.error("marked.js library not loaded or imported correctly.");
+		preview.textContent = textarea.value; // Use textContent for plain text fallback
+	}
+
+	// Enable/disable continue button based on length
+	const continueButton = document.getElementById('scc-setup-wizard-first-step-next-btn');
+	if (continueButton) {
+		if (textLength >= minLength) {
+			continueButton.classList.remove('d-none');
+		} else {
+			continueButton.classList.add('d-none');
+		}
+	}
+}
+window.sccAiAssistedSetupWizUpdateProgress = sccAiAssistedSetupWizUpdateProgress;
+
+// Add event listener for when the preview tab is shown
+document.addEventListener('shown.bs.tab', function (event) {
+    if (event.target.id === 'preview-tab') {
+        sccAiAssistedSetupWizUpdateProgress(); // Re-render Markdown when preview tab is shown
+    }
+});
+function sccRegenerateDescriptionFromUrl() {
+	const websiteUrl = document.getElementById('websiteUrl').value;
+	const businessName = document.getElementById('businessName').value;
+	const descriptionTextarea = document.getElementById('scc-ai-assisted-setup-wiz-business-description');
+	const loader = document.querySelector('.scc-ai-assisted-setup-wiz-business-description-loader');
+	const regenerateBtn = document.getElementById('scc-regenerate-description-btn');
+
+	if (!websiteUrl || !businessName) {
+		alert('Please enter both business name and website URL first');
+		return;
+	}
+
+	// Disable the button and show loader
+	regenerateBtn.disabled = true;
+	loader.classList.remove('scc-hidden');
+
+	// Use the existing getSiteInfoWithAi function with the current page slug
+	sccAiUtils.getSiteInfoWithAi( 'edit-calculator-page', websiteUrl )
+		.then(response => {
+			if (response && response.description) {
+				descriptionTextarea.value = response.description;
+				quizAnswersStore.step1['business-description'] = response.description;
+				sccAiAssistedSetupWizUpdateProgress();
+			} else {
+				alert('Failed to generate description. Please try again.');
+			}
+		})
+		.catch(error => {
+			console.error('Error generating description:', error);
+			alert('An error occurred. Please try again.');
+		})
+		.finally(() => {
+			// Re-enable the button and hide loader
+			regenerateBtn.disabled = false;
+			loader.classList.add('scc-hidden');
+		});
+}
+
+window.sccRegenerateDescriptionFromUrl = sccRegenerateDescriptionFromUrl;
+
+function sccRetrieveBusinessDetails() {
+	const websiteUrl = document.getElementById('websiteUrl').value;
+	const businessName = document.getElementById('businessName').value;
+	const descriptionWrapper = document.getElementById('businessDescriptionWrapper');
+	const retrieveBtn = document.getElementById('scc-retrieve-business-details-btn');
+	const loader = descriptionWrapper.querySelector('.scc-ai-assisted-setup-wiz-business-description-loader'); // Get loader inside description wrapper
+
+	if (!websiteUrl || !businessName) {
+		alert('Please enter both business name and website URL first');
+		return;
+	}
+
+	// Disable the button and show loader
+	retrieveBtn.disabled = true;
+	loader.classList.remove('scc-hidden');
+	descriptionWrapper.classList.remove('d-none'); // Show the description wrapper immediately
+
+	// Use the existing getSiteInfoWithAi function
+	sccAiUtils.getSiteInfoWithAi( 'edit-calculator-page', websiteUrl )
+		.then(response => {
+			// The response structure from getSiteInfoWithAi needs to be checked
+			// Assuming response has a structure like { data: { ai_message: "description" } }
+			const description = response?.ai_message;
+			// Clean up the description string
+			let formattedText = description
+				.replace(/&lt;/g, '<')
+				.replace(/&gt;/g, '>')
+				.replace(/&amp;/g, '&')
+				.replace(/&quot;/g, '"')
+				.replace(/&#039;/g, "'")
+				.replace(/<br\s*\/?>/g, '\n') // Convert <br> tags to newlines
+				.replace(/<\/p>/g, '\n') // Convert </p> tags to newlines
+				.replace(/<[^>]*>/g, '') // Remove any remaining HTML tags
+				.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1'); // Remove markdown links
+
+			if (description) {
+				// Update the description textarea
+				const descriptionTextarea = document.getElementById('scc-ai-assisted-setup-wiz-business-description');
+				descriptionTextarea.value = formattedText;
+				quizAnswersStore.step1['business-description'] = formattedText;
+				sccAiAssistedSetupWizUpdateProgress(); // Update progress bar
+				updateQuizAnswersStore({ currentTarget: descriptionTextarea }, 'step1'); // Trigger check for continue button
+			} else {
+				alert('Failed to retrieve business details. Please try again.');
+				descriptionWrapper.classList.add('d-none'); // Hide wrapper if failed
+			}
+		})
+		.catch(error => {
+			console.error('Error retrieving business details:', error);
+			alert('An error occurred. Please try again.');
+			descriptionWrapper.classList.add('d-none'); // Hide wrapper if failed
+		})
+		.finally(() => {
+			// Re-enable the button and hide loader
+			retrieveBtn.disabled = false;
+			loader.classList.add('scc-hidden');
+		});
+}
+
+window.sccRetrieveBusinessDetails = sccRetrieveBusinessDetails;
+
+function sccDisplayBusinessInfoMessage() {
+
+	const requiredUrl = 'scc-premium-demo.com';
+	console.log(window.location.href);
+    // Check if we're NOT on the required URL
+    if (!window.location.href.includes(requiredUrl)) {
+        console.log('SCC Info Script: Not on the required URL (' + requiredUrl + '). Skipping message display.');
+        return; // Exit the function if the URL doesn't match
+    }
+    // --- Find the Target Element to Insert After ---
+    setTimeout(() => {
+        const targetWrapper = document.querySelector('.scc-product-choices-wrapper');
+
+        // Only proceed if the target wrapper exists
+        if (targetWrapper) {
+
+            // --- Check if message already exists (to avoid duplicates if startSetupWizard is called again) ---
+            if (document.getElementById('scc-inline-business-info-message')) {
+                // Optionally make it visible again if it was hidden
+                document.getElementById('scc-inline-business-info-message').style.display = 'block';
+                return; // Don't create another one
+            }
+
+            // --- Create the Info Message Element ---
+            const infoMessageDiv = document.createElement('div');
+            infoMessageDiv.id = 'scc-inline-business-info-message'; // Unique ID
+            // Basic styling for the message - adjust as needed
+            infoMessageDiv.style.padding = '10px';
+            infoMessageDiv.style.marginTop = '15px'; // Add some space above
+            infoMessageDiv.style.backgroundColor = '#e7f3fe'; // Light blue background
+            infoMessageDiv.style.color = '#0a58ca'; // Darker blue text
+            infoMessageDiv.style.border = '1px solid #b6d4fe'; // Blue border
+            infoMessageDiv.style.borderRadius = '4px';
+            infoMessageDiv.style.fontSize = '14px';
+            infoMessageDiv.style.fontFamily = 'sans-serif';
+            infoMessageDiv.style.display = 'block'; // Initially visible
+
+            // --- Create Message Content ---
+            infoMessageDiv.textContent = 'Tip: Please enter your current business name and your website URL in the fields below to help us personalize your calculator.';
+
+            // --- Insert the Message After the Target Wrapper ---
+            targetWrapper.insertAdjacentElement('afterend', infoMessageDiv);
+
+            // --- Find the Button to Trigger Hiding ---
+            const retrieveButton = document.getElementById('scc-retrieve-business-details-btn');
+
+            if (retrieveButton) {
+                // Make sure we don't add the listener multiple times
+                retrieveButton.removeEventListener('click', sccHideInfoMessageOnClick); // Remove previous if any
+                retrieveButton.addEventListener('click', sccHideInfoMessageOnClick);
+            } else {
+                //console.warn('SCC Info Script: Button with ID "scc-retrieve-business-details-btn" not found on wizard start. The info message will not auto-hide.');
+            }
+
+        } else {
+            //console.warn('SCC Info Script: Element with class "scc-product-choices-wrapper" not found on wizard start. Cannot display the info message.');
+        }
+    }, 100); // Small delay (100ms) to allow template rendering, adjust if needed
+}
+window.sccDisplayBusinessInfoMessage = sccDisplayBusinessInfoMessage;
+// Helper function to avoid listener duplication if button is recreated
+function sccHideInfoMessageOnClick() {
+    const messageDiv = document.getElementById('scc-inline-business-info-message');
+    if (messageDiv) {
+        messageDiv.style.display = 'none';
     }
 }
+window.sccHideInfoMessageOnClick = sccHideInfoMessageOnClick;

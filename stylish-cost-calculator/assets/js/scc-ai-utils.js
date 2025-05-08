@@ -1,9 +1,8 @@
 /************************************************
  * AI Features / AI functions
 ************************************************/
-
 let sccAiWizardOptionListener = null;
-let sccAiWizardThread = [];
+let sccAiWizardThread = '';
 const sccAiDataSchema = [];
 
 const sccAiUtils = {
@@ -11,7 +10,14 @@ const sccAiUtils = {
 	quizRetakeButton: null,
 	optimizerStartSetupWizard: null,
 	aiWizardStatus: null,
-	alreadyLoaded: false,
+	aiWizardLoaderMessages: [
+		'Please wait, generating optimizations for your calculator...',
+		'Analyzing your pricing structure...',
+		'Gathering intelligent suggestions...',
+		'Almost there! Processing AI recommendations...',
+		'Creating personalized optimization insights...',
+	],
+	loaderMessageInterval: null,
 	/*
 	* AI Wizard Page States
 	* ============================
@@ -21,10 +27,6 @@ const sccAiUtils = {
 	* scc-ai-wizard-analytics-insights
 	*/
 	aiWizardInit: ( pageState = null ) => {
-		if ( sccAiUtils.alreadyLoaded ) {
-			return;
-		}
-		sccAiUtils.alreadyLoaded = true;
 		const aiWizardButton = document.getElementById( 'scc-ai-wizard-button' );
 		const aiWizardContainer = aiWizardButton?.closest( '.scc-ai-wizard-panel-container' );
 		sccAiUtils.aiWizardMenu = aiWizardContainer?.querySelector( '.scc-ai-wizard-menu' );
@@ -34,20 +36,17 @@ const sccAiUtils = {
 		const backToMenuButton = document.getElementById( 'scc-ai-wizard-back-btn' );
 		const chatPanel = aiWizardMenu?.querySelector( '.scc-ai-wizard-chat' );
 		sccAiUtils.quizRetakeButton = aiWizardMenu?.querySelector( '#scc-ai-wizard-retake' );
+		const retakeText = sccAiUtils.quizRetakeButton?.querySelector( '.scc-ai-wizard-retake-text' );
 		const quizRetakeButton = sccAiUtils.quizRetakeButton;
-		if ( typeof(sccBackendStore) !== 'undefined' && sccBackendStore.currentCalculatorSetupWizardData.__quizAnswersStore ) {
-			if (quizRetakeButton) {
-				quizRetakeButton.textContent = 'Redo Setup Wizard';
-			}
-		} else {
-			if (quizRetakeButton) {
-				quizRetakeButton.textContent = 'Start Setup Wizard';
-			}
-		}
+		 if ( sccBackendStore.currentCalculatorSetupWizardData.__quizAnswersStore ) {
+		 	retakeText.textContent = 'Redo Setup Wizard';
+		 } else {
+		 	retakeText.textContent = 'Start Setup Wizard';
+		 }
+
 		if ( typeof(sccBackendStore) !== 'undefined' && sccBackendStore.config.sections ) {
 			sccAiUtils.updateMultiplierGUI(sccBackendStore.config.sections);
 		}
-
 
 		sccAiUtils.optimizerStartSetupWizard = aiWizardMenu?.querySelector( '#scc-ai-wizard-consider-setup' );
 		const optimizerStartSetupWizard = sccAiUtils.optimizerStartSetupWizard;
@@ -59,8 +58,6 @@ const sccAiUtils = {
 			'scc-ai-wizard-optimize-form',
 			'scc-ai-wizard-advanced-pricing-formula',
 			'scc-ai-wizard-analytics-insights',
-			'scc-ai-wizard-crisp-chat',
-			'scc-ai-wizard-intelligent-qa',
 		];
 
 		if ( aiWizardButton ) {
@@ -82,7 +79,6 @@ const sccAiUtils = {
 				resetButton.addEventListener( 'click', resetClickHandler );
 				resetButton.hasClickListener = true;
 			}
-
 			const backToMenuClickHandler = () => sccAiUtils.backToMenu( backToMenuButton, chatPanel );
 			if ( ! backToMenuButton.hasClickListener ) {
 				backToMenuButton.addEventListener( 'click', backToMenuClickHandler );
@@ -176,6 +172,7 @@ const sccAiUtils = {
 		refreshButton.classList.remove( 'scc-hidden' );
 
 		sendButton.setAttribute( 'data-option-type', aiOptionType );
+
 		sccAiUtils.insertAiChatMessage( sendButton, null, aiOptionType, customStartingAiMessage );
 
 		if ( sccAiWizardOptionListener ) {
@@ -197,9 +194,49 @@ const sccAiUtils = {
 		// Add current event listener
 		textField.addEventListener( 'keydown', keydownHandler );
 	},
+	blockAIWizardCloseActions: (blockStatus = true) => {
+		const menu = document.querySelector( '.scc-ai-wizard-menu' );
+		const closeButton = menu.querySelector( '.scc-ai-close-btn' );
+		const backButton = menu.querySelector('.scc-ai-back-btn');
+		if ( blockStatus ) {
+			if ( backButton ) {
+				backButton.setAttribute( 'disabled', true );
+			}
+			if ( closeButton ) {
+				closeButton.setAttribute( 'disabled', true );
+			}
+		} else {
+			if ( backButton ) {
+				backButton.removeAttribute( 'disabled' );
+			}
+			if ( closeButton ) {
+				closeButton.removeAttribute( 'disabled' );
+			}
+		}
+	},
+	blockAIWizardCloseActions: (blockStatus = true) => {
+		const menu = document.querySelector( '.scc-ai-wizard-menu' );
+		const closeButton = menu.querySelector( '.scc-ai-close-btn' );
+		const backButton = menu.querySelector('.scc-ai-back-btn');
+		if ( blockStatus ) {
+			if ( backButton ) {
+				backButton.setAttribute( 'disabled', true );
+			}
+			if ( closeButton ) {
+				closeButton.setAttribute( 'disabled', true );
+			}
+		} else {
+			if ( backButton ) {
+				backButton.removeAttribute( 'disabled' );
+			}
+			if ( closeButton ) {
+				closeButton.removeAttribute( 'disabled' );
+			}
+		}
+	},
 	aiWizardRequest: ( optionType, regenerate = false ) => {
 		const menu = document.querySelector( '.scc-ai-wizard-menu' );
-		const inputs = menu.querySelector( '.scc-ai-assistant-inputs' );
+		const inputs = menu?.querySelector( '.scc-ai-assistant-inputs' );
 		const prompt = inputs?.querySelector( '.scc-ai-assistant-text-field' );
 		const sendButton = inputs?.querySelector( '.scc-ai-assistant-send-btn' );
 		const loader = menu.querySelector( '.scc-ai-wizard-loader-container' );
@@ -210,6 +247,7 @@ const sccAiUtils = {
 		let userPrompt = prompt?.value;
 
 		let promptData = null;
+		
 		if ( optionType === 'optimize-form' ) {
 			const wizardData = sccAiUtils.getSetupWizardData( 'industry-questions' );
 			if ( wizardData ) {
@@ -232,6 +270,8 @@ const sccAiUtils = {
 
 			userPrompt = JSON.stringify( promptData );
 			loader.classList.remove( 'scc-hidden' );
+			sccAiUtils.startLoaderMessageRotation(loader);
+			sccAiUtils.blockAIWizardCloseActions( true );
 			if ( regenerate === true ) {
 				sccAiUtils.regenerateFormOptimizerResponse();
 			}
@@ -248,12 +288,11 @@ const sccAiUtils = {
 			if ( regenerate === true ) {
 				sccAiUtils.regenerateSetupWizardStepByStep();
 			}
+			sccAiUtils.startLoaderMessageRotation(loaderSetupWizard);
+			sccAiUtils.blockAIWizardCloseActions( true );
 		} else {
 			userPrompt = prompt?.value;
-			sccAiWizardThread.push( {
-				role: 'user',
-				content: userPrompt,
-			} );
+
 			sccAiUtils.insertUserMessage( sendButton, prompt );
 		}
 
@@ -271,6 +310,7 @@ const sccAiUtils = {
 			}
 			loader.classList.add( 'scc-hidden' );
 			loaderSetupWizard.classList.add( 'scc-hidden' );
+			sccAiUtils.stopLoaderMessageRotation();
 		} else {
 			// Ajax call
 
@@ -280,7 +320,7 @@ const sccAiUtils = {
 				calculator_id: sccAiUtils.getCalcId(),
 				prompt: userPrompt,
 				type: optionType,
-				thread: JSON.stringify( sccAiWizardThread ),
+				thread: sccAiWizardThread,
 				metadata: aiWizardMetadata,
 			};
 			const action = 'scc_ai_wizard_request';
@@ -309,9 +349,15 @@ const sccAiUtils = {
 					}
 					loader.classList.add( 'scc-hidden' );
 					loaderSetupWizard.classList.add( 'scc-hidden' );
+					sccAiUtils.stopLoaderMessageRotation();
+					sccAiUtils.blockAIWizardCloseActions( false );
 				} )
 				.catch( ( error ) => {
 					console.error( 'Error:', error );
+					loader.classList.add( 'scc-hidden' );
+					loaderSetupWizard.classList.add( 'scc-hidden' );
+					sccAiUtils.stopLoaderMessageRotation();
+					sccAiUtils.blockAIWizardCloseActions( false );
 				} );
 		}
 	},
@@ -320,6 +366,8 @@ const sccAiUtils = {
 		const loader = responseContainer.querySelector( '.scc-setup-wizard-loader' );
 		const oldResponse = responseContainer.querySelector( '.scc-ai-chat-bubble-wizard' );
 		loader.classList.remove( 'scc-hidden' );
+		sccAiUtils.startLoaderMessageRotation(loader);
+		sccAiUtils.blockAIWizardCloseActions( true );
 		if ( oldResponse ) {
 			oldResponse.remove();
 		}
@@ -329,6 +377,8 @@ const sccAiUtils = {
 		const loader = responseContainer.closest( '.scc-ai-wizard-menu-body' ).querySelector( '.scc-ai-wizard-loader-container' );
 		const oldResponse = responseContainer.querySelector( '.scc-ai-chat-bubble-wizard' );
 		loader.classList.remove( 'scc-hidden' );
+		sccAiUtils.startLoaderMessageRotation(loader);
+		sccAiUtils.blockAIWizardCloseActions( true );
 		if ( oldResponse ) {
 			oldResponse.remove();
 		}
@@ -353,7 +403,7 @@ const sccAiUtils = {
 		return aiData ? JSON.stringify( aiData ) : null;
 	},
 	resetChat: ( $this ) => {
-		sccAiWizardThread = [];
+		sccAiWizardThread = '';
 		const chat = $this.closest( '.scc-ai-assistant-chat' ) || $this.closest( '.scc-ai-wizard-menu' );
 		const suggestions = chat.querySelectorAll( '.scc-ai-response-option' );
 		const bubbles = chat.querySelectorAll( '.scc-ai-chat-bubble' );
@@ -390,17 +440,19 @@ const sccAiUtils = {
 		const aiLoader = aiChatContainer.querySelector( '.scc-ai-response-loader' );
 		const regenerateButton = aiChatContainer.querySelector( '.scc-ai-action-regenerate' );
 		const message = `
-			<div class="scc-ai-chat-bubble scc-ai-chat-bubble-user">
+            <div class="scc-ai-chat-bubble scc-ai-chat-bubble-user">
+                
                 <div class="scc-ai-chat-bubble-content">
-					<div class="scc-ai-chat-bubble-avatar">
-                    	<img src="${ userAvatar }" alt="">
-                	</div>
+				<div class="scc-ai-chat-bubble-avatar">
+                    <img src="${ userAvatar }" alt="">
+                </div>
                     <div class="scc-ai-chat-bubble-text mt-2">
                         <p>${ userPrompt }</p>
                     </div>
                 </div>
             </div>
         `;
+
 		aiChat.insertAdjacentHTML( 'beforeend', message );
 		aiChat.scrollTop = aiChat.scrollHeight;
 		if ( regenerateButton ) {
@@ -410,6 +462,7 @@ const sccAiUtils = {
 		prompt.setAttribute( 'disabled', true );
 		$this.setAttribute( 'disabled', true );
 		aiLoader.classList.remove( 'scc-hidden' );
+		sccAiUtils.blockAIWizardCloseActions( true );
 	},
 	insertAISuggestionMessage: ( $this, text ) => {
 		text = marked.parse( text );
@@ -437,6 +490,7 @@ const sccAiUtils = {
 		let aiSmallAvatarVisibility = 'scc-hidden';
 		let aiHideAiAvatar = '';
 		let aiMessageClasses = 'scc-ai-chat-bubble-text';
+		let aiAddElementsButton = '';
 
 		if ( ! aiResponse ) {
 			if ( customMessage ) {
@@ -447,16 +501,14 @@ const sccAiUtils = {
 			}
 		} else {
 			const aiResponseObject = JSON.parse( aiResponse );
+
 			if ( aiResponseObject?.ai_response?.ai_message === null && aiResponseObject?.ai_response?.error ) {
 				aiMessageText = aiResponseObject.ai_response.error;
 				sccAiUtils.enableInputsAiWizard( $this );
 				aiMessageClasses = 'scc-ai-chat-bubble-text scc-ai-chat-bubble-text-warning';
 			} else {
 				if ( optionType === 'suggest-elements' ) {
-					sccAiWizardThread.push( {
-						role: 'assistant',
-						content: aiResponseObject.ai_response.ai_raw_response,
-					} );
+					sccAiWizardThread = aiResponseObject.ai_response.thread;
 				}
 				aiMessageText = aiResponseObject.ai_response.ai_message;
 
@@ -465,10 +517,16 @@ const sccAiUtils = {
 					aiHideActionsClass = '';
 					aiHideAiAvatar = 'scc-hidden';
 					aiSmallAvatarVisibility = '';
+					if ( optionType === 'suggest-elements') {
+						aiAddElementsButton = '<button class="scc-ai-wizard-add-elements-btn btn btn-primary scc-ai-wizard-primary-button d-flex align-items-center me-2" onclick="sccAiUtils.addElementsWithAi(this);"><i class="scc-btn-spinner scc-save-btn-spinner scc-hidden ms-0"></i><span class="scc-ai-button-text"> + Add Elements with AI</span></button>';
+					}
+					if ( optionType === 'setup-wizard' ) {
+						aiAddElementsButton = '<button class="scc-ai-wizard-add-elements-btn btn btn-primary scc-ai-wizard-primary-button d-flex align-items-center me-2" onclick="sccAiUtils.addElementsWithAi(this, true);"><i class="scc-btn-spinner scc-save-btn-spinner scc-hidden ms-0"></i><span class="scc-ai-button-text"> + Build Calculator with AI</span></button>';
+					}
 				}
 
 				sccAiUtils.enableInputsAiWizard( aiChat );
-
+				sccAiUtils.blockAIWizardCloseActions( false );
 				sccAiUtils.checkAiCredits( 'edit-calculator-page' ).then( ( credits ) => {
 					sccAiUtils.updateCreditsIndicator( credits, creditIndicator );
 				} ).catch( ( error ) => {
@@ -482,14 +540,12 @@ const sccAiUtils = {
 		}
 		try {
 			const renderer = new marked.Renderer();
-			renderer.link = function(href, title, text) {
+			renderer.link = function( href, title, text ) {
 				const target = '_blank';
-				const link = `<a href="${href}" title="${title || ''}" target="${target}">${text}</a>`;
+				const link = `<a href="${ href }" title="${ title || '' }" target="${ target }">${ text }</a>`;
 				return link;
 			};
-			//aiMessageText = marked.parse( aiMessageText );
 			aiMessageText = marked.parse(aiMessageText, { renderer });
-			
 		} catch ( e ) {
 			aiHideActionsClass = '';
 			aiMessageText = 'An error occurred while processing the response. Please regenerate';
@@ -507,8 +563,9 @@ const sccAiUtils = {
 					<div class="scc-ai-message-actions ${ aiHideActionsClass }">
 					
 					<div class="scc-ai-copy-message-confirmation-container">
-						<a id="scc-ai-chat-regenerate-button" class="scc-ai-chat-action-button material-icons-outlined me-2" onclick="sccAiUtils.aiWizardRequest('${ requestType }', true);" title="Regenerate">refresh</a>
-						<a id="scc-ai-chat-copy-button" class="scc-ai-chat-action-button material-icons-outlined" onclick="sccAiUtils.copyAiResponseToClipboard(this);" title="Copy">copy</a>
+						${ aiAddElementsButton }
+						<a id="scc-ai-chat-copy-button" class="scc-ai-chat-action-button material-icons-outlined me-2" onclick="sccAiUtils.copyAiResponseToClipboard(this);" title="Copy">copy</a>
+						<a id="scc-ai-chat-regenerate-button" class="scc-ai-chat-action-button material-icons-outlined" onclick="sccAiUtils.aiWizardRequest('${ requestType }', true);" title="Regenerate">refresh</a>
 						<span class="scc-ai-copy-message-confirmation scc-hidden" >Copied!</span>
 					</div>
 					</div>
@@ -516,12 +573,18 @@ const sccAiUtils = {
 					<div class="scc-ai-chat-avatar-divider ${ aiHideAiAvatar }"></div>
 
                     <div class="${ aiMessageClasses }">
-                        ${ aiMessageText }
+						<div class="scc-ai-markdown-response">
+							${ aiMessageText }
+						</div>
                         ${ aiSuggestionText }
+						<div class="scc-ai-wizard-add-elements-container">
+							${ aiAddElementsButton }
+						</div>
                     </div>
                 </div>
             </div>
         `;
+
 		if ( optionType === 'optimize-form' ) {
 			aiFormOptimizer.insertAdjacentHTML( 'beforeend', message );
 			aiFormOptimizer.scrollTop = aiFormOptimizer.scrollHeight;
@@ -535,6 +598,108 @@ const sccAiUtils = {
 			accordionBody.insertAdjacentHTML( 'beforeend', message );
 			//aiSetupWizard.scrollTop = aiSetupWizard.scrollHeight;
 		}
+	},
+	addElementsWithAi: ( button, cleanCalculator = false ) => {
+		// Get all buttons with the class and disable them
+		const allButtons = document.querySelectorAll('.scc-ai-wizard-add-elements-btn');
+		allButtons.forEach(btn => {
+			btn.setAttribute('disabled', true);
+			const btnSpinner = btn.querySelector('.scc-save-btn-spinner');
+			if (btnSpinner) {
+				btnSpinner.classList.remove('scc-hidden');
+			}
+		});
+		
+		// Define loading states
+		const loadingStates = [
+			'Preparing elements',
+			'Configuring parameters',
+			'Verifying elements'
+		];
+		let currentState = 0;
+		
+		// Create interval to cycle through states
+		const stateInterval = setInterval(() => {
+			allButtons.forEach(btn => {
+				const btnText = btn.querySelector('.scc-ai-button-text') || btn.lastChild;
+				btnText.textContent = ` ${loadingStates[currentState]}`;
+			});
+			currentState = (currentState + 1) % loadingStates.length;
+		}, 2000);
+
+		const container = button.closest('.scc-ai-chat-bubble-wizard');
+		const aiResponse = container.querySelector('.scc-ai-markdown-response').innerText;
+
+		const schema = sccAiUtils.getCalculatorDataSchema();
+		const firstSection = schema.sections[0];
+		const firstSectionId = firstSection.sectionId;
+		const firstSubsectionId = firstSection.subsections[0].subsectionId;
+		const params = {
+			nonce: pageEditCalculator.nonce,
+			calculator_id: sccAiUtils.getCalcId(),
+			section_target_id: firstSectionId,
+			clean_calculator: cleanCalculator,
+			first_subsection_id: firstSubsectionId,
+			//subsection_target_id: firstSubsectionId,
+			ai_response: aiResponse,
+		};
+		const action = 'scc_ai_wizard_add_elements';
+		const formData = new FormData();
+		formData.append('request_data', JSON.stringify(params));
+
+		const ajaxRoute = ajaxurl + '?action=' + action + '&nonce=' + pageEditCalculator.nonce;
+		//showLoadingChanges();
+		fetch(ajaxRoute, {
+			method: 'POST',
+			body: formData, // Send the formData
+		})
+			.then((response) => response.json())
+			.then((data) => {
+				clearInterval(stateInterval);
+				if(cleanCalculator === true) {
+					sccAiUtils.addCalculatorSettingsWithAi(button);
+				} else {
+					location.reload();
+				}
+			})
+			.catch((error) => {
+				clearInterval(stateInterval);
+				console.error('Error:', error);
+			});
+	},
+	addCalculatorSettingsWithAi: ( button ) => {
+		button.setAttribute( 'disabled', true );
+		const spinner = button.querySelector( '.scc-save-btn-spinner' );
+		spinner.classList.remove( 'scc-hidden' );
+		const buttonText = button.querySelector('.scc-ai-button-text') || button.lastChild;
+		buttonText.textContent = ' Updating Calculator Settings';
+
+		const container = button.closest( '.scc-ai-chat-bubble-wizard' );
+		const aiResponse = container.querySelector( '.scc-ai-markdown-response' ).innerText;
+
+		const params = {
+			nonce: pageEditCalculator.nonce,
+			calculator_id: sccAiUtils.getCalcId(),
+			ai_requested_settings: aiResponse,
+		};
+		const action = 'scc_ai_wizard_add_calculator_settings';
+		const formData = new FormData();
+		formData.append( 'request_data', JSON.stringify( params ) );
+
+		const ajaxRoute = ajaxurl + '?action=' + action + '&nonce=' + pageEditCalculator.nonce;
+		//showLoadingChanges();
+		fetch( ajaxRoute, {
+			method: 'POST',
+			body: formData, // Send the formData
+		} )
+			.then( ( response ) => response.json() )
+			.then( ( data ) => {
+				console.log( data );
+				location.reload();
+			} )
+			.catch( ( error ) => {
+				console.error( 'Error:', error );
+			} );
 	},
 	copyAiResponseToClipboard: ( $this ) => {
 		// Get the content of the div
@@ -581,7 +746,7 @@ const sccAiUtils = {
 	getCalcId: () => {
 		const urlParams = new URLSearchParams( window.location.search );
 		const calcId = urlParams.get( 'id_form' );
-		return Number( calcId );
+		return calcId;
 	},
 	disableInputsAiWizard: ( $this, chatPanel = null ) => {
 		const chat = $this.closest( '.scc-ai-assistant-chat' ) || $this.closest( '.scc-ai-wizard-menu' );
@@ -781,6 +946,28 @@ const sccAiUtils = {
 			panel.classList.toggle( 'scc-hidden' );
 		}
 	},
+	getSiteInfoWithAi: async ( page = 'edit-calculator-page', siteURL = null ) => {
+		let nonce = '';
+		if( typeof pageEditCalculator !== 'undefined' && pageEditCalculator.nonce ) {
+			nonce = pageEditCalculator.nonce;
+		}else if( typeof pageAddCalculator !== 'undefined' && pageAddCalculator.nonce ) {
+			nonce = pageAddCalculator.nonce;
+		}
+		const businessDescriptionLoader = document.querySelector( '.scc-ai-assisted-setup-wiz-business-description-loader' );
+		businessDescriptionLoader.classList.remove( 'scc-hidden' );
+		const params = new URLSearchParams( {
+			action: 'scc_ai_get_site_info_with_ai',
+			nonce: nonce,
+			calculator_id: sccAiUtils.getCalcId(),
+			page: page,
+			siteURL: siteURL,
+		} );
+		const response = await fetch( `${ ajaxurl }?${ params }` );
+		const data = await response.json();
+		const dataResponse = data.data;
+
+		return dataResponse;
+	},
 	forceCloseAiWizardPanel: () => {
 		const panel = sccAiUtils.aiWizardMenu;
 		if ( panel ) {
@@ -818,41 +1005,8 @@ const sccAiUtils = {
 			return 0;
 		}
 	},
-	getCalculatorDataSchema: () => {
-		const calculatorId = sccAiUtils.getCalcId();
-		const calculatorName = document.getElementById( 'costcalculatorname' )?.value;
-		const schema = document.getElementById( 'scc-data-schema' );
-		let data = [];
-		if ( schema ) {
-			data = JSON.parse( schema.textContent );
-		}
-		const sections = data.map( ( section ) => ( {
-			sectionName: section.name,
-			sectionDescription: section.description,
-			elements: section.subsection.map( ( subsection ) =>
-				subsection.element.map( ( element ) => ( {
-					elementName: element.titleElement,
-					elementPrice: element.elementitems.length > 0 ? element.elementitems[ 0 ].price : null,
-					elementType: element.type,
-					elementDescription: element.elementitems.length > 0 ? element.elementitems[ 0 ].description : null,
-					elementItems: element.elementitems.map( ( item ) => ( {
-						itemName: item.name,
-						itemPrice: item.price,
-						itemDescription: item.description,
-					} ) ),
-				} ) ),
-			),
-		} ) );
-		// Add calculatorId and calculatorName at the beginning of extractedData
-		const result = {
-			calculatorId,
-			calculatorName,
-			sections,
-		};
-		return result;
-	},
 	updateCalculatorDataSchema: () => {
-		//const schema = document.getElementById( 'scc-data-schema' );
+		const schema = document.getElementById( 'scc-data-schema' );
 		const params = {
 			action: 'scc_update_calculator_data_schema',
 			nonce: pageEditCalculator.nonce,
@@ -876,159 +1030,211 @@ const sccAiUtils = {
 				} else {
 					console.error( 'Invalid response structure:', data );
 				}
-				sccBackendStore.config.sections = sections;
+				schema.textContent = sections;
+				const menu = document.querySelector( '.scc-ai-wizard-panel-container' );
+				sccAiUtils.loadAdvancedPricingFormulaElements( menu );
 				sccAiUtils.updateMultiplierGUI( data.schema );
 			} )
 			.catch( ( error ) => {
 				console.error( 'Error:', error );
 			} );
 	},
-
-	// this function is used to detect sliders, date or any multiplier element in the calculator data schema
-	updateMultiplierGUI: ( schema ) => {
-		if ( ! schema ) {
-			return;
+	getCalculatorDataSchema: () => {
+		const calculatorId = sccAiUtils.getCalcId();
+		const calculatorName = document.getElementById( 'costcalculatorname' )?.value;
+		const schema = document.getElementById( 'scc-data-schema' );
+		let data = [];
+		if ( schema ) {
+			data = JSON.parse( schema.textContent );
 		}
-		schema.forEach( ( section ) => {
-			section.subsection.forEach( ( subsection ) => {
+		const sections = data.map( ( section ) => ( {
+			sectionName: section.name,
+			sectionId: section.id,
+			sectionDescription: section.description,
+			subsections: section.subsection.map( ( subsection ) => ( {
+				subsectionId: subsection.id,
+				elements: subsection.element.map( ( element ) => ( {
+					elementName: element.titleElement,
+					elementPrice: element.elementitems.length > 0 ? element.elementitems[ 0 ].price : null,
+					elementType: element.type,
+					elementDescription: element.elementitems.length > 0 ? element.elementitems[ 0 ].description : null,
+					elementItems: element.elementitems.map( ( item ) => ( {
+						itemName: item.name,
+						itemPrice: item.price,
+						itemDescription: item.description,
+					} ) ),
+				} ) ),
+			} ) ),
+		} ) );
+		// Add calculatorId and calculatorName at the beginning of extractedData
+		const result = {
+			calculatorId,
+			calculatorName,
+			sections,
+		};
+		return result;
+	},
+	// this function is used to detect sliders, date or any multiplier element in the calculator data schema
+	updateMultiplierGUI: (schema) => {
+		if (!schema) {
+			const sccDataSchema = document.getElementById('scc-data-schema');
+			if (sccDataSchema) {
+				schema = JSON.parse(sccDataSchema.textContent);
+			} else {
+				return;
+			}
+		}
+		schema.forEach((section) => {
+			section.subsection.forEach((subsection) => {
 				let multiplier = false;
-				const subsectionInput = document.querySelector( 'input.input_subsection_id[value="' + subsection.id + '"]' );
-				const subsectionArea = subsectionInput?.closest( '.boardOption' )?.querySelector( '.subsection-area' );
+				const subsectionInput = document.querySelector('input.input_subsection_id[value="' + subsection.id + '"]');
+				const subsectionArea = subsectionInput?.closest('.boardOption')?.querySelector('.subsection-area');
 				const elementCount = subsection.element ? subsection.element?.length : 0;
-				subsection.element.forEach( ( element ) => {
+				
+				let countableElements = 0;
+				let hasSlider = false;
+	
+				subsection.element.forEach((element) => {
 					let elementIsMultiplier = false;
 					let noCostElement = false;
-					if ( element.type === 'comment box' || element.type === 'signature box' || element.type === 'file upload' || element.type === 'texthtml' ) {
+					if (element.type === 'comment box' || element.type === 'signature box' || element.type === 'file upload' || element.type === 'texthtml') {
 						noCostElement = true;
+					} else {
+						countableElements++;
 					}
-					if ( element.type === 'slider' ) {
+					if (element.type === 'slider') {
 						elementIsMultiplier = true;
 						multiplier = true;
-					} else if ( element.type === 'date' ) {
-						if ( element.value6 && element.value1 === 'date_range' ) {
+						hasSlider = true;
+					} else if (element.type === 'date') {
+						if (element.value6 && element.value1 === 'date_range') {
 							const escapedJsonString = element.value6;
-							const unescapedJsonString = JSON.parse( `"${ escapedJsonString }"` );
-							const jsonObject = JSON.parse( unescapedJsonString );
-							if ( jsonObject.date_range_pricing_structure &&
-								( jsonObject.date_range_pricing_structure === 'quantity_mod' ||
-								jsonObject.date_range_pricing_structure === 'quantity_modifier_and_unit_price' )
+							const unescapedJsonString = JSON.parse(`"${escapedJsonString}"`);
+							const jsonObject = JSON.parse(unescapedJsonString);
+							if (jsonObject.date_range_pricing_structure &&
+								(jsonObject.date_range_pricing_structure === 'quantity_mod' ||
+								jsonObject.date_range_pricing_structure === 'quantity_modifier_and_unit_price')
 							) {
 								elementIsMultiplier = true;
 								multiplier = true;
 							}
 						}
 					}
-					const elementInput = subsectionArea.querySelector( 'input.input_id_element[value="' + element.id + '"]' );
-					const elementContainer = elementInput?.closest( '.elements_added' );
-					const elementLinkLine = elementContainer?.querySelector( '.scc-link-line' );
-
+					const elementInput = subsectionArea.querySelector('input.input_id_element[value="' + element.id + '"]');
+					const elementContainer = elementInput?.closest('.elements_added');
+					const elementLinkLine = elementContainer?.querySelector('.scc-link-line');
+	
 					// Add last element connector class
-					if ( elementLinkLine && ! elementIsMultiplier ) {
-						elementLinkLine.classList.remove( 'scc-invert-element-connector' );
-						elementLinkLine.classList.remove( 'scc-last-element-connector' );
-						if ( multiplier ) {
-							elementLinkLine.classList.add( 'scc-invert-element-connector' );
+					if (elementLinkLine && !elementIsMultiplier) {
+						elementLinkLine.classList.remove('scc-invert-element-connector');
+						elementLinkLine.classList.remove('scc-last-element-connector');
+						if (multiplier) {
+							elementLinkLine.classList.add('scc-invert-element-connector');
 						}
 					}
 					// Add line if the element does not have a link line and is not a multiplier
-					if ( ! elementLinkLine && ! elementIsMultiplier ) {
-						if ( elementContainer ) {
+					if (!elementLinkLine && !elementIsMultiplier) {
+						if (elementContainer) {
 							const connectorExtraClass = multiplier ? 'scc-invert-element-connector' : '';
-							const html = `<div class="scc-line-hider"></div><div class="scc-element-connector-line scc-link-line ${ connectorExtraClass }"></div>`;
+							const html = `<div class="scc-line-hider"></div><div class="scc-element-connector-line scc-link-line ${connectorExtraClass}"></div>`;
 							const htmlNoCost = `<div class="scc-line-hider"></div>`;
-							if ( ! noCostElement ) {
-								elementContainer.insertAdjacentHTML( 'afterbegin', html );
+							if (!noCostElement) {
+								elementContainer.insertAdjacentHTML('afterbegin', html);
 							} else {
-								elementContainer.insertAdjacentHTML( 'afterbegin', htmlNoCost );
+								elementContainer.insertAdjacentHTML('afterbegin', htmlNoCost);
 							}
 						}
 					}
 					// Add Line if the element is a multiplier and does not have a link line
-					if ( elementIsMultiplier && ! elementLinkLine ) {
-						const editorContainer = document.querySelector( '.scc-pane-container' );
-						const dataLinkIcon = editorContainer.getAttribute( 'data-link-icon' );
-						if ( elementContainer ) {
+					if (elementIsMultiplier && !elementLinkLine) {
+						const editorContainer = document.querySelector('.scc-pane-container');
+						const dataLinkIcon = editorContainer.getAttribute('data-link-icon');
+						if (elementContainer) {
 							const html = `<div class="scc-line-hider"></div>
 										<div class="scc-multiplier-connector-line scc-link-line scc-hidden">
 											<div class="scc-multiplier-connector-link" data-setting-tooltip-type="element-multiplier-tt" data-bs-original-title title>
-												<span class="scc-icn-wrapper"><img src="${ dataLinkIcon }"></span>
+												<span class="scc-icn-wrapper"><img src="${dataLinkIcon}"></span>
 											</div>
 										</div>`;
-							elementContainer.insertAdjacentHTML( 'afterbegin', html );
-							const tooltipNode = elementContainer.querySelector( '.scc-multiplier-connector-link' );
-							applySettingTooltip( tooltipNode );
+							elementContainer.insertAdjacentHTML('afterbegin', html);
+							const tooltipNode = elementContainer.querySelector('.scc-multiplier-connector-link');
+							applySettingTooltip(tooltipNode);
 						}
 					}
-				} );
-
+				});
+	
 				// Out of subsection loop
-				subsectionArea.querySelectorAll( '.scc-line-hider' ).forEach( ( line ) => {
-					line.classList.remove( 'scc-first-element-subsection' );
-					line.classList.remove( 'scc-last-element-subsection' );
-				} );
-
-				const elements = subsectionArea.querySelectorAll( '.elements_added' );
-
-				if ( elements.length > 0 ) {
-					const noCostElementTypes = [ 'comment box', 'signature box', 'file upload', 'texthtml' ];
-
+				subsectionArea.querySelectorAll('.scc-line-hider').forEach((line) => {
+					line.classList.remove('scc-first-element-subsection');
+					line.classList.remove('scc-last-element-subsection');
+				});
+	
+				const elements = subsectionArea.querySelectorAll('.elements_added');
+	
+				if (elements.length > 0) {
+					const noCostElementTypes = ['comment box', 'signature box', 'file upload', 'texthtml'];
+	
 					let firstCostElementIndex = 0;
 					let lastCostElementIndex = elements.length - 1;
-					const isNoCostElement = ( elementType ) => noCostElementTypes.includes( elementType );
-					for ( let i = 0; i < elements.length; i++ ) {
-						const elementType = elements[ i ].querySelector( '[data-element-setup-type]' )?.getAttribute( 'data-element-setup-type' );
-						if ( ! isNoCostElement( elementType ) ) {
+					const isNoCostElement = (elementType) => noCostElementTypes.includes(elementType);
+					for (let i = 0; i < elements.length; i++) {
+						const elementType = elements[i].querySelector('[data-element-setup-type]')?.getAttribute('data-element-setup-type');
+						if (!isNoCostElement(elementType)) {
 							firstCostElementIndex = i;
 							break;
 						}
 					}
-
-					for ( let i = elements.length - 1; i >= 0; i-- ) {
-						const elementType = elements[ i ].querySelector( '[data-element-setup-type]' )?.getAttribute( 'data-element-setup-type' );
-						if ( ! isNoCostElement( elementType ) ) {
+	
+					for (let i = elements.length - 1; i >= 0; i--) {
+						const elementType = elements[i].querySelector('[data-element-setup-type]')?.getAttribute('data-element-setup-type');
+						if (!isNoCostElement(elementType)) {
 							lastCostElementIndex = i;
 							break;
 						}
 					}
-
-					elements.forEach( ( element, index ) => {
-						const lineHider = element.querySelector( '.scc-line-hider' );
-						const elementType = element.querySelector( '[data-element-setup-type]' )?.getAttribute( 'data-element-setup-type' );
-
-						if ( isNoCostElement( elementType ) ) {
-							if ( index > firstCostElementIndex && index < lastCostElementIndex ) {
-								element.querySelectorAll( '.scc-line-hider' ).forEach( ( hider ) => hider.remove() );
+	
+					elements.forEach((element, index) => {
+						const lineHider = element.querySelector('.scc-line-hider');
+						const elementType = element.querySelector('[data-element-setup-type]')?.getAttribute('data-element-setup-type');
+	
+						if (isNoCostElement(elementType)) {
+							if (index > firstCostElementIndex && index < lastCostElementIndex) {
+								element.querySelectorAll('.scc-line-hider').forEach((hider) => hider.remove());
 							} else {
-								lineHider?.classList.add( 'scc-no-cost-element' );
+								lineHider?.classList.add('scc-no-cost-element');
 							}
 						} else {
-							if ( index === firstCostElementIndex ) {
-								lineHider?.classList.add( 'scc-first-element-subsection' );
+							if (index === firstCostElementIndex) {
+								lineHider?.classList.add('scc-first-element-subsection');
 							}
-							if ( index === lastCostElementIndex ) {
-								lineHider?.classList.add( 'scc-last-element-subsection' );
+							if (index === lastCostElementIndex) {
+								lineHider?.classList.add('scc-last-element-subsection');
 							}
 						}
-
-						if ( index < firstCostElementIndex ) {
-							lineHider?.classList.add( 'scc-first-element-subsection-no-cost' );
+	
+						if (index < firstCostElementIndex) {
+							lineHider?.classList.add('scc-first-element-subsection-no-cost');
 						}
-						if ( index > lastCostElementIndex ) {
-							lineHider?.classList.add( 'scc-last-element-subsection-no-cost' );
+						if (index > lastCostElementIndex) {
+							lineHider?.classList.add('scc-last-element-subsection-no-cost');
 						}
-					} );
+					});
 				}
-				if ( multiplier && elementCount > 1 ) {
-					subsectionArea.querySelectorAll( '.scc-link-line' ).forEach( ( line ) => {
-						line.classList.remove( 'scc-hidden' );
-					} );
-				} else if ( ! multiplier || elementCount <= 1 ) {
-					subsectionArea.querySelectorAll( '.scc-link-line' ).forEach( ( line ) => {
-						line.classList.add( 'scc-hidden' );
-					} );
+				if (hasSlider && countableElements <= 1) {
+					subsectionArea.querySelectorAll('.scc-link-line').forEach((line) => {
+						line.classList.add('scc-hidden');
+					});
+				} else if (multiplier && elementCount > 1) {
+					subsectionArea.querySelectorAll('.scc-link-line').forEach((line) => {
+						line.classList.remove('scc-hidden');
+					});
+				} else if (!multiplier || elementCount <= 1) {
+					subsectionArea.querySelectorAll('.scc-link-line').forEach((line) => {
+						line.classList.add('scc-hidden');
+					});
 				}
-			} );
-		} );
+			});
+		});
 	},
 	switchMultiplierLines: ( element, multiplier ) => {
 		const editorContainer = document.querySelector( '.scc-pane-container' );
@@ -1059,6 +1265,30 @@ const sccAiUtils = {
 		const suggesterButton = document.getElementById( 'scc-ai-wizard-suggest-element' );
 		if ( suggesterButton ) {
 			suggesterButton.click();
+		}
+	},
+	startLoaderMessageRotation: (loaderContainer) => {
+		// Clear any existing interval
+		sccAiUtils.stopLoaderMessageRotation();
+		
+		// Get the message element
+		const messageElement = loaderContainer.querySelector('.scc-ai-wizard-loader-description');
+		if (!messageElement) return;
+		
+		// Set initial message
+		let currentIndex = 0;
+		messageElement.textContent = sccAiUtils.aiWizardLoaderMessages[currentIndex];
+		
+		// Start rotation
+		sccAiUtils.loaderMessageInterval = setInterval(() => {
+			currentIndex = (currentIndex + 1) % sccAiUtils.aiWizardLoaderMessages.length;
+			messageElement.textContent = sccAiUtils.aiWizardLoaderMessages[currentIndex];
+		}, 4000);
+	},
+	stopLoaderMessageRotation: () => {
+		if (sccAiUtils.loaderMessageInterval) {
+			clearInterval(sccAiUtils.loaderMessageInterval);
+			sccAiUtils.loaderMessageInterval = null;
 		}
 	},
 };

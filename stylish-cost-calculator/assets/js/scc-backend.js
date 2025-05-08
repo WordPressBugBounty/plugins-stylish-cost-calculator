@@ -1564,7 +1564,6 @@ const sccBackendUtils = {
 				btn.querySelector( '.scc-saving-element-btn-text' )?.classList.remove( 'scc-hidden' );
 				btn.classList.add( 'btn-warning' );
 				btn.classList.remove( 'btn-disabled' );
-				btn.classList.remove( 'scc-hidden' );
 			} );
 			//updateBackendSideConfigWithDebounce( getCalcId() );
 		} else {
@@ -1574,7 +1573,6 @@ const sccBackendUtils = {
 				btn.querySelector( '.scc-saving-element-btn-text' )?.classList.add( 'scc-hidden' );
 				btn.classList.remove( 'btn-warning' );
 				btn.classList.add( 'btn-disabled' );
-				btn.classList.add( 'scc-hidden' );
 			} );
 		}
 	},
@@ -1640,7 +1638,8 @@ const settingTooltips = {
 		<div class="example-description text-start">
 		  <br>
 		  <a href="${ sccHelpdeskLinks[ 'feature-backup-restore' ] }" target="_blank"><div class="btn btn-primary btn-lg">Learn More</div></a>
-		${premiumMessage}
+		<br><br>
+		  ${premiumMessage}
 		</div>`,
 	},
 	'restore-backup-tt': {
@@ -1649,7 +1648,8 @@ const settingTooltips = {
 		<div class="example-description text-start">
 		  <br>
 		  <a href="${ sccHelpdeskLinks[ 'feature-backup-restore' ] }" target="_blank"><div class="btn btn-primary btn-lg">Learn More</div></a>
-		${premiumMessage}
+		<br><br>
+		  ${premiumMessage}
 		</div>`,
 	},
 	'element-multiplier-tt': {
@@ -2242,7 +2242,8 @@ const settingTooltips = {
 				  <div class="example-description text-start">
 				  <h5 class="mt-3">Note</h5>
 					  <p><strong>Premium version: </strong>100 credits per month</p>
-					  <p><strong>Free version: </strong>5 credits per month</p>
+					  <p><strong>Free version: </strong>25 credits one time only</p>
+					  <a href="${ sccHelpdeskLinks[ 'feature-scc-ai-wizard' ] }" target="_blank"><div class="btn btn-primary btn-lg">Learn More</div></a>
 				  <br>
 				  <span class="scc-premium-msg"><i class="material-icons scc-icon-tooltips pe-1">info_outline</i> Increase your credits with the <b><a class="scc-text-orange px-1" href="https://stylishcostcalculator.com/" >premium license</a></b> </span>
 				  </div>`
@@ -2645,7 +2646,6 @@ const elementTooltips = {
 			<p class='text-start mb-0'>3. Use conditional logic to alert people under certain conditions</p>
 					  <br>
 					  <a href="${ sccHelpdeskLinks[ 'element-text-html-field' ] }" target="_blank"><div class="btn btn-primary btn-lg">Learn more</div></a>
-					  <span class="w-100 d-block pt-3">${premiumMessage}</span>
 				  </div>`,
 		coverImage:
 			'images/tooltip-images/for-elements/infographics-html-plain-field.png',
@@ -3383,7 +3383,7 @@ function truncateElementTitle(str, n) {
 };
 function settings_scc_() {
 	let menuclass = document.querySelector('.scc-edit-nav-items-2')
-	menuclass.prepend(settings_el())
+	menuclass?.prepend(settings_el())
 
 }
 function settings_el() {
@@ -3481,7 +3481,7 @@ document.querySelectorAll('.add-element-btn.save_button').forEach(element => {
 function unabled(e) {
 	let premiumClass = e.classList.contains('scc-premium-element');
 	let o = e.innerText.trim()
-	if (o == 'File Upload' || o == 'Fee & Discount Adjuster' || o == 'Image Button' || o == 'Text/HTML Field' || o == 'Advanced Pricing Formula' || o == 'Date Picker' || o == 'Distance-Based Cost' || o == 'Signature Box') {
+	if (o == 'File Upload' || o == 'Fee & Discount Adjuster' || o == 'Image Button' || o == 'Advanced Pricing Formula' || o == 'Date Picker' || o == 'Distance-Based Cost' || o == 'Signature Box') {
 		let p = ''
 		let tooltipImageUrl = ''
 		switch (o) {
@@ -3493,9 +3493,6 @@ function unabled(e) {
 				break
 			case 'Image Button':
 				p = sccHelpdeskLinks[ 'element-image-buttons' ]
-				break
-			case 'Text/HTML Field':
-				p = sccHelpdeskLinks[ 'element-text-html-field' ]
 				break
 			case 'Advanced Pricing Formula':
 				p = sccHelpdeskLinks[ 'element-variable-math' ]
@@ -3892,15 +3889,18 @@ const handlePreviewDockMode = ( element, mode, event, scroll = true ) => {
 	const buttons = element.parentElement.querySelectorAll( '.btn' );
 	// remove btn-primary from all buttons
 	buttons.forEach( ( button ) => {
-		button.classList.remove( 'scc-btn-primary' );
+		button.classList.remove( 'scc-btn-white' );
 	} );
+
+	const aiWizardElementTabs = document.querySelectorAll( '.scc-element-ai-assistant-wrapper' );
+
 	if ( mode == 'bottom' ) {
 		calcEditorRoot.classList.add( 'preview-docked-bottom' );
 		calcEditorWrapper.classList.add( 'preview-docked-bottom' );
 		calcEditorRoot.classList.remove( 'd-flex' );
 		leftPane.classList.add( 'preview-docked-bottom' );
 		calcNameFieldWrapper.classList.add( 'p-0' );
-		element.classList.add( 'scc-btn-primary' );
+		element.classList.add( 'scc-btn-white' );
 		if ( event ) {
 			previewPane.classList.add( 'preview-docked-bottom' );
 		}
@@ -3908,6 +3908,11 @@ const handlePreviewDockMode = ( element, mode, event, scroll = true ) => {
 			previewPane.scrollIntoView( { behavior: 'smooth' } );
 			previewPane.scrollTop = previewPane.scrollHeight;
 		}
+
+		aiWizardElementTabs.forEach( ( tab ) => {
+			tab.classList.add( 'scc-element-ai-wizard-reposition' );
+		},
+		);
 	}
 	if ( mode == 'right' ) {
 		calcEditorRoot.classList.remove( 'preview-docked-bottom' );
@@ -3915,7 +3920,7 @@ const handlePreviewDockMode = ( element, mode, event, scroll = true ) => {
 		calcEditorRoot.classList.add( 'd-flex' );
 		leftPane.classList.remove( 'preview-docked-bottom' );
 		calcNameFieldWrapper.classList.remove( 'p-0' );
-		element.classList.add( 'scc-btn-primary' );
+		element.classList.add( 'scc-btn-white' );
 		if ( event ) {
 			previewPane.classList.remove( 'preview-docked-bottom' );
 		}
@@ -3923,8 +3928,13 @@ const handlePreviewDockMode = ( element, mode, event, scroll = true ) => {
 			previewPane.scrollIntoView( { behavior: 'smooth' } );
 			previewPane.scrollTop = previewPane.scrollHeight;
 		}
+		aiWizardElementTabs.forEach( ( tab ) => {
+			tab.classList.remove( 'scc-element-ai-wizard-reposition' );
+		},
+		);
 	}
 };
+
 
 jQuery(document).ready(function () {
 	window.sccBackendStore = {

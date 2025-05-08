@@ -424,7 +424,7 @@ display:initial!important;"><?php echo esc_attr( wp_unslash( $item->name ) ); ?>
 									<div class="scc-form-field-item df-scc-checkbox <?php echo esc_attr( $style_scc_calculator ); ?> " >
 										<div class="can-toggle">
 										<input data-optdefault="<?php echo esc_attr( $item->opt_default ); ?>" data-formid="<?php echo intval( $form->id ); ?>" data-itemid="<?php echo intval( $item->id ); ?>" data-elementid="<?php echo intval( $el->id ); ?>" type="checkbox" data-toggle="toggle" onclick="triggerSubmit(1,this,<?php echo intval( $el->id ); ?>, '<?php echo 'chkbx-' . intval( $item->id ); ?>', <?php echo intval( $form->id ); ?>);pricehint(<?php echo intval( $form->id ); ?>,this,<?php echo esc_attr( $el->showPriceHint ); ?>)" datainputprice="100" data-inputtype="switchoption" class="itemCreated" name="name" id="itemcreated_0_0_0_0_<?php echo intval( $item->id ); ?>" >
-											<label style="padding-top:7px;" class="<?php echo 'scc-col-sm-' . intval( $firstMobileColumnSize ) . ' scc-col-md-' . intval( $firstColumnSize ) . ' scc-col-lg-' . intval( $firstColumnSize ) . ' scc-p-0'; ?> scc-form-field-item-label scc_font_45"><?php echo esc_attr( wp_unslash( $item->name ) ); ?>
+											<label style="padding-top:7px;" class="<?php echo 'scc-col-sm-' . intval( $firstMobileColumnSize ) . ' scc-col-md-' . intval( $firstColumnSize ) . ' scc-col-lg-' . intval( $firstColumnSize ) . ' scc-p-0'; ?> scc-form-field-item-label scc_font_45"><?php echo wp_kses( wp_unslash( $item->name ), SCC_ALLOWTAGS ); ?>
 											</label>
 											<label class="scc-form-field-can-toggle-control" for="itemcreated_0_0_0_0_<?php echo intval( $item->id ); ?>">
 												<div class="trn can-toggle__switch can-toggle__switch_45" data-checked="Yes" data-unchecked="No" style="border: 1px solid <?php echo esc_attr( $form->objectColorPicker ); ?>; background: <?php echo esc_attr( $form->objectColorPicker ); ?>; " data-trn-key="">
@@ -443,7 +443,7 @@ display:initial!important;"><?php echo esc_attr( wp_unslash( $item->name ) ); ?>
                                             echo 'width: 100%;';
                                         }
 									    ?>
-											" class="scc-col-md-4 scc-col-xs-10 scc-form-field-item-label scc_font_45"><?php echo esc_attr( wp_unslash( $item->name ) ); ?>
+											" class="scc-col-md-4 scc-col-xs-10 scc-form-field-item-label scc_font_45"><?php echo wp_kses( wp_unslash( $item->name ), SCC_ALLOWTAGS ); ?>
 											<?php if ( $form->elementSkin !== 'style1' ) { ?>
 												<span class="price-hint-text" style="display: none; margin-left: 65%; white-space: nowrap;"><?php echo floatval( $item->price ); ?></span>
 											<?php } ?>
@@ -474,7 +474,7 @@ display:initial!important;"><?php echo esc_attr( wp_unslash( $item->name ) ); ?>
 										<div class="can-toggle demo-rebrand-2">
 										<input data-optdefault="<?php echo esc_attr( $item->opt_default ); ?>" data-formid="<?php echo intval( $form->id ); ?>" data-itemid="<?php echo intval( $item->id ); ?>" data-elementid="<?php echo intval( $el->id ); ?>" type="checkbox" data-toggle="toggle" onclick="triggerSubmit(1,this,<?php echo intval( $el->id ); ?>, '<?php echo 'chkbx-' . intval( $item->id ); ?>', <?php echo intval( $form->id ); ?>);pricehint(<?php echo intval( $form->id ); ?>,this,<?php echo esc_attr( $el->showPriceHint ); ?>)" datainputprice="100" data-inputtype="switchoption" class="itemCreated" name="retgergt" id="itemcreated_0_0_0_0_<?php echo intval( $item->id ); ?>" >
 											<label sytle="padding-top:10px;" class="<?php echo 'scc-col-sm-' . intval( $firstMobileColumnSize ) . ' scc-col-md-' . intval( $firstColumnSize ) . ' scc-col-lg-' . intval( $firstColumnSize ) . ' scc-p-0'; ?> scc-form-field-item-label control-label scc_font_45">
-												<?php echo esc_attr( wp_unslash( $item->name ) ); ?>
+												<?php echo wp_kses( wp_unslash( $item->name ), SCC_ALLOWTAGS ); ?>
 											</label>
 											<label class="scc-form-field-can-toggle-control" for="itemcreated_0_0_0_0_<?php echo intval( $item->id ); ?>">
 												<div class="can-toggle__switch can-toggle__switch_45 trn" data-checked="Yes" data-unchecked="No" style="margin-left:15px; border: 1px solid <?php echo esc_attr( $form->objectColorPicker ); ?>; background: <?php echo esc_attr( $form->objectColorPicker ); ?>; " data-trn-key="">
@@ -496,7 +496,7 @@ display:initial!important;"><?php echo esc_attr( wp_unslash( $item->name ) ); ?>
                                         }
 									    ?>
 											" class="scc-col-md-4 scc-col-xs-10 scc-form-field-item-label control-label scc_font_45">
-												<?php echo esc_attr( wp_unslash( $item->name ) ); ?>
+												<?php echo wp_kses( wp_unslash( $item->name ), SCC_ALLOWTAGS ); ?>
 												<?php if ( $form->elementSkin !== 'style1' ) { ?>
 													<span class="price-hint-text" style="display: none; margin-left: 65%; white-space: nowrap;"><?php echo floatval( $item->price ); ?></span>
 												<?php } ?>
@@ -1092,18 +1092,42 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 					<?php
         }
 
-        if ( $el->type == 'texthtml' ) {
-            continue;
-            ?>
-				<div id="ssc-elmt-<?php echo intval( $el->id ); ?>" class="scc-form-field-item <?php echo $hasAccordion ? ' scc-accordion-panel section_' . esc_attr( $accordion_index ) : ''; ?>">
-					<div class="scc-custom-code element-id-45">
-						<div style="clear:both">
-							<?php echo wp_kses( $el->value2, SCC_ALLOWTAGS ); ?>
-						</div>
+		if ( $el->type == 'texthtml' ) {
+			$texthtml_field_value = json_decode( wp_unslash( $el->value2 ) );
+
+			if ( empty( $texthtml_field_value ) ) {
+				$texthtml_field_value = $el->value2;
+			}
+			$classes = ['scc-form-field-item scc-custom-html', "use-$form->elementSkin", $style2_add_container];
+
+			if ( $style2_add_container ) {
+				$classes[] = 'form_field_item_style_2';
+			}
+
+			if ( $hasAccordion ) {
+				$classes[] = 'scc-accordion-panel';
+				$classes[] = 'section_' . $accordion_index;
+			}
+			?>
+				<div id="ssc-elmt-<?php echo intval( $el->id ); ?>" class="<?php echo esc_attr( join( ' ', $classes ) ); ?>">
+					<div class="scc-custom-code 
+					<?php
+				if ( isset( $texthtml_field_value->texthtml ) ) {
+					echo 'custom-code-v2';
+				}
+			?>
+					">
+							<?php
+					printf(
+				'<div style="clear:both" %s>%s</div>',
+				df_scc_output_texthtml(),
+				do_shortcode( isset( $texthtml_field_value->texthtml ) ? $texthtml_field_value->texthtml : $texthtml_field_value )
+			);
+			?>
 					</div>
 				</div>
-					<?php
-        }
+				<?php
+		}
     }
 		}
 }

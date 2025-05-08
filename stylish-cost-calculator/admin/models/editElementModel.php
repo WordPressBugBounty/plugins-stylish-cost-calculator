@@ -663,6 +663,328 @@ class Stylish_Cost_Calculator_Edit_Page {
 
         return $html;
     }
+
+	public function renderTextHtmlSetupBody2( $el, $conditionsBySet ) {
+        if ( $this->is_from_ajax ) {
+            $el->value1 = 'default';
+        }
+        $defaults    = [
+            'orden'                         => 0,
+            'titleElement'                  => 'Title',
+            'type'                          => '',
+            'subsection_id'                 => 0,
+            'value1'                        => 'default',
+            'value4'                        => null,
+            'value3'                        => null,
+            'value2'                        => '',
+            'length'                        => '',
+            'uniqueId'                      => '',
+            'mandatory'                     => 0,
+            'showTitlePdf'                  => 0,
+            'titleColumnDesktop'            => '4',
+            'titleColumnMobile'             => '12',
+            'showPriceHint'                 => 0,
+            'displayFrontend'               => 1,
+            'displayDetailList'             => 1,
+            'subsection_id'                 => 0,
+            'element_woocomerce_product_id' => 0,
+            'conditions'                    => [],
+        ];
+        $el          = (object) meks_wp_parse_args( $el, $defaults );
+        $field_value = json_decode( wp_unslash( $el->value2 ) );
+
+        if ( empty( $field_value ) ) {
+            $field_value = $el->value2;
+        }
+        ob_start();
+        ?>
+		<div class="scc-element-content" data-element-setup-type="<?php echo esc_attr( $el->type ); ?>" value="selectoption" style="
+			<?php
+            if ( ! $this->is_from_ajax ) {
+                echo 'display:none;';
+            }
+        ?>
+			height:auto;">
+			<div class="slider-setup-body">
+				<!-- ELEMENT -->
+				<label class="form-label fw-bold">Title</label>
+				<div class="input-group mb-3">
+					<input type="text" class="789 input_pad inputoption_title" onkeyup="clickedTitleElement(this)"
+						style="height:35px;width:100%;" placeholder="Title"
+						value="<?php echo esc_attr( $el->titleElement ); ?>">
+				</div>
+				<div class="row g-3 edit-field" style="    margin-bottom: 1rem!important;">
+					<div class="col">
+						<label class="form-label fw-bold">Raw Text (or HTML)</label>
+						<textarea data-type="<?php echo $el->type; ?>" onkeyup="changeValue2(this)" rows="5" cols="33"
+							class="input_pad inputoption_text"
+							style="width: 100%;"><?php echo isset( $field_value->texthtml ) ? $field_value->texthtml : $field_value; ?></textarea>
+					</div>
+				</div>
+				<div class="scc-texthtml-errors scc-hidden">
+				<?php
+                $msg   = 'There are HTML errors in your changes, fix them to save your changes correctly';
+        $hasHtmlErrors = true;
+        echo df_scc_render_alert( $hasHtmlErrors, $msg, 'mt-3' );
+        ?>
+				</div>
+			</div>
+			<div class="scc-element-content" value="selectoption" style="<?php
+        if ( ! $this->is_from_ajax ) {
+            echo 'display:none;';
+        }
+        ?> height:auto">
+				<div class="scc-new-accordion-container">
+					<div class="styled-accordion">
+						<div class="scc-title scc_accordion_advance" onclick="showAdvanceoptions(this)">
+							<i class="material-icons">keyboard_arrow_right</i>
+							<span>Advanced Options</span>
+						</div>
+						<?php echo $this->renderAdvancedOptions( $el ); ?>
+					</div>
+					<div class="styled-accordion">
+					<div class="scc-title scc_accordion_conditional "  >
+						<i class="material-icons">keyboard_arrow_right</i><span style="padding-right:20px;" data-element-tooltip-type="conditional-logic-tt" data-bs-original-title="" title="">Conditional Logic </span>
+					</div>
+					<div class="scc-content" style="display: none;">
+						<div class="scc-transition">
+							<?php
+                            // echo json_encode($conditionsBySet);
+                            foreach ( $conditionsBySet as $key => $conditionCollection ) {
+                                ?>
+								<?php if ( $key > 1 ) { ?>
+									<div style="margin: 10px 0px 10px -10px;">OR</div>
+								<?php } ?>
+								<div class="condition-container clearfix" data-condition-set=<?php echo intval( $key ); ?>>
+								<?php
+                                foreach ( $conditionCollection as $index => $condition ) {
+                                    if ( ( $condition->op == 'eq' || $condition->op == 'ne' || $condition->op == 'any' ) && ! ( $condition->element_condition->type == 'slider' || $condition->element_condition->type == 'quantity box' ) ) {
+                                        ?>
+											<div class="row col-xs-12 col-md-12 conditional-selection" style="padding: 0px; margin-bottom: 5px;">
+												<input type="text" class="id_conditional_item" value="<?php echo intval( $condition->id ); ?>" hidden>
+												<div class="col-xs-1 col-md-1" style="padding:0px;height:35px;background: #DCF1FD;">
+													<span class="scc_label" style="text-align:right;padding-right:10px;margin-top:5px;"><?php echo $index >= 1 ? 'And' : 'Show if'; ?></span>
+												</div>
+												<div class="col-xs-11 col-md-11" style="padding:0px;">
+													<div class="conditional-selection-steps col-xs-12 col-md-12" style="padding:0px;">
+														<div class="item_conditionals">
+															<select  class="first-conditional-step col-3" style="height: 35px;">
+																<option style="font-size: 10px" value="0">Select one</option>
+																<option value="<?php echo intval( $condition->condition_element_id ); ?>" data-type="<?php echo esc_attr( $condition->element_condition->type ); ?>" selected><?php echo esc_attr( $condition->element_condition->titleElement ); ?></option>
+															</select>
+															<select  class="second-conditional-step col-3" style="height: 35px;">
+																<option value="0" style="font-size: 10px">Select one</option>
+																<option value="eq" 
+																<?php
+                                                                if ( $condition->op == 'eq' ) {
+                                                                    echo 'selected';
+                                                                }
+                                        ?>
+																	>Equal To</option>
+																<option value="ne" 
+																<?php
+                                        if ( $condition->op == 'ne' ) {
+                                            echo 'selected';
+                                        }
+                                        ?>
+																	>Not Equal To</option>
+																<option value="any" 
+																<?php
+                                        if ( $condition->op == 'any' ) {
+                                            echo 'selected';
+                                        }
+                                        ?>
+																	>Any</option>
+															</select>
+															<select  class="third-conditional-step col-3" style="height: 35px;
+															<?php
+                                                            if ( $condition->op == 'any' ) {
+                                                                echo 'display:none';
+                                                            }
+                                        ?>
+																 ">
+																<option value="0" style="font-size: 10px">Select one</option>
+																<option value="<?php echo intval( $condition->elementitem_id ); ?>" selected><?php echo esc_attr( $condition->elementitem_name->name ); ?></option>
+															</select>
+															<input value="<?php echo esc_attr( $condition->value ); ?>" type="number" placeholder="Number" style="height: 35px;display:none" class="conditional-number-value col-3" min="0">
+															<div class="btn-group" style="margin-left: 10px;">
+																<button onclick="addConditionElement(this)" class="btn btn-cond-save">Save</button>
+																<button onclick="deleteCondition(this)" class="btn btn-danger">x</button>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<?php
+                                    }
+
+                                    if ( $condition->elementitem_id && ! $condition->condition_element_id ) {
+                                        ?>
+											<div class="row col-xs-12 col-md-12 conditional-selection" style="padding: 0px; margin-bottom: 5px;">
+												<input type="text" class="id_conditional_item" value="<?php echo intval( $condition->id ); ?>" hidden>
+												<div class="col-xs-1 col-md-1" style="padding:0px;height:35px;background: #DCF1FD;">
+													<span class="scc_label" style="text-align:right;padding-right:10px;margin-top:5px;"><?php echo $index >= 1 ? 'And' : 'Show if'; ?></span>
+												</div>
+												<div class="col-xs-11 col-md-11" style="padding:0px;">
+													<div class="conditional-selection-steps col-xs-12 col-md-12" style="padding:0px;">
+														<div class="item_conditionals">
+															<select class="first-conditional-step col-3" style="height: 35px;">
+																<option style="font-size: 10px" value="0">Select one</option>
+																<option value="<?php echo intval( $condition->elementitem_id ); ?>" data-type="checkbox" selected><?php echo esc_attr( $condition->elementitem_name->name ); ?></option>
+															</select>
+															<select class="second-conditional-step col-3" style="height: 35px;">
+																<option value="0" style="font-size: 10px">Select one</option>
+																<option value="chec" 
+																<?php
+                                                                if ( $condition->op == 'chec' ) {
+                                                                    echo 'selected';
+                                                                }
+                                        ?>
+																	>Checked</option>
+																<option value="unc" 
+																<?php
+                                        if ( $condition->op == 'unc' ) {
+                                            echo 'selected';
+                                        }
+                                        ?>
+																	>Unchecked</option>
+															</select>
+															<select  class="third-conditional-step col-3" style="height: 35px;display:none">
+																<option value="0" style="font-size: 10px">Select one</option>
+																<option value="<?php echo intval( $condition->elementitem_id ); ?>" selected><?php echo esc_attr( $condition->elementitem_name->name ); ?></option>
+															</select>
+															<input value="<?php echo esc_attr( $condition->value ); ?>" type="number" placeholder="Number" style="height: 35px;display:none" class="conditional-number-value col-3" min="0">
+															<div class="btn-group" style="margin-left: 10px;">
+																<button onclick="addConditionElement(this)" class="btn btn-cond-save">Save</button>
+																<button onclick="deleteCondition(this)" class="btn btn-danger">x</button>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<?php
+                                    }
+
+                                    if ( $condition->condition_element_id ) {
+                                        if ( $condition->element_condition->type == 'slider' || $condition->element_condition->type == 'quantity box' ) {
+                                            ?>
+												<div class="row col-xs-12 col-md-12 conditional-selection" style="padding: 0px; margin-bottom: 5px;">
+													<input type="text" class="id_conditional_item" value="<?php echo intval( $condition->id ); ?>" hidden>
+													<div class="col-xs-1 col-md-1" style="padding:0px;height:35px;background: #DCF1FD;">
+														<span class="scc_label" style="text-align:right;padding-right:10px;margin-top:5px;"><?php echo $index >= 1 ? 'And' : 'Show if'; ?></span>
+													</div>
+													<div class="col-xs-11 col-md-11" style="padding:0px;">
+														<div class="conditional-selection-steps col-xs-12 col-md-12" style="padding:0px;">
+															<div class="item_conditionals">
+																<select class="first-conditional-step col-3" style="height: 35px;">
+																	<option style="font-size: 10px" value="0">Select one</option>
+																	<option value="<?php echo intval( $condition->condition_element_id ); ?>" data-type="<?php echo esc_attr( $condition->element_condition->type ); ?>" selected><?php echo esc_attr( $condition->element_condition->titleElement ); ?></option>
+																</select>
+																<select class="second-conditional-step col-3" style="height: 35px;">
+																<option value="0" style="font-size: 10px">Select one</option>
+																	<option value="eq" 
+																	<?php
+                                                                    if ( $condition->op == 'eq' ) {
+                                                                        echo 'selected';
+                                                                    }
+                                            ?>
+																		>Equal To</option>
+																	<option value="ne" 
+																	<?php
+                                            if ( $condition->op == 'ne' ) {
+                                                echo 'selected';
+                                            }
+                                            ?>
+																		>Not Equal To</option>
+																	<option value="gr" 
+																	<?php
+                                            if ( $condition->op == 'gr' ) {
+                                                echo 'selected';
+                                            }
+                                            ?>
+																		>Greater than</option>
+																	<option value="les" 
+																	<?php
+                                            if ( $condition->op == 'les' ) {
+                                                echo 'selected';
+                                            }
+                                            ?>
+																		>Less than</option>
+																</select>
+																<select  class="third-conditional-step col-3" style="height: 35px;display:none">
+																	<option value="0" style="font-size: 10px">Select one</option>
+																	<option value="<?php echo intval( $condition->elementitem_id ); ?>" selected><?php echo esc_attr( $condition->elementitem_name->name ); ?></option>
+																</select>
+																<input value="<?php echo esc_attr( $condition->value ); ?>" type="number" placeholder="Number" style="height: 35px;" class="conditional-number-value col-3" min="0">
+																<div class="btn-group" style="margin-left: 10px;">
+																	<button onclick="addConditionElement(this)" class="btn btn-cond-save">Save</button>
+																	<button onclick="deleteCondition(this)" class="btn btn-danger">x</button>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<?php
+                                        }
+                                    }
+                                }
+                                ?>
+									<div class="row col-xs-12 col-md-12 conditional-selection  
+									<?php
+                                    if ( count( $conditionCollection ) ) {
+                                        echo 'hidden';
+                                    }
+                                ?>
+										" style="padding: 0px; margin-bottom: 5px;">
+										<div class="col-xs-1 col-md-1" style="padding:0px;height:35px;background: #DCF1FD;">
+											<span class="scc_label" style="text-align:right;padding-right:10px;margin-top:5px;"><?php echo empty( count( $el->conditions ) ) ? 'Show if' : 'And'; ?></span>
+										</div>
+										<div class="col-xs-11 col-md-11" style="padding:0px;">
+											<div class="conditional-selection-steps col-xs-12 col-md-12" style="padding:0px;">
+												<div class="item_conditionals">
+													<select class="first-conditional-step col-3" style="height: 35px;">
+														<option style="font-size: 10px" value="0">Select an element</option>
+													</select>
+													<select class="second-conditional-step col-3" style="height: 35px;display:none">
+														<option value="0" style="font-size: 10px">Select one</option>
+													</select>
+													<select class="third-conditional-step col-3" style="height: 35px;display:none">
+														<option value="0" style="font-size: 10px">Select one</option>
+													</select>
+													<input type="number" placeholder="Number" style="height: 35px;display:none" class="conditional-number-value col-3" min="0">
+													<div class="btn-group" style="margin-left: 10px;display:none">
+														<button onclick="addConditionElement(this)" class="btn btn-cond-save">Save</button>
+														<button onclick="deleteCondition(this)" class="btn btn-danger btn-delcondition" style="display: none;">x</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<button onclick="(($this) => {jQuery($this).prev().removeClass('hidden'); jQuery($this).addClass('hidden')})(this)" class="btn btn-addcondition cond-add-btn 
+									<?php
+                                if ( empty( count( $el->conditions ) ) ) {
+                                    echo 'hidden';
+                                }
+                                ?>
+										">+ AND</button>
+								</div>
+							<?php } ?>
+							<div style="width: 28%">
+								<button class="btn btn-primary btn-cond-or <?php echo empty( count( $el->conditions ) ) ? 'hidden' : ''; ?>">+ OR</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				</div>
+			</div>
+
+		</div>
+		<?php
+        $html = ob_get_clean();
+
+        return $html;
+    }
+
     public function renderCheckboxSetupBody( $el, $conditionsBySet ) {
         $defaults = [
             'orden'                         => 0,
@@ -713,7 +1035,7 @@ class Stylish_Cost_Calculator_Edit_Page {
         }
         ?>
 	 height:auto">
-		<!-- CONTENIDO DE CADA ELEMENTO -->
+
 		<!-- Simple Buttons - ELEMENT -->
 		<div class="slider-setup-body">
 		<label class="form-label fw-bold" title="For checkboxes, this will not appear on the frontend. Its for internal references only.">Title (Internal reference only)</label>
@@ -2069,7 +2391,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 					<?php echo $this->renderAdvancedOptions( $el ); ?>
 				</div>
 				<div class="styled-accordion">
-				<div class="scc-title scc_accordion_conditional "  >
+					<div class="scc-title scc_accordion_conditional "  >
 						<i class="material-icons">keyboard_arrow_right</i><span style="padding-right:20px;" data-element-tooltip-type="conditional-logic-tt" data-bs-original-title="" title="">Conditional Logic </span>
 					</div>
 					<div class="scc-content" style="display: none;">

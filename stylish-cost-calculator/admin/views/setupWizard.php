@@ -36,6 +36,10 @@ class SetupWizard {
     }
 
     public function render_modal_placeholders() {
+        // require ai wizard model
+        require_once SCC_DIR . '/admin/models/ai-wizard-model.php';
+        $scc_ai_wizard_model = new \SCCAiWizardModel();
+
         // return multiline html string
         ob_start();
         ?>
@@ -153,7 +157,7 @@ class SetupWizard {
 <# if (data.step == 'Result' && data.choices?.length) {  #>
 	<p class="mb-0">Recommended <b>Features</b></p>
 <# } #>
-<div class="row row-cols-3 g-0 w-100">
+<div class="row row-cols-3 g-0 w-100 scc-product-choices-wrapper">
 	<# 
 	if (data.step == 'Result') {
 		data = filterResultPageSuggestions(data);
@@ -186,26 +190,55 @@ class SetupWizard {
 	<# }) #>
   </div>
   <# if (data.step == '1') {
-	const businessAndIndustyFieldsFilledUp = quizAnswersStore.step1?.['business-description']?.length && quizAnswersStore.step1?.['business-name']?.length;
-	const conditionalHideClass = businessAndIndustyFieldsFilledUp ? '' : 'd-none';
+    const businessAndIndustyFieldsFilledUp = quizAnswersStore.step1?.['business-description']?.length && quizAnswersStore.step1?.['business-name']?.length;
   #>
-	<div class="my-3 {{ conditionalHideClass }}" id="businessNameWrapper">
+	<div class="my-3" id="businessNameWrapper">
 		<label for="businessName" class="form-label">What is your business name?</label>
 		<input type="text" value="{{ quizAnswersStore.step1?.['business-name'] }}" name="business-name" class="form-control scc-setup-wizard-text-inputs" id="businessName">
 	</div>
-    <div class="my-3 {{ conditionalHideClass }}" id="businessDescriptionWrapper">
-		<label for="businessDescription" class="form-label">Describe your business and pricing in 3 sentences</label>
-		<textarea name="business-description" class="form-control scc-setup-wizard-text-inputs" id="scc-ai-assisted-setup-wiz-business-description" placeholder="Example: We offer professional sound and lighting services for events of all sizes. Our basic package starts at $500 and includes setup and operation for up to 5 hours. Additional services, such as custom lighting designs and extended hours, are available at competitive rates."
-        oninput="sccAiAssistedSetupWizUpdateProgress()">{{ quizAnswersStore.step1?.['business-description'] }}</textarea>
+	<div class="my-3" id="websiteUrlWrapper">
+		<label for="websiteUrl" class="form-label">What is your website URL?</label>
+		<input type="text" value="{{ quizAnswersStore.step1?.['website-url'] }}" name="website-url" class="form-control scc-setup-wizard-text-inputs" id="websiteUrl" placeholder="https://example.com">
+	</div>
+    <div class="my-3 d-none" id="aiRetrievalWrapper">
+        <button type="button" class="btn scc-btn-green w-100" id="scc-retrieve-business-details-btn" onclick="sccRetrieveBusinessDetails()">
+            <i class="material-icons align-middle">auto_fix_high</i> Retrieve Business Details with AI
+        </button>
+    </div>
+    <div class="my-3 d-none" id="businessDescriptionWrapper">
+		<label for="businessDescription" class="form-label">Business Details</label>
+        <span class="scc-ai-assisted-setup-wiz-business-description-loader scc-hidden"><i class="scc-btn-spinner scc-save-btn-spinner ms-0"></i> <span class="scc-business-description-loader-text">Loading a description from AI... </span></span>
+        
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" id="businessDescriptionTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="preview-tab" data-bs-toggle="tab" data-bs-target="#preview-tab-pane" type="button" role="tab" aria-controls="preview-tab-pane" aria-selected="true">Preview</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="edit-tab" data-bs-toggle="tab" data-bs-target="#edit-tab-pane" type="button" role="tab" aria-controls="edit-tab-pane" aria-selected="false">Edit</button>
+            </li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content" id="businessDescriptionTabContent">
+            <div class="tab-pane fade" id="edit-tab-pane" role="tabpanel" aria-labelledby="edit-tab" tabindex="0">
+                <textarea name="business-description" class="form-control scc-setup-wizard-text-inputs mt-2" id="scc-ai-assisted-setup-wiz-business-description" placeholder="Example: We offer professional sound and lighting services for events of all sizes. Our basic package starts at $500 and includes setup and operation for up to 5 hours. Additional services, such as custom lighting designs and extended hours, are available at competitive rates."
+                oninput="sccAiAssistedSetupWizUpdateProgress()">{{ quizAnswersStore.step1?.['business-description'] }}</textarea>
+                 <small class="d-block mt-1">You can use Markdown for formatting.</small>
+            </div>
+            <div class="tab-pane fade show active" id="preview-tab-pane" role="tabpanel" aria-labelledby="preview-tab" tabindex="0">
+                 <div id="scc-ai-assisted-setup-wiz-business-description-preview" class="mt-2 p-2 border rounded bg-light" style="min-height: 100px;"></div>
+            </div>
+        </div>
+       
         <div class="scc-ai-assisted-setup-wiz-progress-bar-container">
             <div class="scc-ai-assisted-setup-wiz-progress-bar" id="scc-ai-assisted-setup-wiz-progress-bar"></div>
         </div>
+        <div class="mt-1 d-flex justify-content-between align-items-center">
+            <small><strong>Pro TIP:</strong> Try to write who, where, why, how</small>
+        </div>
     </div>
-	<!-- <div class="my-3 {{ conditionalHideClass }}" id="industryTypeWrapper">
-		<label for="industryType" class="form-label">What is your industry?</label>
-		<input type="text" value="{{ quizAnswersStore.step1?.['industry-type'] }}" name="industry-type" class="form-control" id="industryType">
-	</div> -->
-	<button type="submit"id="scc-setup-wizard-first-step-next-btn" data-max-steps="5" data-next-step="2" class="btn btn-primary w-100 {{ conditionalHideClass }}">Continue</button>
+	<button type="submit" id="scc-setup-wizard-first-step-next-btn" data-max-steps="5" data-next-step="2" class="btn btn-primary w-100 d-none">Continue</button>
   <# } #>
   <# if (data.step == 'Result') { #>
 	<# if (data.elementSuggestions?.length) { #>

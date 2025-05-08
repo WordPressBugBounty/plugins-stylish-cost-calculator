@@ -1,3 +1,23 @@
+= 8.0.6 - 2025-05-08
+
+**Frontend Changes**:
+Added: Text/HTML Element support
+
+**Dashboard Changes**:
+Updated: Dashboard header new GUI
+Fixed: Calculator preview panel style fixes
+Added: New templates
+Added: Automatic Business description completion AI Wizard support
+
+**Editing Page Changes**:
+Updated: AI Wizard GUI changes
+Added: AI Wizard "Add elements with AI" support
+Added: AI Wizard "Build Calculator with AI" support
+Fixed: Calculator title special characters issue
+
+**Backend Changes**:
+Improved: Cache plugins compatibility
+
 = 8.0.5 - 2025-04-16
 
 Updated: Uninstall feedback modal behavior

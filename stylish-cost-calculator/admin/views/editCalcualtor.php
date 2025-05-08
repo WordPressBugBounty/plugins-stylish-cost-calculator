@@ -69,6 +69,7 @@ wp_localize_script( 'scc-backend', 'pageEditCalculator', [ 'nonce' => wp_create_
 $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 ?>
 
+<script id="scc-data-schema" type="text/json"><?php echo json_encode( $f1->sections ); ?></script>
 <script>
 	window["woocommerceProducts"] = <?php echo json_encode( $woocommerce_products_array ); ?>;
 	jQuery(document).ready(function() {
@@ -77,7 +78,74 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 			showSweet(true, "Calculator was successfully created")
 		}
 	})
+	let datacal = JSON.parse(String.raw`${document.querySelector('#scc-data-schema').innerText}`)
+	cal = getElmtsNCndns(datacal)
+	//extracts data from json
+	function getElmtsNCndns(data) {
+		let o = []
+		let i = []
+		data.forEach(cc => {
+			//push conditions except the current element
+			cc.subsection.forEach(sub => {
+				sub.element.forEach(el => {
+					switch (el.type) {
+						case 'checkbox':
+							el.elementitems.forEach(item => {
+								o.push({
+									id: item.id,
+									titleElement: item.name,
+									element_id: el.id,
+									type: el.type
+								})
+							});
+							break
+						case 'Dropdown Menu':
+							let iddrop = el.id
+							o.push({
+								id: el.id,
+								titleElement: el.titleElement,
+								type: el.type
+							})
+							el.elementitems.forEach(item => {
+								let {
+									id,
+									element_id,
+									name
+								} = item
+								i.push({
+									id,
+									element_id,
+									name,
+									type: el.type
+								})
+							});
+							break
+						case 'slider':
+						case 'distance':
+						case 'quantity box':
+							o.push({
+								id: el.id,
+								titleElement: el.titleElement,
+								type: el.type
+							})
+							break
+						case 'date':
+								o.push({
+									id: el.id,
+									titleElement: el.titleElement,
+									type: el.type,
+									dateType: el.value1
+								})
+							break
+					}
+				});
+			});
+		});
+		return [o, i]
+	}
 </script>
+
+
 <div class="row ms-2 mt-4 scc-no-gutter" id="calc-editor-root">
 	<input type="text" id="id_scc_form_" value="<?php echo intval( $f1->id ); ?>" hidden>
 	<div class="scc-left-pane clearfix">
@@ -714,236 +782,26 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
                                         }
 
                                         if ( $el->type == 'texthtml' ) {
-                                            continue;
                                             ?>
 											<div class="elements_added">
-												<?php echo ( $scc_special_loop_element )?>
+											    <?php echo ( $scc_special_loop_element )?>
 												<input type="text" class="input_id_element" value="<?php echo intval( $el->id ); ?>" hidden>
 												<div class="elements_added_v2">
 													<div class="element-icon">
-														<i class="fas fa-code" style="font-size:25px;"></i>
+														<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['scc-code'] ); ?></span>
 													</div>
 													<div class="element-title-desc" onclick="javascript:collapseElementTitle(this)" style="cursor: pointer;">
 														<div class="title-desc-wrapper">
-															<span class="element-title">Text/HTML Field</span>
+															<span class="element-title">Text/HTML </span>
 															<p class="element-description">
 																<?php echo esc_attr( $truncatedTitleElement ); ?>
 															</p>
 														</div>
 													</div>
-													<?php echo scc_output_editing_page_element_actions( 'text-html-field', false ); ?>
+													<?php echo scc_output_editing_page_element_actions( 'text-html-field-tt', false ); ?>
 												</div>
-												<div class="scc-element-content" value="selectoption" style="display:none; height:auto;">
-													<!-- CONTENT OF EACH ELEMENT -->
-													<!-- ELEMENT -->
-													<div class="row m-0 selopt5 col-xs-12 col-md-12" style="padding: 0px;">
-														<div class="col-xs-6 col-md-2" style="padding:0px;height:40px;background: #f8f9ff;"><span class="scc_label" style="text-align:right;padding-right:10px;margin-top:5px;">Title</span></div>
-														<div class="col-xs-6 col-md-7" style="padding:0px;"><input type="text" class="input_pad inputoption_title" onkeyup="clickedTitleElement(this)" style="height:40px;width:100%;" placeholder="Title" value="<?php echo esc_attr( wp_unslash( $el->titleElement ) ); ?>"></div>
-													</div>
-													<!-- ELEMENTS INSIDE ELEMENTS -->
-													<div class="row m-0 mt-2 col-xs-12 col-md-12" style="padding:0px;margin-bottom:10px;margin-top: 15px;">
-														<div class="col-xs-6 col-md-2" style="padding:0px;background:#f8f9ff;height:40px;">
-															<span class="scc_label" style="text-align:right;padding-right:10px;margin-top:5px;">Your Custom Code</span>
-														</div>
-														<div class="col-xs-6 col-md-7 p-0 ">
-															<div style="padding:0px;">
-																<textarea data-type="<?php echo esc_html( $el->type ); ?>" onkeyup="changeValue2(this)" rows="5" cols="33" class="input_pad inputoption_text" style="width: 100%;" placeholder="<div></div>"><?php echo esc_attr( $el->value2, SCC_ALLOWTAGS ); ?></textarea>
-															</div>
-														</div>
-													</div>
-													<div class="scc-new-accordion-container">
-														<div class="styled-accordion">
-															<div class="scc-title scc_accordion_advance" onclick="showAdvanceoptions(this)">
-																<i class="material-icons">keyboard_arrow_right</i><span>Advanced Options</span>
-															</div>
-															<?php echo $edit_page_func->renderAdvancedOptions( $el ); ?>
-														</div>
-														<div class="styled-accordion">
-															<div class="scc-title scc_accordion_conditional">
-																<i class="material-icons">keyboard_arrow_right</i><span style="padding-right:20px;" data-element-tooltip-type="conditional-logic-tt" data-bs-original-title="" title="">Conditional Logic </span>
-															</div>
-															<div class="scc-content" style="display: none;">
-																<div class="scc-transition">
-																	<?php
-                                                                    foreach ( $conditionsBySet as $key => $conditionCollection ) {
-                                                                        ?>
-																		<?php if ( $key > 1 ) { ?>
-																			<p>OR condition <?php echo intval( $key ); ?></p>
-																		<?php } ?>
-																		<div class="condition-container clearfix" data-condition-set=<?php echo intval( $key ); ?>>
-																			<?php
-                                                                            foreach ( $conditionCollection as $index => $condition ) {
-                                                                                if ( ( $condition->op == 'eq' || $condition->op == 'ne' || $condition->op == 'any' ) && ! ( $condition->element_condition->type == 'slider' || $condition->element_condition->type == 'quantity box' ) ) {
-                                                                                    ?>
-																					<div class="row col-xs-12 col-md-12 conditional-selection" style="padding: 0px; margin-bottom: 5px;">
-																						<input type="text" class="id_conditional_item" value="<?php echo intval( $condition->id ); ?>" hidden>
-																						<div class="col-xs-1 col-md-1" style="padding:0px;height:40px;background: #DCF1FD;">
-																							<span class="scc_label" style="text-align:right;padding-right:10px;margin-top:5px;"><?php echo $index >= 1 ? 'And' : 'Show if'; ?></span>
-																						</div>
-																						<div class="col-xs-11 col-md-11" style="padding:0px;">
-																							<div class="conditional-selection-steps col-xs-12 col-md-12" style="padding:0px;">
-																								<div class="item_conditionals">
-																									<select disabled class="first-conditional-step col-xs-3" style="height: 40px;">
-																										<option style="font-size: 10px" value="0"><?php echo esc_attr( $condition->element_condition->titleElement ); ?></option>
-																									</select>
-																									<select disabled class="second-conditional-step col-xs-3" style="height: 40px;">
-																										<?php
-                                                                                                        if ( $condition->op == 'eq' ) {
-                                                                                                            echo '<option value="eq">Equal To</option>';
-                                                                                                        }
-                                                                                    ?>
-																										<?php
-                                                                                    if ( $condition->op == 'ne' ) {
-                                                                                        echo '<option value="ne">Not Equal To</option>';
-                                                                                    }
-                                                                                    ?>
-																										<?php
-                                                                                    if ( $condition->op == 'any' ) {
-                                                                                        echo '<option value="any">Any</option>';
-                                                                                    }
-                                                                                    ?>
-																									</select>
-																									<?php if ( $condition->op != 'any' ) { ?>
-																										<select disabled class="third-conditional-step col-xs-3" style="height: 40px;">
-																											<option value="eq"><?php echo esc_attr( $condition->elementitem_name->name ); ?></option>
-																										</select>
-																									<?php } ?>
-																									<div class="btn-group" style="margin-left: 10px;">
-																										<button onclick="deleteCondition(this)" class="btn btn-danger">x</button>
-																									</div>
-																								</div>
-																							</div>
-																						</div>
-																					</div>
-																					<?php
-                                                                                }
-
-                                                                                if ( $condition->elementitem_id && ! $condition->condition_element_id ) {
-                                                                                    ?>
-																					<div class="row col-xs-12 col-md-12 conditional-selection" style="padding: 0px; margin-bottom: 5px;">
-																						<input type="text" class="id_conditional_item" value="<?php echo intval( $condition->id ); ?>" hidden>
-																						<div class="col-xs-1 col-md-1" style="padding:0px;height:40px;background: #DCF1FD;">
-																							<span class="scc_label" style="text-align:right;padding-right:10px;margin-top:5px;"><?php echo $index >= 1 ? 'And' : 'Show if'; ?></span>
-																						</div>
-																						<div class="col-xs-11 col-md-11" style="padding:0px;">
-																							<div class="conditional-selection-steps col-xs-12 col-md-12" style="padding:0px;">
-																								<div class="item_conditionals">
-																									<select disabled class="first-conditional-step col-xs-3" style="height: 40px;">
-																										<option style="font-size: 10px" value="0"><?php echo esc_attr( $condition->elementitem_name->name ); ?></option>
-																									</select>
-																									<select disabled class="second-conditional-step col-xs-3" style="height: 40px;">
-																										<?php if ( $condition->op == 'chec' ) { ?>
-																											<option value="">Checked</option>
-																										<?php } else { ?>
-																											<option value="">Unchecked</option>
-																										<?php } ?>
-																									</select>
-																									<div class="btn-group" style="margin-left: 10px;">
-																										<button onclick="deleteCondition(this)" class="btn btn-danger">x</button>
-																									</div>
-																								</div>
-																							</div>
-																						</div>
-																					</div>
-																					<?php
-                                                                                }
-
-                                                                                if ( $condition->condition_element_id ) {
-                                                                                    if ( $condition->element_condition->type == 'slider' || $condition->element_condition->type == 'quantity box' ) {
-                                                                                        ?>
-																						<div class="row col-xs-12 col-md-12 conditional-selection" style="padding: 0px; margin-bottom: 5px;">
-																							<input type="text" class="id_conditional_item" value="<?php echo intval( $condition->id ); ?>" hidden>
-																							<div class="col-xs-1 col-md-1" style="padding:0px;height:40px;background: #DCF1FD;">
-																								<span class="scc_label" style="text-align:right;padding-right:10px;margin-top:5px;"><?php echo $index >= 1 ? 'And' : 'Show if'; ?></span>
-																							</div>
-																							<div class="col-xs-11 col-md-11" style="padding:0px;">
-																								<div class="conditional-selection-steps col-xs-12 col-md-12" style="padding:0px;">
-																									<div class="item_conditionals">
-																										<select disabled class="first-conditional-step col-xs-3" style="height: 40px;">
-																											<option style="font-size: 10px" value="0"><?php echo esc_attr( $condition->element_condition->titleElement ); ?></option>
-																										</select>
-																										<select disabled class="second-conditional-step col-xs-3" style="height: 40px;">
-																											<?php
-                                                                                                            if ( $condition->op == 'eq' ) {
-                                                                                                                echo '<option style="font-size: 10px" value="0">Equal To</option>';
-                                                                                                            }
-                                                                                        ?>
-																											<?php
-                                                                                        if ( $condition->op == 'ne' ) {
-                                                                                            echo '<option style="font-size: 10px" value="0">Not Equal To</option>';
-                                                                                        }
-                                                                                        ?>
-																											<?php
-                                                                                        if ( $condition->op == 'gr' ) {
-                                                                                            echo '<option style="font-size: 10px" value="0">Greater than</option>';
-                                                                                        }
-                                                                                        ?>
-																											<?php
-                                                                                        if ( $condition->op == 'les' ) {
-                                                                                            echo '<option style="font-size: 10px" value="0">Less than</option>';
-                                                                                        }
-                                                                                        ?>
-																										</select>
-																										<input disabled value="<?php echo esc_attr( $condition->value ); ?>" type="number" placeholder="Number" style="height: 40px;" class="conditional-number-value col-xs-2">
-																										<div class="btn-group" style="margin-left: 10px;">
-																											<button onclick="deleteCondition(this)" class="btn btn-danger">x</button>
-																										</div>
-																									</div>
-																								</div>
-																							</div>
-																						</div>
-																						<?php
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                        ?>
-																			<!-- <div style="background-color: black;height:50px"></div> -->
-																			<div class="row col-xs-12 col-md-12 conditional-selection  
-																			<?php
-                                                                        if ( count( $conditionCollection ) ) {
-                                                                            echo 'hidden';
-                                                                        }
-                                                                        ?>
-																			" style="padding: 0px; margin-bottom: 5px;">
-																				<div class="col-xs-1 col-md-1" style="padding:0px;height:40px;background: #DCF1FD;">
-																					<span class="scc_label" style="text-align:right;padding-right:10px;margin-top:5px;"><?php echo empty( count( $el->conditions ) ) ? 'Show if' : 'And'; ?></span>
-																				</div>
-																				<div class="col-xs-11 col-md-11" style="padding:0px;">
-																					<div class="conditional-selection-steps col-xs-12 col-md-12" style="padding:0px;">
-																						<div class="item_conditionals">
-																							<select onfocus="loadDataItemsCondition(this)" onchange="loadSecondSelectCondition(this)" class="first-conditional-step col-xs-3" style="height: 40px;">
-																								<option style="font-size: 10px" value="0">Select an element</option>
-																							</select>
-																							<select onchange="changeSecondSelectCondition(this)" class="second-conditional-step col-xs-3" style="height: 40px;display:none">
-																							</select>
-																							<select class="third-conditional-step col-xs-3" style="height: 40px;display:none">
-																							</select>
-																							<input type="number" placeholder="Number" style="height: 40px;display:none" class="conditional-number-value col-xs-2">
-																							<div class="btn-group" style="margin-left: 10px;display:none">
-																								<button onclick="addConditionElement(this)" class="btn btn-addcondition">Save</button>
-																								<button onclick="deleteCondition(this)" class="btn btn-danger btn-delcondition" style="display: none;">x</button>
-																							</div>
-																						</div>
-																					</div>
-																				</div>
-																			</div>
-																			<button onclick="(($this) => {jQuery($this).prev().removeClass('hidden'); jQuery($this).addClass('hidden')})(this)" class="btn btn-addcondition cond-add-btn 
-																			<?php
-                                                                        if ( empty( count( $el->conditions ) ) ) {
-                                                                            echo 'hidden';
-                                                                        }
-                                                                        ?>
-																			">+ AND</button>
-																		</div>
-																	<?php } ?>
-																	<div style="margin-left: auto; margin-right: auto; width: 28%">
-																		<button class="btn btn-primary btn-cond-or <?php echo empty( count( $el->conditions ) ) ? 'hidden' : ''; ?>">+ OR</button>
-																	</div>
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
+												<?php echo $edit_page_func->renderTextHtmlSetupBody2( $el, $conditionsBySet ); ?>
+												<?php echo $edit_page_func->renderElementLoader(); ?>
 											</div>
 											<?php
                                         }
@@ -1051,7 +909,7 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['message-circle'] ); ?></span>
 											<div class="btn-backend-text">Comment Box</div>
 										</button>
-										<button value="custom_code" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="text-html-field-tt" data-bs-original-title="" onclick="addTextHtml(this)">
+										<button value="custom_code" class="scc_button btn-backend" data-element-tooltip-type="text-html-field-tt" data-bs-original-title="" onclick="addTextHtml(this)">
 											<i class="scc-btn-spinner scc-d-none"></i>
 											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['scc-code'] ); ?></span>
 											<div class="btn-backend-text">Text/HTML Field</div>
@@ -1105,18 +963,19 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 					<div class="scc-pane-description">See how will look your calculator </div>
 				</div>
 				<div class="col-6 scc-preview-pane-actions">
-					<div class="btn-group scc-dock-switch">
+					<div class="btn-group scc-btn-group-pill scc-btn-group-dock-switcher me-2">
 						<div id="dock-to-bottom" title="Dock the preview pane to the bottom" data-dock-mode="bottom" role="button" onclick="handlePreviewDockMode(this, 'bottom', event)" class="use-tooltip m-0 btn"><?php echo scc_get_kses_extended_ruleset( $scc_icons['dock-to-bottom'] ); ?></div>
 						<div id="dock-to-right" title="Dock the preview pane to the right" data-dock-mode="right" role="button" onclick="handlePreviewDockMode(this, 'right', event)" class="use-tooltip m-0 btn"><?php echo scc_get_kses_extended_ruleset( $scc_icons['dock-to-right'] ); ?></div>
 					</div>
-					<button class="btn btn-disabled scc-refresh-button scc-hidden ms-3 use-tooltip" disabled onclick="sccBackendUtils.refreshPreview(this)"
+
+					<button class="btn btn-disabled scc-refresh-button" disabled onclick="sccBackendUtils.refreshPreview(this)"
 						data-element-type="quantity-box">
 						<span class="scc-saving-element-msg scc-hidden"></span>
 						<span class="scc-saving-element-btn-text scc-hidden">
-							<span class="scc-icn-wrapper me-1"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['refresh-cw'] ); ?></span> See Your Changes
+							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['refresh-cw'] ); ?></span>
 						</span>
 						<span class="scc-saving-element-btn-text-updated">
-							<span class="scc-icn-wrapper me-1"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['check-circle'] ); ?></span> Preview Updated
+							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['refresh-cw'] ); ?></span>
 						</span>
 					</button>
 				</div>
@@ -2184,7 +2043,48 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * @param subsection_id
 	 */
 	function addTextHtml(element) {
-		return
+		// showLoadingChanges()
+		var subsectionContainer = jQuery(element).parent().parent().parent()
+		var subContainer = subsectionContainer.find(".subsection-area.BodyOption")
+		var idSub = subsectionContainer.find(".input_subsection_id").val()
+		var containerButtons = jQuery(element).parent()
+		var count = subsectionContainer.find(".elements_added").length + 1
+		jQuery.ajax({
+			url: ajaxurl,
+			cache: false,
+			data: {
+				action: 'sccAddElementTextHtml',
+				id_sub: idSub,
+				order: count,
+				nonce: pageEditCalculator.nonce
+			},
+			srcElement: element,
+			beforeSend: function () {
+				let {srcElement} = this
+				srcElement.querySelectorAll(':scope > :not(i)').forEach(el => el.classList.add('scc-d-none'))
+				srcElement.querySelector(':scope > i').classList.remove('scc-d-none')
+			},
+			success: function(data) {
+				var datajson = JSON.parse(data)
+				if (datajson.passed == true) {
+					let elementDOM = datajson.DOMhtml
+					var element = insertTextHtml(datajson.id_element, elementDOM)
+					element = jQuery(element)
+
+					// applying tooltips to ajax added elements
+					sccBackendUtils.handleTooltipAjaxAddedElements( element[0] );
+
+					subContainer.append(element)
+					containerButtons.hide()
+				}
+				sccBackendUtils.handleSavingAlert( datajson, true );
+			},
+			complete: function() {
+				let {srcElement} = this
+				srcElement.querySelectorAll(':scope > :not(i)').forEach(el => el.classList.remove('scc-d-none'))
+				srcElement.querySelector(':scope > i').classList.add('scc-d-none')
+			}
+		})
 	}
 	/**
 	 * *Adds element to db with type fileUpload after success the element is added to dom
@@ -3399,7 +3299,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		subs += '											 <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['map-pin'] ); ?></span>'
 		subs += '											<div class="btn-backend-text">Distance-Based Cost</div>'
 		subs += '										</button>'
-		subs += '                                      <button value="custom_code" class="scc_button btn-backend scc-premium-element" onclick="addTextHtml(this)"><i class="scc-btn-spinner scc-d-none"></i>'
+		subs += '                                      <button value="custom_code" class="scc_button btn-backend " onclick="addTextHtml(this)"><i class="scc-btn-spinner scc-d-none"></i>'
 		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-code'] ); ?></span>'
 		subs += '                                          <div class="btn-backend-text">Text/HTML Field</div>'
 		subs += '                                      </button>'
@@ -3559,7 +3459,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['paperclip'] ); ?></span>'
 		section += '																		<div class="btn-backend-text">File Upload</div>'
 		section += '																	</button>'
-		section += '																	<button value="custom_code" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="date-picker-tt" data-bs-original-title="" onclick="addTextHtml(this)">'
+		section += '																	<button value="custom_code" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="text-html-field-tt" data-bs-original-title="" onclick="addTextHtml(this)">'
 		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
 		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['calendar'] ); ?></span>'
 		section += '																		<div class="btn-backend-text">Date Picker</div>'
@@ -3824,11 +3724,11 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	function insertTextHtml(idnewElement) {
 		var elementHead = `<div class="elements_added_v2">
 			<div class="element-icon">
-				<i class="fas fa-code" style="font-size:25px;"></i>
+				<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-code'] ); ?></span>
 			</div>
 			<div class="element-title-desc" onclick="javascript:collapseElementTitle(this)" style="cursor: pointer;">
 				<div class="title-desc-wrapper">
-					<span class="element-title">Text/HTML Field</span>
+					<span class="element-title">Text/HTML</span>
 					<p class="element-description"></p>
 				</div>
 			</div>
@@ -3840,20 +3740,16 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		element += '    <div class="scc-element-content" value="selectoption" style="height: auto;">'
 		element += '        <!-- CONTENT OF EACH ELEMENT -->'
 		element += '        <!-- ELEMENT -->'
-		element += '        <div class="row m-0 selopt5 col-xs-12 col-md-12" style="padding: 0px;">'
-		element += '            <div class="col-xs-6 col-md-2" style="padding:0px;height:40px;background: #f8f9ff;"><span class="scc_label" style="text-align:right;padding-right:10px;margin-top:5px;">Title</span></div>'
-		element += '            <div class="col-xs-6 col-md-7" style="padding:0px;"><input type="text" class="input_pad inputoption_title" onkeyup="clickedTitleElement(this)" style="height:40px;width:100%;" placeholder="Title" value=""></div>'
-		element += '        </div>'
-		element += '        <!-- ELEMENTS INSIDE ELEMENTS -->'
-		element += '        <div class="row m-0 mt-2 col-xs-12 col-md-12" style="padding:0px;margin-bottom:10px;margin-top: 15px;">'
-		element += '            <div class="col-xs-6 col-md-2" style="padding:0px;background:#f8f9ff;height:40px;">'
-		element += '                <span class="scc_label" style="text-align:right;padding-right:10px;margin-top:5px;">Your Custom Code</span>'
-		element += '            </div>'
-		element += '            <div class="p-0 col-xs-6 col-md-7">'
-		element += '            <div  style="padding:0px;">'
-		element += '                <textarea onkeyup="changeValue2(this)" rows="5" cols="33" class="input_pad inputoption_text" style="width: 100%;" placeholder="<div></div>"></textarea>'
-		element += '            </div>'
-		element += '            </div>'
+		element += '        <div class="slider-setup-body">'
+		element += '			<label class="form-label fw-bold">Title</label>';
+		element += '			<div class="input-group mb-3"><input type="text" class="789 input_pad inputoption_title" onkeyup="clickedTitleElement(this)" style="height:35px;width:100%;" placeholder="Title" value=""></div>';
+		element += '        	<!-- ELEMENTS INSIDE ELEMENTS -->'
+		element += '        	<div class="row g-3 edit-field" style="    margin-bottom: 1rem!important;">'
+		element += '            	<div class="col">'
+		element += '               	 	<label class="form-label fw-bold">Raw Text (or HTML)</label>'
+		element += '                	<textarea data-type="texthtml" onkeyup="changeValue2(this)" rows="5" cols="33" class="input_pad inputoption_text" style="width: 100%;"></textarea>'
+		element += '            	</div>'
+		element += '        	</div>'
 		element += '        </div>'
 		element += '        <div class="scc-new-accordion-container">'
 		element += '        <div class="styled-accordion">'
@@ -3930,6 +3826,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		element += '        </div>'
 		element += '    </div>'
 		element += '</div>'
+		element += '<span class="scc-saving-element-msg scc-visibility-hidden"></span>'
 		element += '            </div>'
 		return element
 	}
@@ -3955,7 +3852,6 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		element += elementHead
 		element += elementDOM['fileupload_body']
 		element += '    <div class="scc-element-content" value="selectoption" style="height: auto;">'
-		element += '        <!-- CONTENIDO DE CADA ELEMENTO -->'
 		element += '        <!-- ELEMENT -->'
 		element += '        <!-- ELEMENTS INSIDE ELEMENTS -->'
 		element += '        <div class="scc-new-accordion-container">'

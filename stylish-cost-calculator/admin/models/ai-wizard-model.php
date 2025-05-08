@@ -108,11 +108,10 @@ class SCCAiWizardModel {
                         </div>
                         <button id="scc-ai-wizard-setup-wizard" data-option-type="setup-wizard" class="btn btn-alert scc-ai-wizard-option" href="#"><span class="scc-icn-wrapper me-2"><?php echo scc_get_kses_extended_ruleset( $scc_icons['ai-algorithm'] ); ?></span><?php echo esc_html( $scc_setup_wizard_title ); ?></button>
                         <button id="scc-ai-wizard-suggest-element" data-option-type="suggest-elements" class="btn btn-alert scc-ai-wizard-option" href="#"><span class="scc-icn-wrapper me-1"><?php echo scc_get_kses_extended_ruleset( $scc_icons['icon-bulb'] ); ?></span><?php echo esc_html( $scc_suggest_element_title ); ?></button>
-                        <button id="scc-ai-wizard-optimize-form" data-option-type="optimize-form" class="btn btn-alert scc-ai-wizard-option" href="#"><span class="scc-icn-wrapper me-2"><?php echo scc_get_kses_extended_ruleset( $scc_icons['icon-optimize'] ); ?></span><?php echo esc_html( $scc_form_optimizer_title ); ?></button>
-                        <button id="scc-ai-wizard-advanced-pricing-formula" disabled data-option-type="advanced-pricing-formula" class="btn btn-alert scc-ai-wizard-option" href="#"><span class="scc-icn-wrapper me-2"><?php echo scc_get_kses_extended_ruleset( $scc_icons['icon-noun-math'] ); ?></span><?php echo esc_html( $scc_advanced_pricing_formula_title ); ?></button>
-                        <button id="scc-ai-wizard-analytics-insights" disabled data-option-type="analytics-insights" class="btn btn-alert scc-ai-wizard-option" href="#"><span class="scc-icn-wrapper me-2"><?php echo scc_get_kses_extended_ruleset( $scc_icons['icon-analytics'] ); ?></span><?php echo esc_html( $scc_analytic_insights_title ); ?></button>
-                        <button id="scc-ai-wizard-crisp-chat" data-option-type="open-support-chat" class="btn btn-alert scc-ai-wizard-option" href="#"><span class="scc-icn-wrapper me-2"><?php echo scc_get_kses_extended_ruleset( $scc_icons['message-square'] ); ?></span>Open Support Chat</button>
-                        <button id="scc-ai-wizard-intelligent-qa" data-option-type="open-intelligent-qa" class="btn btn-alert scc-ai-wizard-option" href="#"><span class="scc-icn-wrapper me-2"><?php echo scc_get_kses_extended_ruleset( $scc_icons['help-circle'] ); ?></span>Intelligent Questions & Answers</button>
+                        <button id="scc-ai-wizard-optimize-form" data-option-type="optimize-form" class="btn btn-alert scc-ai-wizard-option scc-ai-wizard-option-secondary" href="#"><span class="scc-icn-wrapper me-2"><?php echo scc_get_kses_extended_ruleset( $scc_icons['icon-optimize'] ); ?></span><?php echo esc_html( $scc_form_optimizer_title ); ?></button>
+                        <button id="scc-ai-wizard-advanced-pricing-formula" disabled data-option-type="advanced-pricing-formula" class="btn btn-alert scc-ai-wizard-option scc-ai-wizard-option-secondary" href="#"><span class="scc-icn-wrapper me-2"><?php echo scc_get_kses_extended_ruleset( $scc_icons['icon-noun-math'] ); ?></span><?php echo esc_html( $scc_advanced_pricing_formula_title ); ?></button>
+                        <button id="scc-ai-wizard-analytics-insights" disabled data-option-type="analytics-insights" class="btn btn-alert scc-ai-wizard-option scc-ai-wizard-option-secondary" href="#"><span class="scc-icn-wrapper me-2"><?php echo scc_get_kses_extended_ruleset( $scc_icons['icon-analytics'] ); ?></span><?php echo esc_html( $scc_analytic_insights_title ); ?></button>
+                        
                     </div>
                     <div class="scc-ai-wizard-content-tab scc-ai-wizard-setup scc-hidden">
                         <div class="scc-ai-wizard-tab-title">
@@ -156,7 +155,12 @@ class SCCAiWizardModel {
                         </div>
                         <div class="scc-ai-wizard-menu-buttons">
                             <button id="scc-ai-wizard-retake" class="btn btn-alert scc-ai-wizard-option" type="button">
+                                <span class="scc-ai-wizard-retake-text">
                                    Redo Setup Wizard
+                                </span>
+                                   <span class="scc-icn-wrapper">
+                                        <?php echo scc_get_kses_extended_ruleset( $scc_icons['refresh-cw'] ); ?>
+                                   </span>
                             </button>
                         </div>
                     </div>
@@ -290,5 +294,50 @@ class SCCAiWizardModel {
         </div>
 <?php
             return ob_get_clean();
+    }
+
+    public function get_ai_wizard_setup_wizard_chat() {
+        $scc_icons          = require SCC_DIR . '/assets/scc_icons/icon_rsrc.php';
+        $user_id            = get_current_user_id();
+        $scc_logo           = SCC_URL . 'assets/images/scc-ai-wizard-logo.svg';
+        $scc_ai_avatar      = SCC_URL . 'assets/images/ai-sparks.svg';
+        $scc_ai_wizard_icon = SCC_URL . 'assets/images/scc-ai-wizard-icon.svg';
+        $scc_user_avatar    = get_avatar_url( $user_id );
+        $scc_icons          = require SCC_DIR . '/assets/scc_icons/icon_rsrc.php';
+
+        ob_start();
+        ?>
+        <div class="scc-create-calculator-chat" data-user-avatar="<?php echo esc_url( $scc_user_avatar ); ?>" data-ai-avatar="<?php echo esc_url( $scc_ai_wizard_icon ); ?>" >
+
+                                <div class="d-flex align-items-center scc-create-calculator-chat-head">
+                                    <span class="scc-icn-wrapper me-3"><?php echo scc_get_kses_extended_ruleset( $scc_icons['message-circle'] ); ?></span>
+                                    <div class="text-start">
+                                        <strong>AI Wizard - Create calculator from chat</strong>
+                                        <p class="mb-0 text-white-50">Build your calculator by chatting with our AI assistant</p>
+                                    </div>
+                                </div>
+
+        <div class="scc-ai-assistant-header">
+                    <div class="scc-ai-assistant-header-buttons">
+
+                        <div class="scc-ai-credit-count scc-hidden">
+                            <span class="scc-ai-credit-count-circle-indicator scc-ai-count-green"></span>
+                            <span class="scc-ai-credit-count-total"></span>
+                        </div>
+                        <div>
+                            <button id="reset-btn" class="scc-ai-reset-btn" title="Reset AI Chat" onclick="sccResetAiAssistant(this)">
+                                <span class="scc-icn-wrapper">
+                                    <?php echo scc_get_kses_extended_ruleset( $scc_icons['refresh-ccw'] ); ?>
+                                </span>
+                            </button>
+
+                        </div>
+                    </div>
+
+            </div>
+        </div>
+
+        <?php
+        return ob_get_clean();
     }
 }

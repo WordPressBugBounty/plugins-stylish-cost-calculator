@@ -25,7 +25,7 @@ wp_localize_script( 'scc-backend', 'pageAllCalculators', [ 'nonce' => wp_create_
             ?>
 			<div id="scc_calculator_<?php echo intval( $f->id ); ?>" class="col-md-6 p-0">
 				<div style="text-align: center;background-color:#fff; margin-bottom:30px; margin-right:30px; padding:30px;border-radius:10px">
-					<h2 class="edith2" title="<?php echo esc_attr( $createdAtText ); ?>"><?php echo esc_attr( $f->formname ); ?></h2>
+					<h2 class="edith2" title="<?php echo esc_attr( $createdAtText ); ?>"><?php echo esc_attr( wp_unslash( $f->formname ) ); ?></h2>
 					<p class="custom-short-code-p-tag" style="background: #F8F9FF;padding:10px;border-radius: 6px;">
 						Shortcode is <strong>[scc_calculator type='text' idvalue='<?php echo intval( $f->id ); ?>']</strong>
 					</p>

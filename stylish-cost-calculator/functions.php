@@ -290,3 +290,27 @@ if( ! function_exists('scc_get_helpdesk_link_list') ){
         return SCC_HELPDESK_LINKS;
     }
 }
+if ( ! function_exists( 'df_scc_render_alert' ) ) {
+    function df_scc_render_alert( $cond, $msg, $custom_class = '', $type = 'warning' ) {
+        $render =  '<div class="alert alert-' . $type . ' align-items-center mt-1 scc-err-btn-style ' . $custom_class . ' ' . ( $cond ? 'd-flex' : 'd-none' ) . '">';
+        $render .= '<svg class="bi flex-shrink-0 me-3" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>';
+        $render .= '<div>' . $msg . '</div>';
+        $render .= '</div>';
+
+        return $render;
+    }
+}
+
+if ( ! function_exists( 'df_scc_output_texthtml' ) ) {
+    function df_scc_output_texthtml( $echo = false ) {
+        $parts = [];
+
+        $output = implode( ' ', $parts );
+
+        if ( $echo ) {
+            echo trim( $output ); // phpcs:ignore
+        } else {
+            return trim( $output );
+        }
+    }
+}

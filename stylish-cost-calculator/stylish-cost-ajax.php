@@ -73,8 +73,11 @@ class ajaxRequest {
             add_action( 'wp_ajax_scc_skip_premium_demo_modal', [ $this, 'skip_premium_demo_modal' ] );
 
             add_action( 'wp_ajax_scc_ai_wizard_request', [ $this, 'scc_ai_wizard_request' ] );
+            add_action( 'wp_ajax_scc_ai_wizard_add_elements', [ $this, 'scc_ai_wizard_add_elements' ] );
+            add_action( 'wp_ajax_scc_ai_wizard_add_calculator_settings', [ $this, 'scc_ai_wizard_add_calculator_settings' ] );
             add_action( 'wp_ajax_scc_ai_check_license', [ $this, 'scc_ai_check_license' ] );
             add_action( 'wp_ajax_scc_ai_check_credits', [ $this, 'scc_ai_check_credits' ] );
+            add_action( 'wp_ajax_scc_ai_get_site_info_with_ai', [ $this, 'scc_ai_get_site_info_with_ai' ] );
             add_action( 'wp_ajax_scc_sync_wizard_suggestions_state', [ $this, 'sync_wizard_suggestions_state' ] );
             add_action( 'wp_ajax_scc_skip_welcome_modal', [ $this, 'skip_welcome_modal' ] );
 
@@ -1607,15 +1610,20 @@ class ajaxRequest {
         $elementC            = new elementController();
         $el['orden']         = intval( $_GET['order'] );
         $el['type']          = 'texthtml';
+        $el['titleElement']  = 'New Text/HTML Field';
         $el['subsection_id'] = intval( $_GET['id_sub'] );
         $html                = $edit_page_func->renderAdvancedOptions( (object) $el );
         $element_id          = $elementC->create( $el );
+        //$body_html           = $edit_page_func->renderTextHtmlSetupBody2( (object) array_merge( $eli, $el, [ 'elementItem_id' => $elementItem_id ] ), [ 1 => [] ] ) . $edit_page_func->renderElementLoader();
         echo ( $element_id ) ? json_encode(
             [
                 'msj'        => 'The element was created',
                 'passed'     => true,
                 'id_element' => $element_id,
-                'DOMhtml'    => [ 'advanced_settings' => $html ],
+                'DOMhtml'    => [ 
+                    'advanced_settings' => $html,
+                    //'texthtml_body' => $body_html,
+                ],
             ]
         ) : json_encode(
             [
@@ -2581,21 +2589,585 @@ class ajaxRequest {
         }
     }
 
-    public function scc_update_calculator_data_schema() {
+    public function scc_ai_action_confirmed() {
         check_ajax_referer( 'edit-calculator-page', 'nonce' );
-        $request_data = sanitize_text_or_array_field( $_POST['request_data'] ); // Changed from $_GET to $_POST
+
+        try {
+            $thread_id    = sanitize_text_or_array_field( $_GET['threadId'] );
+            $run_id       = sanitize_text_or_array_field( $_GET['runId'] );
+            $tool_call_id = sanitize_text_or_array_field( $_GET['toolCallId'] );
+            $tool_output  = sanitize_text_or_array_field( $_GET['toolOutput'] );
+
+            require_once __DIR__ . '/admin/controllers/ai-wizard-controller.php';
+            $ai_builder  = new AiWizardController();
+            $ai_response = $ai_builder->confirm_action_to_assistant( $thread_id, $run_id, $tool_call_id, $tool_output );
+
+            wp_send_json( $ai_response );
+        } catch ( Exception $e ) {
+            wp_send_json( [ 'status' => 'failed', 'message' => 'Error: ' . $e->getMessage() ] );
+        }
+    }
+
+    public function scc_update_element_with_ai() {
+        check_ajax_referer( 'edit-calculator-page', 'nonce' );
+        $element_params = sanitize_text_or_array_field( $_GET['element_params'] );
+        $element_params = json_decode( stripslashes( $element_params ) );
+        $element_id     = intval( $element_params->element_id );
+        $update_type    = sanitize_text_or_array_field( $_GET['update_type'] );
+
+        require_once __DIR__ . '/admin/controllers/ai-wizard-controller.php';
+        $ai_builder = new AiWizardController();
+
+        require_once __DIR__ . '/admin/controllers/elementController.php';
+        $element_c    = new elementController();
+
+        require_once __DIR__ . '/admin/controllers/elementitemController.php';
+        $element_item_c = new elementitemController();
+        require_once __DIR__ . '/admin/models/editElementModel.php';
+        $edit_page_func = new Stylish_Cost_Calculator_Edit_Page( 0, true );
+
+        $html = '';
+
+        if ( $update_type === 'element_name' ) {
+            $element = [
+                'id'           => $element_id,
+                'titleElement' => $element_params->title,
+            ];
+            $html = $element_c->update( $element );
+        }
+
+        if ( $update_type === 'vmath_calculation' ) {
+            $vmath_params  = $element_params->vmath_params;
+            $vmath_formula = $vmath_params->vmath_formula;
+            $item_values   = $vmath_params->item_values;
+            $element_items = $ai_builder->vmath_item_array_helper( $item_values );
+
+            $element_item_c->delete_all_items_from_element( $element_id );
+            $element = [
+                'id'     => $element_id,
+                'value2' => $vmath_formula,
+            ];
+            $element_c->update( $element );
+
+            foreach ( $element_items as $item ) {
+                $eli = [
+                    'name'       => $item['name'],
+                    'price'      => $item['price'],
+                    'value2'     => $item['max_quantity'],
+                    'element_id' => $element_id,
+                ];
+                $element_item_c->create( $eli );
+                $html .= $edit_page_func->render_vriable_math_part( 0, $eli );
+            }
+        }
+
+        wp_send_json( $html );
+    }
+
+    public function scc_ai_wizard_add_elements() {
+        check_ajax_referer( 'edit-calculator-page', 'nonce' );
+
+        $request_data = sanitize_text_or_array_field( $_POST['request_data'] );
         $request_data = json_decode( stripslashes( $request_data ) );
 
-        $calculator_id = intval( $request_data->calculator_id );
+        //ai_requested_elements has the prompt from the ai to generate the elements and settings if needed
+        $ai_requested_elements    = sanitize_text_or_array_field( $request_data->ai_response );
+        $calculator_id            = intval( $request_data->calculator_id );
+        $section_id               = intval( $request_data->section_target_id );
+        $clean_calculator         = boolval( $request_data->clean_calculator );
+        $first_subsection_id      = intval( $request_data->first_subsection_id );
 
-        require_once __DIR__ . '/admin/controllers/formController.php';
-        $calculatorC = new formController();
-        $calc        = $calculatorC->readWithRelations( $calculator_id );
+        require_once __DIR__ . '/admin/controllers/ai-wizard-controller.php';
+        $ai_builder = new AiWizardController();
 
-        if ( $calc ) {
-            wp_send_json( [ 'schema' => $calc->sections, 'calc_id' => $calculator_id ] );
+        $ai_elements_array  = $ai_builder->get_ai_elements_array( $ai_requested_elements, $calculator_id );
+
+        $elements_to_render = [];
+        $check_type         = '';
+
+        if ( empty( $ai_elements_array ) ) {
+            wp_send_json( [ 'ai_requested_elements' => $ai_requested_elements, 'ai_elements_array' => $ai_elements_array ] );
         } else {
-            wp_send_json( [ 'status' => 'failed', 'message' => 'Calculator not found' ] );
+            require_once __DIR__ . '/admin/controllers/subsectionController.php';
+            $subsection_controller = new subsectionController();
+
+            if ( $clean_calculator ) {
+                $subsection_controller->delete( $first_subsection_id );
+            }
+
+            $current_subsection_id = null;
+            $slider_count          = 0;
+            error_log( print_r( $ai_elements_array, true ) );
+
+            foreach ( $ai_elements_array['elements'] as $element_index => $element_values ) {
+                error_log( 'Processing element : ' );
+                error_log( print_r( $element_values, true ) );
+
+                $check_type = $element_values['type'];
+
+                // Create a new subsection only for the first element or if it's the second slider
+                if ( $current_subsection_id === null || ( $check_type === 'slider' && $slider_count > 0 ) ) {
+                    $sb['order']           = $slider_count;
+                    $sb['section_id']      = $section_id;
+                    $current_subsection_id = $subsection_controller->create( $sb );
+                }
+
+                if ( $check_type === 'slider' ) {
+                    $slider_count++;
+                }
+
+                if ( $element_values['type'] === 'Dropdown Menu' ) {
+                    $elements_to_render = $this->scc_add_element_dropdown_with_ai( $element_values, $current_subsection_id );
+                }
+
+                if ( $element_values['type'] === 'slider' ) {
+                    $elements_to_render = $this->scc_add_element_slider_with_ai( $element_values, $current_subsection_id );
+                }
+
+                if ( $element_values['type'] === 'quantity box' ) {
+                    $elements_to_render = $this->scc_add_element_quantity_box_with_ai( $element_values, $current_subsection_id );
+                }
+
+                if ( $element_values['type'] === 'custom math' ) {
+                    $elements_to_render = $this->scc_add_element_fee_and_discount_with_ai( $element_values, $current_subsection_id );
+                }
+
+                if ( $element_values['type'] === 'texthtml' ) {
+                    $elements_to_render = $this->scc_add_element_text_html_with_ai( $element_values, $current_subsection_id );
+                }
+
+                if ( $element_values['type'] === 'signature box' ) {
+                    $elements_to_render = $this->scc_add_element_signature_box_with_ai( $element_values, $current_subsection_id );
+                }
+
+                if ( $element_values['type'] === 'comment box' ) {
+                    $elements_to_render = $this->scc_add_element_comment_box_with_ai( $element_values, $current_subsection_id );
+                }
+
+                if ( $element_values['type'] === 'checkbox' ) {
+                    $elements_to_render = $this->scc_add_element_checkbox_with_ai( $element_values, $current_subsection_id );
+                }
+
+                if ( $element_values['type'] === 'date' ) {
+                    $elements_to_render = $this->scc_add_element_date_with_ai( $element_values, $current_subsection_id );
+                }
+
+                if ( $element_values['type'] === 'distance' ) {
+                    $elements_to_render = $this->scc_add_element_distance_with_ai( $element_values, $current_subsection_id );
+                }
+
+                if ( $element_values['type'] === 'math' ) {
+                    $elements_to_render = $this->scc_add_element_advanced_pricing_formula_with_ai( $element_values, $current_subsection_id );
+                }
+            }
+        }
+
+        wp_send_json( [ 'check_type' => $check_type, 'ai_requested_elements' => $ai_requested_elements, 'ai_elements_array' => $ai_elements_array, 'ai_elements_to_render' => $elements_to_render ] );
+    }
+
+    public function scc_ai_wizard_add_calculator_settings() {
+        check_ajax_referer( 'edit-calculator-page', 'nonce' );
+
+        $request_data = sanitize_text_or_array_field( $_POST['request_data'] );
+        $request_data = json_decode( stripslashes( $request_data ) );
+
+        // Fix: Make sure we're checking both POST and GET, with POST taking precedence
+        $calculator_id = $request_data->calculator_id ? intval( $request_data->calculator_id ) : 0;
+
+        $ai_requested_settings = $request_data->ai_requested_settings ? sanitize_text_or_array_field( $request_data->ai_requested_settings ) : [];
+
+        // Validate we have the required data
+        if ( empty( $calculator_id ) ) {
+            wp_send_json_error( [ 'message' => 'Calculator ID is required' ] );
+
+            return;
+        }
+
+        require_once __DIR__ . '/admin/controllers/ai-wizard-controller.php';
+        $ai_builder                   = new AiWizardController();
+        $ai_calculator_settings_array = $ai_builder->get_ai_calculator_settings_array( $ai_requested_settings, $calculator_id );
+
+        $settings_to_render = [];
+
+        if ( !empty( $ai_calculator_settings_array ) && is_array( $ai_calculator_settings_array ) ) {
+            require_once __DIR__ . '/admin/controllers/formController.php';
+            $form_controller = new formController();
+
+            // Create update data array with all necessary keys to prevent PHP warnings
+            $update_data = [
+                'id' => $calculator_id,
+            ];
+
+            // Only add settings that exist in the AI settings array
+            if ( isset( $ai_calculator_settings_array['calculator_name'] ) ) {
+                $update_data['formname'] = $ai_calculator_settings_array['calculator_name'];
+            }
+
+            if ( isset( $ai_calculator_settings_array['minimum_total'] ) ) {
+                $update_data['minimumTotal'] = $ai_calculator_settings_array['minimum_total'];
+            }
+
+            if ( isset( $ai_calculator_settings_array['detailed_list_button'] ) ) {
+                $update_data['turnviewdetails'] = boolval( $ai_calculator_settings_array['detailed_list_button'] ) ? 'false' : 'true'; // Note: Inverted logic here
+            }
+
+            if ( isset( $ai_calculator_settings_array['email_quote_button'] ) ) {
+                $update_data['turnoffemailquote'] = boolval( $ai_calculator_settings_array['email_quote_button'] ) ? 'false' : 'true'; // Note: Inverted logic here
+            }
+
+            if ( isset( $ai_calculator_settings_array['coupon_code_button'] ) ) {
+                $update_data['turnoffcoupon'] = boolval( $ai_calculator_settings_array['coupon_code_button'] ) ? 'false' : 'true'; // Note: Inverted logic here
+            }
+
+            if ( isset( $ai_calculator_settings_array['show_unit_price'] ) ) {
+                $update_data['showUnitPrice'] = boolval( $ai_calculator_settings_array['show_unit_price'] ) ? 'true' : 'false';
+            }
+
+            if ( isset( $ai_calculator_settings_array['tax_value'] ) ) {
+                $update_data['taxVat']     = floatval( $ai_calculator_settings_array['tax_value'] );
+                $update_data['turnoffTax'] = boolval( $ai_calculator_settings_array['tax_value'] ) ? 'false' : 'true';
+            }
+
+            // Call the update method with our prepared data
+            $update_status = $form_controller->update( $update_data );
+
+            if ( $update_status ) {
+                $settings_to_render['status'] = 'success';
+            } else {
+                $settings_to_render['status'] = 'error';
+            }
+        } else {
+            $settings_to_render['status']                       = 'error';
+            $settings_to_render['message']                      = 'No settings to render';
+            $settings_to_render['ai_calculator_settings_array'] = $ai_calculator_settings_array;
+        }
+
+        wp_send_json( [ 'ai_calculator_settings_array' => $ai_calculator_settings_array, 'settings_to_render' => $settings_to_render ] );
+    }
+
+    private function scc_load_create_element_dependencies() {
+        require_once __DIR__ . '/admin/controllers/elementController.php';
+        require_once __DIR__ . '/admin/controllers/elementitemController.php';
+        require_once __DIR__ . '/admin/models/editElementModel.php';
+    }
+    private function scc_return_create_element_with_ai( $passed, $element_id = null, $message = null ) {
+        $return_message = $element_id ? 'The element was created' : 'There was an error, please try again';
+
+        if ( $message ) {
+            $return_message = $message;
+        }
+        $response = [
+            'msj'    => $return_message,
+            'passed' => $passed,
+        ];
+
+        if ( $element_id !== null ) {
+            $response['id_element'] = $element_id;
+        }
+
+        return json_encode( $response );
+    }
+    private function scc_validate_element_multiplier( $elements ) {
+        foreach ( $elements as $e ) {
+            if ( $e->type == 'slider' ) {
+                $this->scc_return_create_element_with_ai( false, 'slider already' );
+            }
+        }
+    }
+
+    public function scc_add_element_dropdown_with_ai( $element_values, $subsection_id ) {
+        $this->scc_load_create_element_dependencies();
+        $load_woocommerce_products            = false;
+        $element_controller                   = new elementController();
+        $element_item_controller              = new elementitemController();
+        $el['orden']                          = 0;
+        $el['titleElement']                   = $element_values['element_title'];
+        $el['type']                           = 'Dropdown Menu';
+        $el['subsection_id']                  = intval( $subsection_id );
+        $element_id                           = $element_controller->create( $el );
+        $el['id']                             = $element_id;
+
+        $body_html = '';
+        $items     = [];
+
+        // error_log(print_r($element_values['element_items'], true));
+        foreach ( $element_values['element_items'] as $item ) {
+            $eli['order']          = $item['order'];
+            $eli['name']           = $item['name'];
+            $eli['price']          = $item['price'];
+            $eli['description']    = $item['description'];
+            $eli['element_id']     = intval( $element_id );
+            $element_item_id       = $element_item_controller->create( $eli );
+            $eli['elementItem_id'] = $element_item_id['id'];
+            $items[]               = $eli;
+        }
+
+        //return the element id and the html to the frontend
+        $this->scc_return_create_element_with_ai( $element_id ? true : false, $element_id );
+    }
+
+    public function scc_add_element_slider_with_ai( $element_values, $subsection_id ) {
+        $this->scc_load_create_element_dependencies();
+        $element_controller                = new elementController();
+        $element_item_controller           = new elementitemController();
+        $el['orden']                       = 0;
+        $el['titleElement']                = $element_values['element_title'];
+        $el['type']                        = 'slider';
+        $el['value1']                      = $element_values['sub_type'];
+        $el['value2']                      = '1';
+        $el['value3']                      = '1';
+        $el['subsection_id']               = intval( $subsection_id );
+
+        $elmts                  = $element_controller->getBySubsection( intval( $subsection_id ) );
+
+        // validate if there is already a slider in the subsection
+        $this->scc_validate_element_multiplier( $elmts );
+
+        $element_id        = $element_controller->create( $el );
+
+        foreach ( $element_values['element_items'] as $item ) {
+            $eli['value1']     = $item['min'];
+            $eli['value2']     = $item['max'];
+            $eli['value3']     = $item['price'];
+            $eli['element_id'] = intval( $element_id );
+            $elementItem_id    = $element_item_controller->create( $eli );
+        }
+
+        $this->scc_return_create_element_with_ai( $element_id ? true : false, $element_id );
+    }
+
+    public function scc_add_element_quantity_box_with_ai( $element_values, $subsection_id ) {
+        $this->scc_load_create_element_dependencies();
+        $element_controller               = new elementController();
+        $el['orden']                      = 0;
+        $el['titleElement']               = $element_values['element_title'];
+        $el['type']                       = 'quantity box';
+        $el['value1']                     = 'default';
+        $el['value2']                     = $element_values['value'];
+        $el['subsection_id']              = intval( $subsection_id );
+
+        $element_id        = $element_controller->create( $el );
+
+        $this->scc_return_create_element_with_ai( $element_id ? true : false, $element_id );
+    }
+    public function scc_add_element_fee_and_discount_with_ai( $element_values, $subsection_id ) {
+        $this->scc_load_create_element_dependencies();
+        $element_controller               = new elementController();
+        $el['orden']                      = 0;
+        $el['titleElement']               = $element_values['element_title'];
+        $el['type']                       = 'custom math';
+        $el['value1']                     = $element_values['sub_type'];
+        $el['value2']                     = $element_values['value'];
+        $el['displayFrontend']            = 1;
+        $el['displayDetailList']          = 1;
+        $el['subsection_id']              = intval( $subsection_id );
+
+        $element_id        = $element_controller->create( $el );
+
+        $this->scc_return_create_element_with_ai( $element_id ? true : false, $element_id );
+    }
+
+    public function scc_add_element_text_html_with_ai( $element_values, $subsection_id ) {
+        $this->scc_load_create_element_dependencies();
+        $element_controller               = new elementController();
+        $el['orden']                      = 0;
+        $el['titleElement']               = $element_values['element_title'];
+        $el['type']                       = 'texthtml';
+        $el['value1']                     = '1';
+        $el['value2']                     = $element_values['value'];
+        $el['subsection_id']              = intval( $subsection_id );
+
+        $element_id        = $element_controller->create( $el );
+
+        $this->scc_return_create_element_with_ai( $element_id ? true : false, $element_id );
+    }
+
+    public function scc_add_element_signature_box_with_ai( $element_values, $subsection_id ) {
+        $this->scc_load_create_element_dependencies();
+        $element_controller               = new elementController();
+        $el['orden']                      = 0;
+        $el['titleElement']               = $element_values['element_title'];
+        $el['type']                       = 'signature box';
+        $el['subsection_id']              = intval( $subsection_id );
+
+        $element_id        = $element_controller->create( $el );
+
+        $this->scc_return_create_element_with_ai( $element_id ? true : false, $element_id );
+    }
+
+    public function scc_add_element_comment_box_with_ai( $element_values, $subsection_id ) {
+        $this->scc_load_create_element_dependencies();
+        $element_controller     = new elementController();
+        $el['orden']            = 0;
+        $el['titleElement']     = $element_values['element_title'];
+        $el['type']             = 'comment box';
+        $el['subsection_id']    = intval( $subsection_id );
+        $el['value2']           = '4';
+
+        $element_id        = $element_controller->create( $el );
+
+        $this->scc_return_create_element_with_ai( $element_id ? true : false, $element_id );
+    }
+
+    public function scc_add_element_checkbox_with_ai( $element_values, $subsection_id ) {
+        $this->scc_load_create_element_dependencies();
+        $element_controller                = new elementController();
+        $element_item_controller           = new elementitemController();
+        $el['orden']                       = 0;
+        $el['titleElement']                = $element_values['element_title'];
+        $el['type']                        = 'checkbox';
+        $el['subsection_id']               = intval( $subsection_id );
+        $el['value1']                      = $element_values['sub_type'];
+        $el['value4']                      = 'true';
+        $el['value5']                      = '1';
+
+        $element_id        = $element_controller->create( $el );
+
+        $body_html = '';
+        $items     = [];
+
+        foreach ( $element_values['element_items'] as $item ) {
+            $eli['order']          = $item['order'];
+            $eli['name']           = $item['name'];
+            $eli['price']          = $item['price'];
+            $eli['description']    = $item['description'];
+            $eli['element_id']     = intval( $element_id );
+            $element_item_id       = $element_item_controller->create( $eli );
+            // Fix: Check if $element_item_id is an array before accessing its 'id' index
+            if (is_array($element_item_id)) {
+                $eli['elementItem_id'] = $element_item_id['id'];
+            } else {
+                $eli['elementItem_id'] = $element_item_id;
+            }
+            $items[]               = $eli;
+        }
+
+        $this->scc_return_create_element_with_ai( $element_id ? true : false, $element_id );
+    }
+
+    public function scc_add_element_date_with_ai( $element_values, $subsection_id ) {
+        $this->scc_load_create_element_dependencies();
+        $element_controller     = new elementController();
+        $el['orden']            = 0;
+        $el['titleElement']     = $element_values['element_title'];
+        $el['type']             = 'date';
+        $el['value1']           = $element_values['sub_type'];
+        $el['value4']           = $element_values['value'];
+        $el['subsection_id']    = intval( $subsection_id );
+
+        $element_id        = $element_controller->create( $el );
+
+        $this->scc_return_create_element_with_ai( $element_id ? true : false, $element_id );
+    }
+
+    public function scc_add_element_distance_with_ai( $element_values, $subsection_id ) {
+        $this->scc_load_create_element_dependencies();
+        $element_controller                = new elementController();
+        $element_item_controller           = new elementitemController();
+        $el['orden']                       = 0;
+        $el['titleElement']                = $element_values['element_title'];
+        $el['type']                        = 'distance';
+        $el['value1']                      = 'default_pricing';
+        $el['value2']                      = $element_values['sub_type'];
+        $el['subsection_id']               = intval( $subsection_id );
+
+        $element_id        = $element_controller->create( $el );
+
+        $items = [];
+
+        foreach ( $element_values['element_items'] as $item ) {
+            $eli['order']          = $item['order'];
+            $eli['value1']         = '0';
+            $eli['value2']         = '0';
+            $eli['value3']         = $item['price'];
+            $eli['element_id']     = intval( $element_id );
+            $element_item_id       = $element_item_controller->create( $eli );
+            $eli['elementItem_id'] = $element_item_id['id'];
+            $items[]               = $eli;
+        }
+
+        $this->scc_return_create_element_with_ai( $element_id ? true : false, $element_id );
+    }
+
+    public function scc_add_element_advanced_pricing_formula_with_ai( $element_values, $subsection_id ) {
+        $this->scc_load_create_element_dependencies();
+        $element_controller                = new elementController();
+        $element_item_controller           = new elementitemController();
+        $el['orden']                       = 0;
+        $el['titleElement']                = $element_values['element_title'];
+        $el['type']                        = 'math';
+        $el['value2']                      = $element_values['value'];
+        $el['value3']                      = '1';
+        $el['subsection_id']               = intval( $subsection_id );
+
+        $element_id        = $element_controller->create( $el );
+
+        $items = [];
+
+        foreach ( $element_values['element_items'] as $item ) {
+            $eli['order']      = $item['order'];
+            $eli['name']       = $item['name'];
+            $eli['price']      = $item['price'];
+            $eli['value2']     = $item['max'];
+            $eli['value1']     = '1';
+
+            $eli['element_id']     = intval( $element_id );
+            $element_item_id       = $element_item_controller->create( $eli );
+            $eli['elementItem_id'] = $element_item_id['id'];
+            $items[]               = $eli;
+        }
+
+        $this->scc_return_create_element_with_ai( $element_id ? true : false, $element_id );
+    }
+
+    public function scc_ai_get_site_info_with_ai() {
+        // Check if either nonce is valid
+        $edit_nonce_valid = check_ajax_referer( 'edit-calculator-page', 'nonce', false );
+        $add_nonce_valid  = check_ajax_referer( 'add-calculator-page', 'nonce', false );
+
+        if ( !$edit_nonce_valid && !$add_nonce_valid ) {
+            wp_send_json_error( 'Invalid security token' );
+
+            return;
+        }
+
+        $siteURL = null;
+
+        if ( isset( $_GET['siteURL'] ) ) {
+            $siteURL = esc_url_raw( $_GET['siteURL'] );
+        }
+
+        require_once __DIR__ . '/admin/controllers/ai-wizard-controller.php';
+        $ai_wizard_controller = new AiWizardController();
+        $request_data         = $ai_wizard_controller->scc_ai_get_site_info( $siteURL );
+
+        if ( is_wp_error( $request_data ) ) {
+            $error_message = $request_data->get_error_message();
+            wp_send_json_error( "Something went wrong: $error_message" );
+        } else {
+            wp_send_json_success( $request_data );
+        }
+    }
+
+    public function scc_update_calculator_data_schema() {
+        try {
+            check_ajax_referer( 'edit-calculator-page', 'nonce' );
+            $request_data = sanitize_text_or_array_field( $_POST['request_data'] ); // Changed from $_GET to $_POST
+            $request_data = json_decode( stripslashes( $request_data ) );
+
+            $calculator_id = intval( $request_data->calculator_id );
+
+            require_once __DIR__ . '/admin/controllers/formController.php';
+            $calculatorC = new formController();
+            $calc        = $calculatorC->readWithRelations( $calculator_id );
+
+            if ( $calc ) {
+                wp_send_json( [ 'schema' => $calc->sections, 'calc_id' => $calculator_id ] );
+            } else {
+                wp_send_json( [ 'status' => 'failed', 'message' => 'Calculator not found' ] );
+            }
+        } catch ( Exception $e ) {
+            wp_send_json( [ 'status' => 'failed', 'message' => 'Error: ' . $e->getMessage() ] );
         }
     }
 }
