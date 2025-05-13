@@ -268,13 +268,8 @@ for ( $n = 1; $n <= 100; $n++ ) {
 															<div class="switch-container">
 																<label class="scc-switch">
 																	<div class="scc-switch">
-																		<input type="checkbox" name="toggle_boxshadow_style2" placeholder="" value="toggle_boxshadow_style2" id="toggle_boxshadow_style2" class="form-control"
-																			<?php
-																			if ($f1->addContainer == 'true') {
-																				echo 'checked';
-																			}
-																			?>>
-																		<span class="slider round"></span>
+																		<input type="checkbox" disabled name="toggle_boxshadow_style2" placeholder="" value="toggle_boxshadow_style2" id="toggle_boxshadow_style2" class="form-control ">
+																		<span class="slider round scc-disabled-premium-toggle"></span>
 																	</div>
 																</label>
 															</div>

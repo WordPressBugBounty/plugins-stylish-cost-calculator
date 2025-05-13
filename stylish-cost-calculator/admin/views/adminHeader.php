@@ -650,11 +650,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<?php echo scc_get_kses_extended_ruleset( $scc_icons['settings'] ); ?>
 							</span></button>
 						<div class="scc-menu-dropdown-content scc-hidden">
-							<a class="scc-font-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#fontSettingsModal" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
+							<a class="scc-font-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
 								<?php echo scc_get_kses_extended_ruleset( $scc_icons['edit-3'] ); ?>
 							</span> Font Settings</a>
 							<hr>
-							<a class="scc-calculator-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#calculatorSettingsModal" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
+							<a class="scc-calculator-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal1" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
 								<?php echo scc_get_kses_extended_ruleset( $scc_icons['tool'] ); ?>
 							</span> Calculator Settings</a>
 							<hr>
@@ -666,7 +666,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								<?php echo scc_get_kses_extended_ruleset( $scc_icons['dollar-sign'] ); ?>
 							</span> Payment Settings</a>
 							<hr>
-							<a class="scc-wordings-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#wordingsModal" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
+							<a class="scc-wordings-settings-dropdown" href="#" data-bs-toggle="modal" data-bs-target="#settingsModal2" onclick="sccToggleMenuDropdown( this )" ><span class="scc-icn-wrapper">
 								<?php echo scc_get_kses_extended_ruleset( $scc_icons['file-text'] ); ?>
 							</span> Wordings</a>
 							<hr>
