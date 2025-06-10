@@ -931,7 +931,6 @@ const sccAiUtils = {
 
 		if ( panel.classList.contains( 'scc-hidden' ) ) {
 			panel.closest( '.scc-ai-wizard-panel-container' ).classList.add( 'scc-ai-wizard-overlap' );
-			sccAiUtils.closeSupportChat();
 			sccAiUtils.checkAiCredits( 'edit-calculator-page' ).then( ( credits ) => {
 				const creditIndicator = panel?.querySelector( '.scc-ai-credit-count' );
 				sccAiUtils.updateCreditsIndicator( credits, creditIndicator );

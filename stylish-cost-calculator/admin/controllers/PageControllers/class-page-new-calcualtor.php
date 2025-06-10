@@ -14,9 +14,13 @@ class PageNew extends PagesBreadcrumbs {
         // Adding inline script to scc-add-calculator
         wp_add_inline_script( 'scc-add-calculator', 'const previewImagesBaseUrl = "' . esc_url( SCC_TEMPLATE_PREVIEW_BASEURL ) . '";' );
         wp_enqueue_script( 'scc-add-calculator' );
-        wp_enqueue_script( 'scc-wizard-quiz' );
+        
         require dirname( __DIR__, 2 ) . '/views/adminHeader.php';
         require dirname( __DIR__, 2 ) . '/views/addCalculator.php';
+        
+        // Load wizard quiz script AFTER the HTML with choices-data is generated
+        wp_enqueue_script( 'scc-wizard-quiz' );
+        
         require dirname( __DIR__, 2 ) . '/views/adminFooter.php';
     }
 

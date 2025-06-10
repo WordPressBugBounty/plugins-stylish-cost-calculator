@@ -147,13 +147,14 @@ class Stylish_Cost_Calculator_Coupon {
 		echo '</div>';
 		echo '<div class="col-md-6 col-sm-6" data-provide="datepicker">';
 		echo '<div class="input-group date">';
+		echo '<div class="input-group-addon" style="position: absolute; left: -25px; top: 8px;">';
+		echo '<span class="fas fa-calendar-alt"></span>';
+		echo '</div>';
 		$start_date = isset( $coupon ) && isset( $coupon->startdate ) ? date( 'm/d/Y', strtotime( $coupon->startdate ) ) : '';
 		?>
 		<input type="text" class="form-control" style="height:40px;border:2px solid #e8e8e8" id="coupon_start_date" value="<?php echo esc_html( $start_date ); ?>" date-format="mm/dd/yy">
 		<?php
-		echo '<div class="input-group-addon">';
-		echo '<span class="fas fa-calendar-alt"></span>';
-		echo '</div>';
+
 		echo '</div>';
 		echo '<p id="coupon_start_date_error" style="color:red"></p>';
 		echo '</div>';
@@ -164,13 +165,13 @@ class Stylish_Cost_Calculator_Coupon {
 		echo '</div>';
 		echo '<div class="col-md-6 col-sm-6">';
 		echo '<div class="input-group">';
+		echo '<div class="input-group-addon" style="position: absolute; left: -25px; top: 8px;">';
+		echo '<span class="fas fa-calendar-alt"></span>';
+		echo '</div>';
 		$end_date = isset( $coupon ) && isset( $coupon->enddate ) ? date( 'm/d/Y', strtotime( $coupon->enddate ) ) : '';
 		?>
 		<input class="form-control" style="height:40px;border:2px solid #e8e8e8" id="coupon_end_date" value="<?php echo esc_html( $end_date ); ?>" date-format="mm/dd/yy">
 		<?php
-		echo '<div class="input-group-addon">';
-		echo '<span class="fas fa-calendar-alt"></span>';
-		echo '</div>';
 		echo '</div>';
 		echo '<p id="coupon_end_date_error" style="color:red"></p>';
 		echo '</div>';

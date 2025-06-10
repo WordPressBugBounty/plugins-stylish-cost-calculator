@@ -314,3 +314,163 @@ if ( ! function_exists( 'df_scc_output_texthtml' ) ) {
         }
     }
 }
+
+if ( ! function_exists( 'scc_render_floating_support_button' ) ) {
+    /**
+     * Renders a floating support button in the bottom right corner
+     * Automatically adjusts position when AI Wizard is present on editing pages
+     *
+     * @return void
+     */
+    function scc_render_floating_support_button() {
+        // Only show on SCC admin pages
+        if ( ! isset( $_GET['page'] ) || strpos( $_GET['page'], 'scc' ) === false ) {
+            return;
+        }
+
+        // Get the help-circle icon
+        $scc_icons = require SCC_DIR . '/assets/scc_icons/icon_rsrc.php';
+        $support_url = admin_url( 'admin.php?page=scc-support' );
+        
+        // Check if we're on an editing page (where AI Wizard might be present)
+        $is_editing_page = isset( $_GET['page'] ) && ( 
+            $_GET['page'] === 'scc-edit-calculator' || 
+            strpos( $_GET['page'], 'edit' ) !== false 
+        );
+        
+        // Add CSS class for editing pages to adjust positioning
+        $position_class = $is_editing_page ? 'scc-support-btn-with-ai-wizard' : 'scc-support-btn-default';
+        
+        ob_start();
+        ?>
+        <div class="scc-floating-support-button-container <?php echo esc_attr( $position_class ); ?>">
+            <a href="<?php echo esc_url( $support_url ); ?>" 
+               class="scc-floating-support-button use-tooltip" 
+               data-bs-original-title="<?php esc_attr_e( 'Help & Support', 'stylish-cost-calculator' ); ?>"
+               
+               title="<?php esc_attr_e( 'Help & Support', 'stylish-cost-calculator' ); ?>"
+               aria-label="<?php esc_attr_e( 'Go to Help & Support page', 'stylish-cost-calculator' ); ?>">
+                <span class="scc-icn-wrapper">
+                    <?php echo scc_get_kses_extended_ruleset( $scc_icons['help-circle'] ); ?>
+                </span>
+            </a>
+        </div>
+        
+        <style>
+            .scc-floating-support-button-container {
+                position: fixed;
+                bottom: 19px;
+                right: 20px;
+                z-index: 98; /* Below AI Wizard (z-index: 99) but above most content */
+            }
+            
+            /* Adjust position when AI Wizard is present on editing pages */
+            .scc-floating-support-button-container.scc-support-btn-with-ai-wizard {
+                right: 110px; /* Leave space for AI Wizard button */
+            }
+            
+            .scc-floating-support-button {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 60px;
+                height: 60px;
+                background: var(--scc-color-primary, #314AF3);
+                color: white;
+                border-radius: 50%;
+                text-decoration: none;
+                box-shadow: 0 4px 12px rgba(49, 74, 243, 0.3);
+                transition: all 0.3s ease;
+                border: none;
+                cursor: pointer;
+            }
+            
+            .scc-floating-support-button:hover {
+                background: var(--scc-color-primary-dark, #273ccd);
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(49, 74, 243, 0.4);
+                color: white;
+                text-decoration: none;
+            }
+            
+            .scc-floating-support-button:focus {
+                outline: 2px solid var(--scc-color-primary, #314AF3);
+                outline-offset: 2px;
+                color: white;
+                text-decoration: none;
+            }
+            
+            .scc-floating-support-button .scc-icn-wrapper {
+                width: 35px;
+                height: 35px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .scc-floating-support-button .scc-icn-wrapper svg {
+                width: 100%;
+                height: 100%;
+                stroke: currentColor;
+            }
+            
+            /* Animation for attention */
+            @keyframes scc-support-pulse {
+                0%, 100% {
+                    transform: scale(1);
+                }
+                50% {
+                    transform: scale(1.05);
+                }
+            }
+            
+            .scc-floating-support-button:hover {
+                animation: scc-support-pulse 2s infinite;
+            }
+            
+            /* Responsive adjustments */
+            @media (max-width: 768px) {
+                .scc-floating-support-button-container {
+                    bottom: 15px;
+                    right: 15px;
+                }
+                
+                .scc-floating-support-button-container.scc-support-btn-with-ai-wizard {
+                    right: 110px;
+                }
+                
+                .scc-floating-support-button {
+                    width: 48px;
+                    height: 48px;
+                }
+                
+                .scc-floating-support-button .scc-icn-wrapper {
+                    width: 20px;
+                    height: 20px;
+                }
+            }
+        </style>
+        <?php
+        echo ob_get_clean();
+    }
+}
+
+if ( ! function_exists( 'scc_init_floating_support_button' ) ) {
+    /**
+     * Initialize the floating support button on admin pages
+     *
+     * @return void
+     */
+    function scc_init_floating_support_button() {
+        // Only show on admin pages
+        if ( ! is_admin() ) {
+            return;
+        }
+        
+        // Hook into admin_footer to render the button
+        add_action( 'admin_footer', 'scc_render_floating_support_button' );
+    }
+    
+    // Initialize the floating support button
+    add_action( 'admin_init', 'scc_init_floating_support_button' );
+}

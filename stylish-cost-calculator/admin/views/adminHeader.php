@@ -499,6 +499,10 @@ if ( ! defined( 'ABSPATH' ) ) {
                         echo '<div class="scc-page-title">SMS Dashboard</div>';
                         break;
 
+					case 'stylish-cost-calculator_page_scc-support':
+						echo '<div class="scc-page-title">Support & Help</div>';
+						break;
+
                     case 'stylish-cost-calculator_page_scc-list-all-calculator-forms':
                         echo '<div class="scc-page-title">All Calculator Forms</div>';
                         break;

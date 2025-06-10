@@ -195,12 +195,14 @@ if ( $form->buttonStyle == 2 ) {
     $colorfonts_button = $form->objectColorPicker;
 }
 $style_scc_calculator = null;
+$style2_add_container = false; // Initialize variable
 
 if ( $form->elementSkin == 'style_2' ) {
     $style2_add_container = $form->addContainer == 'true' ? 'scc-has-shadow' : false;
     $style_scc_calculator = 'form_field_item_style_2' . ' ' . $style2_add_container;
 } else {
     $style_scc_calculator = 'form_fields_style_1';
+    // $style2_add_container remains false here
 }
 
 foreach ( $form->sections as $index => $section ) {

@@ -8,20 +8,60 @@ const modalLeads = {
 	5: 'Choose one or <u>more</u> <span style="color:#314af3;">unique needs</span> (part 2)',
 };
 
-window.addEventListener( 'DOMContentLoaded', ( event ) => {
-	// removing WordPress's forms.css file, for
-	// document.getElementById('forms-css')?.remove();
-	// parsing query parameters
-	const urlParams = new URLSearchParams( window.location.search );
-	if ( urlParams.has( 'open-wizard' ) ) {
-		document.querySelector( '[data-btn-action="startSetupWizard"]' ).click();
-	}
+// Initialize choicesData early to prevent null reference errors
+let choicesData = {};
 
-	const choicesData = JSON.parse( document.querySelector( '#choices-data' )?.textContent || '[]' );
-	if ( window.location.search === '?page=scc-list-all-calculator-forms' ) {
+// Function to safely initialize choicesData
+const initializeChoicesData = () => {
+	const choicesDataElement = document.querySelector('#choices-data');
+	if (choicesDataElement && choicesDataElement.textContent) {
+		try {
+			choicesData = JSON.parse(choicesDataElement.textContent);
+			window.choicesData = choicesData;
+			return true;
+		} catch (error) {
+			console.error('SCC Wizard: Error parsing choices data:', error);
+			choicesData = {};
+		}
+	}
+	return false;
+};
+
+// Function to wait for choices-data element and initialize
+const waitForChoicesData = (callback, maxAttempts = 10, attempt = 1) => {
+	if (initializeChoicesData()) {
+		callback();
 		return;
 	}
-	window.choicesData = choicesData;
+	
+	if (attempt >= maxAttempts) {
+		console.warn('SCC Wizard: choices-data element not found after', maxAttempts, 'attempts');
+		return;
+	}
+	
+	// Wait 100ms and try again
+	setTimeout(() => {
+		waitForChoicesData(callback, maxAttempts, attempt + 1);
+	}, 100);
+};
+
+// Main initialization function
+const initializeWizard = () => {
+	// Early check - if no choices-data element exists at all, skip initialization
+	if (!document.querySelector('#choices-data')) {
+		return;
+	}
+	
+	// Wait for choices data to be available and properly parsed
+	waitForChoicesData(() => {
+		// Continue with the rest of the initialization
+		initializeWizardComponents();
+	});
+};
+
+// Function to initialize wizard components after data is ready
+const initializeWizardComponents = () => {
+	const choicesData = window.choicesData;
 	const choicesBySteps = Object.keys( choicesData ).filter( ( z ) => z.startsWith( 'step' ) && z !== 'stepResult' && z !== 'step1' ).map( ( x ) => choicesData[ x ].map( ( q ) => q.key ) );
 	window.choicesBySteps = choicesBySteps;
 	const choicesByStepNames = {};
@@ -221,7 +261,7 @@ window.addEventListener( 'DOMContentLoaded', ( event ) => {
 	} );
 	svgCollection = JSON.parse( document.getElementById( 'svgCollection' )?.textContent || '[]' );
 	window.svgCollection = svgCollection;
-} );
+}
 
 // function filterResultPageElementSuggestion(elements) {
 // 	return elements;
@@ -355,7 +395,12 @@ async function updateWizardQuizStorageData( data, newCalcId ) {
 	const wizardData = JSON.parse( await localStorage.getItem( 'wizardQuizData' ) ) || [];
 	// add current unix timestamp
 	data.timestamp = Math.floor( Date.now() / 1000 );
-	const evaluationConditions = [ ...choicesData.elementSuggestions, ...choicesData.stepResult ].map( ( z ) => {
+	
+	// Safely handle choicesData properties that might not exist
+	const elementSuggestions = (choicesData && Array.isArray(choicesData.elementSuggestions)) ? choicesData.elementSuggestions : [];
+	const stepResult = (choicesData && Array.isArray(choicesData.stepResult)) ? choicesData.stepResult : [];
+	
+	const evaluationConditions = [ ...elementSuggestions, ...stepResult ].map( ( z ) => {
 		return { [ z.key ]: z.evaluateAsDoneConditions };
 	} );
 	wizardData.push( { ...data, ...{ calcId: newCalcId }, evaluationConditions } );
@@ -364,14 +409,25 @@ async function updateWizardQuizStorageData( data, newCalcId ) {
 
 
 function getChoicesByStep( stepNumber ) {
+	// Ensure choicesData is available and properly initialized
 	if (typeof choicesData !== 'object' || choicesData === null) {
-        return null;
+        console.warn('SCC Wizard: choicesData is not properly initialized:', choicesData);
+        return [];
     }
+    
     const key = 'step' + stepNumber;
     if (!(key in choicesData)) {
-        return null;
+        console.warn('SCC Wizard: Step data not found for key:', key, 'Available keys:', Object.keys(choicesData));
+        return [];
     }
-    return choicesData[key];
+    
+    const stepData = choicesData[key];
+    if (!Array.isArray(stepData)) {
+        console.warn('SCC Wizard: Step data is not an array for key:', key, 'Data:', stepData);
+        return [];
+    }
+    
+    return stepData;
 }
 
 function getTemplateTypeByStep( stepNumber ) {
@@ -386,17 +442,20 @@ function buildChoicesContent( step ) {
 		step,
 	};
 	if ( step !== 'Result' ) {
+		const choices = getChoicesByStep( step );
 		templateData = {
 			...templateData,
-			choices: getChoicesByStep( step ),
+			choices: choices || [], // Ensure choices is always an array
 		};
 	}
 	if ( step == 'Result' ) {
 		// templateData.choices
+		const allFeatureSuggestions = getChoicesByStep( step );
+		const elementSuggestions = (choicesData && Array.isArray(choicesData.elementSuggestions)) ? choicesData.elementSuggestions : [];
 		templateData = {
 			...templateData,
-			allFeatureSuggestions: getChoicesByStep( step ),
-			allElementSuggestions: choicesData.elementSuggestions,
+			allFeatureSuggestions: allFeatureSuggestions || [], // Ensure it's always an array
+			allElementSuggestions: elementSuggestions, // Ensure it's always an array
 		};
 	}
 	return jQuery( wp.template( getTemplateTypeByStep( step ) )( templateData ) );
@@ -653,7 +712,7 @@ function handleQuizBtnClick( evt ) {
 		templateData = {
 			...templateData,
 			allFeatureSuggestions: getChoicesByStep( 'Result' ),
-			allElementSuggestions: choicesData.elementSuggestions,
+			allElementSuggestions: (choicesData && Array.isArray(choicesData.elementSuggestions)) ? choicesData.elementSuggestions : [],
 		};
 		const filteredFeaturesAndSuggestions = filterResultPageSuggestions( templateData );
 		filteredFeaturesAndSuggestions.elementSuggestions.forEach( ( element ) => {
@@ -678,7 +737,7 @@ function handleQuizBtnClick( evt ) {
 		templateData = {
 			...templateData,
 			allFeatureSuggestions: getChoicesByStep( 'Result' ),
-			allElementSuggestions: choicesData.elementSuggestions,
+			allElementSuggestions: (choicesData && Array.isArray(choicesData.elementSuggestions)) ? choicesData.elementSuggestions : [],
 		};
 		const filteredFeaturesAndSuggestions = filterResultPageSuggestions( templateData );
 		filteredFeaturesAndSuggestions.elementSuggestions.forEach( ( element ) => {
@@ -695,7 +754,12 @@ function handleQuizBtnClick( evt ) {
 		_quizAnswersStore.featureSuggestions = _quizAnswersStore.stepResult;
 		delete _quizAnswersStore.stepResult;
 		const results = { elementsByChoice: filteredFeaturesAndSuggestions.elementsByChoice, featuresByChoice: filteredFeaturesAndSuggestions.featuresByChoice };
-		const evaluationConditions = [ ...choicesData.elementSuggestions, ...choicesData.stepResult ].map( ( z ) => {
+		
+		// Safely handle choicesData properties that might not exist
+		const elementSuggestions = (choicesData && Array.isArray(choicesData.elementSuggestions)) ? choicesData.elementSuggestions : [];
+		const stepResult = (choicesData && Array.isArray(choicesData.stepResult)) ? choicesData.stepResult : [];
+		
+		const evaluationConditions = [ ...elementSuggestions, ...stepResult ].map( ( z ) => {
 			return { [ z.key ]: z.evaluateAsDoneConditions };
 		} );
 		const wizardData = { ...results, ...{ __quizAnswersStore: _quizAnswersStore }, ...suggestionsByStep, evaluationConditions };
@@ -704,7 +768,10 @@ function handleQuizBtnClick( evt ) {
 		} );
 		const setupWizard = document.querySelector( '#floating-wizard-placeholder' );
 		const setupWizardTemplate = wp.template( 'scc-editing-page-sidebar-wizard' );
-		const suggestionsObject = { suggestions: [ ...currentCalculatorSetupWizardData[ 'Pricing Structure' ], ...currentCalculatorSetupWizardData[ 'Unique Needs' ], ...currentCalculatorSetupWizardData[ 'Use Cases' ] ], suggestionsConfig: [ ...choicesData.stepResult, ...choicesData.elementSuggestions ] };
+		const suggestionsObject = { 
+			suggestions: [ ...currentCalculatorSetupWizardData[ 'Pricing Structure' ], ...currentCalculatorSetupWizardData[ 'Unique Needs' ], ...currentCalculatorSetupWizardData[ 'Use Cases' ] ], 
+			suggestionsConfig: [ ...stepResult, ...elementSuggestions ] 
+		};
 		let suggestionsPair = [ ...new Set( suggestionsObject.suggestions ) ].map( ( x ) => {
 			const suggestion = suggestionsObject.suggestionsConfig.find( ( q ) => q.key === x );
 			if ( ! suggestion || suggestion?.showSuggestion === false ) {
@@ -745,7 +812,7 @@ function handleQuizBtnClick( evt ) {
 		templateData = {
 			...templateData,
 			allFeatureSuggestions: getChoicesByStep( 'Result' ),
-			allElementSuggestions: choicesData.elementSuggestions,
+			allElementSuggestions: (choicesData && Array.isArray(choicesData.elementSuggestions)) ? choicesData.elementSuggestions : [],
 		};
 		const filteredFeaturesAndSuggestions = filterResultPageSuggestions( templateData );
 		filteredFeaturesAndSuggestions.elementSuggestions.forEach( ( element ) => {
@@ -1046,7 +1113,6 @@ function sccDisplayBusinessInfoMessage() {
 	console.log(window.location.href);
     // Check if we're NOT on the required URL
     if (!window.location.href.includes(requiredUrl)) {
-        console.log('SCC Info Script: Not on the required URL (' + requiredUrl + '). Skipping message display.');
         return; // Exit the function if the URL doesn't match
     }
     // --- Find the Target Element to Insert After ---
@@ -1108,3 +1174,29 @@ function sccHideInfoMessageOnClick() {
     }
 }
 window.sccHideInfoMessageOnClick = sccHideInfoMessageOnClick;
+
+// Add DOMContentLoaded event listener
+window.addEventListener( 'DOMContentLoaded', ( event ) => {
+	// removing WordPress's forms.css file, for
+	// document.getElementById('forms-css')?.remove();
+	
+	// Check if we should skip initialization for certain pages
+	if ( window.location.search === '?page=scc-list-all-calculator-forms' ) {
+		return;
+	}
+	
+	// Initialize the wizard
+	initializeWizard();
+	
+	// Handle open-wizard parameter after initialization
+	const urlParams = new URLSearchParams( window.location.search );
+	if ( urlParams.has( 'open-wizard' ) ) {
+		// Wait a bit for the page to be fully loaded before clicking
+		setTimeout(() => {
+			const wizardBtn = document.querySelector( '[data-btn-action="startSetupWizard"]' );
+			if (wizardBtn) {
+				wizardBtn.click();
+			}
+		}, 500);
+	}
+} );

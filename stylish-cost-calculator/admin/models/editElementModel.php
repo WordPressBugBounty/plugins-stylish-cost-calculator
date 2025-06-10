@@ -1388,8 +1388,8 @@ class Stylish_Cost_Calculator_Edit_Page {
         $elit     = (object) wp_parse_args( $elit, $defaults );
         ob_start();
         ?>
-		<div class="row m-0 selopt3 col-md-12 col-xs-12" style="margin-bottom:5px;padding:0px;width: 110%">
-					<div class="row" style="margin:0; padding: 0; width: 91%;">
+		<div class="row m-0 selopt3 col-md-12 col-xs-12" style="margin-bottom:5px;padding:0px;">
+					<div class="row" style="margin:0; padding: 0;">
 						<div class="row p-0 m-0 mt-2 col-md-12 col-xs-12">
 							<input class="666 swichoptionitem_id" type="text" value="<?php echo intval( $elit->id ); ?>" hidden>
 							<div class="scc-input 123 el_1 col-xs-1 col-md-1 tool-premium  
@@ -1408,67 +1408,11 @@ class Stylish_Cost_Calculator_Edit_Page {
 								<span class="input-group-text"><?php echo df_scc_get_currency_symbol_by_currency_code( $this->df_scc_form_currency ); ?></span>
 								<input type="number" onchange="changePriceElementItem(this)" onkeyup="changePriceElementItem(this)" class="input_pad inputoption_2" style="width:100%;text-align:center;height:35px;" placeholder="Price" value="<?php echo floatval( $elit->price ); ?>">
 							</div>
-						</div>
-						<!-- Added for image button -->
-						<div class="col-md-2 col-xs-2 checkbox-image image_container mt-1" style="
-																		<?php
-                                                                        if ( ! $is_image_checkbox ) {
-                                                                            echo 'display:none';
-                                                                        }
-        ?>
-																		">
-							<img class="scc-image-picker" style="margin-bottom: -15px;height: 75px;width:75px;object-fit:contain;" onclick="choseImageElementItem(this)" src="<?php echo ( $elit->value1 == null || $elit->value1 == '0' ) ? SCC_ASSETS_URL . '/images/image.png' : $elit->value1; ?>" title="Pick an image. Please choose an image with a 1:1 aspect ratio for best results.">
-							<span class="scc-dropdown-image-remove" onclick="removeDropdownImage(this)">x</span>
+							<div class="col-md-1 col-xs-1" style="padding-left: 0;">
+								<button onclick="removeSwitchOptionDropdown(this)" class="deleteBackendElmnt"><i class="fa fa-trash"></i></button>
+							</div>
 						</div>
 						<!-- < -->
-
-							<!-- START WooCommerce for Image Buttons & Checkboxes Element-->
-							<?php if ( isset( $this->woo_commerce_products ) ) { ?>
-								<div class="dd-woocommerce 
-								<?php
-                                echo $is_image_checkbox ? 'scc-col-md-10' : 'scc-col-md-12';
-
-							    if ( ! empty( $this->combine_checkout_woocommerce_product_id ) ) {
-							        echo 'd-none';
-							    }
-							    ?>
-								" style="padding:0px;">
-									<div class="scc-col-xs-0 scc-col-md-2" style="padding:0px;background: #f8f9ff;height: 35px;"><img class="scc-woo-logo" src="<?php echo esc_url_raw( SCC_ASSETS_URL . '/images/logo-woocommerce.svg' ); ?>" title="Pick an item from your WooCommerce products to link to."></div>
-									<div class="woo-product-dd scc-col-xs-6 scc-col-md-10" style="padding:0px;">
-										<select class="scc_woo_commerce_product_id" data-target="elements_added" onchange="attachProductId(this, <?php echo intval( $elit->id ); ?>)" style="float:left;height:35px;margin-bottom:20px;max-width: 100%;">
-											<option style="font-size: 10px" value=0>Select a product..</option>
-											<?php
-							                foreach ( $this->woo_commerce_products as $product ) {
-							                    ?>
-												<?php
-							                    if ( $product->is_type( 'variable' ) ) {
-							                        $available_variations = $product->get_available_variations();
-
-							                        foreach ( $available_variations as $product_variable ) {
-							                            $attributes = [];
-
-							                            foreach ( $product_variable['attributes'] as $key => $value ) {
-							                                $attributes[] = $product->get_name() . ': ' . $value;
-							                            }
-							                            ?>
-														<option value=<?php echo esc_html( $product_variable['variation_id'] ); ?> <?php echo selected( $product->get_id() == intval( $elit->woocomerce_product_id ) ); ?>><?php echo esc_html( implode( ' | ', $attributes ) ) . ' | Price: ' . get_woocommerce_currency_symbol() . '' . esc_html( $product_variable['display_regular_price'] ); ?></option>
-														<?php
-							                        }
-							                    } else {
-							                        ?>
-													<option value=<?php echo esc_html( $product->get_id() ); ?> <?php echo selected( $product->get_id() == intval( $elit->woocomerce_product_id ) ); ?>><?php echo esc_html( $product->get_name() ) . ' | Price: ' . get_woocommerce_currency_symbol() . '' . esc_html( $product->get_price() ); ?></option>
-													<?php
-							                    }
-							                }
-							    ?>
-										</select>
-									</div>
-								</div>
-							<?php } ?>
-							<!-- END woocommerce dropdown -->
-					</div>
-					<div class="col-md-1 col-xs-1" style="padding-left: 0;">
-						<button onclick="removeSwitchOptionDropdown(this)" class="deleteBackendElmnt"><i class="fa fa-trash"></i></button>
 					</div>
 				</div>
 		<?php

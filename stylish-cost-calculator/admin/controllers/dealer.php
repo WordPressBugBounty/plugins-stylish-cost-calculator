@@ -51,6 +51,9 @@ class dealer {
 			case 'Stylish_Cost_Calculator_Migration':
 				require dirname( __FILE__ ) . '/PageControllers/class-page-migration.php';
 				break;
+			case 'scc-support':
+				require dirname( __FILE__ ) . '/PageControllers/class-page-support.php';
+				break;
 			default:
 				require dirname( __FILE__ ) . '/PageControllers/class-page-new-calcualtor.php';
 		}

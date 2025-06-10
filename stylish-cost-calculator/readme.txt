@@ -1,12 +1,12 @@
 === Stylish Cost Calculator - Quote Generator, Lead Gen & Price Estimator ===
 Contributors: Designful
 Plugin URL: https://www.stylishcostcalculator.com?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=plugin-url
-Version: 8.0.7
+Version: 8.0.8
 Contributors: Designful
 Tags: sales funnel builder, lead generation, cost calculator, price calculator, quote calculator
 Requires at least: 4.0
 Tested up to: 6.8
-Stable tag: 8.0.7
+Stable tag: 8.0.8
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html

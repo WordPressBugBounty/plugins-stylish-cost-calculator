@@ -3,7 +3,7 @@
  * Plugin Name: Stylish Cost Calculator
  * Plugin URI:  https://stylishcostcalculator.com
  * Description: A Stylish Cost Calculator / Price Estimate Form for your site.
- * Version:     8.0.7
+ * Version:     8.0.8
  * Author:      Designful
  * Author URI:  https://stylishcostcalculator.com
  * License:     GPL2
@@ -14,7 +14,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
-define( 'STYLISH_COST_CALCULATOR_VERSION', '8.0.7' );
+define( 'STYLISH_COST_CALCULATOR_VERSION', '8.0.8' );
 define( 'SCC_URL', plugin_dir_url( __FILE__ ) );
 define( 'SCC_DIR', __DIR__ );
 define( 'SCC_LIB_DIR', __DIR__ . '/lib' );
@@ -36,6 +36,7 @@ require SCC_DIR . '/utils/class-cache-plugins-exclusion-hook.php';
 // Load admin classes
 if ( is_admin() ) {
     require SCC_DIR . '/admin/views/setupWizard.php';
+    require SCC_DIR . '/admin/controllers/support-controller.php';
 }
 define(
     'SCC_ALLOWTAGS',
@@ -881,8 +882,6 @@ class df_scc_plugin {
         // List PAGE
         add_submenu_page( 'scc-tabs', 'All Calculator Forms', 'All Calculator Forms ', 'read', 'scc-list-all-calculator-forms', 'ssc_test_data' );
 
-        // HELP AND VIDEOS
-        add_submenu_page( 'scc-tabs', 'Help & Videos', 'Help & Tutorials', 'manage_options', 'scc-help', 'ssc_test_data', null );
         // MEMBERS
         add_submenu_page( 'scc-tabs', 'Members', 'Members Portal', 'manage_options', 'scc-license-help', 'ssc_test_data', null );
         // COUPON
@@ -891,17 +890,20 @@ class df_scc_plugin {
         // QUOTE FOR CALCULATOR
         add_submenu_page( '', 'Quote Viewer', null, 'manage_options', 'scc-quote-management-screen', 'ssc_test_data', null );
         // DIAGNOSTICS
-        add_submenu_page( 'scc-tabs', 'Diagnostics', 'Diag & Sys Info', 'manage_options', 'scc-diagnostics', 'ssc_test_data', null );
+        //add_submenu_page( 'scc-tabs', 'Diagnostics', 'Diag & Sys Info', 'manage_options', 'scc-diagnostics', 'ssc_test_data', null );
         //COUPON
         add_submenu_page( '', 'Quote Viewer', null, 'manage_options', 'scc-coupons-management', 'ssc_test_data', null );
         // GLOBAL SETTINGS
         add_submenu_page( 'scc-tabs', 'Global Settings', 'Global Settings', 'manage_options', 'scc-global-settings', 'ssc_test_data', null );
         // Uncomment to use migration page
         add_submenu_page( '', 'Migçrate your database', 'Migrate', 'manage_options', 'Stylish_Cost_Calculator_Migration', 'ssc_test_data', null );
-        // Add script to the $editing_page_hook
-        add_action( 'load-' . $editing_page_hook, function () {
-            wp_enqueue_script( 'scc-wizard-quiz' );
-        } );
+        // SUPPORT
+        add_submenu_page( 'scc-tabs', 'Support', 'Support & Help', 'manage_options', 'scc-support', 'ssc_test_data', null );
+        
+        // Note: Removed early loading of scc-wizard-quiz script to fix null forEach error during activation
+        // The script is now loaded in individual page controllers after HTML generation
+        // to ensure the choices-data element exists when the script runs
+        
         function ssc_test_data() {
             // $template = dirname(__DIR__,1) . '/formController.php';
             $template = __DIR__ . '/admin/controllers/dealer.php';

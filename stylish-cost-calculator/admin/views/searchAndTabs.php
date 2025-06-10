@@ -1715,7 +1715,7 @@ if ( isset( $f1->add_user_files_to_email_attachment ) && intval( $f1->add_user_f
 							<div class="accordion-body">
 								<div class="scc-vcenter" style="margin-left: 10px;">
 								<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-									<label id="label_email_template" class="scc-calc-settings-lbl">Calculator Specific Text Message Settings <i class="material-icons-outlined more-settings-info me-1">
+								<label id="label_email_template" class="scc-calc-settings-lbl">Calculator Specific Text Message Settings <i class="material-icons-outlined more-settings-info me-1" data-setting-tooltip-type="text-template-edit-tt">
 										<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
 									</i>
 									<span class="scc-text-secondary">(New)</span>

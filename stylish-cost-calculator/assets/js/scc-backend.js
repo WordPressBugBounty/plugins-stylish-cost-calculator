@@ -1629,7 +1629,7 @@ const updateSliderRangesWithDebounce = _.debounce(sccBackendUtils.updateSliderRa
 const updateBackendSideConfigWithDebounce = _.debounce( sccBackendUtils.updateBackendSideConfig, 3000 );
 
 /* Message for premium options tooltips (used in settingTooltips) */
-const premiumMessage = '<span class="scc-premium-msg"><i class="material-icons scc-icon-tooltips pe-1">info_outline</i> You need to purchase a <b><a class="scc-text-orange px-1" href="https://stylishcostcalculator.com/" >premium license</a></b> to edit this feature.</span>'
+const premiumMessage = '<span class="scc-premium-msg"><i class="material-icons scc-icon-tooltips pe-1">info_outline</i> You need to purchase a <b><a class="scc-text-orange px-1" href="https://stylishcostcalculator.com/pricing-plans/" >premium license</a></b> to use this feature.</span>'
 /* Tool Tip for added Settings*/
 const settingTooltips = {
 	'download-backup-tt': {
@@ -2340,6 +2340,13 @@ const settingTooltips = {
 	'email-template-edit-tt': {
 		msg: `<h5 class='text-start'>Email Template</h5>
 				  <p class='text-start mt-2'>Define a custom template for this instance of Stylish Cost Calculator. This will override the email template defined in global settings.</p>
+				  <div class="example-description text-start">
+				${premiumMessage}
+				</div>`,
+	},
+	'text-template-edit-tt': {
+		msg: `<h5 class='text-start'>Text Message Template</h5>
+				  <p class='text-start mt-2'>Enable and define a custom template for the text feature of this cost calculator. Overrides the global template.</p>
 				  <div class="example-description text-start">
 				${premiumMessage}
 				</div>`,
@@ -4131,19 +4138,6 @@ jQuery(document).ready(function () {
 			}
 		})
 	}	
-	window.$crisp=[
-		['do', 'chat:closed']
-	];
-	window.CRISP_WEBSITE_ID="432dae7f-ea55-4810-9144-084fb170ffec";
-	(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);
-		s.onload = () => {
-			if ( window.$crisp ) {
-				$crisp.push( [ 'on', 'chat:opened', function() {
-					sccAiUtils.forceCloseAiWizardPanel();
-				} ] );
-			}
-		};
-	})();
 
 })
 
