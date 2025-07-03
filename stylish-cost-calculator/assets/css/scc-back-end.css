@@ -21,6 +21,10 @@
 	--scc-color-primary-dark-hover: #E5E6FC1A;
 }
 
+body:has(#calc-editor-root){
+	width: fit-content;
+}
+
 #wpwrap {
 	background: var(--scc-div-light-color);
 }
@@ -10761,6 +10765,7 @@ select {
 .range-close-btn {
 	margin: auto 0;
 	width: 3%;
+	padding: 0;
 	color: red;
 	cursor: pointer;
 }
@@ -13532,6 +13537,12 @@ label.scc-accordion_switch_button {
 }
 #wpbody-content{
     padding-bottom: 0px !important;
+}
+#calc-editor-root{
+	flex-wrap: nowrap;
+}
+#calc-editor-root.preview-docked-bottom{
+	flex-wrap: wrap;
 }
 /* End footer */
 .scc-create-calculator-chat{

@@ -1392,13 +1392,13 @@ class Stylish_Cost_Calculator_Edit_Page {
 					<div class="row" style="margin:0; padding: 0;">
 						<div class="row p-0 m-0 mt-2 col-md-12 col-xs-12">
 							<input class="666 swichoptionitem_id" type="text" value="<?php echo intval( $elit->id ); ?>" hidden>
-							<div class="scc-input 123 el_1 col-xs-1 col-md-1 tool-premium  
+							<div class="scc-input 123 el_1 col-xs-1 col-md-1 
 																			<?php
                                                                             if ( $elit->opt_default == '1' ) {
                                                                                 echo 'is-set-default';
                                                                             }
         ?>
-																			" onclick="setDefaultOption(this)" id="dropdownOpt" style="padding:0px;">
+																			" id="dropdownOpt" style="padding:0px;">
 								<label class="scc-elm-num-lbl"><?php echo intval( $count ); ?></label>
 							</div>
 							<div class="col-md-6 col-xs-6 el_2" style="padding: 0px 5px 0px 1px;">

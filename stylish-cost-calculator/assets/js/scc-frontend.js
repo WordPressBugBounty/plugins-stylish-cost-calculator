@@ -1893,24 +1893,7 @@ function triggerSubmit(type, dom, element, item, calcId) {
 	 */
 	var minNumber = []
 	minNumber[calcId] = parseFloat(sccData[calcId].config.minimumTotal)
-	if (minNumber[calcId] > 0) {
-		if (totalTotal[calcId] >= minNumber[calcId]) {
-			container.querySelector("span.scc-minimum-msg").style.display = "none"
-			container.querySelector(".scc-btn-hndle").style.display = ""
-			if (container.find(".totalPrice"))
-				container.find(".totalPrice").style.display = ""
-		} else {
-			if (minOpt[calcId] == "show-notice") {
-				container.querySelector("span.scc-minimum-msg").style.cssText
-					`display: inline-block,
-					margin-top: 20px,
-					margin-bottom: 20px`
-			} else {
-				container.querySelector(".totalPrice").style.display = "none"
-			}
-			container.querySelector(".scc-btn-hndle").style.display = "none"
-		}
-	}
+	
 	//?set total to preview and supports comma and browser separator
 	total.text(getCurrencyText(calcId, parseFloat(totalTotal[calcId])))
 	// handle multiple total
@@ -2562,24 +2545,6 @@ function getMinimumTotal(calculatorId) {
 		minimumTotalChoose
 	} = sccData[calculatorId].config
 	var container = jQuery("#scc_form_" + calculatorId)
-	if (minimumTotal && parseInt(minimumTotal) > 0) {
-		//si hay numero min total
-		if (minimumTotalChoose == "show-notice") {
-			container.find("span.scc-minimum-msg").css({
-				"display": "inline-block",
-				"margin-top": "20px",
-				"margin-bottom": "50px"
-			})
-			container.find(".scc-btn-hndle").css("display", "none")
-		} else {
-			container.find("span.scc-minimum-msg").css("display", "none")
-			container.find(".scc-btn-hndle").css("display", "none")
-			container.find(".totalPrice").css("display", "none")
-		}
-	} else {
-		container.find("span.scc-minimum-msg").css("display", "none")
-		container.find(".scc-btn-hndle").css("display", "")
-	}
 }
 
 function getTranslation_(calculatorID) {

@@ -45,7 +45,7 @@
 	"isWoocommerceCheckoutEnabled": "false",
 	"isStripeEnabled": "false",
 	"ShowFormBuilderOnDetails": "false",
-	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/vehicle-parts-cost-calculator\\/?preview_id=15821&preview_nonce=df44186ff6&preview=true\":3,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/vehicle-parts-cost-calculator\\/\":628,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/vehicle-parts-cost-calculator\":70,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/vehicle-parts-cost-calculator\\/?_gl=1*11r80zy*_gcl_au*NzExNDA1MzE4LjE3MTYzMzYxNzc.*_ga*MTQ0NzcyOTM3NC4xNzE2MzM2MTc3*_ga_1NKDHBJG3J*MTcxNjQxMzU1Mi4zLjEuMTcxNjQxNzg1Ny4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-parts-cost\\/\":184,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-parts-cost\\/?preview_id=15821&preview_nonce=c4dfa28c64&preview=true\":2}",
+	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/vehicle-parts-cost-calculator\\/?preview_id=15821&preview_nonce=df44186ff6&preview=true\":3,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/vehicle-parts-cost-calculator\\/\":628,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/vehicle-parts-cost-calculator\":70,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/vehicle-parts-cost-calculator\\/?_gl=1*11r80zy*_gcl_au*NzExNDA1MzE4LjE3MTYzMzYxNzc.*_ga*MTQ0NzcyOTM3NC4xNzE2MzM2MTc3*_ga_1NKDHBJG3J*MTcxNjQxMzU1Mi4zLjEuMTcxNjQxNzg1Ny4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-parts-cost\\/\":796,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-parts-cost\\/?preview_id=15821&preview_nonce=c4dfa28c64&preview=true\":2,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-parts-cost\\/?utm_source=chatgpt.com\":2}",
 	"emailQuoteRecipients": "1",
 	"created_at": "2023-05-24 15:50:56",
 	"wrapper_max_width": "1000",
@@ -83,6 +83,12 @@
 	"setup_wizard_data": null,
 	"post_quote_redirect_page": "0",
 	"enable_smarturl": "0",
+	"quote_form_position": "",
+	"flatpickr_localization": "",
+	"floating_bar_config": "{\\\"floating_bar_style\\\":\\\"scc_stiky_style2\\\",\\\"show_total_bar_with_sticky_bar\\\":\\\"1\\\",\\\"sticky_bar_background_color\\\":\\\"#000000\\\",\\\"sticky_bar_text_color\\\":\\\"#ffffff\\\",\\\"sticky_expand_button_background\\\":\\\"#000\\\"}",
+	"pdf_banner_images": "{\\\"email_banner_image\\\":\\\"\\\",\\\"email_logo_image\\\":\\\"https:\\\\/\\\\/stylishcostcalculator.com\\\\/wp-content\\\\/uploads\\\\/2020\\\\/10\\\\/SCC-Logo-2019.png\\\",\\\"transparent_logo_image\\\":\\\"\\\"}",
+	"cta_buttons_placement_bottom": "1",
+	"remove_pdf_attachment": "0",
 	"sections": [
 		{
 			"id": "118",
@@ -131,6 +137,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						},
@@ -165,6 +172,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						},
@@ -199,6 +207,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -217,7 +226,8 @@
 									"element_id": "589",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "984",
@@ -235,7 +245,8 @@
 									"element_id": "589",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "985",
@@ -253,7 +264,8 @@
 									"element_id": "589",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "986",
@@ -271,7 +283,8 @@
 									"element_id": "589",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "987",
@@ -289,7 +302,8 @@
 									"element_id": "589",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "988",
@@ -307,7 +321,8 @@
 									"element_id": "589",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "989",
@@ -325,7 +340,8 @@
 									"element_id": "589",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "990",
@@ -343,7 +359,8 @@
 									"element_id": "589",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "991",
@@ -361,7 +378,8 @@
 									"element_id": "589",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1056",
@@ -379,7 +397,8 @@
 									"element_id": "589",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1057",
@@ -397,7 +416,8 @@
 									"element_id": "589",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1058",
@@ -415,7 +435,8 @@
 									"element_id": "589",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1059",
@@ -433,7 +454,8 @@
 									"element_id": "589",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1060",
@@ -451,7 +473,8 @@
 									"element_id": "589",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1061",
@@ -469,7 +492,8 @@
 									"element_id": "589",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1062",
@@ -487,7 +511,8 @@
 									"element_id": "589",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1063",
@@ -505,7 +530,8 @@
 									"element_id": "589",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						}
@@ -547,6 +573,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						},
@@ -581,6 +608,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						},
@@ -615,6 +643,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						}
@@ -656,6 +685,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "359",
@@ -727,6 +757,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -745,7 +776,8 @@
 									"element_id": "622",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1065",
@@ -763,7 +795,8 @@
 									"element_id": "622",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1066",
@@ -781,7 +814,8 @@
 									"element_id": "622",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1067",
@@ -799,7 +833,8 @@
 									"element_id": "622",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1068",
@@ -817,7 +852,8 @@
 									"element_id": "622",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1069",
@@ -835,7 +871,8 @@
 									"element_id": "622",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1070",
@@ -853,7 +890,8 @@
 									"element_id": "622",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								},
 								{
 									"id": "1071",
@@ -871,7 +909,8 @@
 									"element_id": "622",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1072",
@@ -889,7 +928,8 @@
 									"element_id": "622",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
@@ -924,6 +964,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "375",
@@ -1033,7 +1074,8 @@
 									"element_id": "623",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1074",
@@ -1051,7 +1093,8 @@
 									"element_id": "623",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
@@ -1086,6 +1129,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "404",
@@ -1123,7 +1167,8 @@
 									"element_id": "662",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1129",
@@ -1141,7 +1186,8 @@
 									"element_id": "662",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1130",
@@ -1159,7 +1205,8 @@
 									"element_id": "662",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1131",
@@ -1177,7 +1224,8 @@
 									"element_id": "662",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						}
@@ -1219,6 +1267,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "387",
@@ -1274,7 +1323,8 @@
 									"element_id": "627",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								}
 							]
 						},
@@ -1309,6 +1359,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "381",
@@ -1357,6 +1408,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "382",
@@ -1394,7 +1446,8 @@
 									"element_id": "624",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
@@ -1429,6 +1482,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "378",
@@ -1477,6 +1531,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "395",
@@ -1514,7 +1569,8 @@
 									"element_id": "653",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1116",
@@ -1532,7 +1588,8 @@
 									"element_id": "653",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1117",
@@ -1550,7 +1607,8 @@
 									"element_id": "653",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
@@ -1585,6 +1643,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "396",
@@ -1640,7 +1699,8 @@
 									"element_id": "656",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1120",
@@ -1658,7 +1718,8 @@
 									"element_id": "656",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1121",
@@ -1676,7 +1737,8 @@
 									"element_id": "656",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						}
@@ -1718,6 +1780,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "398",
@@ -1755,7 +1818,8 @@
 									"element_id": "657",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1123",
@@ -1773,7 +1837,8 @@
 									"element_id": "657",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
@@ -1808,6 +1873,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "399",
@@ -1861,6 +1927,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "401",
@@ -1898,7 +1965,8 @@
 									"element_id": "659",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1125",
@@ -1916,7 +1984,8 @@
 									"element_id": "659",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								}
 							]
 						},
@@ -1951,6 +2020,7 @@
 							"tooltip_config_array": null,
 							"show_image_on_pdf": "0",
 							"unit_description": null,
+							"value7": null,
 							"conditions": [
 								{
 									"id": "402",
@@ -2004,6 +2074,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "403",
@@ -2041,7 +2112,8 @@
 									"element_id": "661",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1127",
@@ -2059,7 +2131,8 @@
 									"element_id": "661",
 									"value5": "1",
 									"titleIconConfigArray": null,
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						}
@@ -2114,6 +2187,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						}

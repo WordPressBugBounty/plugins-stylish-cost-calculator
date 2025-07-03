@@ -1135,7 +1135,7 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 }
 ?>
 <div class="sections_divider"></div>
-<span class="scc-minimum-msg" <?php echo ( $form->minimumTotal <= 0 ) ? 'style="display:none"' : ''; ?>><span class="trn" data-trn-key="The total price must be a minimum of">The price must be at least</span> <span id="label_currency_min_prefix"></span> <?php echo esc_attr( $form->minimumTotal ); ?> <span id="label_currency_min_sufix"></span> </span>
+
 	<div class="scc-btn-hndle" style="margin-top:20px;min-height: 60px">
 		<?php if ( $isSCCFreeVersion ? false : ( $sccConfig['paypalConfig']['paypal_checked'] == 'true' ) ) { ?>
 			<div class="scc-usr-act-btns-container no-ajaxy" style="padding:0px;">
@@ -1195,7 +1195,6 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 	</div>
 	<div class="scc-total-section" style="padding: 5px 0px 0 5px; font-size:<?php echo esc_attr( $form->titleFontSize ); ?>">
 		<?php
-        if ( $form->removeTotal != 'true' ) {
             $taxtotal = 0;
 
             if ( $form->barstyle == 'scc_tp_style1' ) {
@@ -1276,7 +1275,6 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 				</div>
 				<?php
 			}
-        }
 ?>
 	</div>
 </div>

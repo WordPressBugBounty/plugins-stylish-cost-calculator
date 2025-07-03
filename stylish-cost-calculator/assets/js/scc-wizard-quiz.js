@@ -945,6 +945,28 @@ function startSetupWizard() {
 	if ( wrapper ) {
 		wrapper.classList.add( 'scc-p-relative' );
 	}
+
+	sccAiUtils.checkAiCredits( 'add-calculator-page' ).then( ( credits ) => {
+		
+		// Parse credits string to check current credits
+		if (credits && credits.credits) {
+			const creditsString = credits.credits; // e.g., "15/25" or "0/25"
+			const currentCredits = parseInt(creditsString.split('/')[0]); // Get the first number
+			
+			if (currentCredits === 0) {
+				// Action to perform when credits are zero
+				console.warn('No AI credits remaining');
+				let retrieveBtn = document.querySelector( '#scc-retrieve-business-details-btn' );
+				retrieveBtn.disabled = true;
+				retrieveBtn.classList.add( 'scc-disabled' );
+				alert('You have no AI credits remaining. Purchase the premium version to earn credits and continue using AI features.');
+			} else {
+				console.log(`AI credits available: ${currentCredits}`);
+			}
+		}
+	} ).catch( ( error ) => {
+		console.error( error );
+	} );
 	sccAiAssistedSetupWizUpdateProgress();
 	sccDisplayBusinessInfoMessage();
 }

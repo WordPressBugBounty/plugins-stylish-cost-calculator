@@ -302,7 +302,7 @@ $options = [
         'industry'    => 'home, construction',
         'elements'    => 'text-html, slider, checkbox, dropdown, image-button, comment-box',
         'features'    => 'email-quote, detailed-list, multi-step',
-        'premium'     => false,
+        'premium'     => true,
         'tags'        => 'home, improvement, renovation, construction, remodel, repair, diy',
     ],
     [

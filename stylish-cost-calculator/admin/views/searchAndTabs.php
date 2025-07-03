@@ -2371,6 +2371,7 @@ if ( $isSCCFreeVersion ) {
 						// Hide the modal
 						openedModalInstance?.hide();
 					}
+					window.location.reload();
 				} else {
 					showSweet(false, datajson.msj)
 				}

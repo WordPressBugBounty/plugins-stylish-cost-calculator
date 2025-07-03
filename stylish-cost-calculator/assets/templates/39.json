@@ -45,7 +45,7 @@
 	"isWoocommerceCheckoutEnabled": "",
 	"isStripeEnabled": "",
 	"ShowFormBuilderOnDetails": "false",
-	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-mowing-cost-calculator\\/\":110,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-mowing-cost-calculator\\/?preview_id=17953&preview_nonce=948bd8f8fa&preview=true\":5,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/construction-cost-calculator\\/\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/construction-cost-calculator\\/?preview_id=17978&preview_nonce=b16f1af532&preview=true\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-mowing-cost-calculator\":35,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-mowing-cost-calculator\\/?preview_id=17953&preview_nonce=88774204b7&preview=true\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-care-pricing-calculator\\/\":59,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-care-pricing-calculator\\/?preview_id=17953&preview_nonce=7668a3dfac&preview=true\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-care-pricing-calculator\\/?preview_id=17953&preview_nonce=c31163a927&preview=true\":3}",
+	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-mowing-cost-calculator\\/\":110,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-mowing-cost-calculator\\/?preview_id=17953&preview_nonce=948bd8f8fa&preview=true\":5,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/construction-cost-calculator\\/\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/construction-cost-calculator\\/?preview_id=17978&preview_nonce=b16f1af532&preview=true\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-mowing-cost-calculator\":35,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-mowing-cost-calculator\\/?preview_id=17953&preview_nonce=88774204b7&preview=true\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-care-pricing-calculator\\/\":125,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-care-pricing-calculator\\/?preview_id=17953&preview_nonce=7668a3dfac&preview=true\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-care-pricing-calculator\\/?preview_id=17953&preview_nonce=c31163a927&preview=true\":3,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-care-pricing-calculator\\/?_gl=1*1i7bo5x*_gcl_au*MTI4ODg5MTQyNS4xNzQyMjk4ODA2*_ga*MjAwNDczNzUxLjE3NDIyOTg4MDc.*_ga_1NKDHBJG3J*MTc0MjI5ODgwNi4xLjEuMTc0MjI5ODg5MC4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-mowing-quote-calculator\\/\":54}",
 	"emailQuoteRecipients": "1",
 	"created_at": "2024-02-14 13:42:26",
 	"wrapper_max_width": "1000",
@@ -81,8 +81,14 @@
 	"custom_css_config_array": "",
 	"price_rounding_config_array": "{\\\"rounding_type\\\":\\\"not_rounded\\\"}",
 	"setup_wizard_data": null,
-	"post_quote_redirect_page": "1",
+	"post_quote_redirect_page": "0",
 	"enable_smarturl": "0",
+	"quote_form_position": "",
+	"flatpickr_localization": "",
+	"floating_bar_config": "{\\\"floating_bar_style\\\":\\\"scc_stiky_style2\\\",\\\"show_total_bar_with_sticky_bar\\\":\\\"1\\\",\\\"sticky_bar_background_color\\\":\\\"#000000\\\",\\\"sticky_bar_text_color\\\":\\\"#ffffff\\\",\\\"sticky_expand_button_background\\\":\\\"#000\\\"}",
+	"pdf_banner_images": "{\\\"email_banner_image\\\":\\\"\\\",\\\"email_logo_image\\\":\\\"https:\\\\/\\\\/stylishcostcalculator.com\\\\/wp-content\\\\/uploads\\\\/2020\\\\/10\\\\/SCC-Logo-2019.png\\\",\\\"transparent_logo_image\\\":\\\"\\\"}",
+	"cta_buttons_placement_bottom": "1",
+	"remove_pdf_attachment": "0",
 	"sections": [
 		{
 			"id": "193",
@@ -131,6 +137,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						},
@@ -165,6 +172,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -183,7 +191,8 @@
 									"element_id": "1044",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
@@ -218,6 +227,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -236,7 +246,8 @@
 									"element_id": "1041",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1797",
@@ -254,7 +265,8 @@
 									"element_id": "1041",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
@@ -289,6 +301,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": null,
+							"value7": null,
 							"conditions": [
 								{
 									"id": "621",
@@ -342,6 +355,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": null,
+							"value7": null,
 							"conditions": [
 								{
 									"id": "622",
@@ -395,6 +409,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -413,7 +428,8 @@
 									"element_id": "1266",
 									"value5": "1",
 									"titleIconConfigArray": "{\"type\":\"icon-font\",\"icon_html\":\"<i class=\\\\\\\"scc-fontawesome fa-solid fa-hand-holding-medical\\\\\\\"><\\/i>\",\"icon_class\":\"scc-fontawesome fa-solid fa-hand-holding-medical\",\"icon_text\":\"\",\"image_icon\":\"\",\"position\":\"\",\"width\":\"\"}",
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
@@ -448,6 +464,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": null,
+							"value7": null,
 							"conditions": [
 								{
 									"id": "705",
@@ -480,7 +497,8 @@
 									"element_id": "1267",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "2205",
@@ -498,7 +516,8 @@
 									"element_id": "1267",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "2206",
@@ -516,7 +535,8 @@
 									"element_id": "1267",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "2207",
@@ -534,7 +554,8 @@
 									"element_id": "1267",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": null
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
@@ -569,6 +590,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						}

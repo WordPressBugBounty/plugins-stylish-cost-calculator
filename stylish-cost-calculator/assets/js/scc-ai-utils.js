@@ -981,6 +981,9 @@ const sccAiUtils = {
 		if ( page === 'view-quotes-page' ) {
 			nonce = pageViewQuotes.nonce;
 		}
+		if ( page === 'add-calculator-page' ) {
+			nonce = pageAddCalculator.nonce;
+		}
 
 		const params = new URLSearchParams( {
 			action: 'scc_ai_check_credits',

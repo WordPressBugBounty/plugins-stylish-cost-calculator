@@ -3,7 +3,7 @@
 	"formname": "Custom Shutter Quote (template)",
 	"description": "",
 	"inheritFontType": "false",
-	"titleFontSize": "30px",
+	"titleFontSize": "28px",
 	"titleFontType": "1032",
 	"titleFontWeight": "700",
 	"titleColorPicker": "#191d1b",
@@ -45,7 +45,7 @@
 	"isWoocommerceCheckoutEnabled": "false",
 	"isStripeEnabled": "false",
 	"ShowFormBuilderOnDetails": "false",
-	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/?page_id=24111&preview_id=24111&preview_nonce=c3b49db081&preview=true\":12,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/design-your-dream-shutters\\/?preview_id=24111&preview_nonce=c3b49db081&preview=true\":6,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/design-your-dream-shutters\\/\":121}",
+	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/?page_id=24111&preview_id=24111&preview_nonce=c3b49db081&preview=true\":12,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/design-your-dream-shutters\\/?preview_id=24111&preview_nonce=c3b49db081&preview=true\":6,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/design-your-dream-shutters\\/\":136}",
 	"emailQuoteRecipients": "1",
 	"created_at": "2024-06-06 20:01:24",
 	"wrapper_max_width": "1000",
@@ -87,7 +87,7 @@
 	"flatpickr_localization": "",
 	"floating_bar_config": "{\\\"floating_bar_style\\\":\\\"scc_stiky_style2\\\",\\\"show_total_bar_with_sticky_bar\\\":\\\"1\\\",\\\"sticky_bar_background_color\\\":\\\"#000000\\\",\\\"sticky_bar_text_color\\\":\\\"#ffffff\\\",\\\"sticky_expand_button_background\\\":\\\"#000\\\"}",
 	"pdf_banner_images": "{\\\"email_banner_image\\\":\\\"\\\",\\\"email_logo_image\\\":\\\"https:\\\\/\\\\/stylishcostcalculator.com\\\\/wp-content\\\\/uploads\\\\/2020\\\\/10\\\\/SCC-Logo-2019.png\\\",\\\"transparent_logo_image\\\":\\\"\\\"}",
-	"cta_buttons_placement_bottom": "0",
+	"cta_buttons_placement_bottom": "1",
 	"remove_pdf_attachment": "0",
 	"sections": [
 		{

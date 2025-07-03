@@ -7475,3 +7475,7 @@ textarea.comment_box_text::placeholder {
   border: var(--scc-element-border) !important; 
   padding:12px
 }
+
+.scc-custom-html img{
+  max-width: 100%;
+}

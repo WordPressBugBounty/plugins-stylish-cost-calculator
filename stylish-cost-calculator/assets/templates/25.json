@@ -1,5 +1,5 @@
 {
-	"id": "25",
+	"id": "18",
 	"formname": "Bakery Order Quote (template)",
 	"description": "",
 	"inheritFontType": "false",
@@ -17,7 +17,7 @@
 	"addContainer": "false",
 	"addtoCheckout": "open_cart",
 	"buttonStyle": "1",
-	"turnoffborder": "true",
+	"turnoffborder": "false",
 	"turnoffemailquote": "false",
 	"turnviewdetails": "false",
 	"turnoffcoupon": "false",
@@ -30,22 +30,22 @@
 	"turnoffUnit": "false",
 	"turnoffSave": "false",
 	"turnoffTax": "false",
-	"taxVat": "",
-	"showTaxBeforeTotal": "false",
+	"taxVat": "3",
+	"showTaxBeforeTotal": "true",
 	"symbol": "0",
 	"removeCurrency": "false",
 	"userCompletes": "false",
 	"userClicksf": "false",
 	"formFieldsArray": "",
 	"webhookSettings": "",
-	"showFieldsQuoteArray": "",
+	"showFieldsQuoteArray": "{\"displayIpBrowserColumn\":\"true\",\"showInTable\":[{\"name\":{\"name\":\"Your Name\"}},{\"email\":{\"name\":\"Your Email\"}},{\"phone\":{\"name\":\"Your Phone\"}},{\"email_opened\":{\"name\":\"Email Opened\"}},{\"calc_total\":{\"name\":\"Total\"}},{\"traffic_medium\":{\"name\":\"Traffic medium\"}},{\"referer\":{\"name\":\"Referring Page\"}},{\"traffic_source\":{\"name\":\"Traffic source\"}}]}",
 	"translation": "[{\\\"key\\\":\\\"Total\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Total\\\"},{\\\"key\\\":\\\"Description\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Description\\\"},{\\\"key\\\":\\\"Unit Price\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Unit Price\\\"},{\\\"key\\\":\\\"Quantity\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Quantity\\\"},{\\\"key\\\":\\\"Price\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Price\\\"},{\\\"key\\\":\\\"SEND\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"SEND\\\"},{\\\"key\\\":\\\"Total Price\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Total Price\\\"},{\\\"key\\\":\\\"Summary\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Summary\\\"},{\\\"key\\\":\\\"Email Quote\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Email Quote\\\"},{\\\"key\\\":\\\"Detailed List\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Detailed List\\\"},{\\\"key\\\":\\\"Choose an option...\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Choose an option...\\\"},{\\\"key\\\":\\\"Your Name\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Your Name\\\"},{\\\"key\\\":\\\"Your Email\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Your Email\\\"},{\\\"key\\\":\\\"Your Phone\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Your Phone\\\"},{\\\"key\\\":\\\"Your Phone (Optional)\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Your Phone (Optional)\\\"},{\\\"key\\\":\\\"Coupon Code\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Coupon Code\\\"}]",
-	"paypalConfigArray": "",
+	"paypalConfigArray": "{\"paypal_email\":\"ana@designful.ca\",\"paypal_shopping_cart_name\":\"cart\",\"paypal_checked\":\"true\",\"paypalSuccessURL\":\"\",\"paypalCancelURL\":\"\",\"objectTaxInclusionInPayPal\":false,\"paypal_currency\":\"USD\",\"nonce\":\"b795797f31\"}",
 	"preCheckoutQuoteForm": null,
 	"isWoocommerceCheckoutEnabled": "false",
 	"isStripeEnabled": "",
 	"ShowFormBuilderOnDetails": "false",
-	"urlStatsArray": null,
+	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-template\\/?preview_id=16424&preview_nonce=47fd89cf3b&preview=true\":13,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-template\\/\":326,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-care-template\\/\":2,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-template\\/#\":21,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-template\\/#hunter-email:ana@designful.ca\":2,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-template\":42,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-template\\/?dd=116\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-template\\/?dd=666\":2,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-template\\/?dd=667\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-template\\/?dd=666&chk=670\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-template\\/?dd=667&chk=670\":2,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-template\\/?dd=667&chk=671\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-template\\/?chk=671\":15,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-template\\/?dd=666&chk=671\":4,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-cost-calculator\\/\":214,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-cost-calculator\\/?preview_id=16424&preview_nonce=4deba80a6f&preview=true\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-cost-calculator\\/?dd=666&chk=671\":3,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-cost-calculator\\/?chk=671\":40,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-cost-calculator\\/?dd=666\":41,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-cost-calculator\\/?_gl=1*vsyxrn*_gcl_au*MTk5MDc3Mzg0Ny4xNzIyODc5MzYz*_ga*ODQxNTE4OTE3LjE3MjI4NzkzNjQ.*_ga_1NKDHBJG3J*MTcyMjg3OTM2My4xLjEuMTcyMjg3OTkxMy4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-cost-calculator\\/?_gl=1*1fxx04j*_gcl_au*MTI3NjA2MzYzOC4xNzMyNDE0Nzk3*_ga*OTg2MzEyNTYuMTczMjQxNDc5OA..*_ga_1NKDHBJG3J*MTczNTA5MDY0OC42LjEuMTczNTA5MzYyOC4wLjAuMA..\":1}",
 	"emailQuoteRecipients": "1",
 	"created_at": "0000-00-00 00:00:00",
 	"wrapper_max_width": "1000",
@@ -53,12 +53,12 @@
 	"combine_checkout_items": "0",
 	"combine_checkout_woocommerce_product_id": "0",
 	"showSearchBar": "0",
-	"progress_indicator_style": "1",
+	"progress_indicator_style": "2",
 	"invoice_number_settings": "{\\\"enabled\\\":\\\"0\\\",\\\"startingNumber\\\":\\\"0\\\",\\\"placement\\\":\\\"right\\\"}",
-	"send_quote_form_data_to_user": "1",
+	"send_quote_form_data_to_user": "0",
 	"gdprAcceptanceConfigArray": "{}",
 	"allow_currency_switching": "0",
-	"accordionStyle": "style_1",
+	"accordionStyle": "style_2",
 	"hide_total_until_last_step": "0",
 	"bgShadowContainer": "true",
 	"ctaBtnColorPicker": "#ffa134",
@@ -69,6 +69,26 @@
 	"blurTotalPrice": "false",
 	"customButtonsArray": "{\\\"enable_custom_payment_btns\\\":\\\"0\\\",\\\"paypal_text\\\":\\\"\\\",\\\"stripe_text\\\":\\\"\\\"}",
 	"total_price_range_settings": "{\\\"rangePercent\\\":\\\"0\\\"}",
+	"allow_combined_checkout_item_multiple": "0",
+	"add_user_files_to_email_attachment": "1",
+	"include_quote_form_data": "1",
+	"stripe_subscription_settings": null,
+	"cta_btn_text_color": "#ffffff",
+	"quote_form_show_pdf_name": "1",
+	"progress_buttons_style": "space-between",
+	"show_total_price_float_mobile": "1",
+	"unit_price_config_array": "{\\\"element_id\\\":\\\"\\\",\\\"show_unit_price\\\":\\\"false\\\"}",
+	"custom_css_config_array": null,
+	"price_rounding_config_array": "{\\\"rounding_type\\\":\\\"not_rounded\\\"}",
+	"setup_wizard_data": null,
+	"post_quote_redirect_page": "0",
+	"enable_smarturl": "0",
+	"quote_form_position": "",
+	"flatpickr_localization": "",
+	"floating_bar_config": "{\\\"floating_bar_style\\\":\\\"scc_stiky_style2\\\",\\\"show_total_bar_with_sticky_bar\\\":\\\"1\\\",\\\"sticky_bar_background_color\\\":\\\"#000000\\\",\\\"sticky_bar_text_color\\\":\\\"#ffffff\\\",\\\"sticky_expand_button_background\\\":\\\"#000\\\"}",
+	"pdf_banner_images": "{\\\"email_banner_image\\\":\\\"\\\",\\\"email_logo_image\\\":\\\"https:\\\\/\\\\/stylishcostcalculator.com\\\\/wp-content\\\\/uploads\\\\/2020\\\\/10\\\\/SCC-Logo-2019.png\\\",\\\"transparent_logo_image\\\":\\\"\\\"}",
+	"cta_buttons_placement_bottom": "1",
+	"remove_pdf_attachment": "0",
 	"sections": [
 		{
 			"id": "29",
@@ -92,7 +112,7 @@
 							"titleElement": "",
 							"type": "texthtml",
 							"value1": "",
-							"value2": "{\\\"texthtml\\\":\\\"<img src=\\\\\\\"https:\\\\/\\\\/stylishcostcalculator.com\\\\/wp-content\\\\/uploads\\\\/2023\\\\/05\\\\/banner-4.png\\\\\\\" alt=\\\\\\\"banner\\\\\\\" style=\\\\\\\"width:100%;\\\\\\\" >\\\"}",
+							"value2": "{\\\"texthtml\\\":\\\"<img src=\\\\\\\"https:\\\\/\\\\/stylishcostcalculator.com\\\\/wp-content\\\\/uploads\\\\/2024\\\\/06\\\\/bakery.png\\\\\\\" alt=\\\\\\\"banner\\\\\\\" style=\\\\\\\"width:100%;\\\\\\\" >\\\"}",
 							"value3": "",
 							"value4": "",
 							"length": "12asd",
@@ -103,7 +123,7 @@
 							"titleColumnMobile": "12",
 							"showPriceHint": "0",
 							"displayFrontend": "0",
-							"displayDetailList": "3",
+							"displayDetailList": "0",
 							"subsection_id": "50",
 							"element_woocomerce_product_id": "",
 							"showInputBoxSlider": "0",
@@ -114,6 +134,10 @@
 							"showTitleFrontend": "0",
 							"elementStyle": "",
 							"titleIconConfigArray": "",
+							"tooltip_config_array": "",
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						},
@@ -145,6 +169,10 @@
 							"showTitleFrontend": "0",
 							"elementStyle": "",
 							"titleIconConfigArray": "",
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						},
@@ -176,6 +204,10 @@
 							"showTitleFrontend": "0",
 							"elementStyle": "",
 							"titleIconConfigArray": "{\"type\":\"img\",\"icon_html\":\"\",\"icon_class\":\"\",\"icon_text\":\"\",\"image_icon\":\"https:\\/\\/stylishcostcalculator.com\\/wp-content\\/uploads\\/2023\\/05\\/pastel-3.png\",\"position\":\"\",\"width\":\"\"}",
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -193,7 +225,9 @@
 									"opt_default": "0",
 									"element_id": "69",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "635",
@@ -210,7 +244,9 @@
 									"opt_default": "0",
 									"element_id": "69",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "666",
@@ -227,7 +263,9 @@
 									"opt_default": "0",
 									"element_id": "69",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "667",
@@ -244,7 +282,9 @@
 									"opt_default": "0",
 									"element_id": "69",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "668",
@@ -261,7 +301,9 @@
 									"opt_default": "1",
 									"element_id": "69",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
@@ -293,6 +335,10 @@
 							"showTitleFrontend": "1",
 							"elementStyle": "",
 							"titleIconConfigArray": "{\"type\":\"img\",\"icon_html\":\"\",\"icon_class\":\"\",\"icon_text\":\"\",\"image_icon\":\"https:\\/\\/stylishcostcalculator.com\\/wp-content\\/uploads\\/2023\\/05\\/mezclar.png\",\"position\":\"\",\"width\":\"\"}",
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [
 								{
 									"id": "126",
@@ -344,10 +390,12 @@
 									"value4": "",
 									"uniqueId": "RutUFZp5A0",
 									"woocomerce_product_id": "",
-									"opt_default": "0",
+									"opt_default": "1",
 									"element_id": "424",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "637",
@@ -364,7 +412,9 @@
 									"opt_default": "0",
 									"element_id": "424",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "638",
@@ -381,7 +431,9 @@
 									"opt_default": "0",
 									"element_id": "424",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "639",
@@ -398,7 +450,9 @@
 									"opt_default": "0",
 									"element_id": "424",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "640",
@@ -415,7 +469,9 @@
 									"opt_default": "0",
 									"element_id": "424",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "641",
@@ -432,41 +488,9 @@
 									"opt_default": "0",
 									"element_id": "424",
 									"value5": "1",
-									"titleIconConfigArray": null
-								},
-								{
-									"id": "642",
-									"order": "0",
-									"name": "Almond",
-									"price": "10",
-									"description": "",
-									"value1": "",
-									"value2": "",
-									"value3": "",
-									"value4": "",
-									"uniqueId": "ClBgIV3Uyd",
-									"woocomerce_product_id": "",
-									"opt_default": "0",
-									"element_id": "424",
-									"value5": "1",
-									"titleIconConfigArray": null
-								},
-								{
-									"id": "650",
-									"order": "0",
-									"name": "Red Velvet",
-									"price": "10",
-									"description": "",
-									"value1": "",
-									"value2": "",
-									"value3": "",
-									"value4": "",
-									"uniqueId": "5B6qNXFjCU",
-									"woocomerce_product_id": "",
-									"opt_default": "0",
-									"element_id": "424",
-									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
@@ -498,6 +522,10 @@
 							"showTitleFrontend": "1",
 							"elementStyle": "",
 							"titleIconConfigArray": "{\"type\":\"img\",\"icon_html\":\"\",\"icon_class\":\"\",\"icon_text\":\"\",\"image_icon\":\"https:\\/\\/stylishcostcalculator.com\\/wp-content\\/uploads\\/2023\\/05\\/mezclar.png\",\"position\":\"\",\"width\":\"\"}",
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [
 								{
 									"id": "127",
@@ -549,10 +577,12 @@
 									"value4": "",
 									"uniqueId": "RutUFZp5A0",
 									"woocomerce_product_id": "",
-									"opt_default": "0",
+									"opt_default": "1",
 									"element_id": "430",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "670",
@@ -569,7 +599,9 @@
 									"opt_default": "0",
 									"element_id": "430",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "671",
@@ -586,7 +618,9 @@
 									"opt_default": "0",
 									"element_id": "430",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "672",
@@ -603,7 +637,9 @@
 									"opt_default": "0",
 									"element_id": "430",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "673",
@@ -620,7 +656,9 @@
 									"opt_default": "0",
 									"element_id": "430",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "674",
@@ -637,7 +675,9 @@
 									"opt_default": "0",
 									"element_id": "430",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "675",
@@ -654,7 +694,9 @@
 									"opt_default": "0",
 									"element_id": "430",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "676",
@@ -671,7 +713,9 @@
 									"opt_default": "0",
 									"element_id": "430",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
@@ -681,7 +725,7 @@
 							"titleElement": "Divider",
 							"type": "texthtml",
 							"value1": "",
-							"value2": "{\\\"texthtml\\\":\\\"<hr style=\\\\\\\"border: none; border-top: 1px dashed #1959a; width: 100%;\\\\\\\">\\\"}",
+							"value2": "{\\\"texthtml\\\":\\\"<hr style=\\\\\\\"border: none; border-top: 1px solid #ddd; width: 100%;\\\\\\\">\\\"}",
 							"value3": "",
 							"value4": "",
 							"length": "12asd",
@@ -703,6 +747,10 @@
 							"showTitleFrontend": "0",
 							"elementStyle": "",
 							"titleIconConfigArray": "",
+							"tooltip_config_array": "",
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						},
@@ -734,6 +782,10 @@
 							"showTitleFrontend": "1",
 							"elementStyle": "",
 							"titleIconConfigArray": "{\"type\":\"img\",\"icon_html\":\"\",\"icon_class\":\"\",\"icon_text\":\"\",\"image_icon\":\"https:\\/\\/stylishcostcalculator.com\\/wp-content\\/uploads\\/2023\\/05\\/mezcla.png\",\"position\":\"\",\"width\":\"\"}",
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [
 								{
 									"id": "165",
@@ -788,7 +840,9 @@
 									"opt_default": "0",
 									"element_id": "428",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "652",
@@ -802,10 +856,12 @@
 									"value4": "",
 									"uniqueId": "4OfYNGTPSx",
 									"woocomerce_product_id": "",
-									"opt_default": "0",
+									"opt_default": "1",
 									"element_id": "428",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "662",
@@ -822,7 +878,9 @@
 									"opt_default": "0",
 									"element_id": "428",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "663",
@@ -839,7 +897,9 @@
 									"opt_default": "0",
 									"element_id": "428",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "664",
@@ -856,7 +916,9 @@
 									"opt_default": "0",
 									"element_id": "428",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "665",
@@ -873,7 +935,9 @@
 									"opt_default": "0",
 									"element_id": "428",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
@@ -905,6 +969,10 @@
 							"showTitleFrontend": "0",
 							"elementStyle": "",
 							"titleIconConfigArray": "{\"type\":\"img\",\"icon_html\":\"\",\"icon_class\":\"\",\"icon_text\":\"\",\"image_icon\":\"https:\\/\\/stylishcostcalculator.com\\/wp-content\\/uploads\\/2023\\/05\\/mezcla.png\",\"position\":\"\",\"width\":\"\"}",
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [
 								{
 									"id": "162",
@@ -959,7 +1027,9 @@
 									"opt_default": "0",
 									"element_id": "434",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "690",
@@ -973,10 +1043,12 @@
 									"value4": "",
 									"uniqueId": "4OfYNGTPSx",
 									"woocomerce_product_id": "",
-									"opt_default": "0",
+									"opt_default": "1",
 									"element_id": "434",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "691",
@@ -993,7 +1065,9 @@
 									"opt_default": "0",
 									"element_id": "434",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "692",
@@ -1010,7 +1084,9 @@
 									"opt_default": "0",
 									"element_id": "434",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "693",
@@ -1027,7 +1103,9 @@
 									"opt_default": "0",
 									"element_id": "434",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "694",
@@ -1044,7 +1122,9 @@
 									"opt_default": "0",
 									"element_id": "434",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
@@ -1054,7 +1134,7 @@
 							"titleElement": "Divider",
 							"type": "texthtml",
 							"value1": "",
-							"value2": "{\\\"texthtml\\\":\\\"<hr style=\\\\\\\"border: none; border-top: 1px dashed #1959a; width: 100%;\\\\\\\">\\\"}",
+							"value2": "{\\\"texthtml\\\":\\\"<hr style=\\\\\\\"border: none; border-top: 1px solid #ddd; width: 100%;\\\\\\\">\\\"}",
 							"value3": "",
 							"value4": "",
 							"length": "12asd",
@@ -1076,6 +1156,10 @@
 							"showTitleFrontend": "0",
 							"elementStyle": "",
 							"titleIconConfigArray": "",
+							"tooltip_config_array": "",
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						},
@@ -1107,6 +1191,10 @@
 							"showTitleFrontend": "1",
 							"elementStyle": "",
 							"titleIconConfigArray": "{\"type\":\"img\",\"icon_html\":\"\",\"icon_class\":\"\",\"icon_text\":\"\",\"image_icon\":\"https:\\/\\/stylishcostcalculator.com\\/wp-content\\/uploads\\/2023\\/05\\/manga-pastelera.png\",\"position\":\"\",\"width\":\"\"}",
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -1121,10 +1209,12 @@
 									"value4": "",
 									"uniqueId": "NSyoItRAd5",
 									"woocomerce_product_id": "",
-									"opt_default": "0",
+									"opt_default": "1",
 									"element_id": "436",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "696",
@@ -1141,7 +1231,9 @@
 									"opt_default": "0",
 									"element_id": "436",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "697",
@@ -1158,7 +1250,9 @@
 									"opt_default": "0",
 									"element_id": "436",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "698",
@@ -1175,7 +1269,9 @@
 									"opt_default": "0",
 									"element_id": "436",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "701",
@@ -1192,7 +1288,9 @@
 									"opt_default": "0",
 									"element_id": "436",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "702",
@@ -1209,41 +1307,9 @@
 									"opt_default": "0",
 									"element_id": "436",
 									"value5": "1",
-									"titleIconConfigArray": null
-								},
-								{
-									"id": "703",
-									"order": "0",
-									"name": "French meringue",
-									"price": "10",
-									"description": "",
-									"value1": "",
-									"value2": "",
-									"value3": "",
-									"value4": "",
-									"uniqueId": "VBUDMRQZtI",
-									"woocomerce_product_id": "",
-									"opt_default": "0",
-									"element_id": "436",
-									"value5": "1",
-									"titleIconConfigArray": null
-								},
-								{
-									"id": "704",
-									"order": "0",
-									"name": "Fondant",
-									"price": "10",
-									"description": "",
-									"value1": "",
-									"value2": "",
-									"value3": "",
-									"value4": "",
-									"uniqueId": "U1FCKSwO6k",
-									"woocomerce_product_id": "",
-									"opt_default": "0",
-									"element_id": "436",
-									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						}
@@ -1260,7 +1326,7 @@
 			"showSectionTotal": "false",
 			"showSectionTotalOnPdf": "",
 			"form_id": "18",
-			"section_in_page": "0",
+			"section_in_page": "1",
 			"subsection": [
 				{
 					"id": "152",
@@ -1269,7 +1335,7 @@
 					"element": [
 						{
 							"id": "465",
-							"orden": "1",
+							"orden": "0",
 							"titleElement": "Shape",
 							"type": "Dropdown Menu",
 							"value1": "",
@@ -1293,8 +1359,12 @@
 							"value6": "",
 							"showSavingsSlider": "0",
 							"showTitleFrontend": "0",
-							"elementStyle": null,
-							"titleIconConfigArray": null,
+							"elementStyle": "",
+							"titleIconConfigArray": "",
+							"tooltip_config_array": "",
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -1312,7 +1382,9 @@
 									"opt_default": "0",
 									"element_id": "465",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "740",
@@ -1329,7 +1401,9 @@
 									"opt_default": "0",
 									"element_id": "465",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "741",
@@ -1346,7 +1420,9 @@
 									"opt_default": "0",
 									"element_id": "465",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "742",
@@ -1363,7 +1439,9 @@
 									"opt_default": "1",
 									"element_id": "465",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "743",
@@ -1380,13 +1458,15 @@
 									"opt_default": "0",
 									"element_id": "465",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
 						{
 							"id": "440",
-							"orden": "2",
+							"orden": "1",
 							"titleElement": "letter or number",
 							"type": "comment box",
 							"value1": "",
@@ -1410,8 +1490,12 @@
 							"value6": "",
 							"showSavingsSlider": "0",
 							"showTitleFrontend": "0",
-							"elementStyle": null,
-							"titleIconConfigArray": null,
+							"elementStyle": "",
+							"titleIconConfigArray": "",
+							"tooltip_config_array": "",
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [
 								{
 									"id": "176",
@@ -1456,7 +1540,7 @@
 					"element": [
 						{
 							"id": "437",
-							"orden": "1",
+							"orden": "0",
 							"titleElement": "New element",
 							"type": "checkbox",
 							"value1": "4",
@@ -1480,8 +1564,12 @@
 							"value6": "",
 							"showSavingsSlider": "0",
 							"showTitleFrontend": "0",
-							"elementStyle": null,
-							"titleIconConfigArray": null,
+							"elementStyle": "",
+							"titleIconConfigArray": "",
+							"tooltip_config_array": "",
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -1499,7 +1587,9 @@
 									"opt_default": "0",
 									"element_id": "437",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "706",
@@ -1516,7 +1606,9 @@
 									"opt_default": "0",
 									"element_id": "437",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "714",
@@ -1533,58 +1625,15 @@
 									"opt_default": "0",
 									"element_id": "437",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
 						{
-							"id": "438",
-							"orden": "2",
-							"titleElement": "What are you alergic to",
-							"type": "comment box",
-							"value1": "",
-							"value2": "2",
-							"value3": "write foods to which you have allergies",
-							"value4": "",
-							"length": "12asd",
-							"uniqueId": "zN37VKukIo",
-							"mandatory": "0",
-							"showTitlePdf": "0",
-							"titleColumnDesktop": "4",
-							"titleColumnMobile": "12",
-							"showPriceHint": "0",
-							"displayFrontend": "0",
-							"displayDetailList": "0",
-							"subsection_id": "150",
-							"element_woocomerce_product_id": "",
-							"showInputBoxSlider": "0",
-							"tooltiptext": "",
-							"value5": "1",
-							"value6": "",
-							"showSavingsSlider": "0",
-							"showTitleFrontend": "0",
-							"elementStyle": null,
-							"titleIconConfigArray": null,
-							"conditions": [
-								{
-									"id": "150",
-									"op": "chec",
-									"value": null,
-									"element_id": "438",
-									"condition_element_id": null,
-									"elementitem_id": "705",
-									"condition_set": "1",
-									"elementitem_name": {
-										"name": "Allergies",
-										"uniqueId": "wlFArLIf7u"
-									}
-								}
-							],
-							"elementitems": []
-						},
-						{
 							"id": "444",
-							"orden": "3",
+							"orden": "1",
 							"titleElement": "what drawing do you want on the cake?",
 							"type": "file upload",
 							"value1": "",
@@ -1610,6 +1659,10 @@
 							"showTitleFrontend": "0",
 							"elementStyle": "",
 							"titleIconConfigArray": "",
+							"tooltip_config_array": "",
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [
 								{
 									"id": "158",
@@ -1622,6 +1675,55 @@
 									"elementitem_name": {
 										"name": "Drawing",
 										"uniqueId": "WryxO7azJv"
+									}
+								}
+							],
+							"elementitems": []
+						},
+						{
+							"id": "438",
+							"orden": "2",
+							"titleElement": "What are you allergic to",
+							"type": "comment box",
+							"value1": "",
+							"value2": "2",
+							"value3": "write foods to which you have allergies",
+							"value4": "",
+							"length": "12asd",
+							"uniqueId": "zN37VKukIo",
+							"mandatory": "0",
+							"showTitlePdf": "0",
+							"titleColumnDesktop": "4",
+							"titleColumnMobile": "12",
+							"showPriceHint": "0",
+							"displayFrontend": "0",
+							"displayDetailList": "0",
+							"subsection_id": "150",
+							"element_woocomerce_product_id": "",
+							"showInputBoxSlider": "0",
+							"tooltiptext": "",
+							"value5": "1",
+							"value6": "",
+							"showSavingsSlider": "0",
+							"showTitleFrontend": "0",
+							"elementStyle": "",
+							"titleIconConfigArray": "",
+							"tooltip_config_array": "",
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
+							"conditions": [
+								{
+									"id": "150",
+									"op": "chec",
+									"value": null,
+									"element_id": "438",
+									"condition_element_id": null,
+									"elementitem_id": "705",
+									"condition_set": "1",
+									"elementitem_name": {
+										"name": "Allergies",
+										"uniqueId": "wlFArLIf7u"
 									}
 								}
 							],
@@ -1675,6 +1777,10 @@
 							"showTitleFrontend": "0",
 							"elementStyle": "",
 							"titleIconConfigArray": "{\"type\":\"img\",\"icon_html\":\"\",\"icon_class\":\"\",\"icon_text\":\"\",\"image_icon\":\"https:\\/\\/stylishcostcalculator.com\\/wp-content\\/uploads\\/2023\\/05\\/calendario-11.png\",\"position\":\"\",\"width\":\"\"}",
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						},
@@ -1706,6 +1812,10 @@
 							"showTitleFrontend": "0",
 							"elementStyle": "",
 							"titleIconConfigArray": "{\"type\":\"img\",\"icon_html\":\"\",\"icon_class\":\"\",\"icon_text\":\"\",\"image_icon\":\"https:\\/\\/stylishcostcalculator.com\\/wp-content\\/uploads\\/2023\\/05\\/gente.png\",\"position\":\"\",\"width\":\"\"}",
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						},
@@ -1737,6 +1847,10 @@
 							"showTitleFrontend": "1",
 							"elementStyle": "",
 							"titleIconConfigArray": "{\"type\":\"img\",\"icon_html\":\"\",\"icon_class\":\"\",\"icon_text\":\"\",\"image_icon\":\"https:\\/\\/stylishcostcalculator.com\\/wp-content\\/uploads\\/2023\\/05\\/scooter.png\",\"position\":\"\",\"width\":\"\"}",
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -1751,10 +1865,12 @@
 									"value4": "",
 									"uniqueId": "b07xnWVwmG",
 									"woocomerce_product_id": "",
-									"opt_default": "0",
+									"opt_default": "1",
 									"element_id": "445",
 									"value5": "1",
-									"titleIconConfigArray": ""
+									"titleIconConfigArray": "",
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
@@ -1786,6 +1902,10 @@
 							"showTitleFrontend": "0",
 							"elementStyle": null,
 							"titleIconConfigArray": null,
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [
 								{
 									"id": "159",

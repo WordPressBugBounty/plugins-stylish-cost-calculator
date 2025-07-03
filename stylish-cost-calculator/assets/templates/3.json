@@ -1,5 +1,5 @@
 {
-	"id": "4",
+	"id": "133",
 	"formname": "Car Rental Quote (template)",
 	"description": "",
 	"inheritFontType": "true",
@@ -40,12 +40,12 @@
 	"webhookSettings": "",
 	"showFieldsQuoteArray": "{\"displayIpBrowserColumn\":\"true\",\"showInTable\":[{\"name\":{\"name\":\"Your Name\"}},{\"email\":{\"name\":\"Your Email\"}},{\"phone\":{\"name\":\"Your Phone\"}},{\"email_opened\":{\"name\":\"Email Opened\"}},{\"calc_total\":{\"name\":\"Total\"}},{\"traffic_medium\":{\"name\":\"Traffic medium\"}},{\"traffic_source\":{\"name\":\"Traffic source\"}},{\"referer\":{\"name\":\"Referring Page\"}}]}",
 	"translation": "[{\\\"key\\\":\\\"Total\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Total\\\"},{\\\"key\\\":\\\"Description\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Description\\\"},{\\\"key\\\":\\\"Unit Price\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Unit Price\\\"},{\\\"key\\\":\\\"Quantity\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Quantity\\\"},{\\\"key\\\":\\\"Price\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Price\\\"},{\\\"key\\\":\\\"SEND\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"SEND\\\"},{\\\"key\\\":\\\"Total Price\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Total Price\\\"},{\\\"key\\\":\\\"Summary\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Summary\\\"},{\\\"key\\\":\\\"Email Quote\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Email Quote\\\"},{\\\"key\\\":\\\"Detailed List\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Detailed List\\\"},{\\\"key\\\":\\\"Choose an option...\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Choose an option...\\\"},{\\\"key\\\":\\\"Your Name\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Your Name\\\"},{\\\"key\\\":\\\"Your Email\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Your Email\\\"},{\\\"key\\\":\\\"Your Phone\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Your Phone\\\"},{\\\"key\\\":\\\"Your Phone (Optional)\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Your Phone (Optional)\\\"},{\\\"key\\\":\\\"Coupon Code\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Coupon Code\\\"}]",
-	"paypalConfigArray": "{\"paypal_email\":\"info@designful.ca\",\"paypal_shopping_cart_name\":\"Car Rental Template\",\"paypal_checked\":\"false\",\"paypalSuccessURL\":\"\",\"paypalCancelURL\":\"\",\"objectTaxInclusionInPayPal\":false,\"paypal_currency\":\"USD\",\"nonce\":\"1bff0cf1ca\"}",
+	"paypalConfigArray": "{\"paypal_email\":\"info@designful.ca\",\"paypal_shopping_cart_name\":\"Car Rental\",\"paypal_checked\":\"true\",\"paypalSuccessURL\":\"\",\"paypalCancelURL\":\"\",\"objectTaxInclusionInPayPal\":true,\"paypal_currency\":\"USD\",\"nonce\":\"5fb9e741e1\"}",
 	"preCheckoutQuoteForm": null,
 	"isWoocommerceCheckoutEnabled": "false",
 	"isStripeEnabled": "",
 	"ShowFormBuilderOnDetails": "false",
-	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?preview_id=119&preview_nonce=a0c850da93&preview=true\":44,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/\":426,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?preview_id=119&preview_nonce=a1ae0452b6&preview=true\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?utm_source=scc-free-readme&utm_medium=wordpress%3Futm_content&referrer=wordpress.com\":4,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?utm_source=scc-wordpress-readme&utm_medium=check-templates&referrer=wordpress.com\":11,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?utm_source=scc-free-readme&utm_medium=wordpress?utm_content=check-templates\":16,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?preview_id=119&preview_nonce=18a82a4fd4&preview=true\":3,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?_gl=1*d93poq*_gcl_au*NzE3NTgwMzAxLjE3MjU1MDMwMTQ.*_ga*NDkxNDUwNjEyLjE3MjU1MDMwMTQ.*_ga_1NKDHBJG3J*MTcyNTUwMzAxMy4xLjEuMTcyNTUwMzY5NC4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?_gl=1*lenio5*_gcl_au*NzE3NTgwMzAxLjE3MjU1MDMwMTQ.*_ga*NDkxNDUwNjEyLjE3MjU1MDMwMTQ.*_ga_1NKDHBJG3J*MTcyNTUwMzAxMy4xLjEuMTcyNTUwMzY5NC4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?_gl=1*1sxsa1g*_gcl_au*NzE3NTgwMzAxLjE3MjU1MDMwMTQ.*_ga*NDkxNDUwNjEyLjE3MjU1MDMwMTQ.*_ga_1NKDHBJG3J*MTcyNTUwMzAxMy4xLjEuMTcyNTUwMzY5NC4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?_gl=1*1xi93on*_gcl_au*NjAwODA1NDQuMTcyNDc1OTc0Ng..*_ga*NDYzMDk2MzI4LjE3MjQ3NTk3NDY.*_ga_1NKDHBJG3J*MTcyNjI1NTcwMS4yLjEuMTcyNjI1NTgwMy4wLjAuMA..\":1}",
+	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?preview_id=119&preview_nonce=a0c850da93&preview=true\":44,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/\":2917,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?preview_id=119&preview_nonce=a1ae0452b6&preview=true\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?utm_source=scc-free-readme&utm_medium=wordpress%3Futm_content&referrer=wordpress.com\":11,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?utm_source=scc-wordpress-readme&utm_medium=check-templates&referrer=wordpress.com\":82,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?utm_source=scc-free-readme&utm_medium=wordpress?utm_content=check-templates\":55,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?preview_id=119&preview_nonce=18a82a4fd4&preview=true\":3,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?_gl=1*d93poq*_gcl_au*NzE3NTgwMzAxLjE3MjU1MDMwMTQ.*_ga*NDkxNDUwNjEyLjE3MjU1MDMwMTQ.*_ga_1NKDHBJG3J*MTcyNTUwMzAxMy4xLjEuMTcyNTUwMzY5NC4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?_gl=1*lenio5*_gcl_au*NzE3NTgwMzAxLjE3MjU1MDMwMTQ.*_ga*NDkxNDUwNjEyLjE3MjU1MDMwMTQ.*_ga_1NKDHBJG3J*MTcyNTUwMzAxMy4xLjEuMTcyNTUwMzY5NC4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?_gl=1*1sxsa1g*_gcl_au*NzE3NTgwMzAxLjE3MjU1MDMwMTQ.*_ga*NDkxNDUwNjEyLjE3MjU1MDMwMTQ.*_ga_1NKDHBJG3J*MTcyNTUwMzAxMy4xLjEuMTcyNTUwMzY5NC4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?_gl=1*1xi93on*_gcl_au*NjAwODA1NDQuMTcyNDc1OTc0Ng..*_ga*NDYzMDk2MzI4LjE3MjQ3NTk3NDY.*_ga_1NKDHBJG3J*MTcyNjI1NTcwMS4yLjEuMTcyNjI1NTgwMy4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?referrer=wordpress.com\":2,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?utm_source=scc-free-readme&utm_medium=wordpress%3Futm_content&referrer=mlknsvsw.top\":3,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?_gl=1*10wcqm5*_gcl_au*MTY0MzIxNTE5LjE3NDYxMjIzODI.*_ga*OTA3NzI2NTgwLjE3NDYxMjIzODQ.*_ga_1NKDHBJG3J*MTc0NjEyMjM4NC4xLjAuMTc0NjEyMjM4NC4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=check-templates\":12,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-rental-calculator\\/?_gl=1*1etwb8l*_gcl_au*NTYyOTQ4Mzk2LjE3NDcyNjczMDA.*_ga*MTU1MDIyNDIzOS4xNzQ3MjY3MzAx*_ga_1NKDHBJG3J*czE3NDcyNjczMDAkbzEkZzEkdDE3NDcyNjczMDUkajAkbDAkaDA.\":1}",
 	"emailQuoteRecipients": "1",
 	"created_at": "2024-08-12 16:48:34",
 	"wrapper_max_width": "1000",
@@ -83,6 +83,12 @@
 	"setup_wizard_data": null,
 	"post_quote_redirect_page": "0",
 	"enable_smarturl": "0",
+	"quote_form_position": "",
+	"flatpickr_localization": "",
+	"floating_bar_config": "{\\\"floating_bar_style\\\":\\\"scc_stiky_style1\\\",\\\"show_total_bar_with_sticky_bar\\\":\\\"1\\\",\\\"sticky_bar_background_color\\\":\\\"#000000\\\",\\\"sticky_bar_text_color\\\":\\\"#ffffff\\\",\\\"sticky_expand_button_background\\\":\\\"#000\\\"}",
+	"pdf_banner_images": "{\\\"email_banner_image\\\":\\\"\\\",\\\"email_logo_image\\\":\\\"https:\\\\/\\\\/stylishcostcalculator.com\\\\/wp-content\\\\/uploads\\\\/2020\\\\/10\\\\/SCC-Logo-2019.png\\\",\\\"transparent_logo_image\\\":\\\"\\\"}",
+	"cta_buttons_placement_bottom": "1",
+	"remove_pdf_attachment": "0",
 	"sections": [
 		{
 			"id": "285",
@@ -131,6 +137,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						}
@@ -185,6 +192,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -203,7 +211,8 @@
 									"element_id": "1404",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								},
 								{
 									"id": "2486",
@@ -221,7 +230,8 @@
 									"element_id": "1404",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								}
 							]
 						},
@@ -256,6 +266,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "794",
@@ -288,7 +299,8 @@
 									"element_id": "1414",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								},
 								{
 									"id": "2503",
@@ -306,7 +318,8 @@
 									"element_id": "1414",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								},
 								{
 									"id": "2504",
@@ -324,7 +337,8 @@
 									"element_id": "1414",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								}
 							]
 						},
@@ -359,6 +373,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "795",
@@ -391,7 +406,8 @@
 									"element_id": "1415",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								},
 								{
 									"id": "2506",
@@ -409,7 +425,8 @@
 									"element_id": "1415",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								},
 								{
 									"id": "2507",
@@ -427,7 +444,8 @@
 									"element_id": "1415",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								}
 							]
 						},
@@ -462,6 +480,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -480,7 +499,8 @@
 									"element_id": "1405",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								},
 								{
 									"id": "2488",
@@ -498,21 +518,22 @@
 									"element_id": "1405",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								}
 							]
 						},
 						{
-							"id": "1403",
-							"orden": "4",
+							"id": "1662",
+							"orden": "6",
 							"titleElement": "Rental Duration",
-							"type": "slider",
-							"value1": "quantity_mod",
-							"value2": "1",
-							"value3": "1",
+							"type": "date",
+							"value1": "date_range",
+							"value2": "",
+							"value3": "",
 							"value4": "",
 							"length": "12asd",
-							"uniqueId": "U4zJIKvHET131133",
+							"uniqueId": "Ggd5Jf0LHm",
 							"mandatory": "0",
 							"showTitlePdf": "0",
 							"titleColumnDesktop": "4",
@@ -525,35 +546,17 @@
 							"showInputBoxSlider": "0",
 							"tooltiptext": "",
 							"value5": "1",
-							"value6": "",
+							"value6": "{\\\"min_date\\\":\\\"\\\",\\\"max_date\\\":\\\"\\\",\\\"disable_weekends\\\":0,\\\"disabled_date\\\":\\\"\\\",\\\"date_range_pricing_structure\\\":\\\"quantity_mod\\\",\\\"disable_past_days\\\":true,\\\"enable_limit_days\\\":true,\\\"limit_days\\\":[\\\"Mon\\\",\\\"Tue\\\",\\\"Wed\\\",\\\"Thu\\\",\\\"Fri\\\",\\\"Sat\\\"],\\\"date_type\\\":\\\"date_picker\\\",\\\"enable_time_picker\\\":false,\\\"time_interval\\\":\\\"60m\\\",\\\"time_format\\\":\\\"12h\\\",\\\"limit_hours\\\":true,\\\"limit_hours_start_12h_hour\\\":\\\"9\\\",\\\"limit_hours_start_12h_minutes\\\":\\\"0\\\",\\\"limit_hours_start_am_pm\\\":\\\"AM\\\",\\\"limit_hours_end_12h_hour\\\":\\\"6\\\",\\\"limit_hours_end_12h_minutes\\\":\\\"0\\\",\\\"limit_hours_end_am_pm\\\":\\\"PM\\\",\\\"limit_hours_start_24h_hour\\\":\\\"9\\\",\\\"limit_hours_start_24h_minutes\\\":\\\"0\\\",\\\"limit_hours_end_24h_hour\\\":\\\"18\\\",\\\"limit_hours_end_24h_minutes\\\":\\\"0\\\"}",
 							"showSavingsSlider": "0",
 							"showTitleFrontend": "1",
 							"elementStyle": "",
-							"titleIconConfigArray": "{\"type\":\"icon-font\",\"icon_html\":\"<i class=\\\\\\\"scc-material-icon material-icons-outlined calendar_today\\\\\\\">calendar_today<\\/i>\",\"icon_class\":\"scc-material-icon material-icons-outlined calendar_today\",\"icon_text\":\"calendar_today\",\"image_icon\":\"\",\"position\":\"\",\"width\":\"\"}",
+							"titleIconConfigArray": "{\"type\":\"icon-font\",\"icon_html\":\"<i class=\\\\\\\"scc-fontawesome fa-solid fa-calendar-days\\\\\\\"><\\/i>\",\"icon_class\":\"scc-fontawesome fa-solid fa-calendar-days\",\"icon_text\":\"\",\"image_icon\":\"\",\"position\":\"\",\"width\":\"\"}",
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
-							"unit_description": "Days",
+							"unit_description": "",
+							"value7": "",
 							"conditions": [],
-							"elementitems": [
-								{
-									"id": "2484",
-									"order": "0",
-									"name": "",
-									"price": "",
-									"description": "",
-									"value1": "1",
-									"value2": "30",
-									"value3": "2",
-									"value4": "",
-									"uniqueId": "2cFUpt3SLB131133",
-									"woocomerce_product_id": "",
-									"opt_default": "0",
-									"element_id": "1403",
-									"value5": "1",
-									"titleIconConfigArray": "",
-									"unit_description": ""
-								}
-							]
+							"elementitems": []
 						}
 					]
 				}
@@ -606,6 +609,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -624,7 +628,8 @@
 									"element_id": "1407",
 									"value5": "1",
 									"titleIconConfigArray": "{\"type\":\"icon-font\",\"icon_html\":\"<i class=\\\\\\\"scc-fontawesome fa-solid fa-map-location-dot\\\\\\\"><\\/i>\",\"icon_class\":\"scc-fontawesome fa-solid fa-map-location-dot\",\"icon_text\":\"\",\"image_icon\":\"\",\"position\":\"\",\"width\":\"\"}",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								},
 								{
 									"id": "2493",
@@ -642,7 +647,8 @@
 									"element_id": "1407",
 									"value5": "1",
 									"titleIconConfigArray": "{\"type\":\"icon-font\",\"icon_html\":\"<i class=\\\\\\\"scc-fontawesome fa-solid fa-baby-carriage\\\\\\\"><\\/i>\",\"icon_class\":\"scc-fontawesome fa-solid fa-baby-carriage\",\"icon_text\":\"\",\"image_icon\":\"\",\"position\":\"\",\"width\":\"\"}",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								},
 								{
 									"id": "2494",
@@ -660,7 +666,8 @@
 									"element_id": "1407",
 									"value5": "1",
 									"titleIconConfigArray": "{\"type\":\"icon-font\",\"icon_html\":\"<i class=\\\\\\\"scc-fontawesome fa-solid fa-wifi\\\\\\\"><\\/i>\",\"icon_class\":\"scc-fontawesome fa-solid fa-wifi\",\"icon_text\":\"\",\"image_icon\":\"\",\"position\":\"\",\"width\":\"\"}",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								}
 							]
 						}
@@ -689,7 +696,7 @@
 							"orden": "0",
 							"titleElement": "Driver’s Age",
 							"type": "slider",
-							"value1": "sliding",
+							"value1": "quantity_mod",
 							"value2": "1",
 							"value3": "18",
 							"value4": "$+%",
@@ -715,6 +722,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "Years",
+							"value7": "",
 							"conditions": [],
 							"elementitems": [
 								{
@@ -733,7 +741,8 @@
 									"element_id": "1406",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								},
 								{
 									"id": "2490",
@@ -751,7 +760,8 @@
 									"element_id": "1406",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								},
 								{
 									"id": "2491",
@@ -769,7 +779,8 @@
 									"element_id": "1406",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								}
 							]
 						},
@@ -804,6 +815,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						},
@@ -838,6 +850,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						},
@@ -872,6 +885,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -890,7 +904,8 @@
 									"element_id": "1410",
 									"value5": "1",
 									"titleIconConfigArray": "{\"type\":\"icon-font\",\"icon_html\":\"<i class=\\\\\\\"scc-material-icon material-icons-outlined supervised_user_circle\\\\\\\">supervised_user_circle<\\/i>\",\"icon_class\":\"scc-material-icon material-icons-outlined supervised_user_circle\",\"icon_text\":\"supervised_user_circle\",\"image_icon\":\"\",\"position\":\"\",\"width\":\"\"}",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								}
 							]
 						},
@@ -925,6 +940,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "791",
@@ -980,6 +996,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "Years",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "792",
@@ -1012,7 +1029,8 @@
 									"element_id": "1412",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								},
 								{
 									"id": "2498",
@@ -1030,7 +1048,8 @@
 									"element_id": "1412",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								},
 								{
 									"id": "2499",
@@ -1048,7 +1067,8 @@
 									"element_id": "1412",
 									"value5": "1",
 									"titleIconConfigArray": "",
-									"unit_description": ""
+									"unit_description": "",
+									"usage_type": null
 								}
 							]
 						},
@@ -1083,6 +1103,7 @@
 							"tooltip_config_array": "",
 							"show_image_on_pdf": "0",
 							"unit_description": "",
+							"value7": null,
 							"conditions": [
 								{
 									"id": "793",

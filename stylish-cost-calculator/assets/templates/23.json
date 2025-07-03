@@ -3,7 +3,7 @@
 	"formname": "Flooring Estimate (template)",
 	"description": "",
 	"inheritFontType": "false",
-	"titleFontSize": "40px",
+	"titleFontSize": "30px",
 	"titleFontType": "390",
 	"titleFontWeight": "700",
 	"titleColorPicker": "#262020",
@@ -30,22 +30,22 @@
 	"turnoffUnit": "false",
 	"turnoffSave": "false",
 	"turnoffTax": "false",
-	"taxVat": "",
-	"showTaxBeforeTotal": "false",
+	"taxVat": "3",
+	"showTaxBeforeTotal": "true",
 	"symbol": "0",
 	"removeCurrency": "false",
 	"userCompletes": "false",
 	"userClicksf": "false",
 	"formFieldsArray": "[{\"t4gc79\":{\"name\":\"Name\",\"description\":\"name\",\"type\":\"text\",\"isMandatory\":\"true\",\"trnKey\":null,\"deletable\":null,\"isDefaultField\":false,\"view_state\":true}},{\"1z2ems\":{\"name\":\"Phone\",\"description\":\"phone\",\"type\":\"phone\",\"isMandatory\":\"false\",\"trnKey\":null,\"deletable\":null,\"isDefaultField\":false,\"view_state\":true,\"max_allowed_digits\":\"\"}},{\"jyzur3\":{\"name\":\"Comments\",\"description\":\"\",\"type\":\"text\",\"isMandatory\":\"false\",\"trnKey\":null,\"deletable\":null,\"isDefaultField\":false,\"view_state\":true}}]",
 	"webhookSettings": "",
-	"showFieldsQuoteArray": "{\"displayIpBrowserColumn\":\"true\",\"showInTable\":[{\"referer\":{\"name\":\"Referring Page\"}},{\"traffic_medium\":{\"name\":\"Traffic medium\"}},{\"calc_total\":{\"name\":\"Total\"}}]}",
+	"showFieldsQuoteArray": "{\"displayIpBrowserColumn\":\"true\",\"showInTable\":[{\"referer\":{\"name\":\"Referring Page\"}},{\"traffic_medium\":{\"name\":\"Traffic medium\"}},{\"calc_total\":{\"name\":\"Total\"}},{\"t4gc79\":{\"name\":\"Name\"}},{\"1z2ems\":{\"name\":\"Phone\"}}]}",
 	"translation": "[{\\\"key\\\":\\\"Total\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\" Estimated Cost\\\"},{\\\"key\\\":\\\"Description\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Description\\\"},{\\\"key\\\":\\\"Unit Price\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Unit Price\\\"},{\\\"key\\\":\\\"Quantity\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Quantity\\\"},{\\\"key\\\":\\\"Price\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Price\\\"},{\\\"key\\\":\\\"SEND\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"SEND\\\"},{\\\"key\\\":\\\"Total Price\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\" Estimated Cost\\\"},{\\\"key\\\":\\\"Summary\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Summary\\\"},{\\\"key\\\":\\\"Email Quote\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Email Quote\\\"},{\\\"key\\\":\\\"Detailed List\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Detailed List\\\"},{\\\"key\\\":\\\"Choose an option...\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Choose an option...\\\"},{\\\"key\\\":\\\"Your Name\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Your Name\\\"},{\\\"key\\\":\\\"Your Email\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Your Email\\\"},{\\\"key\\\":\\\"Your Phone\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Your Phone\\\"},{\\\"key\\\":\\\"Your Phone (Optional)\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Your Phone (Optional)\\\"},{\\\"key\\\":\\\"Coupon Code\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Coupon Code\\\"},{\\\"key\\\":\\\"Please choose an option\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Please choose an option\\\"},{\\\"key\\\":\\\"Enter your coupon code\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Enter your coupon code\\\"},{\\\"key\\\":\\\"This code is not valid\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"This code is not valid\\\"},{\\\"key\\\":\\\"Discount percentage\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Discount percentage\\\"},{\\\"key\\\":\\\"Your discount has been applied correctly\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Your discount has been applied correctly\\\"},{\\\"key\\\":\\\"Your discount has not been applied because the total price has to be between\\\",\\\"lang\\\":\\\"en\\\",\\\"translation\\\":\\\"Your discount has not been applied because the total price has to be between\\\"}]",
 	"paypalConfigArray": "{\"paypal_email\":\"\",\"paypal_shopping_cart_name\":\"\",\"paypal_checked\":\"false\",\"paypalSuccessURL\":\"\",\"paypalCancelURL\":\"\",\"objectTaxInclusionInPayPal\":false,\"paypal_currency\":\"\"}",
 	"preCheckoutQuoteForm": null,
 	"isWoocommerceCheckoutEnabled": "false",
 	"isStripeEnabled": "false",
 	"ShowFormBuilderOnDetails": "false",
-	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-carpet-hardwood-estimator\\/?preview_id=15891&preview_nonce=e05a6db869&preview=true\":4,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-carpet-hardwood-estimator\\/\":6,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-carpet-hardwood-estimator-copy\\/\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/home-alarm-system-template\\/\":1}",
+	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-carpet-hardwood-estimator\\/?preview_id=15891&preview_nonce=e05a6db869&preview=true\":4,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-carpet-hardwood-estimator\\/\":487,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-carpet-hardwood-estimator-copy\\/\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/home-alarm-system-template\\/\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-carpet-hardwood-estimator\\/#\":2,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-carpet-hardwood-estimator\":39,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-carpet-hardwood-estimator\\/?_gl=1*1gm6f4t*_gcl_au*MTYyNjM1MzE2My4xNzE3MTc5NzU3*_ga*MTUzOTYyNTM3My4xNzE3MTc5NzU3*_ga_1NKDHBJG3J*MTcxNzE3OTc1Ny4xLjEuMTcxNzE3OTc2NC4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-cost-estimator\\/\":367,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-cost-estimator\\/?preview_id=15891&preview_nonce=3806d33d3c&preview=true\":8,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-cost-estimator\\/?preview_id=15891&preview_nonce=6c4c167c04&preview=true\":2,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-cost-estimator\\/?_gl=1*18xdsqa*_gcl_au*MTMzNDIwOTU5NS4xNzIxMDk2OTA5*_ga*MTI1MTIxNjc1NC4xNzIxMDk2OTEw*_ga_1NKDHBJG3J*MTcyMTA5NjkwOS4xLjEuMTcyMTA5Njk1NS4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-cost-estimator\\/?_gl=1*1sxsa1g*_gcl_au*NzE3NTgwMzAxLjE3MjU1MDMwMTQ.*_ga*NDkxNDUwNjEyLjE3MjU1MDMwMTQ.*_ga_1NKDHBJG3J*MTcyNTUwMzAxMy4xLjEuMTcyNTUwMzY5NC4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-cost-estimator\\/?_gl=1*1ar7w6k*_gcl_au*MjU2OTY4MTEyLjE3MjY3MjE4NDI.*_ga*NTQwNTExMzY1LjE3MjY3MjE4NDI.*_ga_1NKDHBJG3J*MTcyNjcyMTg0MS4xLjEuMTcyNjcyMjAyMC4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-cost-estimator\\/?_gl=1*1crjzno*_gcl_au*NTkxMTQ3NDUwLjE3Mzc1ODEwNjQ.*_ga*MTE3MzA2MDU0OS4xNzM3NTgxMDY0*_ga_1NKDHBJG3J*MTczNzU4MTA2NC4xLjEuMTczNzU4MTA2OS4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-cost-estimator\\/?_gl=1*brmlkg*_gcl_au*MTA2MDQyMTIxOS4xNzQ0NjI0ODgyLjc3NzcyMDI5My4xNzQ0NjM5ODQ5LjE3NDQ2Mzk4NDk.*_ga*MTcwMTIyODg2Ny4xNzQ0NjI0ODgy*_ga_1NKDHBJG3J*MTc0NDYzOTgxOC40LjEuMTc0NDY0MTUxOS4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/flooring-cost-estimator\\/?_gl=1*10jnlz2*_gcl_au*MTMyODA0MjM1MC4xNzQ2MDYyNTUwLjQwODM5NDk4Ni4xNzQ2MDYzMjI4LjE3NDYwNjMyMjg.*_ga*MTc1OTY5OTkwMy4xNzQ2MDYyNTUx*_ga_1NKDHBJG3J*MTc0NjA2MjU1MC4xLjEuMTc0NjA2NTc0Ny4wLjAuMA..\":1}",
 	"emailQuoteRecipients": "1",
 	"created_at": "2023-05-30 15:06:50",
 	"wrapper_max_width": "1000",
@@ -55,13 +55,13 @@
 	"showSearchBar": "0",
 	"progress_indicator_style": "1",
 	"invoice_number_settings": "{\\\"enabled\\\":\\\"0\\\",\\\"startingNumber\\\":\\\"0\\\",\\\"placement\\\":\\\"right\\\"}",
-	"send_quote_form_data_to_user": "1",
+	"send_quote_form_data_to_user": "0",
 	"gdprAcceptanceConfigArray": "{}",
-	"allow_currency_switching": "0",
+	"allow_currency_switching": "1",
 	"accordionStyle": "style_1",
 	"hide_total_until_last_step": "1",
 	"bgShadowContainer": "true",
-	"ctaBtnColorPicker": "#ffd477",
+	"ctaBtnColorPicker": "#f18f15",
 	"show_price_column": "1",
 	"turnoffCtaBtnIcons": "false",
 	"secondaryCtaButtons": "[\\\"add_to_cart_button\\\",\\\"detailed_list_view\\\",\\\"coupon_code\\\",\\\"prev_button\\\"]",
@@ -69,11 +69,31 @@
 	"blurTotalPrice": "false",
 	"customButtonsArray": "{\\\"enable_custom_payment_btns\\\":\\\"0\\\",\\\"paypal_text\\\":\\\"\\\",\\\"stripe_text\\\":\\\"\\\"}",
 	"total_price_range_settings": "{\\\"rangePercent\\\":\\\"0\\\"}",
+	"allow_combined_checkout_item_multiple": "0",
+	"add_user_files_to_email_attachment": "1",
+	"include_quote_form_data": "1",
+	"stripe_subscription_settings": null,
+	"cta_btn_text_color": "#ffffff",
+	"quote_form_show_pdf_name": "1",
+	"progress_buttons_style": "space-between",
+	"show_total_price_float_mobile": "1",
+	"unit_price_config_array": "{\\\"element_id\\\":\\\"\\\",\\\"show_unit_price\\\":\\\"false\\\"}",
+	"custom_css_config_array": null,
+	"price_rounding_config_array": "{\\\"rounding_type\\\":\\\"not_rounded\\\"}",
+	"setup_wizard_data": null,
+	"post_quote_redirect_page": "0",
+	"enable_smarturl": "0",
+	"quote_form_position": "",
+	"flatpickr_localization": "",
+	"floating_bar_config": "{\\\"floating_bar_style\\\":\\\"scc_stiky_style2\\\",\\\"show_total_bar_with_sticky_bar\\\":\\\"1\\\",\\\"sticky_bar_background_color\\\":\\\"#000000\\\",\\\"sticky_bar_text_color\\\":\\\"#ffffff\\\",\\\"sticky_expand_button_background\\\":\\\"#000\\\"}",
+	"pdf_banner_images": "{\\\"email_banner_image\\\":\\\"\\\",\\\"email_logo_image\\\":\\\"https:\\\\/\\\\/stylishcostcalculator.com\\\\/wp-content\\\\/uploads\\\\/2020\\\\/10\\\\/SCC-Logo-2019.png\\\",\\\"transparent_logo_image\\\":\\\"\\\"}",
+	"cta_buttons_placement_bottom": "1",
+	"remove_pdf_attachment": "0",
 	"sections": [
 		{
 			"id": "128",
 			"name": "Floor Me! Calculate the cost of your new flooring.",
-			"description": " ",
+			"description": "This calculator helps you estimate the cost of your dream flooring. It only takes two minutes to get an idea of how much your new project will cost. ",
 			"order": "0",
 			"accordion": "false",
 			"showSectionTotal": "false",
@@ -92,7 +112,7 @@
 							"titleElement": "banner",
 							"type": "texthtml",
 							"value1": "",
-							"value2": "{\\\"texthtml\\\":\\\"<div style=\\\\\\\"background-image: url(\\'https:\\\\/\\\\/images.unsplash.com\\\\/photo-1600494448868-9fbd1ac2d9f5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80\\'); height: 300px; background-size: cover; background-position: center bottom; position: relative;\\\\\\\">\\\\n  <div style=\\\\\\\"position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px; box-sizing: border-box; background: linear-gradient(to top, rgba(0, 105, 113, 0.9) 0%, rgba(0, 105, 113, 0) 100%);\\\\\\\">\\\\n    <h5 style=\\\\\\\"margin: 0; color: white; text-shadow: 1px 1px 1px black;\\\\\\\"> This calculator helps you estimate the cost of your dream flooring. It only takes two minutes to get an idea of how much your new project will cost.<\\\\/h5>\\\\n  <\\\\/div>\\\\n<\\\\/div>\\\"}",
+							"value2": "{\\\"texthtml\\\":\\\"<img src=\\\\\\\"https:\\\\/\\\\/stylishcostcalculator.com\\\\/wp-content\\\\/uploads\\\\/2024\\\\/06\\\\/carpet-2-1.png\\\\\\\" alt=\\\\\\\"banner\\\\\\\" style=\\\\\\\"width:100%;\\\\\\\" >\\\\n\\\"}",
 							"value3": "",
 							"value4": "",
 							"length": "12asd",
@@ -113,7 +133,11 @@
 							"showSavingsSlider": "0",
 							"showTitleFrontend": "1",
 							"elementStyle": "style_1",
-							"titleIconConfigArray": null,
+							"titleIconConfigArray": "",
+							"tooltip_config_array": "",
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						},
@@ -145,6 +169,10 @@
 							"showTitleFrontend": "0",
 							"elementStyle": "style_1",
 							"titleIconConfigArray": "{\"type\":\"icon-font\",\"icon_html\":\"<i class=\\\\\\\"scc-material-icon material-icons-outlined straighten\\\\\\\">straighten<\\/i>\",\"icon_class\":\"scc-material-icon material-icons-outlined straighten\",\"icon_text\":\"straighten\",\"image_icon\":\"\",\"position\":\"\",\"width\":\"\"}",
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -162,7 +190,9 @@
 									"opt_default": "0",
 									"element_id": "684",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
@@ -193,7 +223,11 @@
 							"showSavingsSlider": "0",
 							"showTitleFrontend": "0",
 							"elementStyle": "style_1",
-							"titleIconConfigArray": null,
+							"titleIconConfigArray": "",
+							"tooltip_config_array": "",
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [
 								{
 									"id": "449",
@@ -240,6 +274,10 @@
 							"showTitleFrontend": "0",
 							"elementStyle": "style_1",
 							"titleIconConfigArray": null,
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -257,7 +295,9 @@
 									"opt_default": "1",
 									"element_id": "688",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1189",
@@ -274,7 +314,9 @@
 									"opt_default": "0",
 									"element_id": "688",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1190",
@@ -291,7 +333,9 @@
 									"opt_default": "0",
 									"element_id": "688",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1205",
@@ -308,7 +352,9 @@
 									"opt_default": "0",
 									"element_id": "688",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1206",
@@ -325,7 +371,9 @@
 									"opt_default": "0",
 									"element_id": "688",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1207",
@@ -342,7 +390,9 @@
 									"opt_default": "0",
 									"element_id": "688",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1208",
@@ -359,7 +409,9 @@
 									"opt_default": "0",
 									"element_id": "688",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						}
@@ -398,6 +450,10 @@
 							"showTitleFrontend": "1",
 							"elementStyle": "style_1",
 							"titleIconConfigArray": null,
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -415,7 +471,9 @@
 									"opt_default": "0",
 									"element_id": "702",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1210",
@@ -432,7 +490,9 @@
 									"opt_default": "1",
 									"element_id": "702",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1211",
@@ -449,7 +509,9 @@
 									"opt_default": "0",
 									"element_id": "702",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						}
@@ -488,6 +550,10 @@
 							"showTitleFrontend": "1",
 							"elementStyle": "style_1",
 							"titleIconConfigArray": null,
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": [
 								{
@@ -505,7 +571,9 @@
 									"opt_default": "0",
 									"element_id": "703",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1213",
@@ -522,7 +590,9 @@
 									"opt_default": "0",
 									"element_id": "703",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								},
 								{
 									"id": "1214",
@@ -539,7 +609,9 @@
 									"opt_default": "1",
 									"element_id": "703",
 									"value5": "1",
-									"titleIconConfigArray": null
+									"titleIconConfigArray": null,
+									"unit_description": null,
+									"usage_type": null
 								}
 							]
 						},
@@ -571,6 +643,10 @@
 							"showTitleFrontend": "1",
 							"elementStyle": "style_1",
 							"titleIconConfigArray": null,
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [
 								{
 									"id": "448",
@@ -621,6 +697,10 @@
 							"showTitleFrontend": "1",
 							"elementStyle": "style_1",
 							"titleIconConfigArray": null,
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [
 								{
 									"id": "447",
@@ -671,6 +751,10 @@
 							"showTitleFrontend": "1",
 							"elementStyle": "style_1",
 							"titleIconConfigArray": null,
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [
 								{
 									"id": "446",
@@ -741,6 +825,10 @@
 							"showTitleFrontend": "1",
 							"elementStyle": "style_1",
 							"titleIconConfigArray": null,
+							"tooltip_config_array": null,
+							"show_image_on_pdf": "0",
+							"unit_description": null,
+							"value7": null,
 							"conditions": [],
 							"elementitems": []
 						}
