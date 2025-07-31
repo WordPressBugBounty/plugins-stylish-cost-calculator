@@ -165,7 +165,7 @@ class UninstallSurveyModal {
 			<script type="text/javascript">
 				(function($) {
 					$(function() {
-						const interactedWithFeedbackModal = <?php echo ( get_option( 'df-scc_feedback_invoke', null ) === 'disabled' ) ? 'true' : 'false'; ?>;
+						const interactedWithFeedbackModal = true;
 						const setupSurveyModal = (modal, deactivateLink) => {
 							const firstStep = modal.querySelector('.step1-wrapper');
 							const secondStep = modal.querySelector('.step2-wrapper');
