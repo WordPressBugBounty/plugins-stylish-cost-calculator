@@ -1,4 +1,9 @@
-= 8.0.9 - 2025-07-31
+= 8.1.1 - 2025-09-03
+
+Fixed: Mismatches in calculator templates
+Improved: Security improvements
+
+= 8.1.0 - 2025-07-31
 Fixed: Feedback questionnaire
 
 = 8.0.9 - 2025-07-03
