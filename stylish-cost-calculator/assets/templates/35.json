@@ -48,7 +48,7 @@
 	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/moving-estimate-template\\/?preview_id=17388&preview_nonce=19fdfbab66&preview=true\":23,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/moving-estimate-template\\/\":120,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/moving-estimate-template\\/?_gl=1*1jnw1lb*_gcl_au*MTU2NzM2MTA3NS4xNzQ1MzA2ODk2*_ga*MTMzNzY0MjAyOC4xNzQ1MzA2ODk3*_ga_1NKDHBJG3J*MTc0NTMwNjg5Ni4xLjEuMTc0NTMwNjkxNC4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/moving-estimate-template\\/?_gl=1*wy1ui4*_gcl_au*NjE1NDcwMTEwLjE3NDY3ODI3MDg.*_ga*NDM5ODk2ODA3LjE3NDY3ODI3MDg.*_ga_1NKDHBJG3J*czE3NDY3ODI3MDgkbzEkZzEkdDE3NDY3ODI3MTIkajAkbDAkaDA.\":1}",
 	"emailQuoteRecipients": "1",
 	"created_at": "2025-04-16 15:35:03",
-	"wrapper_max_width": "1000",
+	"wrapper_max_width": "800",
 	"turnoffQty": "false",
 	"combine_checkout_items": "0",
 	"combine_checkout_woocommerce_product_id": "0",

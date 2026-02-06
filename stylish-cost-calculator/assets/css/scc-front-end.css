@@ -2887,10 +2887,9 @@ div.scc_customradio label.ssc-circle-checkbox-label {
 }
 
 /* removes color hover */
-.df-scc-modal button {
+.df-scc-modal:not([id^="user-scc-sv"]) button {
   background-color: white;
   font-size: 18px;
-
 }
 
 .modal .df-scc-euiText {

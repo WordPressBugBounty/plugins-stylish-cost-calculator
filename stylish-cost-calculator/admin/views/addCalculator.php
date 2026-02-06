@@ -68,11 +68,16 @@ include 'partials/welcome-page.php';
 include 'partials/template-loader-page.php';
 ?>
 <style>
-	#adminmenumain, #wpfooter {
+	/* #adminmenumain, #wpfooter { */
+	#wpfooter {
 		display: none !important
 	}
-	#wpcontent {
-		margin-left: 0 !important;
+	/* Adjust content margin based on menu state */
+	body.folded #wpcontent {
+		margin-left: 36px !important;
+	}
+	body:not(.folded) #wpcontent {
+		margin-left: 160px !important;
 	}
 	.action-btn {
 		display: flex;
@@ -297,6 +302,17 @@ include 'partials/template-loader-page.php';
 		font-family: "Nunito";
 	}
 </style>
+
+<script>
+	// Collapse WordPress admin menu by default
+	jQuery(document).ready(function() {
+		if (!document.body.classList.contains('folded')) {
+			document.body.classList.add('folded');
+			// Trigger WordPress's native event to update the menu state
+			jQuery(document).trigger('wp-collapse-menu', { 'fold': 'fold' });
+		}
+	});
+</script>
 <script type="text/json" id="svgCollection">
 <?php
 echo wp_json_encode(

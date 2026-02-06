@@ -17,7 +17,7 @@ $translateArray = json_decode( stripslashes( $translateArray ) );
 
 </div>
 
-<div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+<div class="modal fade scc-dashboard-modal" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable scc-modal-fullscreen">
     <div class="modal-content">
       <div class="modal-header">
@@ -186,7 +186,7 @@ for ( $n = 1; $n <= 100; $n++ ) {
     </div>
   </div>
 </div><!-- END OF MODAL -->
-<div class="modal fade" id="settingsModal1" tabindex="-1" aria-labelledby="settingsModal1Label" aria-hidden="true">
+<div class="modal fade scc-dashboard-modal" id="settingsModal1" tabindex="-1" aria-labelledby="settingsModal1Label" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable scc-modal-fullscreen">
     <div class="modal-content">
       <div class="modal-header">
@@ -403,7 +403,8 @@ for ( $n = 1; $n <= 100; $n++ ) {
 														<!-- Warning message -->
 														<div class="alert alert-warning align-items-center mt-1 scc-err-btn-style
 													<?php
-													if ($f1->buttonStyle == '3' && $f1->ctaBtnColorPicker == '#000000' || $f1->buttonStyle == '3' && $f1->ctaBtnColorPicker == '#000') {
+													$ctaBtnColor = isset( $f1->ctaBtnColorPicker ) ? $f1->ctaBtnColorPicker : '';
+													if ($f1->buttonStyle == '3' && $ctaBtnColor == '#000000' || $f1->buttonStyle == '3' && $ctaBtnColor == '#000') {
 														echo 'd-flex';
 													} else {
 														echo 'd-none';
@@ -2033,7 +2034,7 @@ if ( $isSCCFreeVersion ) {
     </div>
   </div>
 </div><!-- END OF MODAL -->
-<div class="modal fade" id="settingsModal2" tabindex="-1" aria-labelledby="settingsModal2Label" aria-hidden="true">
+<div class="modal fade scc-dashboard-modal" id="settingsModal2" tabindex="-1" aria-labelledby="settingsModal2Label" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable scc-modal-fullscreen">
     <div class="modal-content">
       <div class="modal-header">

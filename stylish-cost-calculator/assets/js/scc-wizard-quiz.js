@@ -956,10 +956,8 @@ function startSetupWizard() {
 			if (currentCredits === 0) {
 				// Action to perform when credits are zero
 				console.warn('No AI credits remaining');
-				let retrieveBtn = document.querySelector( '#scc-retrieve-business-details-btn' );
-				retrieveBtn.disabled = true;
-				retrieveBtn.classList.add( 'scc-disabled' );
-				alert('You have no AI credits remaining. Purchase the premium version to earn credits and continue using AI features.');
+				// Don't disable the button - let user click it to see the error message
+				// Alert will be shown in sccRetrieveBusinessDetails function when user clicks the button
 			} else {
 				console.log(`AI credits available: ${currentCredits}`);
 			}
@@ -1044,8 +1042,13 @@ function sccRegenerateDescriptionFromUrl() {
 	regenerateBtn.disabled = true;
 	loader.classList.remove('scc-hidden');
 
+	// Detect which page we're on based on available nonce
+	const currentPage = ( typeof pageAddCalculator !== 'undefined' && pageAddCalculator.nonce ) 
+		? 'add-calculator-page' 
+		: 'edit-calculator-page';
+	
 	// Use the existing getSiteInfoWithAi function with the current page slug
-	sccAiUtils.getSiteInfoWithAi( 'edit-calculator-page', websiteUrl )
+	sccAiUtils.getSiteInfoWithAi( currentPage, websiteUrl )
 		.then(response => {
 			if (response && response.description) {
 				descriptionTextarea.value = response.description;
@@ -1057,7 +1060,9 @@ function sccRegenerateDescriptionFromUrl() {
 		})
 		.catch(error => {
 			console.error('Error generating description:', error);
-			alert('An error occurred. Please try again.');
+			// Show the specific error message from the API response
+			const errorMessage = error.message || 'An error occurred. Please try again.';
+			alert(errorMessage);
 		})
 		.finally(() => {
 			// Re-enable the button and hide loader
@@ -1085,12 +1090,25 @@ function sccRetrieveBusinessDetails() {
 	loader.classList.remove('scc-hidden');
 	descriptionWrapper.classList.remove('d-none'); // Show the description wrapper immediately
 
+	// Detect which page we're on based on available nonce
+	const currentPage = ( typeof pageAddCalculator !== 'undefined' && pageAddCalculator.nonce ) 
+		? 'add-calculator-page' 
+		: 'edit-calculator-page';
+	
 	// Use the existing getSiteInfoWithAi function
-	sccAiUtils.getSiteInfoWithAi( 'edit-calculator-page', websiteUrl )
+	sccAiUtils.getSiteInfoWithAi( currentPage, websiteUrl )
 		.then(response => {
 			// The response structure from getSiteInfoWithAi needs to be checked
 			// Assuming response has a structure like { data: { ai_message: "description" } }
 			const description = response?.ai_message;
+			
+			// Check if description exists before processing
+			if (!description) {
+				alert('Failed to retrieve business details. Please try again.');
+				descriptionWrapper.classList.add('d-none'); // Hide wrapper if failed
+				return;
+			}
+			
 			// Clean up the description string
 			let formattedText = description
 				.replace(/&lt;/g, '<')
@@ -1103,21 +1121,28 @@ function sccRetrieveBusinessDetails() {
 				.replace(/<[^>]*>/g, '') // Remove any remaining HTML tags
 				.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1'); // Remove markdown links
 
-			if (description) {
-				// Update the description textarea
-				const descriptionTextarea = document.getElementById('scc-ai-assisted-setup-wiz-business-description');
-				descriptionTextarea.value = formattedText;
-				quizAnswersStore.step1['business-description'] = formattedText;
-				sccAiAssistedSetupWizUpdateProgress(); // Update progress bar
-				updateQuizAnswersStore({ currentTarget: descriptionTextarea }, 'step1'); // Trigger check for continue button
-			} else {
-				alert('Failed to retrieve business details. Please try again.');
-				descriptionWrapper.classList.add('d-none'); // Hide wrapper if failed
-			}
+			// Update the description textarea
+			const descriptionTextarea = document.getElementById('scc-ai-assisted-setup-wiz-business-description');
+			descriptionTextarea.value = formattedText;
+			quizAnswersStore.step1['business-description'] = formattedText;
+			sccAiAssistedSetupWizUpdateProgress(); // Update progress bar
+			updateQuizAnswersStore({ currentTarget: descriptionTextarea }, 'step1'); // Trigger check for continue button
 		})
 		.catch(error => {
 			console.error('Error retrieving business details:', error);
-			alert('An error occurred. Please try again.');
+			// Check if the error is related to credits
+			const errorMessage = error.message || '';
+			const isCreditError = errorMessage.toLowerCase().includes('credit') || 
+								  errorMessage.toLowerCase().includes('quota') || 
+								  errorMessage.toLowerCase().includes('not enough');
+			
+			// Show personalized message for credit errors, otherwise show the API error message
+			if (isCreditError) {
+				alert('You have no AI credits remaining. Purchase the premium version to earn credits and continue using AI features.');
+			} else {
+				const displayMessage = errorMessage || 'An error occurred. Please try again.';
+				alert(displayMessage);
+			}
 			descriptionWrapper.classList.add('d-none'); // Hide wrapper if failed
 		})
 		.finally(() => {

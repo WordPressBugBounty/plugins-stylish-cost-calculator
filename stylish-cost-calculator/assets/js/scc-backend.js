@@ -378,88 +378,337 @@ const sccBackendUtils = {
 	  })
 	},
 	setupSurveyModal: (modal) => {
-		const firstStep = modal.querySelector('.step1-wrapper');
-		const secondStep = modal.querySelector('.step2-wrapper');
-		const thirdStep = modal.querySelector('.step3-wrapper');
-		const closeBtn = modal.querySelector('[data-dismiss="modal"]');
+		const surveyCard = modal.querySelector('[data-survey-card]');
+		const successState = modal.querySelector('[data-survey-success]');
+		const ratings = modal.querySelectorAll('[data-survey-rating]');
+		const ratingSection = modal.querySelector('[data-survey-ratings-section]');
+		const reasonsSection = modal.querySelector('[data-survey-reasons-section]');
+		const reasonContainer = modal.querySelector('[data-survey-reasons]');
+		const continueBtn = modal.querySelector('[data-survey-continue]');
+		const ratingRemind = modal.querySelector('[data-survey-ratings-remind]');
+		const messageSection = modal.querySelector('[data-survey-message-section]');
+		const contactSection = modal.querySelector('[data-survey-contact-section]');
+		const actionSection = modal.querySelector('[data-survey-action-section]');
 		const emailInput = modal.querySelector('#feedback-email-input');
-		const usernameInput = modal.querySelector( '#feedback-username-input' );
+		const usernameInput = modal.querySelector('#feedback-username-input');
 		const checkboxOptIn = modal.querySelector('#feedback-opt-in');
+		const commentInput = modal.querySelector('#comments-text-input');
+		const submitBtn = modal.querySelector('#comments-submit-btn');
 		const searchParams = new URLSearchParams(window.location.search);
-		const launchTour = ( searchParams.get( 'page' ) === 'scc_edit_items' && searchParams.has('new') ) ? true : false ;
+		const launchTour = ( searchParams.get( 'page' ) === 'scc_edit_items' && searchParams.has('new') );
+		const closeBtn = modal.querySelector('.df-scc-euiModal__closeIcon');
 
-		modal.classList.remove('d-none', 'fade');
-		modal.style.display = 'block';
+		const setFormSectionsVisible = ( visible ) => {
+			[ messageSection, contactSection, actionSection ].forEach( section => {
+				if ( ! section ) {
+					return;
+				}
+				if ( visible ) {
+					section.classList.remove('d-none');
+				} else {
+					section.classList.add('d-none');
+				}
+			});
+			if ( submitBtn ) {
+				submitBtn.disabled = ! visible;
+			}
+		};
 
 		const responseData = {
-			rating: 0,
+			rating: null,
 			text: '',
-			email: emailInput.value,
-			username: usernameInput.value,
-			optedForEmail: checkboxOptIn.checked,
-		  }
+			reasons: [],
+			email: emailInput ? emailInput.value : '',
+			username: usernameInput ? usernameInput.value : '',
+			optedForEmail: checkboxOptIn ? checkboxOptIn.checked : false,
+		};
 
-		const ratingChosenText = modal.querySelector('.rating-chosen');
-
-		const commentInput = modal.querySelector('#comments-text-input');
-		const commentSubmitBtn = modal.querySelector('#comments-submit-btn');
-
-		const ratingsPicker = modal.querySelector('.ratings-picker');
-		ratingsPicker.querySelectorAll('li').forEach((li, index) => {
-			li.addEventListener('click', evt => {
-			firstStep.classList.add('d-none');
-			secondStep.classList.remove('d-none');
-			ratingChosenText.textContent = index + 1;
-			responseData.rating = index + 1;
+		const resetSurveyState = () => {
+			modal.classList.remove('d-none', 'fade');
+			modal.style.display = 'block';
+			if ( surveyCard ) {
+				surveyCard.classList.remove('d-none');
+			}
+			if ( successState ) {
+				successState.classList.add('d-none');
+			}
+			setFormSectionsVisible( false );
+			if ( ratingSection ) {
+				ratingSection.classList.remove('d-none');
+			}
+			if ( ratingRemind ) {
+				ratingRemind.classList.remove('d-none');
+			}
+			if ( reasonsSection ) {
+				reasonsSection.classList.add('d-none');
+			}
+			if ( continueBtn ) {
+				continueBtn.classList.add('d-none');
+				continueBtn.disabled = true;
+			}
+			if ( submitBtn ) {
+				submitBtn.textContent = 'Submit feedback';
+			}
+			if ( commentInput ) {
+				commentInput.value = '';
+			}
+			if ( reasonContainer ) {
+				reasonContainer.innerHTML = '';
+			}
+			responseData.rating = null;
+			responseData.text = '';
+			responseData.reasons = [];
+			if ( emailInput ) {
+				responseData.email = emailInput.value;
+			}
+			if ( usernameInput ) {
+				responseData.username = usernameInput.value;
+			}
+			if ( checkboxOptIn ) {
+				responseData.optedForEmail = checkboxOptIn.checked;
+			}
+			ratings.forEach( button => {
+				button.classList.remove('is-selected');
+				button.style.borderColor = '';
+				button.style.backgroundColor = '';
 			});
-		});
+		};
 
-		commentInput.addEventListener('input', evt => {
-			responseData.text = evt.target.value;
-		});
+		resetSurveyState();
 
-		emailInput.addEventListener('input', evt => {
-			responseData.email = evt.target.value;
-		});
-	  
-		checkboxOptIn.addEventListener('change', evt => {
-			responseData.optedForEmail = evt.target.checked;
-			document.querySelector( '#survey-email-input-wrapper' ).classList.toggle( 'd-none' );
-			document.querySelector( '#survey-username-input-wrapper' ).classList.toggle( 'd-none' );
-			if (!evt.target.checked) {
-				delete responseData.email;
-				delete responseData.username;
+		const getReasonsByRating = ( rating ) => {
+			if ( ! rating ) {
+				return [];
 			}
-		});
-		commentSubmitBtn.addEventListener('click', evt => {
-			jQuery.ajax({
-			url:
-				ajaxurl +
-				"?action=scc_feedback_manage" +
-				"&_wpnonce=" +
-				pageEditCalculator.nonce,
-			type: "POST",
-			contentType: "application/json; charset=utf-8",
-			dataType: "json",
-			data: JSON.stringify(responseData),
-			beforeSend: function () {
-				commentSubmitBtn.disabled = true;
-				commentSubmitBtn.textContent = 'Submitting...';
-			},
-			complete: function (data) {
-				secondStep.classList.add('d-none');
-				thirdStep.classList.remove('d-none');
-				closeBtn.classList.add('d-none');
-				setTimeout(() => {
-					document.querySelector('#user-scc-sv').classList.remove('d-block');
-					document.querySelector('#user-scc-sv').classList.add('fade', 'd-none');
-					if( launchTour ){
-						sccBackendUtils.knowingEditingPageGuidedTour( 'scc-introjs-new-editing-page' );
+			if ( rating <= 2 ) {
+				return [
+					'Poor output quality',
+					'Too complicated to use',
+					'Missing key features',
+					'Too many bugs',
+					'Too expensive',
+					'Poor design',
+					'Slow performance',
+					'Lacking support',
+				];
+			}
+			if ( rating === 3 ) {
+				return [
+					'Quality could improve',
+					'Could be easier to use',
+					'Some features missing',
+					'Occasional issues',
+					'Pricing concerns',
+					'Design could improve',
+					'Performance could be better',
+					'Support could be better',
+				];
+			}
+			return [
+				'Excellent output quality',
+				'Easy to use',
+				'Great features',
+				'Works reliably',
+				'Good value',
+				'Beautiful design',
+				'Fast and responsive',
+				'Helpful support',
+			];
+		};
+
+		const goToFormStep = () => {
+			if ( ratingSection ) {
+				ratingSection.classList.add('d-none');
+			}
+			if ( ratingRemind ) {
+				ratingRemind.classList.add('d-none');
+			}
+			if ( reasonsSection ) {
+				reasonsSection.classList.add('d-none');
+			}
+			setFormSectionsVisible( true );
+			if ( commentInput ) {
+				commentInput.focus();
+			}
+		};
+
+		const convertRgbToRgba = ( color, alpha = 0.15 ) => {
+			if ( ! color || typeof color !== 'string' ) {
+				return `rgba(99, 102, 241, ${ alpha })`;
+			}
+			if ( color.startsWith('#') ) {
+				return color;
+			}
+			return color.replace('rgb', 'rgba').replace(')', `, ${ alpha })`);
+		};
+
+		const handleRatingVisual = ( button, active ) => {
+			if ( active ) {
+				button.classList.add('is-selected');
+				const color = button.dataset.surveyRatingColor;
+				button.style.borderColor = color;
+				button.style.backgroundColor = convertRgbToRgba(color);
+			} else {
+				button.classList.remove('is-selected');
+				button.style.borderColor = '';
+				button.style.backgroundColor = '';
+			}
+			};
+
+		const renderReasons = ( rating ) => {
+			responseData.reasons = [];
+			if ( reasonContainer ) {
+				reasonContainer.innerHTML = '';
+			}
+			const reasons = getReasonsByRating( rating );
+			reasons.forEach( reason => {
+				const button = document.createElement('button');
+				button.type = 'button';
+				button.className = 'scc-survey-reason-btn';
+				button.textContent = reason;
+				button.dataset.surveyReason = reason;
+				button.addEventListener('click', () => {
+					const reasonIndex = responseData.reasons.indexOf( reason );
+					if ( reasonIndex > -1 ) {
+						responseData.reasons.splice( reasonIndex, 1 );
+						button.classList.remove('is-selected');
+					} else {
+						responseData.reasons.push( reason );
+						button.classList.add('is-selected');
 					}
-				}, 3000);
-			}
-			})
-		});
+					if ( continueBtn ) {
+						if ( responseData.reasons.length ) {
+							continueBtn.classList.remove('d-none');
+							continueBtn.disabled = false;
+						} else {
+							continueBtn.classList.add('d-none');
+							continueBtn.disabled = true;
+						}
+					}
+				});
+				if ( reasonContainer ) {
+					reasonContainer.appendChild( button );
+				}
+			});
+		};
+
+			ratings.forEach( button => {
+				button.addEventListener('click', () => {
+					const value = Number( button.dataset.surveyRating );
+					responseData.rating = value;
+					ratings.forEach( btn => handleRatingVisual( btn, btn === button ) );
+					renderReasons( value );
+					if ( reasonsSection ) {
+						reasonsSection.classList.remove('d-none');
+						reasonsSection.scrollIntoView( { behavior: 'smooth', block: 'center' } );
+					}
+					if ( ratingRemind ) {
+						ratingRemind.classList.add('d-none');
+					}
+					if ( continueBtn ) {
+						continueBtn.classList.add('d-none');
+						continueBtn.disabled = true;
+					}
+				});
+			});
+
+		if ( continueBtn ) {
+			continueBtn.addEventListener('click', () => {
+				if ( responseData.reasons.length ) {
+					goToFormStep();
+				}
+			} );
+		}
+
+		if ( commentInput ) {
+			commentInput.addEventListener('input', ( evt ) => {
+				responseData.text = evt.target.value;
+			});
+		}
+
+		if ( emailInput ) {
+			emailInput.addEventListener('input', ( evt ) => {
+				responseData.email = evt.target.value;
+			});
+		}
+
+		if ( usernameInput ) {
+			usernameInput.addEventListener('input', ( evt ) => {
+				responseData.username = evt.target.value;
+			});
+		}
+
+		if ( checkboxOptIn ) {
+			checkboxOptIn.addEventListener('change', ( evt ) => {
+			const emailWrapper = modal.querySelector('#survey-email-input-wrapper');
+			const usernameWrapper = modal.querySelector('#survey-username-input-wrapper');
+				responseData.optedForEmail = evt.target.checked;
+				if ( evt.target.checked ) {
+					responseData.email = emailInput ? emailInput.value : '';
+					responseData.username = usernameInput ? usernameInput.value : '';
+					if ( emailWrapper ) {
+						emailWrapper.classList.remove('d-none');
+					}
+					if ( usernameWrapper ) {
+						usernameWrapper.classList.remove('d-none');
+					}
+				} else {
+					if ( emailWrapper ) {
+						emailWrapper.classList.add('d-none');
+					}
+					if ( usernameWrapper ) {
+						usernameWrapper.classList.add('d-none');
+					}
+					delete responseData.email;
+					delete responseData.username;
+				}
+			});
+		}
+
+		if ( submitBtn ) {
+			submitBtn.addEventListener('click', () => {
+				if ( ! responseData.rating || submitBtn.disabled ) {
+					return;
+				}
+				jQuery.ajax({
+					url: `${ ajaxurl }?action=scc_feedback_manage&_wpnonce=${ pageEditCalculator.nonce }`,
+					type: 'POST',
+					contentType: 'application/json; charset=utf-8',
+					dataType: 'json',
+					data: JSON.stringify( responseData ),
+					beforeSend: () => {
+						submitBtn.disabled = true;
+						submitBtn.textContent = 'Submitting...';
+					},
+					complete: () => {
+						submitBtn.textContent = 'Submit feedback';
+						if ( surveyCard ) {
+							surveyCard.classList.add('d-none');
+						}
+						if ( successState ) {
+							successState.classList.remove('d-none');
+						}
+						if ( closeBtn ) {
+							closeBtn.classList.add('d-none');
+						}
+						if ( continueBtn ) {
+							continueBtn.classList.add('d-none');
+							continueBtn.disabled = true;
+						}
+						setTimeout( () => {
+							const surveyModal = document.querySelector('#user-scc-sv');
+							if ( surveyModal ) {
+								surveyModal.classList.remove('d-block');
+								surveyModal.classList.add('fade', 'd-none');
+							}
+							if ( launchTour ) {
+								sccBackendUtils.knowingEditingPageGuidedTour( 'scc-introjs-new-editing-page' );
+							}
+						}, 3000 );
+					},
+				});
+			});
+		}
 	},
 	showWelcomeModal: () => {
 		const modal = document.querySelector( '#scc-welcome-modal' );
@@ -1564,6 +1813,7 @@ const sccBackendUtils = {
 				btn.querySelector( '.scc-saving-element-btn-text' )?.classList.remove( 'scc-hidden' );
 				btn.classList.add( 'btn-warning' );
 				btn.classList.remove( 'btn-disabled' );
+				btn.classList.remove( 'scc-hidden' );
 			} );
 			//updateBackendSideConfigWithDebounce( getCalcId() );
 		} else {
@@ -1573,6 +1823,7 @@ const sccBackendUtils = {
 				btn.querySelector( '.scc-saving-element-btn-text' )?.classList.add( 'scc-hidden' );
 				btn.classList.remove( 'btn-warning' );
 				btn.classList.add( 'btn-disabled' );
+				btn.classList.add( 'scc-hidden' );
 			} );
 		}
 	},
@@ -4138,7 +4389,7 @@ jQuery(document).ready(function () {
 			}
 		})
 	}	
-
+	sccAiUtils.updateMultiplierGUI();
 })
 
 

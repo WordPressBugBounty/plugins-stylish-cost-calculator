@@ -755,32 +755,7 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 											</div>
 											<?php
                                         }
-
-                                        if ( $el->type == 'file upload' ) {
-                                            ?>
-											<div class="elements_added">
-											    <?php echo ( $scc_special_loop_element )?>
-												<input type="text" class="input_id_element" value="<?php echo intval( $el->id ); ?>" hidden>
-												<div class="elements_added_v2">
-													<div class="element-icon">
-														<i class="fas fa-paperclip" style="font-size:25px;"></i>
-													</div>
-													<div class="element-title-desc" onclick="javascript:collapseElementTitle(this)" style="cursor: pointer;">
-														<div class="title-desc-wrapper">
-															<span class="element-title">File Upload Field</span>
-															<p class="element-description">
-																<?php echo esc_attr( $truncatedTitleElement ); ?>
-															</p>
-														</div>
-													</div>
-													<?php echo scc_output_editing_page_element_actions( 'file-upload', false ); ?>
-												</div>
-												<?php echo $edit_page_func->renderFileUploadSetupBody2( $el, $conditionsBySet ); ?>
-												<?php echo $edit_page_func->renderElementLoader(); ?>
-											</div>
-											<?php
-                                        }
-
+										
                                         if ( $el->type == 'texthtml' ) {
                                             ?>
 											<div class="elements_added">
@@ -968,7 +943,7 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 						<div id="dock-to-right" title="Dock the preview pane to the right" data-dock-mode="right" role="button" onclick="handlePreviewDockMode(this, 'right', event)" class="use-tooltip m-0 btn"><?php echo scc_get_kses_extended_ruleset( $scc_icons['dock-to-right'] ); ?></div>
 					</div>
 
-					<button class="btn btn-disabled scc-refresh-button" disabled onclick="sccBackendUtils.refreshPreview(this)"
+					<button class="btn btn-disabled scc-refresh-button scc-hidden" disabled onclick="sccBackendUtils.refreshPreview(this)"
 						data-element-type="quantity-box">
 						<span class="scc-saving-element-msg scc-hidden"></span>
 						<span class="scc-saving-element-btn-text scc-hidden">
@@ -2109,7 +2084,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		var subsectionContainer = jQuery(element).parent().parent().parent()
 		var subContainer = subsectionContainer.find(".subsection-area.BodyOption")
 		var idSub = subsectionContainer.find(".input_subsection_id").val()
-		var containerButtons = jQuery(element)
+		var containerButtons = jQuery(element).parent()
 		var count = subsectionContainer.find(".elements_added").length + 1
 		jQuery.ajax({
 			url: ajaxurl,
@@ -3699,7 +3674,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	function insertSliderElement(idnewElement, idnewElementItem, elementDOM) {
 		var elementHead = `<div class="elements_added_v2">
 			<div class="element-icon">
-				<i class="fas fa-sliders-h" style="font-size:25px;"></i>
+				<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-slider'] ); ?></span>
 			</div>
 			<div class="element-title-desc" onclick="javascript:collapseElementTitle(this)" style="cursor: pointer;">
 				<div class="title-desc-wrapper">
@@ -3837,7 +3812,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	function insertFileupload(idnewElement) {
 		var elementHead = `<div class="elements_added_v2">
 			<div class="element-icon">
-				<i class="fas fa-paperclip" style="font-size:25px;"></i>
+				<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['paperclip'] ); ?></span>
 			</div>
 			<div class="element-title-desc" onclick="javascript:collapseElementTitle(this)" style="cursor: pointer;">
 				<div class="title-desc-wrapper">
@@ -3910,7 +3885,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	function insertQuantityBox(idnewElement, elementDOM) {
 		var elementHead = `<div class="elements_added_v2">
 			<div class="element-icon">
-				<i class="material-icons" style="font-size:25px;">exposure</i>
+				<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-quantity'] ); ?></span>
 			</div>
 			<div class="element-title-desc" onclick="javascript:collapseElementTitle(this)" style="cursor: pointer;">
 				<div class="title-desc-wrapper">
@@ -4039,7 +4014,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		var elementHead = `<input type="text" class="input_id_element" value="${idnewElement}" hidden="">
 			<div class="elements_added_v2">
 			<div class="element-icon">
-				<i class="fas fa-comment" style="font-size:25px;"></i>
+				<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['message-circle'] ); ?></span>
 			</div>
 			<div class="element-title-desc" onclick="javascript:collapseElementTitle(this)" style="cursor: pointer;">
 				<div class="title-desc-wrapper">
@@ -4114,7 +4089,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		
 		var elementHead = `<div class="elements_added_v2">
 			<div class="element-icon">
-				<i class="far fa-list-alt" style="font-size:25px;"></i>
+				<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-dropdown'] ); ?></span>
 			</div>
 			<div class="element-title-desc" onclick="javascript:collapseElementTitle(this)" style="cursor: pointer;">
 				<div class="title-desc-wrapper">
@@ -4308,14 +4283,31 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	}
 </script>
 <style>
-	#adminmenumain, #wpfooter {
+	body{
+		background-color: #f8f9ff;
+	}
+	/* #adminmenumain,  */
+	#wpfooter {
 		display: none !important
 	}
-
-	#wpcontent {
-		margin-left: 0 !important;
+	/* Adjust content margin based on menu state */
+	body.folded #wpcontent {
+		margin-left: 36px !important;
+	}
+	body:not(.folded) #wpcontent {
+		margin-left: 160px !important;
 	}
 	#crisp-chatbox > div > a{
 		right: 115px !important;
 	}
 </style>
+<script>
+	// Collapse WordPress admin menu by default
+	jQuery(document).ready(function() {
+		if (!document.body.classList.contains('folded')) {
+			document.body.classList.add('folded');
+			// Trigger WordPress's native event to update the menu state
+			jQuery(document).trigger('wp-collapse-menu', { 'fold': 'fold' });
+		}
+	});
+</script>

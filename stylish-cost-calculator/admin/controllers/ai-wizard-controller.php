@@ -333,7 +333,7 @@ class AiWizardController {
             'method'  => 'POST',
             'headers' => ['Content-Type' => 'application/json'],
             'body'    => json_encode( $request_data ),
-            'timeout' => 60,
+            'timeout' => 120,
         ] );
 
         if ( is_wp_error( $response ) ) {
@@ -361,7 +361,7 @@ class AiWizardController {
             'method'  => 'POST',
             'headers' => ['Content-Type' => 'application/json'],
             'body'    => json_encode( $request_data ),
-            'timeout' => 60,
+            'timeout' => 120,
         ] );
 
         if ( is_wp_error( $response ) ) {
@@ -387,7 +387,7 @@ class AiWizardController {
             'method'  => 'POST',
             'headers' => ['Content-Type' => 'application/json'],
             'body'    => json_encode( $request_data ),
-            'timeout' => 60,
+            'timeout' => 120,
         ] );
 
         if ( is_wp_error( $response ) ) {
@@ -411,12 +411,12 @@ class AiWizardController {
             'is_activated' => $this->is_activated,
             'url'          => $this->get_base_url(),
         ];
-        $api_endpoint = 'https://api.stylishcostcalculator.com/rest/ai-wizard-suggest-elements-v2';
+        $api_endpoint = 'https://api.stylishcostcalculator.com/rest/ai-wizard-suggest-elements-responses';
         $response     = wp_remote_post( $api_endpoint, [
             'method'  => 'POST',
             'headers' => ['Content-Type' => 'application/json'],
             'body'    => json_encode( $request_data ),
-            'timeout' => 60,
+            'timeout' => 120,
         ] );
 
         if ( is_wp_error( $response ) ) {
@@ -437,12 +437,12 @@ class AiWizardController {
             'is_activated' => $this->is_activated,
             'url'          => $this->get_base_url(),
         ];
-        $api_endpoint = 'https://api.stylishcostcalculator.com/rest/ai-wizard-optimize-form-v2';
+        $api_endpoint = 'https://api.stylishcostcalculator.com/rest/ai-wizard-optimize-form-responses';
         $response     = wp_remote_post( $api_endpoint, [
             'method'  => 'POST',
             'headers' => ['Content-Type' => 'application/json'],
             'body'    => json_encode( $request_data ),
-            'timeout' => 60,
+            'timeout' => 120,
         ] );
 
         if ( is_wp_error( $response ) ) {
@@ -462,12 +462,12 @@ class AiWizardController {
             'is_activated' => $this->is_activated,
             'url'          => $this->get_base_url(),
         ];
-        $api_endpoint = 'https://api.stylishcostcalculator.com/rest/ai-wizard-setup-wizard-step-by-step-v2';
+        $api_endpoint = 'https://api.stylishcostcalculator.com/rest/ai-wizard-setup-wizard-step-by-step-responses';
         $response     = wp_remote_post( $api_endpoint, [
             'method'  => 'POST',
             'headers' => ['Content-Type' => 'application/json'],
             'body'    => json_encode( $request_data ),
-            'timeout' => 60,
+            'timeout' => 120,
         ] );
 
         if ( is_wp_error( $response ) ) {
@@ -518,12 +518,12 @@ class AiWizardController {
             'url'          => $this->get_base_url(),
         ];
 
-        $api_endpoint = 'https://api.stylishcostcalculator.com/rest/ai-wizard-add-elements-array';
+        $api_endpoint = 'https://api.stylishcostcalculator.com/rest/ai-wizard-add-elements-responses';
         $response     = wp_remote_post( $api_endpoint, [
             'method'  => 'POST',
             'headers' => ['Content-Type' => 'application/json'],
             'body'    => json_encode( $request_data ),
-            'timeout' => 60,
+            'timeout' => 240,
         ] );
         //$response =  $element_test;
 
@@ -563,12 +563,12 @@ class AiWizardController {
             'is_activated' => $this->is_activated,
             'url'          => $this->get_base_url(),
         ];
-        $api_endpoint = 'https://api.stylishcostcalculator.com/rest/ai-wizard-add-calculator-settings-array';
+        $api_endpoint = 'https://api.stylishcostcalculator.com/rest/ai-wizard-add-calculator-settings-responses';
         $response     = wp_remote_post( $api_endpoint, [
             'method'  => 'POST',
             'headers' => ['Content-Type' => 'application/json'],
             'body'    => json_encode( $request_data ),
-            'timeout' => 60,
+            'timeout' => 120,
         ] );
 
         if ( is_wp_error( $response ) ) {
@@ -608,12 +608,12 @@ class AiWizardController {
             'is_activated' => $this->is_activated,
             'url'          => $siteURL,
         ];
-        $api_endpoint = 'https://api.stylishcostcalculator.com/rest/ai-wizard-web-search';
+        $api_endpoint = 'https://api.stylishcostcalculator.com/rest/ai-wizard-web-search-responses';
         $response     = wp_remote_post( $api_endpoint, [
             'method'  => 'POST',
             'headers' => ['Content-Type' => 'application/json'],
             'body'    => json_encode( $request_data ),
-            'timeout' => 60,
+            'timeout' => 120,
         ] );
 
         if ( is_wp_error( $response ) ) {

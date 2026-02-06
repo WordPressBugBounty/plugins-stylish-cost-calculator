@@ -48,7 +48,7 @@
 	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/audio-editing-and-podcast-editing-calculculator\\/\":903,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/audio-editing-and-podcast-editing-calculculator\\/?gclid=Cj0KCQiAoab_BRCxARIsANMx4S6XcpV83b7fFLxGZJ2IXZ4LI5HgXLbX9tECuGY4lL3_UXh-fbDTMGMaArXcEALw_wcB\":3,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/audio-editing-and-podcast-editing-calculculator\\/?swcfpc=1\":2,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/audio-editing-and-podcast-editing-calculculator\\/#\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/audio-editing-and-podcast-editing-calculculator\":26,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/video-editing-cost-calculator\\/\":207,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/video-editing-cost-calculator\\/?preview_id=311&preview_nonce=b9a8d2c1e7&preview=true\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/video-editing-cost-calculator\\/?_gl=1*11y4p8j*_gcl_au*Njc5MDY0ODc3LjE3MjQ4NTczMTk.*_ga*ODAzMDMyOTcxLjE3MjQ4NTczMTk.*_ga_1NKDHBJG3J*MTcyNDg1NzMxOS4xLjEuMTcyNDg1NzM0NS4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/video-editing-cost-calculator\\/?_gl=1*1sxsa1g*_gcl_au*NzE3NTgwMzAxLjE3MjU1MDMwMTQ.*_ga*NDkxNDUwNjEyLjE3MjU1MDMwMTQ.*_ga_1NKDHBJG3J*MTcyNTUwMzAxMy4xLjEuMTcyNTUwMzY5NC4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/video-editing-cost-calculator\\/#content\":1}",
 	"emailQuoteRecipients": "1",
 	"created_at": "0000-00-00 00:00:00",
-	"wrapper_max_width": "1000",
+	"wrapper_max_width": "800",
 	"turnoffQty": "false",
 	"combine_checkout_items": "0",
 	"combine_checkout_woocommerce_product_id": "0",

@@ -1123,6 +1123,7 @@ class ajaxRequest {
             case 'add':
                 check_ajax_referer( 'add-calculator-page', 'nonce' );
                 $form['formname']    = sanitize_text_field( $_GET['calculator_name'] );
+                $form['wrapper_max_width']            = 800;
                 $response            = $formC->create( $form );
                 $sec['form_id']      = $response;
                 $secid               = $sectionC->create( $sec );
@@ -1375,7 +1376,7 @@ class ajaxRequest {
                             //!Recently done must be tested
                             $condition['element_id'] = intval( $id_element );
 
-                            if ( $condition['element_condition'] ) {
+                            if ( isset( $condition['element_condition'] ) && $condition['element_condition'] ) {
                                 $condition_element                 = (array) $elementC->getByUniqueId( sanitize_text_field( $condition['element_condition']['uniqueId'] ) . intval( $calculator_id ) );
                                 $condition['condition_element_id'] = intval( $condition_element['id'] );
                             } else {
@@ -2254,6 +2255,9 @@ class ajaxRequest {
             'text'          => '',
             'optedForEmail' => false,
         ] );
+        $data['ip']          = $this->scc_get_request_ip();
+        $data['device']      = $this->scc_detect_device_type();
+        $data['pricingPlan'] = 'free';
         $survey_store_url = SCC_TELEMETRY_ENDPOINT . '/api/public/user-survey';
         $headers          = [
             'user-agent'        => 'SCC/' . STYLISH_COST_CALCULATOR_VERSION . ';',
@@ -2263,7 +2267,7 @@ class ajaxRequest {
             'X-Site-Url'        => md5( get_site_url() ),
             'X-Release-Channel' => 'demo',
         ];
-        wp_remote_post( $survey_store_url, [
+        $response = wp_remote_post( $survey_store_url, [
             'method'      => 'POST',
             'timeout'     => 5,
             'redirection' => 5,
@@ -2384,10 +2388,17 @@ class ajaxRequest {
     public function submit_uninstall_survey() {
         check_ajax_referer( 'uninstall-df-scc-calculator-page', 'nonce' );
         $data = json_decode( file_get_contents( 'php://input' ), true );
+        $user_email = get_option( 'admin_email' );
+        if ( function_exists( 'wp_get_current_user' ) ) {
+            $user      = wp_get_current_user();
+            $user_data = (array) $user->data;
+            $user_email = $user_data['user_email'];
+        }
         $data = wp_parse_args( $data, [
             'answer'           => 0,
             'comment'          => '',
             'site'             => '',
+            'email'            => $user_email,
         ] );
         $data['site']     = md5( get_site_url() );
         $survey_store_url = SCC_TELEMETRY_ENDPOINT . '/api/public/uninstall-survey';
@@ -3169,6 +3180,62 @@ class ajaxRequest {
         } catch ( Exception $e ) {
             wp_send_json( [ 'status' => 'failed', 'message' => 'Error: ' . $e->getMessage() ] );
         }
+    }
+
+    private function scc_get_request_ip() {
+        $ip_headers = [
+            'HTTP_CLIENT_IP',
+            'HTTP_X_FORWARDED_FOR',
+            'HTTP_X_FORWARDED',
+            'HTTP_X_CLUSTER_CLIENT_IP',
+            'HTTP_FORWARDED_FOR',
+            'HTTP_FORWARDED',
+            'REMOTE_ADDR',
+        ];
+
+        foreach ( $ip_headers as $header ) {
+            if ( empty( $_SERVER[ $header ] ) ) {
+                continue;
+            }
+            $ip_list = explode( ',', $_SERVER[ $header ] );
+            foreach ( $ip_list as $raw_ip ) {
+                $ip = trim( $raw_ip );
+                if ( filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+                    return $ip;
+                }
+            }
+        }
+
+        return 'unknown';
+    }
+
+    private function scc_detect_device_type() {
+        $user_agent = isset( $_SERVER['HTTP_USER_AGENT'] ) ? strtolower( $_SERVER['HTTP_USER_AGENT'] ) : '';
+
+        if ( empty( $user_agent ) ) {
+            return 'unknown';
+        }
+
+        if ( strpos( $user_agent, 'windows' ) !== false ) {
+            return 'windows';
+        }
+        if ( strpos( $user_agent, 'mac os' ) !== false || strpos( $user_agent, 'macintosh' ) !== false ) {
+            return 'macos';
+        }
+        if ( strpos( $user_agent, 'android' ) !== false ) {
+            return 'android';
+        }
+        if ( strpos( $user_agent, 'iphone' ) !== false || strpos( $user_agent, 'ipad' ) !== false || strpos( $user_agent, 'ipod' ) !== false ) {
+            return 'ios';
+        }
+        if ( strpos( $user_agent, 'linux' ) !== false ) {
+            return 'linux';
+        }
+        if ( strpos( $user_agent, 'cros' ) !== false ) {
+            return 'chromeos';
+        }
+
+        return 'unknown';
     }
 }
 new ajaxRequest();

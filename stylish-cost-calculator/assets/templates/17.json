@@ -62,7 +62,7 @@
     "urlStatsArray": null,
     "showSearchBar": "0",
     "invoice_number_settings": "{\\\"enabled\\\":\\\"0\\\",\\\"startingNumber\\\":\\\"0\\\",\\\"placement\\\":\\\"right\\\"}",
-    "wrapper_max_width": "1000",
+    "wrapper_max_width": "800",
     "send_quote_form_data_to_user": "0",
     "allow_currency_switching": "0",
     "hide_total_until_last_step": "0",

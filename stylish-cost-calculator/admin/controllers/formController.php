@@ -121,12 +121,12 @@ class formController {
 		( isset( $values['isWoocommerceCheckoutEnabled'] ) ) ? $isWoocommerceCheckoutEnabled = $values['isWoocommerceCheckoutEnabled'] : $isWoocommerceCheckoutEnabled = null;
 		( isset( $values['isStripeEnabled'] ) ) ? $isStripeEnabled                           = $values['isStripeEnabled'] : $isStripeEnabled = null;
 		( isset( $values['ShowFormBuilderOnDetails'] ) ) ? $ShowFormBuilderOnDetails         = $values['ShowFormBuilderOnDetails'] : $ShowFormBuilderOnDetails = 'false';
-
+		$wrapper_max_width = isset( $values['wrapper_max_width'] ) ? $values['wrapper_max_width'] : 800;
 		$query   = $this->db->prepare(
 			"INSERT INTO {$this->db->prefix}df_scc_forms
             (id, formname, isWoocommerceCheckoutEnabled, isStripeEnabled, `description`, inheritFontType, titleFontSize, titleFontType, titleFontWeight, titleColorPicker, ServicefontSize, fontType, fontWeight, ServiceColorPicker, objectSize, objectColorPicker, elementSkin, addContainer, addtoCheckout,
             buttonStyle, turnoffborder, turnoffemailquote, turnviewdetails, turnoffcoupon, barstyle, turnofffloating, removeTotal, minimumTotal, minimumTotalChoose, removeTitle, turnoffUnit, turnoffQty, turnoffSave, turnoffTax, taxVat, symbol, removeCurrency, userCompletes,
-            userClicksf, showTaxBeforeTotal, formFieldsArray, webhookSettings, showFieldsQuoteArray, translation, paypalConfigArray, ShowFormBuilderOnDetails, created_at) VALUES (%d,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",
+            userClicksf, showTaxBeforeTotal, formFieldsArray, webhookSettings, showFieldsQuoteArray, translation, paypalConfigArray, ShowFormBuilderOnDetails, created_at, wrapper_max_width) VALUES (%d,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%d);",
 			$form_id,
 			$formname,
 			$isWoocommerceCheckoutEnabled,
@@ -173,7 +173,8 @@ class formController {
 			$translation,
 			$paypalConfigArray,
 			$ShowFormBuilderOnDetails,
-			$now
+			$now,
+			$wrapper_max_width
 		);
 		$result  = $this->db->query( $query );
 		$last_id = $this->db->insert_id;

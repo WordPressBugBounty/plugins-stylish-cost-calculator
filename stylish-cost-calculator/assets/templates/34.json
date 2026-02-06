@@ -48,7 +48,7 @@
 	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/beauty-quiz\\/?preview_id=17828&preview_nonce=9c2d3f49f8&preview=true\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/beauty-quiz\\/\":228,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/roof-replacement-cost\\/\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/beauty-quiz\":31,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/beauty-quiz\\/?preview_id=17934&preview_nonce=d325f7ca2d&preview=true\":2,\"https:\\/\\/stylishcostcalculator.com\\/use-case\\/product-recommender-quiz\\/\":25,\"https:\\/\\/stylishcostcalculator.com\\/?page_id=25971&preview_id=25971&preview_nonce=ae7e3b7e5f&preview=true\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/beauty-quiz\\/?_gl=1*1043udg*_gcl_au*MTkzMDE4OTE3NC4xNzI1NDkzMzA3*_ga*NjE1ODQ1NDE0LjE3MjU0OTMzMDc.*_ga_1NKDHBJG3J*MTcyNTU4NjA3Ny43LjEuMTcyNTU4NzY1NC4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/beauty-quiz\\/?_gl=1*dn2yy5*_gcl_au*MTE0MTkzNDYxOC4xNzMyNjIxNzg2*_ga*MTY5ODAxODU3NS4xNzMyNjIxNzg2*_ga_1NKDHBJG3J*MTczMjYyMTc4NS4xLjEuMTczMjYyMTk3Ny4wLjAuMA..\":1}",
 	"emailQuoteRecipients": "1",
 	"created_at": "2024-02-01 16:38:56",
-	"wrapper_max_width": "1000",
+	"wrapper_max_width": "800",
 	"turnoffQty": "true",
 	"combine_checkout_items": "0",
 	"combine_checkout_woocommerce_product_id": "0",

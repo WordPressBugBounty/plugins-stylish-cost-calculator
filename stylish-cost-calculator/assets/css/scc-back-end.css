@@ -21,10 +21,6 @@
 	--scc-color-primary-dark-hover: #E5E6FC1A;
 }
 
-body:has(#calc-editor-root){
-	width: fit-content;
-}
-
 #wpwrap {
 	background: var(--scc-div-light-color);
 }
@@ -12525,8 +12521,8 @@ a.introjs-hint {
   /* AI Wizard */
   .scc-ai-wizard-panel-container{
 	position: fixed;
-	right: 10px;
-	bottom: 20px;
+	right: 20px;
+	bottom: 23px;
 	z-index: 99;
   }
   .scc-ai-wizard-overlap{
@@ -12591,8 +12587,8 @@ a.introjs-hint {
   .scc-ai-wizard-button{
 	border-radius: 50%;
 	background: transparent;
-	height: 60px;
-	width: 60px;
+	height: 45px;
+	width: 45px;
 	color: white;
 	font-weight: 700;
 	display: flex;
@@ -13319,6 +13315,19 @@ label.scc-accordion_switch_button {
 	left: 8px;
   }
 
+  /* Adjust modal content margins when WordPress admin menu is expanded */
+	body:not(.folded) .scc-dashboard-modal .modal-content {
+	margin-left: 175px;
+	margin-right: 15px;
+	}
+
+	/* When WordPress menu is collapsed (folded), use smaller left margin */
+	body.folded .scc-dashboard-modal .modal-content {
+	margin-left: 50px;
+	margin-right: 15px;
+	}
+
+
   .scc-editing-page-menu-panel{
 	background: #fff;
 	border-radius: var(--scc-btn-border-radius);
@@ -13605,17 +13614,30 @@ label.scc-accordion_switch_button {
 	justify-content: center;
   }
   .scc-btn-header-back{
-    background: transparent;
-    color: white;
+    background: transparent !important;
+    color: white !important;
     padding: 0;
+    border: none !important;
   }
   .scc-btn-header-back svg{
     width: 30px;
     height: 30px;
   }
-  .scc-btn-header-back:hover{
-    background: transparent;
+  .scc-btn-header-back:hover,
+  .scc-btn-header-back:focus,
+  .scc-btn-header-back:focus-visible,
+  .scc-btn-header-back:active,
+  .scc-btn-header-back.focus,
+  .btn.scc-btn-header-back:focus{
+    background: transparent !important;
     color: white !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border: none !important;
+  }
+  .scc-btn-header-back .scc-icn-wrapper svg{
+    color: white !important;
+    stroke: white !important;
   }
 
   .scc-navbar .btn.btn-default {

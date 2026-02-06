@@ -395,7 +395,48 @@ $scc_screen       = get_current_screen();
 <script>
 	jQuery(document).ready(function () {
 		jQuery('#scc-editing-area-smiling-loading').remove()
+		
+		// Set initial icon based on menu state with a small delay to ensure DOM is ready
+		setTimeout(function() {
+			sccUpdateMenuToggleIcon();
+		}, 100);
 	})
+	
+	// Update the menu toggle icon based on current state
+	function sccUpdateMenuToggleIcon() {
+		const body = document.body;
+		const isCurrentlyFolded = body.classList.contains('folded');
+		const iconWrapper = document.getElementById('scc-menu-toggle-icon');
+		
+		if (iconWrapper) {
+			// When folded (collapsed), show > (chevron-right) to indicate it will expand
+			// When not folded (expanded), show < (chevron-left) to indicate it will collapse
+			const chevronRight = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><path d="M9 18l6-6-6-6"/></svg>';
+			const chevronLeft = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left"><path d="M15 18l-6-6 6-6"/></svg>';
+			
+			iconWrapper.innerHTML = isCurrentlyFolded ? chevronRight : chevronLeft;
+		}
+	}
+	
+	// Toggle WordPress admin menu
+	function sccToggleWordPressMenu(event) {
+		event.preventDefault();
+		const body = document.body;
+		const isCurrentlyFolded = body.classList.contains('folded');
+		
+		if (isCurrentlyFolded) {
+			body.classList.remove('folded');
+			jQuery(document).trigger('wp-collapse-menu', { 'fold': 'open' });
+		} else {
+			body.classList.add('folded');
+			jQuery(document).trigger('wp-collapse-menu', { 'fold': 'fold' });
+		}
+		
+		// Update icon after toggle
+		setTimeout(function() {
+			sccUpdateMenuToggleIcon();
+		}, 50);
+	}
 </script>
 <?php if ( $scc_screen->base === 'admin_page_scc_edit_items' ) {
     do_action( 'scc_render_try_demo_notices' );
@@ -405,11 +446,9 @@ $scc_screen       = get_current_screen();
 		<div class="scc-header-logo-col p-3">
 			<div class="scc-custom-version-info align-middle w-100">
 				<?php if ( isset( $_REQUEST['id_form'] ) || $scc_screen->base === 'toplevel_page_scc-tabs' ) { ?>
-					<a class="text-decoration-none text-white" href="<?php echo admin_url(); ?>">
-						<button class="btn scc-btn-header-back py-2 me-3">
-							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['chevron-left'] ); ?></span>
-						</button>
-					</a>
+					<button class="btn scc-btn-header-back py-2 me-3" onclick="sccToggleWordPressMenu(event)">
+						<span class="scc-icn-wrapper" id="scc-menu-toggle-icon"><?php echo scc_get_kses_extended_ruleset( $scc_icons['chevron-right'] ); ?></span>
+					</button>
 				<?php
                 }
 				?>

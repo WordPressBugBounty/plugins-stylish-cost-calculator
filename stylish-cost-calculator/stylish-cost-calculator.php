@@ -3,7 +3,7 @@
  * Plugin Name: Stylish Cost Calculator
  * Plugin URI:  https://stylishcostcalculator.com
  * Description: A Stylish Cost Calculator / Price Estimate Form for your site.
- * Version:     8.1.1
+ * Version:     8.1.9
  * Author:      Designful
  * Author URI:  https://stylishcostcalculator.com
  * License:     GPL2
@@ -14,7 +14,7 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
-define( 'STYLISH_COST_CALCULATOR_VERSION', '8.1.1' );
+define( 'STYLISH_COST_CALCULATOR_VERSION', '8.1.9' );
 define( 'SCC_URL', plugin_dir_url( __FILE__ ) );
 define( 'SCC_DIR', __DIR__ );
 define( 'SCC_LIB_DIR', __DIR__ . '/lib' );
@@ -176,7 +176,7 @@ class df_scc_plugin {
         }
 
         if ( ! in_array( 'wrapper_max_width', $forms_table_cols ) ) {
-            $wpdb->query( $wpdb->prepare( "ALTER TABLE `{$wpdb->prefix}df_scc_forms` ADD wrapper_max_width SMALLINT(10) NOT NULL DEFAULT 1000", [] ) );
+            $wpdb->query( $wpdb->prepare( "ALTER TABLE `{$wpdb->prefix}df_scc_forms` ADD wrapper_max_width SMALLINT(10) NOT NULL DEFAULT 800", [] ) );
         }
 
         if ( ! in_array( 'setup_wizard_data', $forms_table_cols ) ) {
@@ -310,7 +310,7 @@ class df_scc_plugin {
     `urlStatsArray` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     `showSearchBar` tinyint(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     `invoice_number_settings` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-    `wrapper_max_width` SMALLINT(10) NOT NULL DEFAULT 1000,
+    `wrapper_max_width` SMALLINT(10) NOT NULL DEFAULT 800,
     `setup_wizard_data` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     `created_at` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00'
   )  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
@@ -696,12 +696,12 @@ class df_scc_plugin {
         $form = get( $idvalue );
 
         if ( ! $form ) {
-            return "<h4 style='color:red'>Invalid calculator with ID {$atts['idvalue']}</h4>";
+            return "<h4 style='color:red'>Invalid calculator with ID " . intval( $atts['idvalue'] ) . "</h4>";
         }
         $form->showFieldsQuoteArray = json_decode( stripslashes( $form->showFieldsQuoteArray ), true );
         $allfonts2                  = json_decode( $scc_googlefonts_var->gf_get_local_fonts() );
         $allfonts2i                 = $allfonts2->items;
-        $fontUsed2                  = ! empty( $form->titleFontType ) ? $allfonts2i[ $form->titleFontType ] : null;
+        $fontUsed2                  = ! empty( $form->titleFontType ) && isset( $allfonts2i[ $form->titleFontType ] ) ? $allfonts2i[ $form->titleFontType ] : null;
         $fontUsed2Variant           = ( $form->titleFontWeight != '' ) ? $form->titleFontWeight : 'regular';
         $google_font_links          = [];
         /**
@@ -725,7 +725,7 @@ class df_scc_plugin {
          *Service font
          */
         $allfonts3i       = $allfonts2->items;
-        $fontUsed3        = ! empty( $form->fontType ) ? $allfonts3i[ $form->fontType ] : null;
+        $fontUsed3        = ! empty( $form->fontType ) && isset( $allfonts3i[ $form->fontType ] ) ? $allfonts3i[ $form->fontType ] : null;
         $fontUsed3Variant = ( $form->fontWeight != '' ) ? $form->fontWeight : 'regular';
 
         if ( $form->inheritFontType == 'null' || $form->inheritFontType == 'false' ) {

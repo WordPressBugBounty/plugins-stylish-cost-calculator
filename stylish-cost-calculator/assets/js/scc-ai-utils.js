@@ -1,6 +1,22 @@
 /************************************************
  * AI Features / AI functions
 ************************************************/
+
+/**
+ * PLUGIN VERSION FLAG
+ * Set to false for FREE version, true for PREMIUM version
+ * 
+ * Migration instructions for FREE version:
+ * 1. Set sccIsPro = false
+ * 2. Remove/comment the import statements below (lines with 'import')
+ * 3. Remove/comment the export statement at the end of the file
+ * 4. Ensure 'marked' library is loaded globally via WordPress enqueue
+ */
+const sccIsPro = false;
+
+// PREMIUM ONLY: Comment out these imports for FREE version
+//import { marked } from 'marked';
+//import stylishCostCalculatorModal from './modals/index';
 let sccAiWizardOptionListener = null;
 let sccAiWizardThread = '';
 const sccAiDataSchema = [];
@@ -26,6 +42,187 @@ const sccAiUtils = {
 	* scc-ai-wizard-optimize-form
 	* scc-ai-wizard-analytics-insights
 	*/
+	toggleAiWizardOverlay: function(show = true) {
+		// Find or create the overlay
+		let overlay = document.querySelector('.scc-ai-wizard-overlay');
+		
+		if (!overlay && show) {
+			// Create the overlay if it doesn't exist
+			overlay = document.createElement('div');
+			overlay.className = 'scc-ai-wizard-overlay';
+			
+			// Create the icon element - using the wizard hat image like in the screenshot
+			const wizardIcon = document.createElement('div');
+			wizardIcon.style.width = '80px';
+			wizardIcon.style.height = '80px';
+			wizardIcon.style.marginBottom = '20px';
+			wizardIcon.innerHTML = `
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="fill:#7b5dfa">
+					<path d="M416 398.9c58.5-41.1 96-104.1 96-174.9C512 100.3 397.1 0 256 0 114.8 0 0 100.3 0 224c0 70.7 37.5 133.8 96 174.9V464c0 26.5 21.5 48 48 48h224c26.5 0 48-21.5 48-48v-65.1zM160 388v-35.6c47.1 13.2 96.7 13.2 144 0V388c0 4.4-3.6 8-8 8H168c-4.4 0-8-3.6-8-8zm8-280v64c0 4.4 3.6 8 8 8h32c4.4 0 8-3.6 8-8v-64c0-4.4-3.6-8-8-8h-32c-4.4 0-8 3.6-8 8zm88 272c0 8.8-7.2 16-16 16s-16-7.2-16-16v-64c0-8.8 7.2-16 16-16s16 7.2 16 16v64zm96-208v64c0 4.4 3.6 8 8 8h32c4.4 0 8-3.6 8-8v-64c0-4.4-3.6-8-8-8h-32c-4.4 0-8 3.6-8 8z" />
+				</svg>
+			`;
+			
+			// Create steps tracker
+			const stepsContainer = document.createElement('div');
+			stepsContainer.className = 'scc-ai-wizard-steps-container';
+			stepsContainer.style.marginTop = '30px';
+			stepsContainer.style.display = 'flex';
+			stepsContainer.style.flexDirection = 'column';
+			stepsContainer.style.alignItems = 'flex-start';
+			
+			// Add steps
+			const steps = [
+				{text: 'Processing your inputs...', done: true},
+				{text: 'Applying calculation logic...', done: true},
+				{text: 'Finalizing your calculator...', done: false}
+			];
+			
+			steps.forEach(step => {
+				const stepItem = document.createElement('div');
+				stepItem.className = 'scc-ai-wizard-step-item';
+				stepItem.style.display = 'flex';
+				stepItem.style.alignItems = 'center';
+				stepItem.style.margin = '5px 0';
+				
+				// Create icon for step
+				const icon = document.createElement('span');
+				icon.style.display = 'inline-flex';
+				icon.style.alignItems = 'center';
+				icon.style.justifyContent = 'center';
+				icon.style.width = '24px';
+				icon.style.height = '24px';
+				icon.style.borderRadius = '50%';
+				icon.style.marginRight = '10px';
+				
+				if (step.done) {
+					icon.style.backgroundColor = '#5BB75B';
+					icon.innerHTML = `
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+							<polyline points="20 6 9 17 4 12"></polyline>
+						</svg>
+					`;
+				} else {
+					icon.style.backgroundColor = '#6d6d6d';
+					icon.innerHTML = `
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="12" cy="12" r="10"></circle>
+						</svg>
+					`;
+				}
+				
+				// Create text for step
+				const text = document.createElement('span');
+				text.textContent = step.text;
+				text.style.fontSize = '16px';
+				text.style.color = step.done ? 'white' : '#c7c7c7';
+				
+				stepItem.appendChild(icon);
+				stepItem.appendChild(text);
+				stepsContainer.appendChild(stepItem);
+			});
+			
+			// Create message element
+			const message = document.createElement('div');
+			message.className = 'scc-ai-wizard-overlay-message';
+			message.textContent = 'Almost There!';
+			message.style.fontSize = '28px';
+			message.style.fontWeight = 'bold';
+			message.style.color = 'white';
+			message.style.marginTop = '20px';
+			message.style.marginBottom = '10px';
+			
+			// Create subtitle
+			const subtitle = document.createElement('div');
+			subtitle.textContent = 'Your calculator will be ready in just a moment';
+			subtitle.style.color = '#f1f1f1';
+			subtitle.style.fontSize = '16px';
+			subtitle.style.marginBottom = '30px';
+			
+			// Create progress bar
+			const progressContainer = document.createElement('div');
+			progressContainer.style.width = '80%';
+			progressContainer.style.maxWidth = '600px';
+			progressContainer.style.height = '10px';
+			progressContainer.style.backgroundColor = '#dddddd';
+			progressContainer.style.borderRadius = '5px';
+			progressContainer.style.overflow = 'hidden';
+			progressContainer.style.marginBottom = '40px';
+			
+			const progressBar = document.createElement('div');
+			progressBar.style.width = '50%';
+			progressBar.style.height = '100%';
+			progressBar.style.backgroundColor = '#7b5dfa';
+			progressBar.style.borderRadius = '5px';
+			// Add animation to progress bar
+			progressBar.style.transition = 'width 3s ease-in-out';
+			setTimeout(() => {
+				progressBar.style.width = '100%';
+			}, 100);
+			
+			progressContainer.appendChild(progressBar);
+			
+			// Append elements to overlay
+			overlay.appendChild(wizardIcon);
+			overlay.appendChild(message);
+			overlay.appendChild(subtitle);
+			overlay.appendChild(progressContainer);
+			overlay.appendChild(stepsContainer);
+			
+			// Add overlay styles
+			overlay.style.position = 'fixed';
+			overlay.style.top = '0';
+			overlay.style.left = '0';
+			overlay.style.width = '100%';
+			overlay.style.height = '100%';
+			overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.93)';
+			overlay.style.backdropFilter = 'blur(8px)';
+			overlay.style.display = 'flex';
+			overlay.style.flexDirection = 'column';
+			overlay.style.alignItems = 'center';
+			overlay.style.justifyContent = 'center';
+			overlay.style.zIndex = '99999';
+			
+			// Add animation to overlay
+			overlay.style.opacity = '0';
+			overlay.style.transition = 'opacity 0.3s ease';
+			setTimeout(() => {
+				overlay.style.opacity = '1';
+			}, 10);
+			
+			// Append to body
+			document.body.appendChild(overlay);
+			
+			// Update step status periodically
+			let currentStep = 2;
+			setTimeout(() => {
+				const icons = stepsContainer.querySelectorAll('.scc-ai-wizard-step-item span:first-child');
+				const texts = stepsContainer.querySelectorAll('.scc-ai-wizard-step-item span:last-child');
+				
+				if (icons[currentStep]) {
+					icons[currentStep].style.backgroundColor = '#5BB75B';
+					icons[currentStep].innerHTML = `
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+							<polyline points="20 6 9 17 4 12"></polyline>
+						</svg>
+					`;
+				}
+				
+				if (texts[currentStep]) {
+					texts[currentStep].style.color = 'white';
+				}
+			}, 4000);
+			
+		} else if (overlay && !show) {
+			// Add fade-out animation
+			overlay.style.opacity = '0';
+			// Remove after animation completes
+			setTimeout(() => {
+				overlay.remove();
+			}, 300);
+		} else {
+			console.log("Case not handled: overlay=", overlay, "show=", show);
+		}
+	},
 	aiWizardInit: ( pageState = null ) => {
 		const aiWizardButton = document.getElementById( 'scc-ai-wizard-button' );
 		const aiWizardContainer = aiWizardButton?.closest( '.scc-ai-wizard-panel-container' );
@@ -38,16 +235,11 @@ const sccAiUtils = {
 		sccAiUtils.quizRetakeButton = aiWizardMenu?.querySelector( '#scc-ai-wizard-retake' );
 		const retakeText = sccAiUtils.quizRetakeButton?.querySelector( '.scc-ai-wizard-retake-text' );
 		const quizRetakeButton = sccAiUtils.quizRetakeButton;
-		 if ( sccBackendStore.currentCalculatorSetupWizardData.__quizAnswersStore ) {
-		 	retakeText.textContent = 'Redo Setup Wizard';
-		 } else {
-		 	retakeText.textContent = 'Start Setup Wizard';
-		 }
-
-		if ( typeof(sccBackendStore) !== 'undefined' && sccBackendStore.config.sections ) {
-			sccAiUtils.updateMultiplierGUI(sccBackendStore.config.sections);
+		if ( sccBackendStore.currentCalculatorSetupWizardData.__quizAnswersStore ) {
+			retakeText.textContent = 'Redo Setup Wizard';
+		} else {
+			retakeText.textContent = 'Start Setup Wizard';
 		}
-
 		sccAiUtils.optimizerStartSetupWizard = aiWizardMenu?.querySelector( '#scc-ai-wizard-consider-setup' );
 		const optimizerStartSetupWizard = sccAiUtils.optimizerStartSetupWizard;
 
@@ -214,26 +406,6 @@ const sccAiUtils = {
 			}
 		}
 	},
-	blockAIWizardCloseActions: (blockStatus = true) => {
-		const menu = document.querySelector( '.scc-ai-wizard-menu' );
-		const closeButton = menu.querySelector( '.scc-ai-close-btn' );
-		const backButton = menu.querySelector('.scc-ai-back-btn');
-		if ( blockStatus ) {
-			if ( backButton ) {
-				backButton.setAttribute( 'disabled', true );
-			}
-			if ( closeButton ) {
-				closeButton.setAttribute( 'disabled', true );
-			}
-		} else {
-			if ( backButton ) {
-				backButton.removeAttribute( 'disabled' );
-			}
-			if ( closeButton ) {
-				closeButton.removeAttribute( 'disabled' );
-			}
-		}
-	},
 	aiWizardRequest: ( optionType, regenerate = false ) => {
 		const menu = document.querySelector( '.scc-ai-wizard-menu' );
 		const inputs = menu?.querySelector( '.scc-ai-assistant-inputs' );
@@ -299,7 +471,20 @@ const sccAiUtils = {
 		const calculatorId = sccAiUtils.getCalcId();
 		const storedData = sccAiUtils.getAiWizardResponse( calculatorId, optionType );
 
+		// Check if storedData exists and has valid ai_response
+		let hasValidStoredData = false;
 		if ( storedData && ! regenerate ) {
+			try {
+				const parsedStoredData = JSON.parse( storedData );
+				hasValidStoredData = parsedStoredData?.ai_response?.ai_message && 
+					parsedStoredData.ai_response.ai_message.trim() !== '';
+			} catch ( error ) {
+				console.error( 'Error parsing stored data:', error );
+				hasValidStoredData = false;
+			}
+		}
+
+		if ( hasValidStoredData ) {
 			const jsonData = storedData;
 
 			if ( optionType === 'optimize-form' || optionType === 'setup-wizard' ) {
@@ -312,7 +497,7 @@ const sccAiUtils = {
 			loaderSetupWizard.classList.add( 'scc-hidden' );
 			sccAiUtils.stopLoaderMessageRotation();
 		} else {
-			// Ajax call
+			// Ajax call - no valid stored data found
 
 			const params = {
 				action: 'scc_ai_wizard_request',
@@ -465,7 +650,8 @@ const sccAiUtils = {
 		sccAiUtils.blockAIWizardCloseActions( true );
 	},
 	insertAISuggestionMessage: ( $this, text ) => {
-		text = marked.parse( text );
+		// Convert markdown to HTML (different method for FREE vs PREMIUM)
+		text = sccIsPro ? marked( text ) : marked.parse( text );
 		const message = `
                 <div class="scc-ai-suggestion-message">
                     ${ text }
@@ -473,7 +659,7 @@ const sccAiUtils = {
         `;
 		return message;
 	},
-	insertAiChatMessage( $this, aiResponse = null, optionType, customMessage = null ) {
+	insertAiChatMessage: function( $this, aiResponse = null, optionType, customMessage = null ) {
 		const aiChatContainer = $this.closest( '.scc-ai-assistant-chat' ) || $this.closest( '.scc-ai-wizard-menu' );
 		const aiAvatar = aiChatContainer.getAttribute( 'data-ai-avatar' );
 		const forceShowAiActions = optionType === 'setup-wizard' || optionType === 'optimize-form' ? true : false;
@@ -510,6 +696,7 @@ const sccAiUtils = {
 				if ( optionType === 'suggest-elements' ) {
 					sccAiWizardThread = aiResponseObject.ai_response.thread;
 				}
+				
 				aiMessageText = aiResponseObject.ai_response.ai_message;
 
 				if ( ( aiMessageText && aiMessageText.includes( '[[show_actions]]' ) ) || ( aiMessageText && forceShowAiActions ) ) {
@@ -518,10 +705,10 @@ const sccAiUtils = {
 					aiHideAiAvatar = 'scc-hidden';
 					aiSmallAvatarVisibility = '';
 					if ( optionType === 'suggest-elements') {
-						aiAddElementsButton = '<button class="scc-ai-wizard-add-elements-btn btn btn-primary scc-ai-wizard-primary-button d-flex align-items-center me-2" onclick="sccAiUtils.addElementsWithAi(this);"><i class="scc-btn-spinner scc-save-btn-spinner scc-hidden ms-0"></i><span class="scc-ai-button-text"> + Add Elements with AI</span></button>';
+						aiAddElementsButton = '<button class="scc-ai-wizard-add-elements-btn btn btn-primary scc-ai-wizard-primary-button d-flex align-items-center me-2" onclick="window.showAiWizardOverlay(this, false);"><i class="scc-btn-spinner scc-save-btn-spinner scc-hidden ms-0"></i><span class="scc-ai-button-text"> + Add Elements with AI</span></button>';
 					}
 					if ( optionType === 'setup-wizard' ) {
-						aiAddElementsButton = '<button class="scc-ai-wizard-add-elements-btn btn btn-primary scc-ai-wizard-primary-button d-flex align-items-center me-2" onclick="sccAiUtils.addElementsWithAi(this, true);"><i class="scc-btn-spinner scc-save-btn-spinner scc-hidden ms-0"></i><span class="scc-ai-button-text"> + Build Calculator with AI</span></button>';
+						aiAddElementsButton = '<button class="scc-ai-wizard-add-elements-btn btn btn-primary scc-ai-wizard-primary-button d-flex align-items-center me-2" onclick="window.showAiWizardOverlay(this, true);"><i class="scc-btn-spinner scc-save-btn-spinner scc-hidden ms-0"></i><span class="scc-ai-button-text"> + Build Calculator with AI</span></button>';
 					}
 				}
 
@@ -545,7 +732,8 @@ const sccAiUtils = {
 				const link = `<a href="${ href }" title="${ title || '' }" target="${ target }">${ text }</a>`;
 				return link;
 			};
-			aiMessageText = marked.parse(aiMessageText, { renderer });
+			// Convert markdown to HTML (different method for FREE vs PREMIUM)
+			aiMessageText = sccIsPro ? marked( aiMessageText, { renderer } ) : marked.parse( aiMessageText, { renderer } );
 		} catch ( e ) {
 			aiHideActionsClass = '';
 			aiMessageText = 'An error occurred while processing the response. Please regenerate';
@@ -600,6 +788,18 @@ const sccAiUtils = {
 		}
 	},
 	addElementsWithAi: ( button, cleanCalculator = false ) => {
+		
+		if (typeof sccAiUtils.toggleAiWizardOverlay !== 'function') {
+			console.error("toggleAiWizardOverlay is not a function");
+			return;
+		}
+		
+		try {
+			sccAiUtils.toggleAiWizardOverlay(true);
+		} catch (error) {
+			console.error("Error while showing the overlay:", error);
+		}
+		
 		// Get all buttons with the class and disable them
 		const allButtons = document.querySelectorAll('.scc-ai-wizard-add-elements-btn');
 		allButtons.forEach(btn => {
@@ -624,6 +824,15 @@ const sccAiUtils = {
 				const btnText = btn.querySelector('.scc-ai-button-text') || btn.lastChild;
 				btnText.textContent = ` ${loadingStates[currentState]}`;
 			});
+			
+			// Also update the overlay subtitle
+			const overlaySubtitle = document.querySelector('.scc-ai-wizard-overlay-message + div');
+			if (overlaySubtitle) {
+				overlaySubtitle.textContent = loadingStates[currentState];
+			} else {
+				console.warn("No se encontró el subtítulo del overlay");
+			}
+			
 			currentState = (currentState + 1) % loadingStates.length;
 		}, 2000);
 
@@ -640,7 +849,6 @@ const sccAiUtils = {
 			section_target_id: firstSectionId,
 			clean_calculator: cleanCalculator,
 			first_subsection_id: firstSubsectionId,
-			//subsection_target_id: firstSubsectionId,
 			ai_response: aiResponse,
 		};
 		const action = 'scc_ai_wizard_add_elements';
@@ -648,10 +856,10 @@ const sccAiUtils = {
 		formData.append('request_data', JSON.stringify(params));
 
 		const ajaxRoute = ajaxurl + '?action=' + action + '&nonce=' + pageEditCalculator.nonce;
-		//showLoadingChanges();
+		
 		fetch(ajaxRoute, {
 			method: 'POST',
-			body: formData, // Send the formData
+			body: formData,
 		})
 			.then((response) => response.json())
 			.then((data) => {
@@ -659,11 +867,24 @@ const sccAiUtils = {
 				if(cleanCalculator === true) {
 					sccAiUtils.addCalculatorSettingsWithAi(button);
 				} else {
+					// Hide the overlay before reloading
+					try {
+						sccAiUtils.toggleAiWizardOverlay(false);
+					} catch (error) {
+						console.error("Error while hiding the overlay:", error);
+					}
 					location.reload();
 				}
 			})
 			.catch((error) => {
 				clearInterval(stateInterval);
+				// Hide the overlay on error
+				try {
+					sccAiUtils.toggleAiWizardOverlay(false);
+					console.log("Overlay hidden correctly after error");
+				} catch (error) {
+					console.error("Error while hiding the overlay:", error);
+				}
 				console.error('Error:', error);
 			});
 	},
@@ -673,6 +894,12 @@ const sccAiUtils = {
 		spinner.classList.remove( 'scc-hidden' );
 		const buttonText = button.querySelector('.scc-ai-button-text') || button.lastChild;
 		buttonText.textContent = ' Updating Calculator Settings';
+		
+		// Update the overlay subtitle
+		const overlaySubtitle = document.querySelector('.scc-ai-wizard-overlay-message + div');
+		if (overlaySubtitle) {
+			overlaySubtitle.textContent = 'Updating Calculator Settings';
+		}
 
 		const container = button.closest( '.scc-ai-chat-bubble-wizard' );
 		const aiResponse = container.querySelector( '.scc-ai-markdown-response' ).innerText;
@@ -687,19 +914,22 @@ const sccAiUtils = {
 		formData.append( 'request_data', JSON.stringify( params ) );
 
 		const ajaxRoute = ajaxurl + '?action=' + action + '&nonce=' + pageEditCalculator.nonce;
-		//showLoadingChanges();
+		
 		fetch( ajaxRoute, {
 			method: 'POST',
-			body: formData, // Send the formData
-		} )
+			body: formData,
+		})
 			.then( ( response ) => response.json() )
 			.then( ( data ) => {
-				console.log( data );
+				// Hide the overlay before reloading
+				sccAiUtils.toggleAiWizardOverlay(false);
 				location.reload();
-			} )
+			})
 			.catch( ( error ) => {
+				// Hide the overlay on error
+				sccAiUtils.toggleAiWizardOverlay(false);
 				console.error( 'Error:', error );
-			} );
+			});
 	},
 	copyAiResponseToClipboard: ( $this ) => {
 		// Get the content of the div
@@ -931,6 +1161,7 @@ const sccAiUtils = {
 
 		if ( panel.classList.contains( 'scc-hidden' ) ) {
 			panel.closest( '.scc-ai-wizard-panel-container' ).classList.add( 'scc-ai-wizard-overlap' );
+			sccAiUtils.closeSupportChat();
 			sccAiUtils.checkAiCredits( 'edit-calculator-page' ).then( ( credits ) => {
 				const creditIndicator = panel?.querySelector( '.scc-ai-credit-count' );
 				sccAiUtils.updateCreditsIndicator( credits, creditIndicator );
@@ -963,7 +1194,40 @@ const sccAiUtils = {
 		} );
 		const response = await fetch( `${ ajaxurl }?${ params }` );
 		const data = await response.json();
+		
+		// Check if the response indicates an error
+		if ( !data.success ) {
+			// Extract error message from ai_raw_response if available
+			let errorMessage = 'An error occurred. Please try again.';
+			if ( data.data && data.data.ai_raw_response ) {
+				errorMessage = data.data.ai_raw_response;
+			} else if ( data.data && typeof data.data === 'string' ) {
+				errorMessage = data.data;
+			} else if ( data.data && data.data.error ) {
+				errorMessage = data.data.error;
+			}
+			const error = new Error( errorMessage );
+			error.responseData = data.data;
+			throw error;
+		}
+		
 		const dataResponse = data.data;
+		
+		// Check if the response data contains an error message in ai_raw_response
+		// (e.g., when credits are insufficient but the request technically succeeded)
+		if ( dataResponse && dataResponse.ai_raw_response ) {
+			const aiResponse = dataResponse.ai_raw_response;
+			// Check if it's an error message (contains keywords like "credit", "quota", "not enough", "sorry")
+			if ( typeof aiResponse === 'string' && 
+				( aiResponse.toLowerCase().includes( 'credit' ) || 
+				  aiResponse.toLowerCase().includes( 'quota' ) || 
+				  aiResponse.toLowerCase().includes( 'not enough' ) ||
+				  aiResponse.toLowerCase().includes( 'sorry' ) ) ) {
+				const error = new Error( aiResponse );
+				error.responseData = dataResponse;
+				throw error;
+			}
+		}
 
 		return dataResponse;
 	},
@@ -975,13 +1239,13 @@ const sccAiUtils = {
 	},
 	checkAiCredits: async ( page ) => {
 		let nonce = '';
-		if ( page === 'edit-calculator-page' ) {
+		if ( page === 'edit-calculator-page' && typeof pageEditCalculator !== 'undefined' && pageEditCalculator.nonce ) {
 			nonce = pageEditCalculator.nonce;
 		}
-		if ( page === 'view-quotes-page' ) {
+		if ( page === 'view-quotes-page' && typeof pageViewQuotes !== 'undefined' && pageViewQuotes.nonce ) {
 			nonce = pageViewQuotes.nonce;
 		}
-		if ( page === 'add-calculator-page' ) {
+		if ( page === 'add-calculator-page' && typeof pageAddCalculator !== 'undefined' && pageAddCalculator.nonce ) {
 			nonce = pageAddCalculator.nonce;
 		}
 
@@ -1007,7 +1271,7 @@ const sccAiUtils = {
 			return 0;
 		}
 	},
-	updateCalculatorDataSchema: () => {
+	updateCalculatorDataSchema: ( postSchemaUpdateCallback = null ) => {
 		const schema = document.getElementById( 'scc-data-schema' );
 		const params = {
 			action: 'scc_update_calculator_data_schema',
@@ -1036,6 +1300,9 @@ const sccAiUtils = {
 				const menu = document.querySelector( '.scc-ai-wizard-panel-container' );
 				sccAiUtils.loadAdvancedPricingFormulaElements( menu );
 				sccAiUtils.updateMultiplierGUI( data.schema );
+				if ( postSchemaUpdateCallback ) {
+					postSchemaUpdateCallback( data.schema );
+				}
 			} )
 			.catch( ( error ) => {
 				console.error( 'Error:', error );
@@ -1295,4 +1562,452 @@ const sccAiUtils = {
 	},
 };
 
+//let button = document.getElementById('scc-ai-wizard-retake');
+//window.showAiWizardOverlay(button, false);
+
+window.showAiWizardOverlay = function(button, cleanCalculator = false) {
+    // Create the overlay directly without depending on sccAiUtils
+    let overlay = document.querySelector('.scc-ai-wizard-overlay');
+    
+    if (!overlay) {
+        // Create the overlay
+        overlay = document.createElement('div');
+        overlay.className = 'scc-ai-wizard-overlay';
+        overlay.id = 'scc-ai-wizard-global-overlay';
+        
+        // Create the icon
+        const wizardIcon = document.createElement('div');
+        wizardIcon.style.width = '80px';
+        wizardIcon.style.height = '80px';
+        wizardIcon.style.marginBottom = '20px';
+        wizardIcon.innerHTML = `
+            <svg id="a" xmlns="http://www.w3.org/2000/svg" width="80" height="80" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 826 826"><defs><linearGradient id="b" x1="138.54" y1="13.67" x2="797.94" y2="627.4" gradientTransform="translate(0 826) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2b41f0"/><stop offset="1" stop-color="#722aef"/></linearGradient></defs><path d="M279.75,758.61l-31.47,13.75c-5.52,2.4-10.23,6.24-13.64,11.09-1.32,1.83-2.44,3.79-3.35,5.89l-13.71,31.42c-.53,1.23-1.67,1.83-2.81,1.83s-2.27-.6-2.79-1.83l-13.28-30.89c-3.29-7.63-9.32-13.72-16.91-17.07l-32.06-14.19c-2.19-.96-2.41-3.8-.7-5.14.2-.18.43-.32.7-.42l31.51-13.77c7.59-3.31,13.67-9.37,16.98-16.98l13.74-31.48c.54-1.22,1.66-1.83,2.8-1.83s2.27.61,2.79,1.83l13.74,31.48c3.31,7.59,9.37,13.67,16.99,16.98l31.47,13.75c2.44,1.05,2.44,4.51,0,5.58Z" fill="#ffab02" stroke-width="0"/><path d="M148.11,493.37l12.38-28.64c2.98-6.91,8.45-12.47,15.32-15.48l28.39-12.5c2.19-.97,2.19-4.14,0-5.08l-28.39-12.5c-6.84-3.01-12.35-8.53-15.32-15.48l-12.38-28.67c-.96-2.21-4.1-2.21-5.03,0l-12.38,28.67c-2.97,6.91-8.45,12.47-15.32,15.48l-28.42,12.54c-2.19.97-2.19,4.11,0,5.08l28.9,12.92c6.84,3.04,12.28,8.6,15.22,15.54l12,28.12c.96,2.21,4.1,2.24,5.03,0h0Z" fill="#ffab02" stroke-width="0"/><path d="M556.02,334.02l36.83,16.26c8.75,3.85,15.64,10.92,19.39,19.58l15.28,35.48c1.24,2.87,5.18,2.87,6.44,0l15.73-36.13c3.85-8.75,10.8-15.73,19.5-19.5l36.13-15.73c2.76-1.24,2.76-5.18,0-6.44l-36.13-15.73c-8.75-3.86-15.73-10.8-19.5-19.5l-15.73-36.13c-1.24-2.76-5.18-2.76-6.44,0l-15.73,36.13c-3.85,8.75-10.8,15.73-19.5,19.5l-36.21,15.81c-2.76,1.24-2.76,5.18,0,6.44l-.08-.09.03.03v.02Z" fill="#ffab02" stroke-width="0"/><path d="M685.64,605.25l-172.82-1.39c-10.55,27.18-36.85,46.57-67.64,46.92-.49,0-.97,0-1.46,0h-65.2c-.29,0-.59,0-.88,0-31.12-.63-57.57-20.72-67.61-48.56h-167.96c-33.68,29.45-67.35,58.89-101.02,88.32l-.29.25c18.17,12.34,49.23,32.11,91.38,51.74,1.14-1.62,2.49-3.1,4.03-4.38,1.72-1.45,3.63-2.62,5.71-3.5l31.37-13.7c2.98-1.3,5.34-3.65,6.64-6.65l13.73-31.44c3.66-8.43,11.91-13.87,21.14-13.87s17.51,5.45,21.15,13.91l13.72,31.41c1.3,2.99,3.65,5.34,6.65,6.64l31.44,13.73c8.39,3.65,13.83,11.9,13.86,21.06.03,9.19-5.39,17.51-13.82,21.2l-24.81,10.83c41.47,9.66,87.54,16.2,137.64,17.04,1.77.03,3.55.05,5.34.07,2.96.02,5.93.02,8.92.01,1.49-.01,2.98-.02,4.47-.04,187.72-2.18,319.65-83.93,367.65-117.09l-101.33-82.51ZM483.12,488.16c-7.88-12.75-21.85-21.3-37.88-21.61-.34-.02-.68-.02-1.02-.02h-65.09c-16.39,0-30.77,8.64-38.8,21.63-4.32,6.96-6.81,15.19-6.81,23.98v65.2c0,.6.01,1.22.04,1.82.33,8.58,3.05,16.58,7.52,23.3,8.15,12.36,22.16,20.49,38.05,20.49h65.19c15.42,0,29.04-7.64,37.28-19.34,4.94-6.97,7.95-15.37,8.29-24.45.03-.6.05-1.22.05-1.82v-65.2c0-8.79-2.49-17.02-6.82-23.98ZM627.72,513.06c-.2-.01-.4-.01-.6-.01h-109.35v64.29c0,.62,0,1.22-.03,1.82h0s155.77.01,155.77.01v-19.73c0-25.42-20.44-46.07-45.79-46.38ZM305.68,577.34v-64.29h-106.91c-25.62,0-46.39,20.77-46.39,46.39v19.73h153.33c-.03-.6-.03-1.21-.03-1.83ZM560.67,4.03l-.41.29-290.79,207.19-55.22,276.65h0s95.45.01,95.45.01c9.96-28.76,37.33-49.47,69.43-49.47h65.19c32.11,0,59.46,20.71,69.43,49.46h0s91.2.01,91.2.01l-101.91-190.49,62.19-116.92-32.27-14.38c-7.1-3.16-10.3-11.49-7.13-18.59,2.32-5.23,7.42-8.32,12.78-8.36h.1c1.92,0,3.87.4,5.72,1.22l65.24,29.05,96.34,42.05.87.38L560.67,4.03Z" fill="url(#b)" fill-rule="evenodd" stroke-width="0"/>
+        `;
+        
+        // Create steps tracker
+        const stepsContainer = document.createElement('div');
+        stepsContainer.className = 'scc-ai-wizard-steps-container';
+        stepsContainer.style.marginTop = '30px';
+        stepsContainer.style.display = 'flex';
+        stepsContainer.style.flexDirection = 'column';
+        stepsContainer.style.alignItems = 'flex-start';
+        
+        // Add steps
+        const steps = [
+            {text: 'Processing your inputs...', done: true},
+            {text: 'Applying calculation elements...', done: true},
+            {text: 'Finalizing your calculator...', done: false}
+        ];
+        
+        steps.forEach(step => {
+            const stepItem = document.createElement('div');
+            stepItem.className = 'scc-ai-wizard-step-item';
+            stepItem.style.display = 'flex';
+            stepItem.style.alignItems = 'center';
+            stepItem.style.margin = '5px 0';
+            
+            // Create icon for step
+            const icon = document.createElement('span');
+            icon.style.display = 'inline-flex';
+            icon.style.alignItems = 'center';
+            icon.style.justifyContent = 'center';
+            icon.style.width = '24px';
+            icon.style.height = '24px';
+            icon.style.borderRadius = '50%';
+            icon.style.marginRight = '10px';
+            
+            if (step.done) {
+                icon.style.backgroundColor = '#5BB75B';
+                icon.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                `;
+            } else {
+                icon.style.backgroundColor = '#6d6d6d';
+                icon.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                    </svg>
+                `;
+            }
+            
+            // Create text for step
+            const text = document.createElement('span');
+            text.textContent = step.text;
+            text.style.fontSize = '16px';
+            text.style.color = step.done ? 'black' : '#9999A0';
+            
+            stepItem.appendChild(icon);
+            stepItem.appendChild(text);
+            stepsContainer.appendChild(stepItem);
+        });
+        
+        // Create message element
+        const message = document.createElement('div');
+        message.className = 'scc-ai-wizard-overlay-message';
+        message.id = 'scc-ai-wizard-overlay-message';
+        message.textContent = 'Almost There!';
+        message.style.fontSize = '28px';
+        message.style.fontWeight = 'bold';
+        message.style.color = 'black';
+        message.style.marginTop = '20px';
+        message.style.marginBottom = '10px';
+        
+        // Create subtitle
+        const subtitle = document.createElement('div');
+        subtitle.id = 'scc-ai-wizard-overlay-subtitle';
+        subtitle.textContent = 'Your calculator will be ready in just a moment';
+        subtitle.style.color = '#9999A0';
+        subtitle.style.fontSize = '16px';
+        subtitle.style.marginBottom = '30px';
+        
+        // Create progress bar container
+        const progressBarsWrapper = document.createElement('div');
+        progressBarsWrapper.style.width = '80%';
+        progressBarsWrapper.style.maxWidth = '600px';
+        progressBarsWrapper.style.marginBottom = '40px';
+        
+        // Create main progress bar
+        const progressContainer = document.createElement('div');
+        progressContainer.style.width = '100%';
+        progressContainer.style.height = '10px';
+        progressContainer.style.backgroundColor = '#dddddd';
+        progressContainer.style.borderRadius = '5px';
+        progressContainer.style.overflow = 'hidden';
+        progressContainer.style.marginBottom = '8px';
+        
+        const progressBar = document.createElement('div');
+        progressBar.id = 'scc-ai-wizard-progress-bar';
+        // Start with minimal width
+        progressBar.style.width = '0%';
+        progressBar.style.height = '100%';
+        progressBar.style.backgroundColor = '#7b5dfa';
+        progressBar.style.borderRadius = '5px';
+        // Add animation to progress bar
+        progressBar.style.transition = 'width 2s ease-in-out';
+        
+        progressContainer.appendChild(progressBar);
+        
+        // Create estimated time progress bar (secondary bar)
+        const estimatedProgressContainer = document.createElement('div');
+        estimatedProgressContainer.style.width = '100%';
+        estimatedProgressContainer.style.height = '6px';
+        estimatedProgressContainer.style.backgroundColor = '#e8e8e8';
+        estimatedProgressContainer.style.borderRadius = '3px';
+        estimatedProgressContainer.style.overflow = 'hidden';
+        
+        const estimatedProgressBar = document.createElement('div');
+        estimatedProgressBar.id = 'scc-ai-wizard-estimated-progress-bar';
+        estimatedProgressBar.style.width = '0%';
+        estimatedProgressBar.style.height = '100%';
+        estimatedProgressBar.style.backgroundColor = '#b4a3f5';
+        estimatedProgressBar.style.borderRadius = '3px';
+        estimatedProgressBar.style.transition = 'width 45s linear';
+        
+        estimatedProgressContainer.appendChild(estimatedProgressBar);
+        
+        // Append both progress bars to wrapper
+        progressBarsWrapper.appendChild(progressContainer);
+        progressBarsWrapper.appendChild(estimatedProgressContainer);
+        
+        // Append elements to overlay
+        overlay.appendChild(wizardIcon);
+        overlay.appendChild(message);
+        overlay.appendChild(subtitle);
+        overlay.appendChild(progressBarsWrapper);
+        overlay.appendChild(stepsContainer);
+        
+        // Style the overlay
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.93)';
+        overlay.style.backdropFilter = 'blur(8px)';
+        overlay.style.display = 'flex';
+        overlay.style.flexDirection = 'column';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.zIndex = '99999';
+        
+        // Add animation to overlay
+        overlay.style.opacity = '0';
+        overlay.style.transition = 'opacity 0.3s ease';
+        
+        // Append to body
+        document.body.appendChild(overlay);
+        
+        setTimeout(() => {
+            overlay.style.opacity = '1';
+            
+            // Animate main progress bar to 50% after overlay becomes visible
+            const progressBar = document.getElementById('scc-ai-wizard-progress-bar');
+            if (progressBar) {
+                progressBar.style.width = '50%';
+            }
+            
+            // Start estimated progress bar animation (45 seconds)
+            const estimatedProgressBar = document.getElementById('scc-ai-wizard-estimated-progress-bar');
+            if (estimatedProgressBar) {
+                estimatedProgressBar.style.width = '100%';
+            }
+        }, 10);
+    }
+    
+    // Define loading states for subtitle updates
+    const loadingStates = [
+        'Preparing elements',
+        'Configuring parameters',
+        'Verifying elements'
+    ];
+    let currentState = 0;
+    
+    // Interval to update messages
+    const stateInterval = setInterval(() => {
+        const subtitle = document.getElementById('scc-ai-wizard-overlay-subtitle');
+        if (subtitle) {
+            subtitle.textContent = loadingStates[currentState];
+            console.log("Subtitle updated:", loadingStates[currentState]);
+        }
+        currentState = (currentState + 1) % loadingStates.length;
+    }, 2000);
+    
+    // Disable all buttons with the class
+    const allButtons = document.querySelectorAll('.scc-ai-wizard-add-elements-btn');
+    allButtons.forEach(btn => {
+        btn.setAttribute('disabled', true);
+        const btnSpinner = btn.querySelector('.scc-save-btn-spinner');
+        if (btnSpinner) {
+            btnSpinner.classList.remove('scc-hidden');
+        }
+    });
+    
+    // Get AI response
+    const container = button.closest('.scc-ai-chat-bubble-wizard');
+    const aiResponse = container.querySelector('.scc-ai-markdown-response').innerText;
+    
+    // Prepare data for request
+    const schema = sccAiUtils.getCalculatorDataSchema();
+    const firstSection = schema.sections[0];
+    const firstSectionId = firstSection.sectionId;
+    
+    // Check if subsections exist before accessing subsectionId
+    if (!firstSection.subsections || firstSection.subsections.length === 0) {
+        // Show error modal using df-modal-root system
+        stylishCostCalculatorModal({
+            context: 'ai-wizard-no-subsections',
+            title: 'No Subsections Available',
+            content: 'Please create at least one subsection in your calculator before using the AI wizard.',
+            affirmativeButtonText: 'OK',
+            affirmativeButtonCallback: () => {
+                // Modal will be closed by the modal system
+            }
+        });
+        
+        // Re-enable buttons
+        allButtons.forEach(btn => {
+            btn.removeAttribute('disabled');
+            const btnSpinner = btn.querySelector('.scc-save-btn-spinner');
+            if (btnSpinner) {
+                btnSpinner.classList.add('scc-hidden');
+            }
+        });
+        
+        // Clear interval
+        clearInterval(stateInterval);
+        
+        // Hide overlay
+        if (overlay) {
+            overlay.style.display = 'none';
+        }
+        
+        return;
+    }
+    
+    const firstSubsectionId = firstSection.subsections[0].subsectionId;
+    const params = {
+        nonce: pageEditCalculator.nonce,
+        calculator_id: sccAiUtils.getCalcId(),
+        section_target_id: firstSectionId,
+        clean_calculator: cleanCalculator,
+        first_subsection_id: firstSubsectionId,
+        ai_response: aiResponse,
+    };
+    const action = 'scc_ai_wizard_add_elements';
+    const formData = new FormData();
+    formData.append('request_data', JSON.stringify(params));
+    
+    const ajaxRoute = ajaxurl + '?action=' + action + '&nonce=' + pageEditCalculator.nonce;
+    
+    // Call endpoint
+    fetch(ajaxRoute, {
+        method: 'POST',
+        body: formData,
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            clearInterval(stateInterval);
+            
+            // Update the progress bar to 75% when elements are added
+            const progressBar = document.getElementById('scc-ai-wizard-progress-bar');
+            if (progressBar) {
+                progressBar.style.width = '75%';
+            }
+            
+            // Reset estimated progress bar and start 15-second animation
+            const estimatedProgressBar = document.getElementById('scc-ai-wizard-estimated-progress-bar');
+            if (estimatedProgressBar) {
+                // Reset to 0% instantly
+                estimatedProgressBar.style.transition = 'none';
+                estimatedProgressBar.style.width = '0%';
+                
+                // Force reflow to ensure the reset happens
+                estimatedProgressBar.offsetHeight;
+                
+                // Start new 15-second animation
+                estimatedProgressBar.style.transition = 'width 20s linear';
+                setTimeout(() => {
+                    estimatedProgressBar.style.width = '100%';
+                }, 10);
+            }
+            
+            if(cleanCalculator === true) {
+                // Update subtitle for next phase
+                const subtitle = document.getElementById('scc-ai-wizard-overlay-subtitle');
+                if (subtitle) {
+                    subtitle.textContent = 'Updating Calculator Settings';
+                }
+                
+                // Configure data for next request
+                const params = {
+                    nonce: pageEditCalculator.nonce,
+                    calculator_id: sccAiUtils.getCalcId(),
+                    ai_requested_settings: aiResponse,
+                };
+                const action = 'scc_ai_wizard_add_calculator_settings';
+                const formData = new FormData();
+                formData.append('request_data', JSON.stringify(params));
+                
+                const ajaxRoute = ajaxurl + '?action=' + action + '&nonce=' + pageEditCalculator.nonce;
+                
+                // Call endpoint to update settings
+                fetch(ajaxRoute, {
+                    method: 'POST',
+                    body: formData,
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        // Update the progress bar to 100% when settings are complete
+                        const progressBar = document.getElementById('scc-ai-wizard-progress-bar');
+                        if (progressBar) {
+                            progressBar.style.width = '100%';
+                        }
+                        
+                        // Update the last step to completed after settings success
+                        const stepsContainer = document.querySelector('.scc-ai-wizard-steps-container');
+                        if (stepsContainer) {
+                            const icons = stepsContainer.querySelectorAll('.scc-ai-wizard-step-item span:first-child');
+                            const texts = stepsContainer.querySelectorAll('.scc-ai-wizard-step-item span:last-child');
+                            
+                            if (icons[2]) {
+                                icons[2].style.backgroundColor = '#5BB75B';
+                                icons[2].innerHTML = `
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                `;
+                            }
+                            
+                            if (texts[2]) {
+                                texts[2].style.color = 'black';
+                            }
+                        }
+                        
+                        // Wait a bit to show the completed state before reloading
+                        setTimeout(() => {
+                            // Hide overlay before reloading
+                            const overlay = document.getElementById('scc-ai-wizard-global-overlay');
+                            if (overlay) {
+                                overlay.style.opacity = '0';
+                                setTimeout(() => {
+                                    overlay.remove();
+                                    location.reload();
+                                }, 300);
+                            } else {
+                                location.reload();
+                            }
+                        }, 500);
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        // Hide overlay on error
+                        const overlay = document.getElementById('scc-ai-wizard-global-overlay');
+                        if (overlay) {
+                            overlay.style.opacity = '0';
+                            setTimeout(() => {
+                                overlay.remove();
+                            }, 300);
+                        }
+                    });
+            } else {
+                // Update progress bar to 100% when only adding elements (no settings)
+                const progressBar = document.getElementById('scc-ai-wizard-progress-bar');
+                if (progressBar) {
+                    progressBar.style.width = '100%';
+                }
+                
+                // Update the last step to completed
+                const stepsContainer = document.querySelector('.scc-ai-wizard-steps-container');
+                if (stepsContainer) {
+                    const icons = stepsContainer.querySelectorAll('.scc-ai-wizard-step-item span:first-child');
+                    const texts = stepsContainer.querySelectorAll('.scc-ai-wizard-step-item span:last-child');
+                    
+                    if (icons[2]) {
+                        icons[2].style.backgroundColor = '#5BB75B';
+                        icons[2].innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        `;
+                    }
+                    
+                    if (texts[2]) {
+                        texts[2].style.color = 'black';
+                    }
+                }
+                
+                // Wait a bit to show the completed state before reloading
+                setTimeout(() => {
+                    // Hide overlay before reloading
+                    const overlay = document.getElementById('scc-ai-wizard-global-overlay');
+                    if (overlay) {
+                        overlay.style.opacity = '0';
+                        setTimeout(() => {
+                            overlay.remove();
+                            location.reload();
+                        }, 300);
+                    } else {
+                        location.reload();
+                    }
+                }, 500);
+            }
+        })
+        .catch((error) => {
+            clearInterval(stateInterval);
+            console.error('Error:', error);
+            // Hide overlay on error
+            const overlay = document.getElementById('scc-ai-wizard-global-overlay');
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.remove();
+                }, 300);
+            }
+        });
+};
+
 window.sccAiUtils = sccAiUtils;
+// PREMIUM ONLY: Remove/comment this export for FREE version
+//export default sccAiUtils;

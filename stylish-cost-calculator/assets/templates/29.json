@@ -48,7 +48,7 @@
 	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/kitchen-renovation-company-calculator-copy\\/?preview_id=17190&preview_nonce=15e67fbdfc&preview=true\":2,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/kitchen-medicine-dosage-calculation\\/\":11,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/medicine-dosage-calculation\\/\":313,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/medicine-dosage-calculation\\/#\":3,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/medicine-dosage-calculation\":38,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/medicine-dosage-calculation\\/?_gl=1*194lujh*_gcl_au*MjYyMDE1Njc4LjE3NDIzNzI1OTY.*_ga*NjM0Nzg2NDY2LjE3NDIzNzI1OTY.*_ga_1NKDHBJG3J*MTc0MjM3MjU5Ni4xLjEuMTc0MjM3MjYyMi4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/medicine-dosage-calculation\\/?_gl=1*1s7gh2c*_gcl_au*MjI0MzY5ODU5LjE3NDU0MTUyOTY.*_ga*MTQ1Nzk1NDQ3OS4xNzQ1NDE1Mjk2*_ga_1NKDHBJG3J*MTc0NTQxNTI5Ni4xLjEuMTc0NTQxNTMyNi4wLjAuMA..\":1}",
 	"emailQuoteRecipients": "1",
 	"created_at": "0000-00-00 00:00:00",
-	"wrapper_max_width": "1000",
+	"wrapper_max_width": "800",
 	"turnoffQty": "false",
 	"combine_checkout_items": "0",
 	"combine_checkout_woocommerce_product_id": "0",

@@ -48,7 +48,7 @@
 	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/house-cleaning-cost-calculator\\/?preview_id=124&preview_nonce=6fba42346e&preview=true\":6,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/house-cleaning-cost-calculator\\/\":1768,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/house-cleaning-cost-calculator\\/?utm_source=scc-wordpress-readme&utm_medium=check-templates&referrer=wordpress.com\":56,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/house-cleaning-cost-calculator?utm_source=scc-free-readme&utm_medium=wordpress\":47,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/house-cleaning-cost-calculator\\/?utm_source=scc-free-readme&utm_medium=wordpress\":61,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/house-cleaning-cost-calculator\\/?utm_source=chatgpt.com\":7,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/house-cleaning-cost-calculator\\/?referrer=wordpress.com\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/house-cleaning-cost-calculator\\/?fbclid=IwAR0f4Q3ny-EOp_quaRDe-Bx1u7-IDsI65s97l9GnUMJRABm2u0QbCy3avOk\":3,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/house-cleaning-cost-calculator\\/?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=check-templates\":19,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/house-cleaning-cost-calculator\\/#\":1}",
 	"emailQuoteRecipients": "1",
 	"created_at": "2024-09-24 10:23:07",
-	"wrapper_max_width": "1000",
+	"wrapper_max_width": "800",
 	"turnoffQty": "false",
 	"combine_checkout_items": "0",
 	"combine_checkout_woocommerce_product_id": "0",

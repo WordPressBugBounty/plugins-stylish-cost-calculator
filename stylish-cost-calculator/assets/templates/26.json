@@ -48,7 +48,7 @@
 	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/grocery-costs-calculator\\/?preview_id=9910&preview_nonce=f5b3d0b422&preview=true\":9,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/grocery-costs-calculator\\/\":470,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/grocery-costs-calculator\\/?_gl=1*1bnph7p*_gcl_au*NzM4MDYzMjk1LjE3NDY4MjgwMjQuMTY4MzAwMTUyLjE3NDcyNDM2MjYuMTc0NzI0MzYyNg..*_ga*MTkwNTc5NjI3NS4xNzQ2ODI4MDI1*_ga_1NKDHBJG3J*czE3NDc0MDI3MDQkbzYkZzEkdDE3NDc0MDUzMjAkajAkbDAkaDA.\":1}",
 	"emailQuoteRecipients": "1",
 	"created_at": "2025-05-06 17:44:13",
-	"wrapper_max_width": "1000",
+	"wrapper_max_width": "800",
 	"turnoffQty": "false",
 	"combine_checkout_items": "0",
 	"combine_checkout_woocommerce_product_id": "0",

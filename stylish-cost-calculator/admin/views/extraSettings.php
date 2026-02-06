@@ -270,87 +270,250 @@ if ( $isSCCFreeVersion ) {
 <div class="modal df-scc-modal fade in" id="user-scc-sv" style="padding-right: 0px; display: none;" role="dialog">
 	<div class="df-scc-euiOverlayMask df-scc-euiOverlayMask--aboveHeader">
 		<div class="df-scc-euiModal df-scc-euiModal--maxWidth-default df-scc-euiModal--confirmation">
-			<button onclick="sccSkipFeedbackModal()" class="df-scc-euiButtonIcon df-scc-euiButtonIcon--text df-scc-euiModal__closeIcon" type="button" data-dismiss="modal" aria-label="Closes this modal window">
+			<button onclick="sccSkipFeedbackModal()" class="df-scc-euiButtonIcon df-scc-euiButtonIcon--text df-scc-euiModal__closeIcon" type="button" aria-label="Closes this modal window">
 				<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" class="df-scc-euiIcon df-scc-euiIcon--medium df-scc-euiButtonIcon__icon" focusable="false" role="img" aria-hidden="true">
 					<path d="M7.293 8L3.146 3.854a.5.5 0 11.708-.708L8 7.293l4.146-4.147a.5.5 0 01.708.708L8.707 8l4.147 4.146a.5.5 0 01-.708.708L8 8.707l-4.146 4.147a.5.5 0 01-.708-.708L7.293 8z"></path>
 				</svg>
 			</button>
 			<div class="df-scc-euiModal__flex">
-				<div class="step1-wrapper">
-					<div class="df-scc-euiModalHeader d-block pb-0">
-						<div class="progress w-25">
-							<div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-							<div class="progress-bar bg-secondary" role="progressbar" style="width: 50%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+				<div class="scc-survey-card-wrapper" data-survey-section>
+					<div class="scc-survey-card" data-survey-card>
+						<div class="scc-survey-heading">
+							<h2>How's your experience?</h2>
+							<p>Your feedback helps us build a better Stylish Cost Calculator.</p>
 						</div>
-						<div class="df-scc-euiModalHeader__title pt-2">Rate your experience with our product...</div>
-					</div>
-					<div class="df-scc-euiModalBody">
-						<div class="df-scc-euiModalBody__overflow d-flex align-items-center pb-0">
-								<ul class="pagination pagination-lg me-3 mb-0 ratings-picker">
-									<li class="page-item me-2">
-										<span class="page-link text-dark" role="button">1</span>
-									</li>
-									<li class="page-item me-2"><span class="page-link text-dark" role="button">2</span></li>
-									<li class="page-item me-2"><span class="page-link text-dark" role="button">3</span></li>
-									<li class="page-item me-2"><span class="page-link text-dark" role="button">4</span></li>
-									<li class="page-item"><span class="page-link text-dark" role="button">5</span></li>
-								</ul>
-								<p><i style="vertical-align: sub;" class="material-icons-outlined text-info">star</i>&nbsp;<span>Stars</span></p>
+						<?php
+						$survey_ratings = array(
+							array(
+								'value' => 1,
+								'emoji' => '😡',
+								'label' => 'Very Unhappy',
+								'color' => 'rgb(239, 68, 68)',
+							),
+							array(
+								'value' => 2,
+								'emoji' => '😕',
+								'label' => 'Unhappy',
+								'color' => 'rgb(251, 146, 60)',
+							),
+							array(
+								'value' => 3,
+								'emoji' => '😐',
+								'label' => 'Okay',
+								'color' => 'rgb(234, 179, 8)',
+							),
+							array(
+								'value' => 4,
+								'emoji' => '😊',
+								'label' => 'Happy',
+								'color' => 'rgb(74, 222, 128)',
+							),
+							array(
+								'value' => 5,
+								'emoji' => '😍',
+								'label' => 'Love it',
+								'color' => 'rgb(34, 197, 94)',
+							),
+						);
+						?>
+						<div class="scc-survey-ratings" data-survey-ratings data-survey-ratings-section>
+							<?php foreach ( $survey_ratings as $rating ) : ?>
+								<button class="scc-survey-rating-btn" type="button" data-survey-rating="<?php echo esc_attr( $rating['value'] ); ?>" data-survey-rating-color="<?php echo esc_attr( $rating['color'] ); ?>" title="<?php echo esc_attr( $rating['label'] ); ?>">
+									<span class="scc-survey-rating-emoji"><?php echo esc_html( $rating['emoji'] ); ?></span>
+									<span class="scc-survey-rating-label"><?php echo esc_html( $rating['label'] ); ?></span>
+								</button>
+							<?php endforeach; ?>
 						</div>
-					</div>
-					<div class="df-scc-euiModalFooter"></div>
-				</div>
-				<div class="step2-wrapper d-none">
-					<div class="df-scc-euiModalHeader d-block pb-0">
-						<div class="progress w-25">
-							<div class="progress-bar bg-secondary" role="progressbar" style="width: 50%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-							<div class="progress-bar bg-info" role="progressbar" style="width: 50%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+						<div class="scc-survey-remind-wrapper" data-survey-ratings-remind>
+							<button type="button" class="btn btn-link text-muted scc-survey-remind" onclick="sccSkipFeedbackModal()">Remind me later</button>
 						</div>
-						<div class="pt-2 d-flex align-items-center justify-content-between">
-							<div class="df-scc-euiModalHeader__title">Anything that can be improved?</div>
-							<p><i style="vertical-align: sub;" class="material-icons-outlined text-info">star</i>&nbsp;<span class="rating-chosen">5</span></p>
-						</div>
-					</div>
-					<div class="df-scc-euiModalBody">
-						<div class="df-scc-euiModalBody__overflow d-block align-items-center pb-0">
-							<div class="">
-								<textarea id="comments-text-input" class="form-control h-auto" placeholder="Your feedback (optional)" rows="4"></textarea>
+						<div class="scc-survey-section d-none" data-survey-reasons-section>
+							<div class="d-flex justify-content-between align-items-center mb-2">
+								<h3 class="mb-0">What influenced your rating?</h3>
+								<button type="button" class="btn btn-primary btn-sm d-none" data-survey-continue>Continue</button>
 							</div>
+							<div class="scc-survey-reasons" data-survey-reasons></div>
+						</div>
+						<div class="scc-survey-section d-none" data-survey-message-section>
+							<label for="comments-text-input">Anything else we should know? (optional)</label>
+							<textarea id="comments-text-input" class="form-control scc-survey-textarea" placeholder="Tell us more about your experience..." rows="4"></textarea>
+						</div>
+						<div class="scc-survey-section d-none" data-survey-contact-section>
 							<div class="form-group" id="survey-username-input-wrapper">
 								<label for="feedback-username-input">Your name (optional)</label>
-								<input id="feedback-username-input" class="form-control" value="<?php echo esc_attr( $df_scc_user_name ); ?>" >
+								<input id="feedback-username-input" class="form-control" value="<?php echo esc_attr( $df_scc_user_name ); ?>">
 							</div>
 							<div class="form-group" id="survey-email-input-wrapper">
 								<label for="feedback-email-input">Your email address (optional)</label>
-								<input id="feedback-email-input" class="form-control" value="<?php echo esc_attr( get_option( 'df_scc_emailsender', get_option( 'admin_email' ) ) ); ?>" >
+								<input id="feedback-email-input" class="form-control" value="<?php echo esc_attr( get_option( 'df_scc_emailsender', get_option( 'admin_email' ) ) ); ?>">
 							</div>
 							<div class="scc-form-checkbox">
 								<label class="scc-accordion_switch_button align-bottom" for="feedback-opt-in">
 									<input checked type="checkbox" id="feedback-opt-in">
 									<span class="scc-accordion_toggle_button round"></span>
 								</label>
-								<span><label role="button" for="feedback-opt-in" class="lblExtraSettingsEditCalc">I don't mind receiving a reply by email.</label>
-								</span>
+								<span><label role="button" for="feedback-opt-in" class="lblExtraSettingsEditCalc">I don't mind receiving a reply by email.</label></span>
 							</div>
-							<div class="">
-								<div id="comments-submit-btn" class="btn btn-primary">Submit</div>
-							</div>
+						</div>
+						<div class="scc-survey-section d-none" data-survey-action-section>
+							<button id="comments-submit-btn" class="btn btn-primary w-100" type="button" disabled>Submit feedback</button>
 						</div>
 					</div>
-					<div class="df-scc-euiModalFooter"></div>
-				</div>
-				<div class="step3-wrapper d-none">
-					<div class="df-scc-euiModalHeader d-block mb-0">
-						<div class="df-scc-euiModalHeader__title">
-							<i style="vertical-align: sub;" class="material-icons-outlined bg-info rounded">check</i>
-							<span>Thanks for the feedback!</span>
-						</div>
+					<div class="scc-survey-success d-none" data-survey-success>
+						<div class="scc-survey-success-icon">🎉</div>
+						<h2>Thank you!</h2>
+						<p>Your feedback helps us improve.</p>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div><!-- /.modal -->
+<style id="scc-survey-styles">
+	#user-scc-sv .scc-survey-card-wrapper {
+		width: 100%;
+	}
+	#user-scc-sv .scc-survey-card {
+		max-width: 640px;
+		margin: 0 auto;
+		padding: 24px 28px 32px;
+		background: #fff;
+		border-radius: 16px;
+		box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+	}
+	#user-scc-sv .scc-survey-heading {
+		text-align: center;
+		margin-bottom: 24px;
+	}
+	#user-scc-sv .scc-survey-heading h2 {
+		font-size: 24px;
+		font-weight: 600;
+		color: #111827;
+		margin-bottom: 8px;
+	}
+	#user-scc-sv .scc-survey-heading p {
+		color: #6b7280;
+		margin: 0;
+	}
+	#user-scc-sv .scc-survey-ratings {
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 12px;
+		margin-bottom: 24px;
+	}
+	#user-scc-sv .scc-survey-rating-btn {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 4px;
+		border: 3px solid transparent;
+		border-radius: 12px;
+		padding: 12px 16px;
+		background: #f9fafb;
+		font-size: 14px;
+		font-weight: 500;
+		color: #374151;
+		cursor: pointer;
+		transition: all 0.2s ease;
+		min-width: 96px;
+	}
+	#user-scc-sv .scc-survey-rating-btn:hover {
+		background: #f3f4f6;
+		transform: scale(1.05);
+	}
+	#user-scc-sv .scc-survey-rating-btn.is-selected {
+		box-shadow: 0 6px 20px rgba(15, 23, 42, 0.1);
+		transform: scale(1.08);
+	}
+	#user-scc-sv .scc-survey-rating-emoji {
+		font-size: 32px;
+		line-height: 1;
+	}
+	#user-scc-sv .scc-survey-section {
+		margin-bottom: 24px;
+	}
+	#user-scc-sv [data-survey-continue] {
+		padding: 6px 16px;
+		border-radius: 999px;
+		font-size: 13px;
+	}
+	#user-scc-sv .scc-survey-remind-wrapper {
+		text-align: left;
+		margin-top: -12px;
+		margin-bottom: 16px;
+	}
+	#user-scc-sv .scc-survey-remind {
+		font-size: 14px;
+		text-decoration: none;
+	}
+	#user-scc-sv .scc-survey-remind:hover {
+		text-decoration: underline;
+	}
+	#user-scc-sv .scc-survey-section h3 {
+		font-size: 16px;
+		font-weight: 600;
+		color: #374151;
+		margin-bottom: 12px;
+	}
+	#user-scc-sv .scc-survey-reasons {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+	#user-scc-sv .scc-survey-reason-btn {
+		border: 2px solid #e5e7eb;
+		border-radius: 999px;
+		padding: 6px 16px;
+		background: #fff;
+		color: #4b5563;
+		font-size: 14px;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+	#user-scc-sv .scc-survey-reason-btn:hover {
+		border-color: #6d28d9;
+	}
+	#user-scc-sv .scc-survey-reason-btn.is-selected {
+		border-color: #6366f1;
+		background: #eef2ff;
+		color: #4c1d95;
+		font-weight: 600;
+	}
+	#user-scc-sv .scc-survey-textarea {
+		border: 2px solid #e5e7eb;
+		border-radius: 8px;
+		resize: vertical;
+		min-height: 90px;
+	}
+	#user-scc-sv .scc-survey-textarea:focus {
+		border-color: #6366f1;
+		box-shadow: none;
+	}
+	#user-scc-sv .scc-survey-success {
+		max-width: 480px;
+		margin: 0 auto;
+		padding: 48px 32px;
+		text-align: center;
+		background: #fff;
+		border-radius: 16px;
+		box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+	}
+	#user-scc-sv .scc-survey-success-icon {
+		font-size: 60px;
+		margin-bottom: 16px;
+	}
+	#user-scc-sv .scc-survey-success h2 {
+		color: #22c55e;
+		font-weight: 600;
+		margin-bottom: 8px;
+	}
+	#user-scc-sv .scc-survey-success p {
+		color: #6b7280;
+		margin: 0;
+	}
+</style>
 <!-- welcome message and introductory video modal -->
 <div class="modal df-scc-modal fade in" id="scc-welcome-modal" style="padding-right: 0px; display: none;" role="dialog">
 	<div class="df-scc-euiOverlayMask df-scc-euiOverlayMask--aboveHeader">

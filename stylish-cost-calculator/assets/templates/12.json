@@ -71,7 +71,7 @@
 	"showSearchBar": null,
 	"enable_smarturl": null,
 	"invoice_number_settings": null,
-	"wrapper_max_width": "1000",
+	"wrapper_max_width": "800",
 	"send_quote_form_data_to_user": "0",
 	"include_quote_form_data": "1",
 	"allow_currency_switching": "0",

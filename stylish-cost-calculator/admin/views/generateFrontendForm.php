@@ -168,7 +168,7 @@ $sccConfig                                                            = [
     'preCheckoutQuoteForm'          => $form->preCheckoutQuoteForm == 'true' ? true : false,
     'coupon'                        => '',
 ];
-$calc_wrapper_max_width = isset( $form->wrapper_max_width ) ? $form->wrapper_max_width . 'px' : '1000px';
+$calc_wrapper_max_width = isset( $form->wrapper_max_width ) ? $form->wrapper_max_width . 'px' : '800px';
 $wrapper_styles         = defined( 'DOING_AJAX' ) ? '' : "style=\"max-width:$calc_wrapper_max_width\"";
 ?>
 <script id="scc-config-<?php echo intval( $form->id ); ?>" type="text/json">
@@ -888,7 +888,11 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
         }
 
         if ( $el->type == 'quantity box' ) {
-            $input_default_value = empty( $el->value4 ) ? 'value=' . 0 : 'value=' . intval( $el->value4 );
+            $min_value           = ( isset( $el->value4 ) && $el->value4 !== '' ) ? intval( $el->value4 ) : 0;
+            $max_value           = ( isset( $el->value3 ) && $el->value3 !== '' ) ? intval( $el->value3 ) : null;
+            $input_default_value = 'value=' . $min_value;
+            $min_attr            = 'min=' . $min_value;
+            $max_attr            = is_null( $max_value ) ? '' : 'max=' . $max_value;
             $enable_commas       = ( isset( $el->value5 ) && $el->value5 == 2 ) ? true : false;
             ?>
 				<!-- NEEDS ATTENTION -->
@@ -918,7 +922,9 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 									class="number_box_text number_box_text-45 itemCreated mandatory_no_45"
 									data-inputtype="number_input"
 									type="<?php echo $enable_commas ? 'text' : 'number'; ?>"
-									data-value="1" 
+									data-value="1"
+									<?php echo esc_attr( $min_attr ); ?>
+									<?php echo esc_attr( $max_attr ); ?>
 							 <?php echo esc_attr( $input_default_value ); ?>>
 >
 						<?php } else { ?>
@@ -938,6 +944,8 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 									data-inputtype="number_input"
 									type="<?php echo $enable_commas ? 'text' : 'number'; ?>"
 									data-value="4"
+									<?php echo esc_attr( $min_attr ); ?>
+									<?php echo esc_attr( $max_attr ); ?>
 								<?php echo esc_attr( $input_default_value ); ?>
 >
 							<span class="input-number-increment" onclick="changeNumberQuantity(this,'+',<?php echo intval( $el->id ); ?>,<?php echo intval( $form->id ); ?>)">+</span>
@@ -967,7 +975,9 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 									class="number_box_text number_box_text-45 itemCreated mandatory_no_45"
 									data-inputtype="number_input"
 									type="<?php echo $enable_commas ? 'text' : 'number'; ?>"
-									data-value="1" 
+									data-value="1"
+									<?php echo esc_attr( $min_attr ); ?>
+									<?php echo esc_attr( $max_attr ); ?>
 							<?php echo esc_attr( $input_default_value ); ?>
 >
 					<?php } else { ?>
@@ -987,6 +997,8 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 									data-inputtype="number_input"
 									type="<?php echo $enable_commas ? 'text' : 'number'; ?>"
 									data-value="4"
+									<?php echo esc_attr( $min_attr ); ?>
+									<?php echo esc_attr( $max_attr ); ?>
 							<?php echo esc_attr( $input_default_value ); ?>
 >
 						<span class="input-number-increment" onclick="changeNumberQuantity(this,'+',<?php echo intval( $el->id ); ?>,<?php echo intval( $form->id ); ?>)">+</span>

@@ -48,7 +48,7 @@
 	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/solar-panel-cost-calculator\\/?preview_id=20418&preview_nonce=808238154f&preview=true\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/solar-panel-cost-calculator\\/\":264,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/solar-panel-cost-calculator\":2,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/solar-panel-cost-calculator\\/?_gl=1*o68ko*_gcl_au*NzAwNDAxNS4xNzE3NjAyOTE1*_ga*MTU5NDc0MTM0OS4xNzE3NjAyOTE1*_ga_1NKDHBJG3J*MTcxNzYwMjkxNS4xLjEuMTcxNzYwMjkzMC4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/solar-panel-cost-calculator\\/?_gl=1*6qotrk*_gcl_au*MTkzOTcxMzY4NC4xNzI0OTU0NjYw*_ga*MTUwMDY4NjQxMS4xNzI0OTU0NjYx*_ga_1NKDHBJG3J*MTcyNDk1NDY2MC4xLjEuMTcyNDk1NTQwOC4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/solar-panel-cost-calculator\\/?_gl=1*1p8b1ss*_gcl_au*OTk0NjQwNjYzLjE3MzgxODg5MzE.*_ga*NDM1NDMxNDQyLjE3MzgxODg5MzI.*_ga_1NKDHBJG3J*MTczODE4ODkzMS4xLjEuMTczODE4ODk0MS4wLjAuMA..\":1}",
 	"emailQuoteRecipients": "1",
 	"created_at": "2024-03-07 16:55:20",
-	"wrapper_max_width": "1000",
+	"wrapper_max_width": "800",
 	"turnoffQty": "false",
 	"combine_checkout_items": "0",
 	"combine_checkout_woocommerce_product_id": "0",

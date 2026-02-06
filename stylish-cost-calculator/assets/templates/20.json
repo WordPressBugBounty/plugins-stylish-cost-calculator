@@ -48,7 +48,7 @@
 	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/vehicle-parts-cost-calculator\\/?preview_id=15821&preview_nonce=df44186ff6&preview=true\":3,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/vehicle-parts-cost-calculator\\/\":628,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/vehicle-parts-cost-calculator\":70,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/vehicle-parts-cost-calculator\\/?_gl=1*11r80zy*_gcl_au*NzExNDA1MzE4LjE3MTYzMzYxNzc.*_ga*MTQ0NzcyOTM3NC4xNzE2MzM2MTc3*_ga_1NKDHBJG3J*MTcxNjQxMzU1Mi4zLjEuMTcxNjQxNzg1Ny4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-parts-cost\\/\":796,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-parts-cost\\/?preview_id=15821&preview_nonce=c4dfa28c64&preview=true\":2,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/car-parts-cost\\/?utm_source=chatgpt.com\":2}",
 	"emailQuoteRecipients": "1",
 	"created_at": "2023-05-24 15:50:56",
-	"wrapper_max_width": "1000",
+	"wrapper_max_width": "800",
 	"turnoffQty": "false",
 	"combine_checkout_items": "0",
 	"combine_checkout_woocommerce_product_id": "0",

@@ -1368,8 +1368,12 @@ function triggerSubmit(type, dom, element, item, calcId) {
 			}
 			break
 		case 3:
-			if (parseFloat(jQuery(dom).val()) > parseFloat(jQuery(dom).attr('max'))) jQuery(dom).val(jQuery(dom).attr('max'))
-			if (parseFloat(jQuery(dom).val()) < parseFloat(jQuery(dom).attr('min'))) jQuery(dom).val(jQuery(dom).attr('min'))
+			var currentValue = parseFloat(jQuery(dom).val())
+			var maxValue = parseFloat(jQuery(dom).attr('max'))
+			var minValue = parseFloat(jQuery(dom).attr('min'))
+			if (!Number.isNaN(maxValue) && currentValue > maxValue) jQuery(dom).val(maxValue)
+			if (Number.isNaN(minValue)) minValue = 0
+			if (!Number.isNaN(currentValue) && currentValue < minValue) jQuery(dom).val(minValue)
 			numberDom = jQuery(dom).val()
 			var o = [element, numberDom]
 			var ss = elementsTotal[calcId].find(e => e[0] == element)

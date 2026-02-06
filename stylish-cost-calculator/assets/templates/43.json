@@ -48,7 +48,7 @@
 	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/asphalt-driveway-cost-calculator\\/?preview_id=19498&preview_nonce=196e277e00&preview=true\":2,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/asphalt-driveway-cost-calculator\\/\":1122,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/asphalt-driveway-cost-calculator\\/#\":5}",
 	"emailQuoteRecipients": "1",
 	"created_at": "2024-09-26 19:09:40",
-	"wrapper_max_width": "1000",
+	"wrapper_max_width": "800",
 	"turnoffQty": "false",
 	"combine_checkout_items": "0",
 	"combine_checkout_woocommerce_product_id": "0",

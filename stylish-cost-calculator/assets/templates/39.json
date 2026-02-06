@@ -48,7 +48,7 @@
 	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-mowing-cost-calculator\\/\":110,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-mowing-cost-calculator\\/?preview_id=17953&preview_nonce=948bd8f8fa&preview=true\":5,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/construction-cost-calculator\\/\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/construction-cost-calculator\\/?preview_id=17978&preview_nonce=b16f1af532&preview=true\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-mowing-cost-calculator\":35,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-mowing-cost-calculator\\/?preview_id=17953&preview_nonce=88774204b7&preview=true\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-care-pricing-calculator\\/\":125,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-care-pricing-calculator\\/?preview_id=17953&preview_nonce=7668a3dfac&preview=true\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-care-pricing-calculator\\/?preview_id=17953&preview_nonce=c31163a927&preview=true\":3,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-care-pricing-calculator\\/?_gl=1*1i7bo5x*_gcl_au*MTI4ODg5MTQyNS4xNzQyMjk4ODA2*_ga*MjAwNDczNzUxLjE3NDIyOTg4MDc.*_ga_1NKDHBJG3J*MTc0MjI5ODgwNi4xLjEuMTc0MjI5ODg5MC4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/lawn-mowing-quote-calculator\\/\":54}",
 	"emailQuoteRecipients": "1",
 	"created_at": "2024-02-14 13:42:26",
-	"wrapper_max_width": "1000",
+	"wrapper_max_width": "800",
 	"turnoffQty": "false",
 	"combine_checkout_items": "0",
 	"combine_checkout_woocommerce_product_id": "0",

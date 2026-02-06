@@ -48,7 +48,7 @@
 	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/home-alarm-system-template\\/\":663,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/home-alarm-system-template-copy\\/?preview_id=16424&preview_nonce=47fd89cf3b&preview=true\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/bakery-template\\/\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/home-alarm-system-template\":40,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/home-alarm-system-template\\/?preview_id=15920&preview_nonce=292dccee24&preview=true\":2,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/home-alarm-system-template\\/?_gl=1*1e1ijnb*_gcl_au*MjczODEzOTY1LjE3MTg4MTM0MTk.*_ga*MTA3MzI2OTIzMy4xNzE4ODEzNDE5*_ga_1NKDHBJG3J*MTcxOTI2Nzc5OC44LjEuMTcxOTI2ODE5OS4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/home-alarm-system-template\\/?_gl=1*a672at*_gcl_au*MTk5MDc3Mzg0Ny4xNzIyODc5MzYz*_ga*ODQxNTE4OTE3LjE3MjI4NzkzNjQ.*_ga_1NKDHBJG3J*MTcyMjg3OTM2My4xLjEuMTcyMjg3OTkxMy4wLjAuMA..\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/home-alarm-system-template\\/?_gl=1*qm6620*_gcl_au*ODgzODY2ODEzLjE3NDQ5NjM5ODY.*_ga*NDYwNjA5OTMyLjE3NDQ5NjM5ODY.*_ga_1NKDHBJG3J*MTc0NDk2Mzk4Ni4xLjEuMTc0NDk2Mzk5Ny4wLjAuMA..\":1}",
 	"emailQuoteRecipients": "1",
 	"created_at": "0000-00-00 00:00:00",
-	"wrapper_max_width": "1000",
+	"wrapper_max_width": "800",
 	"turnoffQty": "false",
 	"combine_checkout_items": "0",
 	"combine_checkout_woocommerce_product_id": "0",

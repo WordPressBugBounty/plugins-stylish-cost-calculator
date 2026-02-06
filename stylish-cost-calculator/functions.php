@@ -39,7 +39,7 @@ if ( ! function_exists( 'scc_feedback_invocation' ) ) {
         $invoke_at          = 0;
         switch ( $args ) {
             case 'skip':
-                $invoke_at = $save_count + 20;
+                $invoke_at = $save_count + 30;
                 update_option( 'df-scc_feedback_invoke', $invoke_at );
                 break;
 
@@ -60,7 +60,7 @@ if ( ! function_exists( 'scc_feedback_invocation' ) ) {
                 } elseif ( $current_invocation == 'disabled' ) {
                     $invoke_at = 0;
                 } else {
-                    $invoke_at = 20;
+                    $invoke_at = 30;
                 }
                 break;
         }

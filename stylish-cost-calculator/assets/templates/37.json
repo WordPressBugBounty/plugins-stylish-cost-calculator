@@ -48,7 +48,7 @@
 	"urlStatsArray": "{\"https:\\/\\/stylishcostcalculator.com\\/templates\\/tree-removal-cost-calculator\\/\":2629,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/tree-removal-cost-calculator\\/#\":18,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/tree-removal-cost-calculator\\/?_gl=1*1syny9r*_gcl_au*MTk2MDM5MjExMi4xNzQ2ODU0NzQ0*_ga*MTM3MTg3OTAyNy4xNzQ2ODU0NzQ1*_ga_1NKDHBJG3J*czE3NDY4NTQ3NDQkbzEkZzEkdDE3NDY4NTQ3NzYkajAkbDAkaDA.\":1,\"https:\\/\\/stylishcostcalculator.com\\/templates\\/tree-removal-cost-calculator\\/?utm_source=chatgpt.com\":1}",
 	"emailQuoteRecipients": "1",
 	"created_at": "2024-09-20 15:56:54",
-	"wrapper_max_width": "1000",
+	"wrapper_max_width": "800",
 	"turnoffQty": "false",
 	"combine_checkout_items": "0",
 	"combine_checkout_woocommerce_product_id": "0",
