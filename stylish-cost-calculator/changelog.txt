@@ -1,3 +1,22 @@
+## 8.2.1 - 2026-02-26
+
+**Frontend Changes:**
+- Added: Date Picker element support, including localized calendar behavior.
+- Improved: Frontend handling for new interactive form features.
+
+**Dashboard Changes:**
+- Improved: Admin menu toggle behavior to stay in sync with WordPress menu state.
+- Fixed: Font settings and element selector GUI mismatches in dashboard tabs.
+
+**Editing Page Changes:**
+- Improved: Usability updates for key editor features in the free version.
+- Fixed: Undefined Date Picker variable errors on the editing page.
+- Fixed: Text/HTML element interactions that could break slider GUI behavior.
+
+**Backend Changes:**
+- Updated: Google Fonts and AJAX handling to support recent editor enhancements.
+- Improved: Core integration logic for the Date Picker workflow.
+
 = 8.1.9 - 2026-01-27
 Fixed: Quantity input box negative values issue
 Improved: Security improvements

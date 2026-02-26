@@ -5,26 +5,38 @@
 var itemsTotal = []
 var elementsTotal = []
 var elementsComment = []
+var elementDate = []
 var customMath = []
 var Sliders = []
 var itemsArray = [] //for detail
 var scc_rate_label_convertion = null
 var mandatoryElements = []
+var globalMathArray = [];
+var variableMathElement = [];
+ 
 
 async function initializeScc() {
-
+    
 	jQuery('.calc-wrapper').each((index, element) => {
+
 		let formId = element.getAttribute('id').replace('scc_form_', '');
+
 		if (typeof (window.sccData) == "undefined") {
 			window.sccData = []
 		}
-		if (typeof (sccData[formId]) == "undefined") {
-			sccData[formId] = {}
+		if (typeof (window.sccData[formId]) == "undefined") {
+			window.sccData[formId] = {}
 		}
+        
+		let sccConfig = JSON.parse( document.getElementById( 'scc-config-' + formId ).textContent );
 
 		// parse and store config to data object
-		sccData[formId].config = JSON.parse(document.getElementById('scc-config-' + formId).textContent)
+	    sccData[ formId ].config = sccConfig;
 
+	    jQuery(function () {
+		    sccInitTimePicker( formId );
+	        sccFlatpickrInit(formId);
+	    });
 
 		/**
 		 * *Handles currency conversion rate
@@ -71,6 +83,9 @@ async function initializeScc() {
 		customMath[form_id] = []
 		Sliders[form_id] = []
 		itemsArray[form_id] = []
+		elementDate[ form_id ] = [];
+		globalMathArray[form_id] = [];
+		variableMathElement[form_id] = [];
 	})
 	return 0;
 }
@@ -236,7 +251,9 @@ function showQuoteDetailView(calcId) {
 	document.head.appendChild(style);
 	//added to avoid error js when no element selected
 	if ((!sccData[calcId].pdf)) return;
+	
 	jQuery('#detail-view-placeholder').html(wp.template('scc-quote-items-list-modal')({ pdf: sccData[calcId].pdf, calcId, pdfConfig, objectColor }));
+	
 	if (isDetailViewWebhookEnabled) {
 		jQuery.ajax({
 			url: wp.ajax.settings.url + '?action=scc_do_webhooks' + '&calcId=' + calcId + '&type=detailed_view',
@@ -662,6 +679,7 @@ function sccApplyColors() {
 		}
 		document.head.appendChild(styleEl);
 		var styleSheet = styleEl.sheet;
+		 
 		let targets = {
 			'a.scc-usr-act-btns:not(.scc-btn-style-2)': `background: ${objectColor}`,
 			'.btPayPalButtonCustom, .btnStripe': `border: 2px solid ${objectColor}`,
@@ -783,7 +801,7 @@ function sccLoadGFonts() {
 window.addEventListener('DOMContentLoaded', (event) => {
 	// apply colors
 
-
+      
 	// START of Multiple Total shortcode with combine attribute's frontend javascript
 	jQuery('.scc-multiple-total-wrapper[data-combination]').on('valueChange', function (event) {
 		/* showCurrencySymbol : if the currency symbol be showed or not it finds the value from the data attribute
@@ -913,9 +931,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 		initializeScc()
 		sccUslStats()
 		dfsccLoaded()
-		initSCCAccordion()
-		// scc_font_styles()
-
+		initSCCAccordion() 
 		sccApplyColors()
 		sccLoadGFonts()
 	}
@@ -952,7 +968,7 @@ function addCouponCodeModal(calcId) {
 	input.df-scc-euiFieldText:focus {
 		background-image: linear-gradient(to top, ${objectColor}, ${objectColor} 2px, transparent 2px, transparent 100%);
 	}`
-	head = document.head || document.getElementsByTagName('head')[0],
+	let head = document.head || document.getElementsByTagName('head')[0],
 		style = document.createElement('style');
 	style.setAttribute("id", "scc-quotemodal");
 
@@ -1325,6 +1341,115 @@ function dfsccLoaded() {
 
 	})
 }
+function sccCreateLocalDateFromString( dateString ) {
+	if ( dateString.includes( '-' ) ) {
+		const [ year, month, day ] = dateString.split( '-' );
+		return new Date( year, month - 1, day );
+	} else if ( dateString.includes( '/' ) ) {
+		const [ month, day, year ] = dateString.split( '/' );
+		return new Date( year, month - 1, day );
+	}
+	return new Date( dateString );
+}
+function sccClearButtonPlugin( pluginConfig, calcId ) {
+	const btnLabel = sccGetTranslationByKey( calcId, 'Clear' );
+	const defaultConfig = {
+		clear: btnLabel,
+	};
+
+	// the config object used to configure this instance of the plugin
+	const config = Object.assign( {}, defaultConfig, pluginConfig );
+
+	return function( fp ) {
+		let clearButton;
+
+		function onReady() {
+			clearButton = fp._createElement( 'div', 'scc-flatpickr-clear ' + config.class, config.clear );
+			clearButton.classList.add( 'trn' );
+			clearButton.setAttribute( 'data-trn-key', 'Clear' );
+			clearButton.addEventListener( 'click', fp.clear );
+
+			fp.calendarContainer.appendChild( clearButton );
+		}
+
+		return {
+			onReady,
+		};
+	};
+}
+function sccCloseButtonPlugin( pluginConfig, calcId ) {
+	const btnLabel = sccGetTranslationByKey( calcId, 'Close' );
+	const defaultConfig = {
+		label: btnLabel,
+	};
+
+	const config = Object.assign( {}, defaultConfig, pluginConfig );
+
+	return function( fp ) {
+		let closeButton;
+
+		function onReady() {
+			closeButton = fp._createElement( 'div', 'scc-flatpickr-close', config.label );
+			closeButton.classList.add( 'trn' );
+			closeButton.setAttribute( 'data-trn-key', 'Close' );
+			closeButton.addEventListener( 'click', function() {
+				fp.close();
+			} );
+
+			fp.calendarContainer.appendChild( closeButton );
+		}
+
+		return {
+			onReady,
+		};
+	};
+}
+function sccFlatpickrFormatDate( originalDateFormat ) {
+	return originalDateFormat
+		.replace( /dd/g, 'd' )
+		.replace( /mm/g, 'm' )
+		.replace( /yyyy/g, 'Y' )
+		.replace( /YY/g, 'y' );
+}
+// convert a date string to a format selected on the PDF settings
+function sccFormatStringDate( input, format = 'yyyy-mm-dd' ) {
+	let dateObj;
+	// If input is a string, attempt to convert it into a Date object
+	if ( typeof input === 'string' ) {
+		dateObj = sccCreateLocalDateFromString( input );
+	} else if ( input instanceof Date ) {
+		dateObj = input;
+	}
+
+	// Check if dateObj is a valid Date object
+	if ( ! ( dateObj instanceof Date ) || isNaN( dateObj.getTime() ) ) {
+		//console.error("Invalid Date provided to sccFormatDate.");
+		return;
+	}
+	const day = String( dateObj.getDate() ).padStart( 2, '0' );
+	const month = String( dateObj.getMonth() + 1 ).padStart( 2, '0' ); // Months are 0-based
+	const year = dateObj.getFullYear();
+
+	switch ( format ) {
+		case 'yyyy-mm-dd':
+		case 'Y-m-d':
+			return `${ year }-${ month }-${ day }`;
+		case 'mm-dd-yyyy':
+		case 'm-d-Y':
+			return `${ month }-${ day }-${ year }`;
+		case 'dd-mm-yyyy':
+		case 'd-m-Y':
+			return `${ day }-${ month }-${ year }`;
+		case 'dd/mm/yyyy':
+		case 'd/m/Y':
+			return `${ day }/${ month }/${ year }`;
+		case 'mm/dd/yyyy':
+		case 'm/d/Y':
+			return `${ month }/${ day }-${ year }`;
+		default:
+			return `${ year }-${ month }-${ day }`; // Default format to the standard
+	}
+} 
 
 //total script
 //total script
@@ -1436,6 +1561,87 @@ function triggerSubmit(type, dom, element, item, calcId) {
 				elementsComment[calcId].splice(index, 1)
 			}
 			break
+		case 11:
+			//Element date range
+			const container = dom.closest( '.scc-form-field-item-control' );
+			const startDate = container.querySelector( '.scc-start-date' );
+			const startDateTime = container.querySelector( '.scc-start-date  + .time-input' );
+			const endDate = container.querySelector( '.scc-end-date' );
+			const endDateTime = container.querySelector( '.scc-end-date  + .time-input' );
+			const flatPickerConfig = startDate._flatpickr.config;
+			const { dateRangePricingStructure, subsectionId } = container.dataset;
+			// const subsectionId = sliderNode.getAttribute( 'data-subId' );
+
+			var formatDate = sccData[ calcId ]?.config?.pdf?.dateFormat ?? 'yyyy-mm-dd';
+			var price = container.querySelector( '.scc-date-cost-per-date' ).value;
+			var qnt = 1;
+			// get the dates from the input fields
+			const startDateVal = new Date( sccStandardDateFormat( startDate.value, formatDate ) );
+			const endDateVal = new Date( sccStandardDateFormat( endDate.value, formatDate ) );
+			startDateVal.setHours( 0, 0, 0, 0 );
+			endDateVal.setHours( 0, 0, 0, 0 );
+			if ( startDate.value ) {
+				const min_end_date = new Date( startDateVal.getTime() );
+				const min_end_date_string = min_end_date.toISOString().slice( 0, 10 );
+				endDate.setAttribute( 'min', min_end_date_string );
+				const event = new Event( 'sccMinChanged' );
+				endDate.dispatchEvent( event );
+			} else {
+				endDate.setAttribute( 'min', '' );
+			}
+			//validate if the start date is greater than the end date
+			var date = '';
+			if ( startDate.value != '' && endDate.value != '' ) {
+				let { includeDays } = startDate.dataset;
+				includeDays = includeDays ? includeDays.split( ', ' ) : [];
+				const allDays = [ 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat' ];
+				const excludedDays = allDays.filter( ( day ) => ! includeDays.includes( day ) );
+				const { numberOfExcludedDays } = sccUtils.countExcludedDaysInDatePicker( startDateVal, endDateVal, flatPickerConfig.disable, excludedDays );
+				const totalExcludedDays = numberOfExcludedDays;
+				if ( startDateVal > endDateVal ) {
+					container.querySelector( '.scc-end-date' ).value = startDate.value;
+					const warningNode = container.querySelector( '.scc-err-date-range' );
+					warningNode.classList.remove( 'scc-d-none' );
+
+					date = '';
+					setTimeout( () => {
+						warningNode.classList.add( 'scc-d-none' );
+					}, 5000 );
+					return;
+				}
+				const difference = ( endDateVal - startDateVal ) - ( totalExcludedDays * 24 * 60 * 60 * 1000 );
+				qnt = Math.floor( difference / ( 1000 * 60 * 60 * 24 ) ) + 1;
+				const fromTime = startDateTime?.value;
+				const toTime = endDateTime?.value;
+				let fromDate = sccFormatStringDate( sccStandardDateFormat( startDate.value, formatDate ), formatDate );
+				let toDate = sccFormatStringDate( sccStandardDateFormat( endDate.value, formatDate ), formatDate );
+				if ( fromTime ) {
+					fromDate = `${ fromDate } ${ fromTime }`;
+				}
+				if ( toTime ) {
+					toDate = `${ toDate } ${ toTime }`;
+				}
+
+				date = `${ sccGetTranslationByKey( calcId, 'From' ) } ${ fromDate } ${ sccGetTranslationByKey( calcId, 'To' ) } ${ toDate }`;
+			}
+			var o = [ element, date, price, qnt, dateRangePricingStructure, subsectionId ];
+			var ss = elementDate[ calcId ].find( ( e ) => e[ 0 ] == element );
+			if ( ss ) {
+				ss[ 1 ] = date;
+				ss[ 2 ] = price;
+				ss[ 3 ] = qnt;
+				ss[ 4 ] = dateRangePricingStructure;
+				ss[ 5 ] = subsectionId;
+			} else {
+				elementDate[ calcId ].push( o );
+			}
+			//if (!date) elementDate[calcId].splice(ss, 1);
+			if ( ! date ) {
+				var index = elementDate[ calcId ].indexOf( ss );
+				elementDate[ calcId ].splice( index, 1 );
+			}
+
+			break;	
 	}
 	checkConditions(calcId)
 	/**
@@ -1521,6 +1727,7 @@ function triggerSubmit(type, dom, element, item, calcId) {
 				itemsTotal[calcId].push(o)
 			}
 		}
+
 		/**
 		 * *For Checkboxes
 		 */
@@ -1620,8 +1827,9 @@ function triggerSubmit(type, dom, element, item, calcId) {
 				showSectionTotalOnPdf: secs.showSectionTotalOnPdf
 			});
 		}
-		sub.forEach(subs => {
-			var elmts = subs.element
+		sub.forEach( ( subs, subIndex ) => {
+			var elmts = subs.element;
+			const countElmts = elmts.length;
 			elementsTotal[calcId].forEach(et => {
 				var itemOne = []
 				var f = elmts.find(el1 => el1.id == et[0])
@@ -1633,6 +1841,12 @@ function triggerSubmit(type, dom, element, item, calcId) {
 						qt = scs[1]
 					}
 				})
+				elementDate[ calcId ].forEach( ( scs ) => {
+					const g = elmts.find( ( itt ) => itt.subsection_id == scs[ 5 ] );
+					if ( g && [ 'quantity_modifier_and_unit_price', 'quantity_mod' ].includes( scs[ 4 ] ) ) {
+						qt = scs[ 3 ];
+					}
+				} );
 				if (f) { //quantity box
 					tot = parseFloat(tot) + parseFloat(f.value2) * (parseFloat(et[1]) * qt)
 					itemOne["id_element"] = f.id
@@ -1734,13 +1948,14 @@ function triggerSubmit(type, dom, element, item, calcId) {
 				/** if the current element is a dropdown, add dropdownTitle property to it's items
 				 * to reference it in webhook as a title of the dropdown and the choice items name
 				 */
-				if (itms.type == "Dropdown Menu") {
+				 if (itms.type == "Dropdown Menu") {
 					itms.elementitems = itms.elementitems.map(elementitem => {
 						elementitem.dropdownTitle = itms.titleElement
 						elementitem.showTitlePdf = itms.showTitlePdf
 						return elementitem
 					})
 				}
+
 				var num = 0
 				/**
 				 * *Multiplies the number of items in the same subsection
@@ -1752,11 +1967,74 @@ function triggerSubmit(type, dom, element, item, calcId) {
 						q = scs[1]
 					}
 				})
-				var items = itms.elementitems
-				itemsTotal[calcId].forEach(it => {
+				elementDate[ calcId ].forEach( ( scs ) => {
+					const g = elmts.find( ( itt ) => itt.subsection_id == scs[ 5 ] );
+					if ( g && [ 'quantity_modifier_and_unit_price', 'quantity_mod' ].includes( scs[ 4 ] ) ) {
+						q = scs[ 3 ];
+					}
+				} );
+
+				if (itms.type == "date" || itms.type == "date range") {
+					var items = [itms];
+					//return;
+				} else {
+					var items = itms.elementitems;
+				}
+
+			    elementDate[ calcId ].forEach( ( edd ) => {
+					let dateType = 'date';
+					let priceDate = 0;
+					let priceDateTotal = 0;
+					let numDays = 0;
+					if ( edd[ 2 ] ) {
+						dateType = 'date range';
+						numDays = ( [ 'quantity_modifier_and_unit_price', 'quantity_mod' ].includes( edd[ 4 ] ) ) ? q : ( edd[ 3 ] * q );
+						priceDate = edd[ 2 ];
+						priceDateTotal = ( edd[ 2 ] * numDays ) / parseFloat( countElmts );
+					}
+					const itemOne = [];
+					const f = elmts.find( ( el1 ) => el1.id == edd[ 0 ] );
+					if ( f ) {
+						tot =  edd[ 2 ] * numDays;
+						itemOne.id_element = f.id;
+						itemOne.qtn = numDays;
+						itemOne.name = f.titleElement;
+						itemOne.type = dateType;
+						itemOne.description = edd[ 1 ];
+						itemOne.price = priceDate;
+						itemOne.parentSectionId = secs.id;
+						itemOne.subSectionIndex = subIndex;
+						itemOne.calculationType = edd[ 4 ];
+						itemOne.woo_commerce = {
+							product_id: parseInt( f.element_woocomerce_product_id ) || 0,
+							quantity: parseFloat( itemOne.qtn ),
+						};
+						if ( f.displayDetailList == 0 ) {
+							itemOne.displayDetailList = true;
+						} else {
+							itemOne.displayDetailList = false;
+						}
+						if ( f.showTitlePdf == 1 ) {
+							itemOne.showTitlePdf = true;
+						} else {
+							itemOne.showTitlePdf = false;
+						}
+						if ( itemsArray[ calcId ].findIndex( ( e ) => e.id_element == f.id ) < 0 ) {
+							if ( f.uniqueId ) {
+								itemOne.uniqueId = f.uniqueId;
+							} else {
+								console.error( 'uniqueId is not set' );
+							}
+							itemsArray[ calcId ].push( itemOne );
+						}
+                    }
+				} );
+                
+ 			    itemsTotal[calcId].forEach(it => {
 					var itemOne = []
-					var f = items.find(el2 => itms.type == 'checkbox' ? 'chkbx-' + el2.id == it : el2.id == it)
-					if (f) {
+				    var f = items.find(el2 => itms.type == 'checkbox' ? 'chkbx-' + el2.id == it : el2.id == it);
+
+				    if (f) {
 						num = f.price
 						tot = parseFloat(tot) + parseFloat(num) * q
 						itemOne["id_elementItem"] = f.id
@@ -1777,9 +2055,9 @@ function triggerSubmit(type, dom, element, item, calcId) {
 					}
 				});
 			});
-		});
-		// totalSec = totalNew            
-		secOne["id"] = secs.id
+        });
+
+	    secOne["id"] = secs.id
 		secOne["total"] = tot
 		secOne["math"] = maths
 		arraySectItems[calcId].push(secOne)
@@ -1793,7 +2071,7 @@ function triggerSubmit(type, dom, element, item, calcId) {
 	arraySectItems[calcId].forEach(element => {
 		var totalOld = element.total
 		var totalNew = 0
-		var adsdas = totalOld % 10
+        var adsdas = totalOld % 10
 		if (element.math.length > 0) {
 			element.math.forEach(m => {
 				if (m.value == "") {
@@ -1936,7 +2214,7 @@ function triggerSubmit(type, dom, element, item, calcId) {
 	itemsOrdered.forEach((e) => {
 		let res = itemsArray[calcId].find((eq) => {
 			let resp = false;
-			if (e.type == "Dropdown Menu" || e.type == "checkbox") {
+		    if (e.type == "Dropdown Menu" || e.type == "checkbox") {
 				if (e.type == "checkbox") {
 					resp = e.id == eq.id_elementItem;
 				} else {
@@ -1967,6 +2245,7 @@ function triggerSubmit(type, dom, element, item, calcId) {
 	sccData[calcId].stripeCart = buildStripeData(rawItems)
 	sccData[calcId].pdf = buildDetailViewData(sortedItems, sccData[calcId].config.formname, totalTotal[calcId], calcId, tax_vat, taxParcent, subTotalBeforeTax, couponData, total_converted)
 }
+
 //handles mandatory items
 function verifiedMandatoryItems(calcId) {
 	var container = document.querySelector("#scc_form_" + calcId)
@@ -2028,8 +2307,7 @@ function verifiedMandatoryItems(calcId) {
 			nextSiblingElement.classList.add( 'scc-d-flex' );
 		}
 
-
-		if (i == 0) {
+        if (i == 0) {
 			jQuery([document.documentElement, document.body]).animate({
 				scrollTop: jQuery("#ssc-elmt-" + oppo[calcId][i]).offset().top - 50
 			}, 1000);
@@ -2042,6 +2320,51 @@ function verifiedMandatoryItems(calcId) {
 	}
 }
 
+// convert a date string to a standard format yyyy-mm-dd
+function sccStandardDateFormat( inputDate, format ) {
+	let day, month, year;
+	//removing the hours from the date for calculations or conditions
+	inputDate = inputDate.split( ' ' )[ 0 ];
+	inputDate = inputDate.trimEnd();
+
+	switch ( format ) {
+		case 'dd-mm-yyyy':
+		case 'd-m-Y':
+			[ day, month, year ] = inputDate.split( '-' );
+			break;
+		case 'mm-dd-yyyy':
+		case 'm-d-Y':
+			[ month, day, year ] = inputDate.split( '-' );
+			break;
+		case 'yyyy-mm-dd':
+		case 'Y-m-d':
+			[ year, month, day ] = inputDate.split( '-' );
+			break;
+		case 'dd/mm/yyyy':
+		case 'd/m/Y':
+			[ day, month, year ] = inputDate.split( '/' );
+			break;
+		case 'mm/dd/yyyy':
+		case 'm/d/Y':
+			[ month, day, year ] = inputDate.split( '/' );
+			break;
+		case 'yyyy/mm/dd':
+		case 'Y/m/d':
+			[ year, month, day ] = inputDate.split( '/' );
+			break;
+		default:
+			console.error( 'Invalid format provided.' );
+			return;
+	}
+	// Validate the parsed date parts
+	const dateObj = new Date( year, month - 1, day );
+	if ( dateObj.getFullYear() !== parseInt( year ) || dateObj.getMonth() + 1 !== parseInt( month ) || dateObj.getDate() !== parseInt( day ) ) {
+		return inputDate;
+	}
+	// Return in the standard format
+	return `${ year }-${ String( month ).padStart( 2, '0' ) }-${ String( day ).padStart( 2, '0' ) }`;
+}
+
 function mandatory_elements() {
 	let mandatories = []
 	Object.keys(sccData).forEach(function (calcId) {
@@ -2051,7 +2374,6 @@ function mandatory_elements() {
 			s.subsection.forEach(su => {
 				su.element.forEach(e => {
 					if (e.mandatory == "1" 
-						&& e.type != "date" 
 						&& e.type != "texthtml" 
 						&& e.type != "math" 
 						&& e.type != "distance"
@@ -2230,6 +2552,32 @@ function buildDetailViewData(rawData, formname, total, calcId, taxAmount = 0, ta
 					woo_commerce: e.woo_commerce
 				}
 			}
+		} else if ( e?.type == 'date' ) {
+			return {
+				type: 'date',
+				attr: {
+					name: e.name,
+					uniqueId: e?.uniqueId,
+					description: e.description,
+					displayPdf: e.showTitlePdf,
+					woo_commerce: e.woo_commerce,
+				},
+			};
+		} else if ( e?.type == 'date range' ) {
+			return {
+				type: 'date_range',
+				attr: {
+					name: e.name,
+					description: e.description,
+					total_price,
+					uniqueId: e?.uniqueId,
+					unit: parseInt( e.qtn ),
+					unit_price,
+					value: parseFloat( e.price ),
+					woo_commerce: e.woo_commerce,
+					numeric_value: parseInt( e.qtn ) * parseFloat( e.price ),
+				},
+			};
 		}
 		return {
 			type: "element",
@@ -2498,6 +2846,8 @@ function getCurrency(dataScc) {
 	}
 }
 
+
+
 /**
  * *Display sign in amounts in slider
  * !needs to be used in total value, currently static
@@ -2620,5 +2970,351 @@ function changeButtonToogle(element) {
 		jQuery(element).parent().addClass("clicked-buttom-checkbox")
 	} else {
 		jQuery(element).parent().removeClass("clicked-buttom-checkbox")
+	}
+}
+
+/**
+ * Initialize flatpickr datepickers for the given formId.
+ * To disable the "today" date, we add a function to the disable array that returns true for today's date.
+ * @param formId
+ */
+function sccFlatpickrInit( formId ) {
+
+    const sccDatePickers = document.querySelectorAll( '.scc-datepicker' );
+	const { config } = sccData[ formId ];
+	sccDatePickers.forEach( async ( e ) => {
+		let dateFormat = config?.pdf?.dateFormat ?? 'yyyy-mm-dd';
+		const { flatpickr_localization: flatpickrLocalization } = config;
+		let localizationFile = flatpickrLocalization ? flatpickrLocalization : 'en';
+		// Replace capital letters with small letters, and add a - if replaced letter is not the first letter
+		localizationFile = localizationFile.replace( /[A-Z]/g, ( match, offset ) => {
+			return offset === 0 ? match.toLowerCase() : '-' + match.toLowerCase();
+		} ) + '.js';
+		const localizationKey = flatpickrLocalization ? flatpickrLocalization.replace( /[A-Z]/g, ( match, offset ) => {
+			return offset === 0 ? match.toLowerCase() : '_' + match.toLowerCase();
+		} ) : 'en';
+
+		if ( localizationFile === 'uz-latn.js' ) {
+			localizationFile = 'uz_latn.js';
+		}
+
+		dateFormat = sccFlatpickrFormatDate( dateFormat );
+		let minDate = ( e.getAttribute( 'min' ) === 'today' ) ? e.getAttribute( 'min' ) : sccFormatStringDate( e.getAttribute( 'min' ), dateFormat );
+		const maxDate = ( e.getAttribute( 'max' ) === 'today' ) ? e.getAttribute( 'max' ) : sccFormatStringDate( e.getAttribute( 'max' ), dateFormat );
+
+		const defaultValue = e.value;
+		const disabledDate = e.getAttribute( 'data-disabled-dates' );
+		const disablePastDays = Number( e.getAttribute( 'data-disable-past-days' ) );
+		const disableTodayDate = Number( e.getAttribute( 'data-disable-today-date' ) );
+		const enableLimitDays = e.getAttribute( 'data-enable_limit_days' );
+		let includeDays = e.getAttribute( 'data-include-days' );
+		const dayToNumber = {
+			Sun: 0,
+			Mon: 1,
+			Tue: 2,
+			Wed: 3,
+			Thu: 4,
+			Fri: 5,
+			Sat: 6,
+		};
+
+		if ( includeDays ) {
+			includeDays = includeDays.split( ', ' ).map( ( day ) => dayToNumber[ day ] );
+		}
+
+		if ( disablePastDays ) {
+			minDate = 'today';
+		}
+
+		// Prepare disabled dates array
+		const rawDisabledDatesArray = disabledDate.split( ', ' );
+		const formattedDisabledDatesArray = rawDisabledDatesArray.map( ( dateStr ) => sccFormatStringDate( dateStr, dateFormat ) );
+
+		// Disable days not in includeDays if enableLimitDays is set
+		if ( enableLimitDays && includeDays ) {
+			formattedDisabledDatesArray.push( function( date ) {
+				return ! includeDays.includes( date.getDay() );
+			} );
+		}
+
+		// Disable today's date by adding a function to the disable array
+		if ( disableTodayDate ) {
+			formattedDisabledDatesArray.push( function( date ) {
+				const today = new Date();
+				// Compare year, month, and date to match today
+				return (
+					date.getFullYear() === today.getFullYear() &&
+				date.getMonth() === today.getMonth() &&
+				date.getDate() === today.getDate()
+				);
+			} );
+		}
+
+		const lang = ( ( navigator.language || navigator.userLanguage ) || '' ).substr( 0, 2 );
+		const timepicker = e.nextElementSibling;
+		let localizationConfig = null;
+		// Dynamically import localization if not English
+		if ( localizationFile !== 'en.js' ) {
+			localizationConfig = await import( 'flatpickr/dist/l10n/' + localizationFile ).then( ( module ) => module.default );
+		}
+		// Initialize flatpickr with the updated disable array
+	    const picker = new flatpickr( e, {
+			dateFormat,
+			locale: localizationConfig ? localizationConfig[ localizationKey ] : 'en',
+			minDate,
+			maxDate,
+			disable: formattedDisabledDatesArray,
+			plugins: [ sccCloseButtonPlugin( {}, formId ), sccClearButtonPlugin( {}, formId ) ],
+			disableMobile: true,
+			onChange: ( selectedDates, dateStr, instance ) => {
+				e.value = dateStr;
+				const formId = e.getAttribute( 'data-formid' );
+				const elementId = e.getAttribute( 'data-elementid' );
+				const elementType = parseInt( e.getAttribute( 'data-elementtype' ) );
+
+				if ( timepicker && timepicker.classList.contains( 'time-input' ) ) {
+					timepicker.value = '';
+					// Reset the tomselect in timepicker
+					if ( timepicker?.tomselect ) {
+						timepicker.tomselect.clear();
+					}
+					if ( timepicker?.tomselect && selectedDates.length > 0 ) {
+						timepicker.tomselect.enable();
+					} else if ( timepicker?.tomselect ) {
+						timepicker.tomselect.disable();
+					}
+				}
+
+				triggerSubmit( elementType, e, elementId, 0, formId );
+			},
+		} );
+
+		if ( timepicker?.tomselect ) {
+			timepicker.tomselect.disable();
+		}
+		if ( ! defaultValue ) {
+			timepicker && timepicker.setAttribute( 'data-empty-date', 1 );
+		}
+		e.readOnly = true;
+		if ( defaultValue ) {
+			picker.setDate( defaultValue, true, 'Y-m-d' );
+		}
+		picker.calendarContainer.classList.add( 'scc-flatpickr-' + formId );
+
+		e.addEventListener( 'sccMinChanged', function() {
+			try {
+				const newMin = sccFormatStringDate( e.getAttribute( 'min' ), dateFormat );
+				if ( typeof picker !== 'undefined' ) {
+					picker.set( 'minDate', newMin );
+				}
+			} catch ( error ) {
+				// Error handling can be added here if needed
+			}
+		} );
+		if ( timepicker && timepicker.classList.contains( 'time-input' ) ) {
+		    timepicker.addEventListener( 'change', function( { target } ) {
+				const timeValue = target.value;
+				const formId = e.getAttribute( 'data-formid' );
+				const elementId = e.getAttribute( 'data-elementid' );
+				const elementType = parseInt( e.getAttribute( 'data-elementtype' ) );
+
+				triggerSubmit( elementType, e, elementId, 0, formId, { isTime: true, timeValue } );
+			} );
+		}
+	} );
+}
+window.sccFlatpickrInit = sccFlatpickrInit;
+
+window.sccInitTimePicker = ( formId ) => {  
+	const calcWrapper = sccUtils.getCalcWrapper( formId );
+	const sccTimePickers = calcWrapper.querySelectorAll( '.time-input' );
+	sccTimePickers.forEach( ( e ) => {
+		let { timeFormat, startTwelveHourHour, startTwelveHourMinutes, startAmPm,
+			endTwelveHourHour, endTwelveHourMinutes, timeInterval, endAmPm, startTwentyFourHourHour,
+			startTwentyFourHourMinutes, endTwentyFourHourHour, endTwentyFourHourMinutes, limitHours, emptyDate } = e.dataset;
+		function generateTimeArray24h( startHour, startMinutes, endHour, endMinutes, intervalMinutes ) {
+			const times = [];
+			let currentHour = parseInt( startHour );
+			let currentMinutes = parseInt( startMinutes );
+			const endTotalMinutes = parseInt( endHour ) * 60 + parseInt( endMinutes );
+
+			while ( ( currentHour * 60 + currentMinutes ) <= endTotalMinutes ) {
+			  times.push( `${ String( currentHour ).padStart( 2, '0' ) }:${ String( currentMinutes ).padStart( 2, '0' ) }` );
+			  currentMinutes += intervalMinutes;
+			  if ( currentMinutes >= 60 ) {
+					currentHour += Math.floor( currentMinutes / 60 );
+					currentMinutes %= 60;
+			  }
+			}
+			return times;
+		  }
+
+		  function convertTo24HourFormat( hour, minutes, amPm ) {
+			hour = parseInt( hour );
+			minutes = parseInt( minutes );
+			if ( amPm === 'PM' && hour !== 12 ) {
+			  hour += 12;
+			}
+			if ( amPm === 'AM' && hour === 12 ) {
+			  hour = 0;
+			}
+			return { hour, minutes };
+		  }
+
+		  function generateTimeArray12h( startHour, startMinutes, startAmPm, endHour, endMinutes, endAmPm, intervalMinutes ) {
+			const times = [];
+			let { hour: currentHour, minutes: currentMinutes } = convertTo24HourFormat( startHour, startMinutes, startAmPm );
+			const { hour: endHour24, minutes: endMinutes24 } = convertTo24HourFormat( endHour, endMinutes, endAmPm );
+			const endTotalMinutes = endHour24 * 60 + endMinutes24;
+
+			while ( ( currentHour * 60 + currentMinutes ) <= endTotalMinutes ) {
+			  const displayHour = currentHour % 12 === 0 ? 12 : currentHour % 12;
+			  const displayAmPm = currentHour < 12 || currentHour === 24 ? 'AM' : 'PM';
+			  times.push( `${ displayHour }:${ String( currentMinutes ).padStart( 2, '0' ) } ${ displayAmPm }` );
+			  currentMinutes += intervalMinutes;
+			  if ( currentMinutes >= 60 ) {
+					currentHour += Math.floor( currentMinutes / 60 );
+					currentMinutes %= 60;
+			  }
+			}
+
+			return times;
+		  }
+
+		  const timeIntervalMinutes = parseInt( timeInterval );
+
+		  if ( Number( limitHours ) === 0 ) {
+			startTwentyFourHourHour = 0;
+			endTwentyFourHourHour = 23;
+			startTwentyFourHourMinutes = 0;
+			endTwentyFourHourMinutes = 0;
+			startTwelveHourHour = 12;
+			endTwelveHourHour = 11;
+			startTwelveHourMinutes = 0;
+			endTwelveHourMinutes = 0;
+			startAmPm = 'AM';
+			endAmPm = 'PM';
+		  }
+
+		  if ( timeFormat === '24h' ) {
+			const times24h = generateTimeArray24h(
+			  startTwentyFourHourHour,
+			  startTwentyFourHourMinutes,
+			  endTwentyFourHourHour,
+			  endTwentyFourHourMinutes,
+			  timeIntervalMinutes,
+			);
+			const options = times24h.map( ( time ) => ( { value: time, text: time } ) );
+			const twelveHourTomSelect = new TomSelect( e, {
+				options,
+				maxItems: null,
+				create: false,
+				maxItems: 1,
+				maxOptions: 'null',
+				hideSelected: true,
+				controlInput: false,
+			} );
+			if ( Number( emptyDate ) === 1 ) {
+				twelveHourTomSelect.disable();
+			}
+			twelveHourTomSelect.on( 'item_add', function() {
+				twelveHourTomSelect.blur();
+			} );
+		  } else if ( timeFormat === '12h' ) {  
+			const times12h = generateTimeArray12h(
+			  startTwelveHourHour,
+			  startTwelveHourMinutes,
+			  startAmPm,
+			  endTwelveHourHour,
+			  endTwelveHourMinutes,
+			  endAmPm,
+			  timeIntervalMinutes,
+			);
+			
+			const options = times12h.map( ( time ) => ( { value: time, text: time } ) );
+		    const twentyFourHourTomSelect = new TomSelect( e, {
+				options,
+				maxItems: null,
+				create: false,
+				maxItems: 1,
+				maxOptions: 'null',
+				hideSelected: true,
+				controlInput: false,
+			} );
+			twentyFourHourTomSelect.on( 'item_add', function() {
+				twentyFourHourTomSelect.blur();
+			} );
+		  }
+	} );
+};
+
+const sccUtils = {
+    countExcludedDaysInDatePicker: ( start, end, datesExcluded, excludedDays = [] ) => {
+		// prevent mutation of the start and end dates
+		start = new Date( start );
+		end = new Date( end );
+		const dayToNumber = {
+			Sun: 0,
+			Mon: 1,
+			Tue: 2,
+			Wed: 3,
+			Thu: 4,
+			Fri: 5,
+			Sat: 6,
+		};
+		let numberOfExcludedDays = 0;
+		const datesExcludedUnix = datesExcluded.map( ( date ) => new Date( date ).getTime() );
+		// Loop through each date in the range
+		while ( start <= end ) {
+			if ( datesExcludedUnix.includes( start.getTime() ) ) {
+				numberOfExcludedDays++;
+			}
+			// increase the count of the day of the week
+			switch ( start.getDay() ) {
+				case ( dayToNumber.Sun ):
+					if ( excludedDays.includes( 'Sun' ) ) {
+						numberOfExcludedDays++;
+					}
+					break;
+				case dayToNumber.Mon:
+					if ( excludedDays.includes( 'Mon' ) ) {
+						numberOfExcludedDays++;
+					}
+					break;
+				case dayToNumber.Tue:
+					if ( excludedDays.includes( 'Tue' ) ) {
+						numberOfExcludedDays++;
+					}
+					break;
+				case dayToNumber.Wed:
+					if ( excludedDays.includes( 'Wed' ) ) {
+						numberOfExcludedDays++;
+					}
+					break;
+				case dayToNumber.Thu:
+					if ( excludedDays.includes( 'Thu' ) ) {
+						numberOfExcludedDays++;
+					}
+					break;
+				case dayToNumber.Fri:
+					if ( excludedDays.includes( 'Fri' ) ) {
+						numberOfExcludedDays++;
+					}
+					break;
+				case dayToNumber.Sat:
+					if ( excludedDays.includes( 'Sat' ) ) {
+						numberOfExcludedDays++;
+					}
+					break;
+			}
+			// Move to the next day
+			start.setDate( start.getDate() + 1 );
+		}
+		return {
+			numberOfExcludedDays,
+		};
+	},
+	getCalcWrapper: ( calcId ) => {
+		return document.querySelector( `#scc_form_${ calcId }` );
 	}
 }

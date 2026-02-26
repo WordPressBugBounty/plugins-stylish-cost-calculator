@@ -727,8 +727,7 @@ if ( ! class_exists( 'googlefonts_scc' ) ) {
 			$http = ( ! empty( $_SERVER['HTTPS'] ) ) ? 'https' : 'http';
 			$url  = $http . '://fonts.googleapis.com/css';
 			$url .= $this->get_api_query( $fonts );
-			// echo "<link rel='stylesheet' id='font-style-cc-css'  href='" . $url . "' type='text/css' media='all' />";
-			return $url;
+			echo "<link rel='stylesheet' id='font-style-cc-css'  href='" . esc_url( $url ) . "' type='text/css' media='all' />";
 		}
 
 		function enqueue_fonts_style( $fonts = array() ) {

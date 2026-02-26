@@ -32,6 +32,7 @@ class ajaxRequest {
             add_action( 'wp_ajax_sccAddElementFileUpload', [ $this, 'scc_addElementFileUpload' ] );
 
             add_action( 'wp_ajax_sccAddElementTextHtml', [ $this, 'scc_addElementTextHtml' ] );
+            add_action( 'wp_ajax_sccAddElementDate', [ $this, 'scc_AddElementDate' ] );
             add_action( 'wp_ajax_sccAddElementSlider', [ $this, 'scc_addElementSlider' ] );
             add_action( 'wp_ajax_sccSaveSection', [ $this, 'scc_saveSection' ] );
             add_action( 'wp_ajax_sccDelSection', [ $this, 'scc_delSection' ] );
@@ -61,6 +62,7 @@ class ajaxRequest {
             // add_action('wp_ajax_sccMigrateManual', array($this, 'scc_migrateManual'));
             // update section order
             add_action( 'wp_ajax_sccUpdateSectionOrder', [ $this, 'scc_updateSectionOrder' ] );
+            add_action( 'wp_ajax_scc_update_value_6_by_id', [ $this, 'update_value_6_by_id' ] );
 
             add_action( 'wp_ajax_sccPDFSettings', [ $this, 'sccPDFSettings' ] );
             add_action( 'wp_ajax_scc_feedback_manage', [ $this, 'sccFeedbackManage' ] );
@@ -76,12 +78,18 @@ class ajaxRequest {
             add_action( 'wp_ajax_scc_ai_wizard_add_elements', [ $this, 'scc_ai_wizard_add_elements' ] );
             add_action( 'wp_ajax_scc_ai_wizard_add_calculator_settings', [ $this, 'scc_ai_wizard_add_calculator_settings' ] );
             add_action( 'wp_ajax_scc_ai_check_license', [ $this, 'scc_ai_check_license' ] );
+            add_action( 'wp_ajax_scc_get_smtp_status', [$this, 'ajax_get_smtp_status'] );
+            add_action( 'wp_ajax_scc_get_email_log_status', [$this, 'ajax_get_email_log_status'] );
+            add_action( 'wp_ajax_scc_check_woocommerce_config', [$this, 'ajax_check_woocommerce_config'] );
             add_action( 'wp_ajax_scc_ai_check_credits', [ $this, 'scc_ai_check_credits' ] );
             add_action( 'wp_ajax_scc_ai_get_site_info_with_ai', [ $this, 'scc_ai_get_site_info_with_ai' ] );
             add_action( 'wp_ajax_scc_sync_wizard_suggestions_state', [ $this, 'sync_wizard_suggestions_state' ] );
             add_action( 'wp_ajax_scc_skip_welcome_modal', [ $this, 'skip_welcome_modal' ] );
 
             add_action( 'wp_ajax_scc_update_calculator_data_schema', [ $this, 'scc_update_calculator_data_schema' ] );
+
+            add_action( 'wp_ajax_scc_get_icon_list', [ $this, 'scc_get_icon_list' ] );
+            add_action( 'wp_ajax_scc_get_edit_page_calc_config', [ $this, 'get_edit_page_calc_config' ] );
         }
 
         // public ajax calls
@@ -1603,6 +1611,37 @@ class ajaxRequest {
         );
         die();
     }
+
+    public function scc_addElementDate() {
+        
+        check_ajax_referer( 'edit-calculator-page', 'nonce' );
+        require_once __DIR__ . '/admin/controllers/elementController.php';
+        require_once __DIR__ . '/admin/models/editElementModel.php';
+        $edit_page_func      = new Stylish_Cost_Calculator_Edit_Page( 0, true );
+        $elementC            = new elementController();
+        $el['orden']         = intval( $_GET['order'] );
+        $el['titleElement']  = 'Title';
+        $el['type']          = 'date';
+        $el['subsection_id'] = intval( $_GET['id_sub'] );
+        $element_id          = $elementC->create( $el );
+        $el['id']            = $element_id;
+        
+        $body                = $edit_page_func->renderDate( (object) $el, [ 1 => [] ] ) . $edit_page_func->renderElementLoader();
+        $html                = $edit_page_func->renderAdvancedOptions( (object) $el );
+        
+        ( $element_id ) ? wp_send_json(
+            [
+                'passed'     => true,
+                'id_element' => $element_id,
+                'DOMhtml'    => [
+                    'body'              => $body,
+                    'advanced_settings' => $html,
+                ],
+            ]
+        ) : wp_send_json( [ 'passed' => false ] );
+        die();
+    }
+
     public function scc_addElementTextHtml() {
         check_ajax_referer( 'edit-calculator-page', 'nonce' );
         require_once __DIR__ . '/admin/controllers/elementController.php';
@@ -1876,6 +1915,33 @@ class ajaxRequest {
         );
         die();
     }
+    public function update_value_6_by_id() {
+        check_ajax_referer( 'edit-calculator-page', 'nonce' );
+        require_once __DIR__ . '/admin/controllers/elementController.php';
+        $element_controller  = new elementController();
+        $element_id          = intval( $_REQUEST[ 'elementId' ] );
+        $incoming_data       = json_decode( file_get_contents( 'php://input' ), true );
+        $element_values      = $element_controller->read( $element_id );
+        $current_value6_data = json_decode( stripslashes( $element_values->value6 ), true );
+        $value6_default      = DF_SCC_ELEMENT_DEFAULT_VALUES['date-picker-element']['advanced']['value6'];
+
+        if ( ! $current_value6_data ) {
+            $current_value6_data = $value6_default;
+        }
+        // strip the keys in $current_value6_data if it matches the keys of $incoming_data
+        foreach ( $current_value6_data as $key => $value ) {
+            if ( array_key_exists( $key, $incoming_data ) ) {
+                unset( $current_value6_data[ $key ] );
+            }
+        }
+        $updated_data        = wp_parse_args( array_merge( $incoming_data, $current_value6_data ), $value6_default );
+        $el                  = [
+            'id'     => $element_id,
+            'value6' => wp_slash( wp_json_encode( $updated_data ) ),
+        ];
+        $element_controller->update( $el );
+        wp_send_json_success( [ 'ok' => 'ok' ] );
+    }
     public function scc_upElement() {
         check_ajax_referer( 'edit-calculator-page', 'nonce' );
         require_once __DIR__ . '/admin/controllers/elementController.php';
@@ -1904,6 +1970,47 @@ class ajaxRequest {
 
         if ( isset( $_GET['value5'] ) ) {
             $el['value5'] = sanitize_text_field( $_GET['value5'] );
+        }
+
+         if ( isset( $_GET['value6'] ) ) {
+            if ( is_array( $_GET['value6'] ) && !in_array( 'default_from_address', array_keys( $_GET['value6'] ) ) && !in_array( 'image_aspect_ratio', array_keys( $_GET['value6'] ) ) ) {
+                $current_value6_data = json_decode( stripslashes( $elementC->read( $el['id'] )->value6 ), true );
+                $value6_default      = DF_SCC_ELEMENT_DEFAULT_VALUES['date-picker-element']['advanced']['value6'];
+                $incoming_data       = $_GET['value6'];
+                // strip the keys in $current_value6_data if it matches the keys of $incoming_data
+
+                if ( is_array( $current_value6_data ) ) {
+                    foreach ( $current_value6_data as $key => $value ) {
+                        if ( array_key_exists( $key, $incoming_data ) ) {
+                            unset( $current_value6_data[ $key ] );
+                        }
+                    }
+                } else {
+                    $current_value6_data = [];
+                }
+                $incoming_data       = is_array( $incoming_data ) ? $incoming_data : [];
+                $current_value6_data = is_array( $current_value6_data ) ? $current_value6_data : [];
+                $value6_default      = is_array( $value6_default ) ? $value6_default : [];
+                $updated_data        = wp_parse_args( array_merge( $incoming_data, $current_value6_data ), $value6_default );
+                // $sccDateConfigArray with wp_parse_args
+                $sccDateConfigArray  = $updated_data;
+                // sanitize all values in $sccDateConfigArray
+                $sccDateConfigArray  = array_map(
+                    function ( $value ) {
+                        return sanitize_text_or_array_field( $value );
+                    },
+                    $sccDateConfigArray
+                );
+                $el['value6'] = wp_slash( wp_json_encode( $sccDateConfigArray ) );
+            } elseif ( is_array( $_GET['value6'] ) && in_array( 'default_from_address', array_keys( $_GET['value6'] ) ) ) {
+                $sccDistanceConfigArray = wp_parse_args( $_GET['value6'], [ 'default_from_address' => '', 'default_from_place' => '' ] );
+                $el['value6']           = wp_slash( wp_json_encode( $sccDistanceConfigArray ) );
+            } elseif ( is_array( $_GET['value6'] ) && in_array( 'image_aspect_ratio', array_keys( $_GET['value6'] ) ) ) {
+                $sccImageConfigArray = wp_parse_args( $_GET['value6'], [ 'image_aspect_ratio' => '', 'image_height' => '' ] );
+                $el['value6']        = wp_slash( wp_json_encode( $sccImageConfigArray ) );
+            } else {
+                $el['value6'] = sanitize_text_field( $_GET['value6'] );
+            }
         }
 
         if ( isset( $_GET['mandatory'] ) ) {
@@ -2127,26 +2234,40 @@ class ajaxRequest {
     public function scc_saveFormNameSettings() {
         check_ajax_referer( 'edit-calculator-page', 'nonce' );
         require_once __DIR__ . '/admin/controllers/formController.php';
-        $formC                  = new formController();
-        $f['id']                = intval( $_POST['id_form'] );
-        $f['formname']          = sanitize_text_field( $_POST['data']['formname'] );
-        $f['elementSkin']       = sanitize_text_field( $_POST['data']['elementSkin'] );
-        $f['addContainer']      = sanitize_text_field( $_POST['data']['addContainer'] );
-        $f['buttonStyle']       = sanitize_text_field( $_POST['data']['buttonStyle'] );
-        $f['turnoffemailquote'] = sanitize_text_field( $_POST['data']['turnoffemailquote'] );
-        $f['turnviewdetails']   = sanitize_text_field( $_POST['data']['turnviewdetails'] );
-        $f['turnoffcoupon']     = sanitize_text_field( $_POST['data']['turnoffcoupon'] );
-        $f['barstyle']          = sanitize_text_field( $_POST['data']['barstyle'] );
-        $f['turnofffloating']   = sanitize_text_field( $_POST['data']['turnofffloating'] );
-        $f['removeTitle']       = sanitize_text_field( $_POST['data']['removeTitle'] );
-        $f['turnoffUnit']       = sanitize_text_field( $_POST['data']['turnoffUnit'] );
-        $f['turnoffQty']        = sanitize_text_field( $_POST['data']['turnoffQty'] );
-        $f['turnoffSave']       = sanitize_text_field( $_POST['data']['turnoffSave'] );
-        $f['turnoffTax']        = sanitize_text_field( $_POST['data']['turnoffTax'] );
-        $f['symbol']            = sanitize_text_field( $_POST['data']['symbol'] );
-        $f['removeCurrency']    = sanitize_text_field( $_POST['data']['removeCurrency'] );
-        $f['userCompletes']     = sanitize_text_field( $_POST['data']['userCompletes'] );
-        $f['userClicksf']       = sanitize_text_field( $_POST['data']['userClicksf'] );
+        $formC                   = new formController();
+        $f['id']                 = intval( $_POST['id_form'] );
+        $f['formname']           = sanitize_text_field( $_POST['data']['formname'] );
+        $f['elementSkin']        = sanitize_text_field( $_POST['data']['elementSkin'] );
+        $f['addContainer']       = sanitize_text_field( $_POST['data']['addContainer'] );
+        $f['buttonStyle']        = sanitize_text_field( $_POST['data']['buttonStyle'] );
+        $f['turnoffemailquote']  = sanitize_text_field( $_POST['data']['turnoffemailquote'] );
+        $f['turnviewdetails']    = sanitize_text_field( $_POST['data']['turnviewdetails'] );
+        $f['turnoffcoupon']      = sanitize_text_field( $_POST['data']['turnoffcoupon'] );
+        $f['barstyle']           = sanitize_text_field( $_POST['data']['barstyle'] );
+        $f['turnofffloating']    = sanitize_text_field( $_POST['data']['turnofffloating'] );
+        $f['removeTitle']        = sanitize_text_field( $_POST['data']['removeTitle'] );
+        $f['turnoffUnit']        = sanitize_text_field( $_POST['data']['turnoffUnit'] );
+        $f['turnoffQty']         = sanitize_text_field( $_POST['data']['turnoffQty'] );
+        $f['turnoffSave']        = sanitize_text_field( $_POST['data']['turnoffSave'] );
+        $f['turnoffTax']         = sanitize_text_field( $_POST['data']['turnoffTax'] );
+        $f['symbol']             = sanitize_text_field( $_POST['data']['symbol'] );
+        $f['removeCurrency']     = sanitize_text_field( $_POST['data']['removeCurrency'] );
+        $f['userCompletes']      = sanitize_text_field( $_POST['data']['userCompletes'] );
+        $f['userClicksf']        = sanitize_text_field( $_POST['data']['userClicksf'] );
+        $f['inheritFontType']    = sanitize_text_field( $_POST['data']['inheritFontType'] );
+        $f['titleFontSize']      = sanitize_text_field( $_POST['data']['titleFontSize'] );
+        $f['titleFontType']      = sanitize_text_field( $_POST['data']['titleFontType'] );
+        $f['titleFontWeight']    = sanitize_text_field( $_POST['data']['titleFontWeight'] );
+        $f['titleColorPicker']   = sanitize_text_field( $_POST['data']['titleColorPicker'] );
+        $f['ServicefontSize']    = sanitize_text_field( $_POST['data']['ServicefontSize'] );
+        $f['fontType']           = sanitize_text_field( $_POST['data']['fontType'] );
+        $f['fontWeight']         = sanitize_text_field( $_POST['data']['fontWeight'] );
+        $f['ServiceColorPicker'] = sanitize_text_field( $_POST['data']['ServiceColorPicker'] );
+        $f['objectSize']         = sanitize_text_field( $_POST['data']['objectSize'] );
+        $f['objectColorPicker']  = sanitize_text_field( $_POST['data']['objectColorPicker'] );
+        $f['ctaBtnColorPicker']  = sanitize_text_field( $_POST['data']['ctaBtnColorPicker'] );
+        $f['cta_btn_text_color']  = sanitize_text_field( $_POST['data']['cta_btn_text_color'] );
+
         $f['translation']       = sanitize_text_field( $_POST['translations'] );
         $f['wrapper_max_width'] = absint( $_POST['data']['calcWrapperMaxWidth'] );
         $request                = $formC->update( $f );
@@ -2463,6 +2584,59 @@ class ajaxRequest {
             $decoded_response = json_decode( wp_remote_retrieve_body( $response ), true );
             wp_send_json( $decoded_response );
         }
+    }
+
+    public function ajax_get_email_log_status() {
+        // Verify nonce
+        check_ajax_referer( 'edit-calculator-page', 'nonce' );
+
+        $log_file           = wp_upload_dir()['basedir'] . '/scc-logs/scc-email-quote.log';
+        $has_error_or_alert = false;
+        $last_message       = '';
+
+        if ( file_exists( $log_file ) ) {
+            $log_content = file_get_contents( $log_file );
+            $log_lines   = explode( "\n", $log_content );
+
+            // Filter out empty lines and get non-empty lines
+            $log_lines = array_filter( $log_lines, function ( $line ) {
+                return ! empty( trim( $line ) );
+            } );
+
+            if ( ! empty( $log_lines ) ) {
+                // Get the last line
+                $last_line    = trim( end( $log_lines ) );
+                $last_message = $last_line;
+
+                // Check if last message is ERROR or ALERT
+                if ( strpos( $last_line, 'ERROR:' ) === 0 || strpos( $last_line, 'ALERT:' ) === 0 ) {
+                    $has_error_or_alert = true;
+                }
+            }
+        }
+
+        // Also check SMTP status
+        require_once SCC_DIR . '/utils/class-scc-smtp-checker.php';
+        $smtp_data = SCC_SMTP_Checker::get_smtp_status_data();
+        $has_smtp  = $smtp_data['has_smtp'] ?? false;
+
+        wp_send_json_success( [
+            'has_error_or_alert' => $has_error_or_alert,
+            'last_message'       => $last_message,
+            'has_smtp'           => $has_smtp,
+            'is_configured'      => $smtp_data['is_configured'] ?? false,
+        ] );
+    }
+
+    public function ajax_get_smtp_status() {
+        // Verify nonce
+        check_ajax_referer( 'edit-calculator-page', 'nonce' );
+
+        // Include the SMTP checker class
+        require_once SCC_DIR . '/utils/class-scc-smtp-checker.php';
+
+        $smtp_data = SCC_SMTP_Checker::get_smtp_status_data();
+        wp_send_json_success( $smtp_data );
     }
 
     public function scc_ai_check_credits() {
@@ -3182,6 +3356,33 @@ class ajaxRequest {
         }
     }
 
+    //load the icon list from the json files
+    public function scc_get_icon_list() {
+        try {
+            check_ajax_referer( 'edit-calculator-page', 'nonce' );
+
+            if ( isset( $_REQUEST['type'] ) && $_REQUEST['type'] == 'fa' ) {
+                $icons = file_get_contents( SCC_URL . 'assets/scc_icons/font-awesome-solid.json' );
+                $icons = json_decode( $icons, true );
+                wp_send_json_success( $icons );
+            }
+
+            if ( isset( $_REQUEST['type'] ) && $_REQUEST['type'] == 'material' ) {
+                $icons = file_get_contents( SCC_URL . 'assets/scc_icons/material-icons-outlined.json' );
+                $icons = json_decode( $icons, true );
+                wp_send_json_success( $icons );
+            }
+            // by default load font-awesome icons
+            if ( isset( $_REQUEST['type'] ) && empty( $_REQUEST['type'] ) ) {
+                $icons = file_get_contents( SCC_URL . 'assets/scc_icons/font-awesome-solid.json' );
+                $icons = json_decode( $icons, true );
+                wp_send_json_success( $icons );
+            }
+        } catch ( Exception $e ) {
+            wp_send_json( [ 'status' => 'failed', 'message' => 'Error: ' . $e->getMessage() ] );
+        }
+    }
+
     private function scc_get_request_ip() {
         $ip_headers = [
             'HTTP_CLIENT_IP',
@@ -3236,6 +3437,85 @@ class ajaxRequest {
         }
 
         return 'unknown';
+    }
+
+    public function get_edit_page_calc_config() {
+        check_ajax_referer( 'edit-calculator-page', 'nonce' );
+        require_once __DIR__ . '/admin/controllers/formController.php';
+        $calc_id = intval( $_REQUEST['calc_id'] );
+
+        try {
+            $calculatorC = new formController();
+            $formData    = $calculatorC->readWithRelations( $calc_id );
+            require_once __DIR__ . '/frontend/controllers/frontendController.php';
+            $frontendController = new SccFrontendController( $calc_id, $formData );
+            $config             = $frontendController->get_config( $formData, true );
+            wp_send_json_success( $config['scc_config'] );
+        } catch ( \Throwable $th ) {
+            wp_send_json_error( $th->getMessage() );
+        }
+    }
+
+    /**
+     * Check WooCommerce configuration status for the calculator.
+     * Returns information about whether WooCommerce products are properly configured.
+     *
+     * @return void
+     */
+    public function ajax_check_woocommerce_config() {
+        check_ajax_referer( 'edit-calculator-page', 'nonce' );
+
+        $form_id = isset( $_POST['form_id'] ) ? intval( $_POST['form_id'] ) : 0;
+
+        if ( $form_id === 0 ) {
+            wp_send_json_error( [ 'message' => 'Invalid form ID' ] );
+            return;
+        }
+
+        global $wpdb;
+
+        // Get form data
+        $form = $wpdb->get_row( $wpdb->prepare(
+            "SELECT isWoocommerceCheckoutEnabled, combine_checkout_items, combine_checkout_woocommerce_product_id
+            FROM {$wpdb->prefix}df_scc_forms WHERE id = %d",
+            $form_id
+        ) );
+
+        if ( ! $form ) {
+            wp_send_json_error( [ 'message' => 'Form not found' ] );
+            return;
+        }
+
+        $is_woocommerce_active = is_plugin_active( 'woocommerce/woocommerce.php' );
+        $is_woocommerce_checkout_enabled = $form->isWoocommerceCheckoutEnabled === 'true';
+        $is_combined_checkout = ! empty( $form->combine_checkout_items ) && $form->combine_checkout_items;
+        $combined_product_id = intval( $form->combine_checkout_woocommerce_product_id );
+
+        // Default status
+        $has_config_issue = false;
+        $issue_type = '';
+        $message = '';
+
+        // Only check if WooCommerce checkout is enabled and combined checkout is active
+        // Note: The "no products linked" case is handled by handleWoocommerceValidation in JavaScript
+        if ( $is_woocommerce_active && $is_woocommerce_checkout_enabled && $is_combined_checkout ) {
+            // Combined checkout is enabled - check if product is selected
+            if ( $combined_product_id === 0 ) {
+                $has_config_issue = true;
+                $issue_type = 'combined_checkout_no_product';
+                $message = 'Combined Line Items is enabled but no WooCommerce product is selected for checkout.';
+            }
+        }
+
+        wp_send_json_success( [
+            'has_config_issue'               => $has_config_issue,
+            'issue_type'                     => $issue_type,
+            'message'                        => $message,
+            'is_woocommerce_active'          => $is_woocommerce_active,
+            'is_woocommerce_checkout_enabled' => $is_woocommerce_checkout_enabled,
+            'is_combined_checkout'           => $is_combined_checkout,
+            'combined_product_id'            => $combined_product_id,
+        ] );
     }
 }
 new ajaxRequest();

@@ -1,5 +1,50 @@
 <?php
 
+const DF_SCC_DEFAULT_FORM_FIELDS = [
+    0 => [
+        'name' => [
+            'name'                      => 'Your Name',
+            'description'               => 'Type in your name',
+            'type'                      => 'text',
+            'isMandatory'               => true,
+            'useSeparateFields'         => false,
+            'firstNameFieldLabel'       => 'First Name',
+            'firstNameFieldDescription' => 'First Name',
+            'lastNameFieldLabel'        => 'Last Name',
+            'lastNameFieldDescription'  => 'Last Name',
+            'trnKey'                    => 'Your Name',
+            'typeSwitchingAllowed'      => false,
+            'isDefaultField'            => true,
+            'view_state'                => true,
+            'deletable'                 => false,
+        ],
+    ],
+    1 => [
+        'email' => [
+            'name'                 => 'Your Email',
+            'description'          => 'Type in your email',
+            'type'                 => 'email',
+            'isMandatory'          => true,
+            'trnKey'               => 'Your Email',
+            'typeSwitchingAllowed' => false,
+            'isDefaultField'       => true,
+            'deletable'            => false,
+        ],
+    ],
+    2 => [
+        'phone' => [
+            'name'                 => 'Your Phone',
+            'description'          => 'phone',
+            'type'                 => 'phone',
+            'isMandatory'          => false,
+            'trnKey'               => 'Your Phone (Optional)',
+            'typeSwitchingAllowed' => false,
+            'isDefaultField'       => true,
+            'deletable'            => true,
+        ],
+    ],
+];
+
 define(
     'SCC_HELPDESK_LINKS',
     [
@@ -89,6 +134,39 @@ define(
         'feature-backup-restore'                 => 'https://help.stylishcostcalculator.com/en/article/backup-restore-backup-your-calculator-instance-or-transfer-your-calculator-to-another-site-154ny5y/',
         ]
 );
+
+define( 'DF_SCC_ELEMENT_DEFAULT_VALUES', [
+    'date-picker-element' => [
+        'advanced' => [
+            'value6' => [
+                'min_date'                      => '',
+                'max_date'	                     => '',
+                'disable_weekends'              => 0,
+                'disabled_date'                 => '',
+                'disable_today_date'            => 0,
+                'date_range_pricing_structure'  => 'unit_price_only',
+                'disable_past_days'             => 0,
+                'enable_limit_days'             => 1,
+                'limit_days'                    => [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ],
+                'date_type'                     => 'date_picker',
+                'enable_time_picker'            => 0,
+                'time_interval'                 => '60m',
+                'time_format'                   => '12h',
+                'limit_hours'                   => 1,
+                'limit_hours_start_12h_hour'    => 9,
+                'limit_hours_start_12h_minutes' => 0,
+                'limit_hours_start_am_pm'       => 'AM',
+                'limit_hours_end_12h_hour'      => 6,
+                'limit_hours_end_12h_minutes'   => 0,
+                'limit_hours_end_am_pm'         => 'PM',
+                'limit_hours_start_24h_hour'    => 9,
+                'limit_hours_start_24h_minutes' => 0,
+                'limit_hours_end_24h_hour'      => 18,
+                'limit_hours_end_24h_minutes'   => 0,
+            ],
+        ],
+    ],
+] );
 
 define(
     'SCC_ELEMENT_TYPES',

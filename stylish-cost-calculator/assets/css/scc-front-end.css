@@ -2393,6 +2393,95 @@ button.close {
   color: white;
 }
 
+.scc-date-range-column:has(.scc-start-date) {
+    padding-left: 0 !important;
+    padding-right: 5px !important;
+}
+
+.scc-date-input-field {
+  width:100% !important;
+  border-radius:12px !important;
+  border: #E8E8E8 2px solid!important; 
+  padding:12px !important; 
+  min-height:50px;
+  line-height: normal !important;
+}
+
+.scc-form-field-item-control .time-input.ts-wrapper .ts-control {
+  min-height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding-top: 10px;
+}
+
+.form-select-tom .ts-control,
+.time-input .ts-control {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 16px 12px;
+  padding: 10px;
+  line-height: normal;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: #E8E8E8 2px solid;
+  border-radius: 12px;
+  min-height: 60px;
+  align-items: center;
+}
+
+.scc-flatpickr-clear{
+  margin-left:10px;
+  float:left;
+  background: #314af3;
+  color: white;
+  border-radius: 5px;
+}
+.scc-flatpickr-close{
+  margin-right:10px;
+  float:right;
+  background: #f1f1f1;
+  color: white;
+  border-radius: 5px;
+}
+
+.scc-flatpickr-clear,  .scc-flatpickr-close, .scc-flatpickr-today{
+  margin-bottom: 10px;
+  border-radius: 5px;
+  display: inline-block;
+  padding: 1px 10px;
+  cursor: pointer;
+}
+.scc-flatpickr-today{
+  margin-left:10px;
+  float:left;
+  background: #f1f1f1;
+}
+
+.scc-datepicker, .scc-datepicker-modal {
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAYUlEQVR4nGNgGEBwlIGB4TAV1WGA/1BMLXVg4MXAwPAYSdN/EjFIryc+Cygx/D8UPyLGu5TiEWABueD/qAWEwGgQEQSjQUS9ILJhIB3YEmMBzYtrT6gCSgz3IMP3DCMYAAD8jK0gGoDnGgAAAABJRU5ErkJggg==) !important;
+  background-position: right center !important;
+  background-repeat: no-repeat !important;
+  background-size: 18px !important;
+  background-origin: content-box !important;
+}
+
+.scc-flatpickr-clear, .scc-flatpickr-close {
+  margin-bottom: 10px;
+  border-radius: 5px;
+  display: inline-block;
+  padding: 1px 10px;
+  cursor: pointer;
+}
+
+.scc-form-field-item-control .scc-date-input-field {
+  float: left;
+  margin-right: 10px !important;
+}
+
+
 /* Form field siyle 1, style 2 */
 .scc-form-field-item {
   margin-top: 20px;
@@ -7387,7 +7476,7 @@ textarea.comment_box_text::placeholder {
   width: 20px;
   top: 20px;
   background-repeat: no-repeat;
-  background-image: url(data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-search'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E);
+  /*background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-search'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='M21 21l-4.35-4.35'/%3E%3C/svg%3E");*/
 }
 
 .scc-dropdown-opt-title {
@@ -7406,7 +7495,12 @@ textarea.comment_box_text::placeholder {
 }
 
 .form-select-tom .ts-dropdown-content {
-  max-height: 350px;
+   max-height: 350px;
+}
+
+.ts-wrapper.time-input {
+   position: static !important;
+   margin-top: 60px;
 }
 
 .ts-wrapper.single .ts-control,
@@ -7477,4 +7571,20 @@ textarea.comment_box_text::placeholder {
 
 .scc-custom-html img{
   max-width: 100%;
+}
+
+/*
+* end of checkbox column for style 1
+*/
+.df-scc-image-buttons input[type=checkbox][id^=btn_image_],
+.ts-control > input[disabled],
+.df-scc-image-buttons input[type=radio][id^=btn_image_],
+.scc-d-none,
+.scc-vmath-has-linked-items-only,
+.scc-section-hidden,
+.scc-conditional-hidden,
+.scc-multi-page-total-hidden,
+.scc-multi-page-last-prev-hidden,
+.scc-progressbar-style-3-hidden {
+  display: none !important;
 }

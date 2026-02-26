@@ -330,5 +330,5 @@ class SCC_SMTP_Checker {
                 ];
             }
         }
-    }
+    } 
 }

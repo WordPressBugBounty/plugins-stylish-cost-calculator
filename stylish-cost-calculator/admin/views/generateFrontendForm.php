@@ -2,6 +2,70 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
+
+if ( ! function_exists( 'get_scc_font_variables' ) ) {
+	function get_scc_font_variables( $form, $no_gfont_css_output = false ) {
+		require SCC_DIR . '/lib/wp-google-fonts/google-fonts.php';
+		
+		$form->showFieldsQuoteArray = json_decode( stripslashes( ! empty( $form->showFieldsQuoteArray ) ? $form->showFieldsQuoteArray : '' ), true );
+		$allfonts2                  = json_decode( $scc_googlefonts_var->gf_get_local_fonts() );
+		$allfonts2i                 = $allfonts2->items;
+		$fontUsed2                  = ! empty( $form->titleFontType ) || '0' === $form->titleFontType ? $allfonts2i[ $form->titleFontType ] : $allfonts2i['432'];
+		$fontUsed2Variant           = ( $form->titleFontWeight != '' ) ? $form->titleFontWeight : 'regular';
+
+		/**
+		 * *Title font
+		 */
+		$fontFamilyService2 = 'inherit';
+		$fontFamilyTitle2   = 'inherit';
+        
+		$gdpr_mode = (bool) intval( get_option( 'df_scc_gdpr_mode', 0 ) );
+		
+		if ( $gdpr_mode ) {
+			$form->inheritFontType = 'true';
+		}
+
+		if ( $form->inheritFontType == 'null' || $form->inheritFontType == 'false' ) {
+			$fonts[0]['kind']     = $fontUsed2->kind;
+			$fonts[0]['family']   = $fontUsed2->family;
+			$fonts[0]['variants'] = [ $fontUsed2Variant ];
+			$fonts[0]['subsets']  = $fontUsed2->subsets;
+			$fontFamilyTitle2     = $fonts[0]['family'];
+	
+			if ( ! $no_gfont_css_output ) {
+				$scc_googlefonts_var->style_late( $fonts ); //load google fonts css
+			}
+		}
+		/**
+		 * *Service font
+		 */
+		$allfonts3i       = $allfonts2->items;
+		$fontUsed3        = ! empty( $form->fontType ) || '0' === $form->fontType ? $allfonts3i[ $form->fontType ] : $allfonts2i['432'];
+		$fontUsed3Variant = ( $form->fontWeight != '' ) ? $form->fontWeight : 'regular';
+
+		if ( $form->inheritFontType == 'null' || $form->inheritFontType == 'false' ) {
+			$fonts2[0]['kind']     = $fontUsed3->kind;
+			$fonts2[0]['family']   = $fontUsed3->family;
+			$fonts2[0]['variants'] = [ $fontUsed3Variant ];
+			$fonts2[0]['subsets']  = $fontUsed3->subsets;
+			$fontFamilyService2    = $fonts2[0]['family'];
+
+			if ( ! $no_gfont_css_output ) {
+				$scc_googlefonts_var->style_late( $fonts2 ); //load google fonts css
+			}
+		}
+		/**
+		 * *Object font
+		 */
+		$scc_font_variables = [
+			'fontFamilyTitle2'   => $fontFamilyTitle2,
+			'fontFamilyService2' => $fontFamilyService2,
+		];
+
+		return $scc_font_variables;
+	}
+}
+
 $isSCCFreeVersion      = defined( 'STYLISH_COST_CALCULATOR_VERSION' );
 $defaultFields         = json_decode( '[{"name":{"name":"Your Name","description":"Type in your name","type":"text","isMandatory":null,"trnKey":"Your Name","deletable":false}},{"email":{"name":"Your Email","description":"Type in your email","type":"email","isMandatory":null,"trnKey":"Your Email","deletable":false}},{"phone":{"name":"Your Phone","description":"phone","type":"phone","isMandatory":null,"trnKey":"Your Phone (Optional)","deletable":false}}]', true );
 $formFieldsArray       = empty( $form->formFieldsArray ) ? $defaultFields : json_decode( $form->formFieldsArray, true );
@@ -75,6 +139,56 @@ $webhookSettings = [
 $translateArray = $form->translation;
 $translateArray = json_decode( stripslashes( $translateArray ) );
 
+ // Render the datepicker css and js if not already loaded
+if ( ! function_exists( 'scc_date_picker_css_js_loader' ) ) {
+	function scc_date_picker_css_js_loader() {
+		// Get the browser language.
+		$lang = isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ? substr( $_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2 ) : 'en';
+		// Define the path to the l10n files
+		$l10n_path = SCC_URL . 'lib/flatpickr/js/l10n/';
+
+		// Check if the l10n file exists for the language
+		if ( file_exists( SCC_DIR . '/lib/flatpickr/js/l10n/' . $lang . '.js' ) ) {
+			wp_enqueue_script( 'scc-flatpickr-' . $lang, $l10n_path . $lang . '.js', [], scc_get_file_version( SCC_DIR . '/lib/flatpickr/js/l10n/' . $lang . '.js' ), true );
+		}
+	}
+}
+
+// Render title icon and trigger the icon libraries to load
+if ( ! function_exists( 'scc_print_title_icon' ) ) {
+	function scc_print_title_icon( $element ) {
+		$icon_rendered   = '';
+		$scc_icon_config = wp_parse_args(
+			json_decode( wp_unslash( ! empty( $element->titleIconConfigArray ) ? $element->titleIconConfigArray : '' ), true ),
+			''
+		);
+
+		if ( ! empty( $scc_icon_config ) ) {
+			if ( $scc_icon_config['type'] === 'img' ) {
+				$icon_rendered  = '<span class="scc-icon-wrapper">';
+				$icon_rendered .= '<img style="max-width:22px;" src="' . $scc_icon_config['image_icon'] . '" alt="' . $scc_icon_config['type'] . '">';
+				$icon_rendered .= '</span>';
+			}
+
+			if ( $scc_icon_config['type'] === 'icon-font' ) {
+				$icon_rendered  = '<span class="scc-icon-wrapper">';
+				$icon_rendered .= $scc_icon_config['icon_html'];
+				$icon_rendered .= '</span>';
+
+				if ( strpos( $scc_icon_config['icon_class'], 'scc-material-icon' ) !== false ) {
+					load_material_icons();
+				}
+
+				if ( strpos( $scc_icon_config['icon_class'], 'scc-fontawesome' ) !== false ) {
+					load_font_awesome_icons();
+				}
+			}
+		}
+
+		return $icon_rendered;
+	}
+}
+
 if ( ! function_exists( 'getTranslatables' ) ) {
     function getTranslatables( $translateArray ) {
         $arrt = [];
@@ -92,6 +206,12 @@ if ( ! function_exists( 'getTranslatables' ) ) {
     }
 }
 ( $translateArray != null || $translateArray != '' ) ? $transletables = getTranslatables( $translateArray ) : $transletables = [];
+
+$price_range_total_settings_default = [ 'rangePercent' => '0' ];
+$price_range_total_settings         = wp_parse_args( $price_range_total_settings_default );
+
+$fontFamily = get_scc_font_variables($form); 
+ 
 $sccConfig                                                            = [
     'form_id'                       => $form->id,
     'formname'                      => $form->formname,
@@ -100,13 +220,13 @@ $sccConfig                                                            = [
     'title'                         => [
         'color'       => $form->titleColorPicker,
         'size'        => $form->titleFontSize,
-        'font_family' => $fontFamilyTitle2,
+        'font_family' => $fontFamily['fontFamilyTitle2'],
         'font_weight' => $form->titleFontWeight,
     ],
     'service'                       => [
         'color'        => $form->ServiceColorPicker,
         'size'         => $form->ServicefontSize,
-        'font_familly' => $fontFamilyService2,
+        'font_familly' => $fontFamily['fontFamilyService2'],
         'font_weight'  => $form->fontWeight,
     ],
 
@@ -121,8 +241,8 @@ $sccConfig                                                            = [
     'isTotalBarHidden'                  => $form->removeTotal === 'true',
 
     'fontConfig'                    => [
-        'serviceFont'     => $fontFamilyService2,
-        'titleFont'       => $fontFamilyTitle2,
+        'serviceFont'     => $fontFamily['fontFamilyService2'],
+        'titleFont'       => $fontFamily['fontFamilyTitle2'],
         'googleFontLinks' => $google_font_links,
     ],
     'objectColor'                   => $form->objectColorPicker,
@@ -167,9 +287,11 @@ $sccConfig                                                            = [
     'stripePubKey'                  => $stripeConfig['pubKey'],
     'preCheckoutQuoteForm'          => $form->preCheckoutQuoteForm == 'true' ? true : false,
     'coupon'                        => '',
+	'priceRangeTotalSettings'       => $price_range_total_settings
 ];
 $calc_wrapper_max_width = isset( $form->wrapper_max_width ) ? $form->wrapper_max_width . 'px' : '800px';
 $wrapper_styles         = defined( 'DOING_AJAX' ) ? '' : "style=\"max-width:$calc_wrapper_max_width\"";
+$scc_format_date              = $sccConfig['pdf']['dateFormat'] ?? 'yyyy-mm-dd';
 ?>
 <script id="scc-config-<?php echo intval( $form->id ); ?>" type="text/json">
 	<?php echo json_encode( $sccConfig ); ?>
@@ -177,7 +299,8 @@ $wrapper_styles         = defined( 'DOING_AJAX' ) ? '' : "style=\"max-width:$cal
 <script>
 	// create data object and mount current calculator
 	var formId = <?php echo intval( $form->id ); ?>;
-	/**
+    
+    /**
 	 * *Gives style to title section elements
 	 */
 	  </script>
@@ -208,17 +331,19 @@ if ( $form->elementSkin == 'style_2' ) {
 foreach ( $form->sections as $index => $section ) {
     $accordion_index = $index . '-' . intval( $form->id );
     $section_class   = ['scc-title-s'];
-
-    if ( empty( $section->name ) ) {
+    $section_attributes       = [];
+    $section_attributes       = array_merge( $section_attributes, [ 'data-section-index' => $accordion_index ] );
+    $section_attributes       = array_merge( $section_attributes, [ 'data-section-id' => $section->id ] );
+	
+	if ( empty( $section->name ) ) {
         $section_class[] = 'scc-empty-title';
     }
-    $hasAccordion    = $section->accordion == 'true' ? true : false;
-    ?>
+    $hasAccordion    = $section->accordion == 'true' ? true : false;    ?>
 		<?php if ( $hasAccordion ) { ?>
 			<div class="scc-accordion" id="section_<?php echo esc_attr( $accordion_index ); ?>" style="color:white !important;overflow: hidden;"><?php echo esc_attr( $section->name ); ?></div>
 		<?php } ?>
 		<?php if ( ! $hasAccordion ) { ?>
-			<div class="<?php echo esc_attr( join( ' ', $section_class ) ); ?>" id="section_title_<?php echo $accordion_index; ?>"> <?php echo esc_attr( wp_unslash( $section->name ) ); ?></div>
+			<div class="<?php echo esc_attr( join( ' ', $section_class ) ); ?>" id="section_title_<?php echo $accordion_index; ?>" <?php echo df_scc_escaped_output_attr_collection( $section_attributes ); ?>> <?php echo esc_attr( wp_unslash( $section->name ) ); ?></div>
 			<?php if ( $section->name ) { ?>
 			<div class="scc-title-s-hr"></div>
 			<?php } ?>
@@ -235,7 +360,7 @@ foreach ( $form->sections as $index => $section ) {
         $class_names[] = 'scc-empty-description';
     }
     ?>
-		<div class="<?php echo esc_attr( join( ' ', $class_names ) ); ?>">
+		<div id= 'section_desc_<?php echo $accordion_index ?>' class="<?php echo esc_attr( join( ' ', $class_names ) ); ?>" <?php echo df_scc_escaped_output_attr_collection( $section_attributes ); ?>>
 			<?php echo wp_kses( wp_unslash( $section->description ), SCC_ALLOWTAGS ); ?>
 		</div>
 		<?php foreach ( $section->subsection as $sub ) { ?>
@@ -245,6 +370,19 @@ foreach ( $form->sections as $index => $section ) {
          * apply custom column to the element if there are column value defined for mobile and desktop view
          */
         $applyCustomColumn = ( $form->elementSkin == 'style1' ) && ( $el->titleColumnDesktop > 0 && $el->titleColumnDesktop <= 12 ) && ( $el->titleColumnMobile > 0 && $el->titleColumnMobile <= 12 );
+        
+		/**
+		* Handling tooltip configuration, the table will have a column named 'tooltiptext' which will contain the tooltip configuration,
+		* in a JSON format from version 8.2.3 onwards. But, for the old version 'tooltip' column will contain the tooltip text
+		*/
+		$tooltip_defaults = [
+			'title'     => empty( $el->tooltiptext ) ? '' : stripslashes( $el->tooltiptext ),
+			'content'   => '',
+			'image'     => '',
+			'btn_label' => '',
+			'btn_link'  => '',
+		];
+		$tooltip_config = wp_parse_args( json_decode( wp_unslash(  ! empty( $el->tooltip_config_array ) ? $el->tooltip_config_array : '' ), true ), $tooltip_defaults );
 
         if ( $applyCustomColumn ) {
             $firstColumnSize        = intval( $el->titleColumnDesktop );
@@ -735,7 +873,6 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 								<option value="null" class="scc-tom-select-placeholder scc-pick-an-option">Choose an option...</option>
 								<?php
 						        for ( $i = 0; $i < count( $el->elementitems ); $i++ ) {
-						            //print_r($el->elementitems[$i]);
 						            ?>
 									<option 
 										data-title="<?php echo  wp_kses( $el->elementitems[ $i ]->name, SCC_ALLOWTAGS ); ?>"
@@ -842,7 +979,7 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 					<?php
         }
 
-        if ( $el->type == 'comment box' ) {
+		if ( $el->type == 'comment box' ) {
             ?>
 					<?php if ( $applyCustomColumn ) { ?>
 					<div id="ssc-elmt-<?php echo intval( $el->id ); ?>" class="scc-form-field-item 
@@ -888,7 +1025,8 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
         }
 
         if ( $el->type == 'quantity box' ) {
-            $min_value           = ( isset( $el->value4 ) && $el->value4 !== '' ) ? intval( $el->value4 ) : 0;
+            $input_default_value = empty( $el->value4 ) ? 'value=' . 0 : 'value=' . intval( $el->value4 );
+			$min_value           = ( isset( $el->value4 ) && $el->value4 !== '' ) ? intval( $el->value4 ) : 0;
             $max_value           = ( isset( $el->value3 ) && $el->value3 !== '' ) ? intval( $el->value3 ) : null;
             $input_default_value = 'value=' . $min_value;
             $min_attr            = 'min=' . $min_value;
@@ -978,6 +1116,9 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 									data-value="1"
 									<?php echo esc_attr( $min_attr ); ?>
 									<?php echo esc_attr( $max_attr ); ?>
+
+
+
 							<?php echo esc_attr( $input_default_value ); ?>
 >
 					<?php } else { ?>
@@ -1010,6 +1151,260 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 			<?php echo scc_frontend_alerts( 'mandatory-element' ); ?>
 					<?php
         }
+
+		if ( $el->type == 'date' ) {
+                $scc_date_config_default      = DF_SCC_ELEMENT_DEFAULT_VALUES['date-picker-element']['advanced']['value6'];
+                scc_date_picker_css_js_loader();
+                $current_values               = json_decode( wp_unslash( !empty( $el->value6 ) ? $el->value6 : '' ), true );
+
+                if ( !isset( $current_values[ 'limit_days' ] ) &&
+                     !empty( $current_values['disable_weekends'] ) &&
+                     $current_values['disable_weekends'] === 'true' ) {
+                    $current_values['limit_days'] = [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri' ];
+                }
+                $scc_date_config = wp_parse_args(
+                    json_decode( wp_unslash( !empty( $el->value6 ) ? $el->value6 : '' ), true ),
+                    $scc_date_config_default
+                );
+                // create an array where the keys with limit_hours_ prefix are kept, underscores are replaced with dashes, 12 is replaced with 'twelve' and 24 is replaced with 'twenty-four' and a 'data-' prefix is added
+                $scc_date_config_hours = array_combine(
+                    array_map(
+                        function ( $key ) {
+                            return 'data-' . str_replace( [ 'limit_hours_', '_', '12h', '24h' ], [ '', '-', 'twelve-hour', 'twenty-four-hour' ], $key );
+                        },
+                        array_keys( array_filter( $scc_date_config, function ( $key ) {
+                            if ( in_array( $key, ['time_format', 'time_interval', 'limit_hours'] ) ) {
+                                return true;
+                            }
+
+                            return strpos( $key, 'limit_hours_' ) === 0;
+                        }, ARRAY_FILTER_USE_KEY ) )
+                    ),
+                    array_filter( $scc_date_config, function ( $key ) {
+                        if ( in_array( $key, ['time_format', 'time_interval', 'limit_hours'] ) ) {
+                            return true;
+                        }
+
+                        return strpos( $key, 'limit_hours_' ) === 0;
+                    }, ARRAY_FILTER_USE_KEY )
+                );
+
+                ?>
+				<?php if ( $applyCustomColumn ) { ?>
+				<div id="ssc-elmt-<?php echo intval( $el->id ); ?>" data-typeelement="<?php echo esc_attr( $el->type ); ?>" class="scc-form-field-item
+												<?php
+											echo $style_scc_calculator;
+					echo $hasAccordion ? ' scc-accordion-panel section_' . $accordion_index : '';
+
+					if ( $scc_disable_flex ) {
+						echo ' scc-d-block clearfix';
+					}
+					?>
+						">
+					<label class="<?php echo "scc-col-sm-$firstMobileColumnSize scc-col-md-$firstColumnSize scc-col-lg-$firstColumnSize scc-p-0"; ?> scc_font_45 scc-form-field-item-label" for="selectbasic"><?php echo scc_print_title_icon( $el ); ?><?php echo stripslashes( wp_kses( $el->titleElement, SCC_ALLOWTAGS ) ); ?> <span 
+												<?php
+					if ( $tooltip_config['title'] == null || $tooltip_config['title'] == '' ) {
+						echo 'style="display:none;"';
+					}
+					?>
+						class="scc-tooltip2" tooltip="<?php echo esc_attr( json_encode( $tooltip_config ) ); ?>" flow="right"><i class="scc-info-icon"><?php echo scc_get_kses_extended_ruleset( $scc_icons['help'] ); ?></i></span></label>
+					<div 
+						class="control-label <?php echo "scc-col-sm-$secondMobileColumnSize scc-col-md-$secondColumnSize scc-col-lg-$secondColumnSize scc-p-0";
+					echo $scc_date_config['enable_time_picker'] ? ' scc-has-time-picker' : ' '; ?> scc_select_opt scc-form-field-item-control"
+						data-date-range-pricing-structure="<?php echo esc_attr( $scc_date_config['date_range_pricing_structure'] ); ?>"
+						data-subsection-id="<?php echo intval( $el->subsection_id ); ?>"
+						style="padding:0px">
+						<?php if ( $el->value1 != 'date_range' ) { ?>
+						<!-- single date input -->
+						<input type="text" 
+							placeholder="<?php echo esc_attr( $scc_format_date ); ?>"
+							min="<?php echo esc_attr( $scc_date_config['min_date'] ); ?>"
+							max="<?php echo esc_attr( $scc_date_config['max_date'] ); ?>"
+							data-disable-past-days="<?php echo esc_attr( $scc_date_config['disable_past_days'] ); ?>"
+							data-include-days="<?php echo esc_attr( implode( ', ', $scc_date_config['limit_days'] ) ); ?>"
+							data-enable_limit_days="<?php echo esc_attr( $scc_date_config['enable_limit_days'] ); ?>"
+							format-date="<?php echo esc_attr( $scc_format_date ); ?>"
+							data-disabled-dates="<?php echo esc_attr( $scc_date_config['disabled_date'] ); ?>"
+							data-disable-today-date="<?php echo esc_attr( $scc_date_config['disable_today_date'] ); ?>"
+							value="<?php echo esc_attr( $el->value2 ); ?>"
+							id="itemcreate_0_0_0_<?php echo intval( $el->id ); ?>"
+							class="comment_box_text itemCreated mandatory_no_45 scc-datepicker scc-date-input-field"
+							onchange="triggerSubmit(10, this, <?php echo intval( $el->id ); ?>, 0, <?php echo intval( $form->id ); ?>)"
+							data-elementtype="10"
+							data-formid="<?php echo intval( $form->id ); ?>"
+							data-elementid="<?php echo intval( $el->id ); ?>">
+						<?php if ( $scc_date_config['enable_time_picker'] ) { ?>
+							<input type="hidden" <?php echo df_scc_escaped_output_attr_collection( $scc_date_config_hours ); ?> data-elementid=<?php echo intval( $el->id ); ?> data-element-type="time-picker-start" class="time-input" placeholder="Select time">
+						<?php } ?>
+						<?php } else { ?>
+						<!-- date range input -->
+						<div class="scc-col-md-6 scc-col-lg-6 scc-col-xs-12 scc-p-0 scc-date-range-column">
+							<label style="padding-left:5px;" class="trn" data-trn-key="From">From</label>
+							<div>
+							<input type="text"
+								placeholder="<?php echo esc_attr( $scc_format_date ); ?>"
+								min="<?php echo esc_attr( $scc_date_config['min_date'] ); ?>"
+								max="<?php echo esc_attr( $scc_date_config['max_date'] ); ?>"
+								data-disable-past-days="<?php echo esc_attr( $scc_date_config['disable_past_days'] ); ?>"
+								data-include-days="<?php echo esc_attr( implode( ', ', $scc_date_config['limit_days'] ) ); ?>"
+								data-enable_limit_days="<?php echo esc_attr( $scc_date_config['enable_limit_days'] ); ?>"
+								format-date="<?php echo esc_attr( $scc_format_date ); ?>"
+								data-disabled-dates="<?php echo esc_attr( $scc_date_config['disabled_date'] ); ?>"
+								data-disable-today-date="<?php echo esc_attr( $scc_date_config['disable_today_date'] ); ?>"
+								value="<?php echo esc_attr( $el->value2 ); ?>"
+								id="itemcreate_0_0_0_<?php echo intval( $el->id ); ?>"
+								class="scc-start-date comment_box_text itemCreated mandatory_no_45 scc-datepicker scc-date-input-field"
+								onchange="triggerSubmit(11, this, <?php echo intval( $el->id ); ?>, 0, <?php echo intval( $form->id ); ?>)"
+								data-elementtype="11"
+								data-formid="<?php echo intval( $form->id ); ?>"
+								data-elementid="<?php echo intval( $el->id ); ?>">
+							<?php if ( $scc_date_config['enable_time_picker'] ) { ?>
+								<input type="hidden" <?php echo df_scc_escaped_output_attr_collection( $scc_date_config_hours ); ?> class="time-input" placeholder="Select time">
+							<?php } ?>
+							</div>
+						</div>
+						<div class="scc-col-md-6 scc-col-lg-6 scc-col-xs-12 scc-p-0 scc-date-range-column">
+							<label style="padding-left:5px;" class="trn" data-trn-key="To">To</label>
+							<div>
+							<input type="text"
+								placeholder="<?php echo esc_attr( $scc_format_date ); ?>"
+								min="<?php echo esc_attr( $scc_date_config['min_date'] ); ?>"
+								max="<?php echo esc_attr( $scc_date_config['max_date'] ); ?>"
+								data-disable-past-days="<?php echo esc_attr( $scc_date_config['disable_past_days'] ); ?>"
+								data-include-days="<?php echo esc_attr( implode( ', ', $scc_date_config['limit_days'] ) ); ?>"
+								data-enable_limit_days="<?php echo esc_attr( $scc_date_config['enable_limit_days'] ); ?>"
+								format-date="<?php echo esc_attr( $scc_format_date ); ?>"
+								data-disabled-dates="<?php echo esc_attr( $scc_date_config['disabled_date'] ); ?>"
+								data-disable-today-date="<?php echo esc_attr( $scc_date_config['disable_today_date'] ); ?>"
+								value="<?php echo esc_attr( $el->value2 ); ?>" id="itemcreate_0_0_0_<?php echo intval( $el->id ); ?>_2"
+								class="scc-end-date comment_box_text itemCreated mandatory_no_45 scc-datepicker scc-date-input-field"
+								onchange="triggerSubmit(11, this, <?php echo intval( $el->id ); ?>, 0, <?php echo intval( $form->id ); ?>)"
+								data-elementtype="11"
+								data-formid="<?php echo intval( $form->id ); ?>"
+								data-elementid="<?php echo intval( $el->id ); ?>">
+							<?php if ( $scc_date_config['enable_time_picker'] ) { ?>
+								<input type="hidden" <?php echo df_scc_escaped_output_attr_collection( $scc_date_config_hours ); ?> class="time-input" placeholder="Select time">
+							<?php } ?>
+							</div>
+						</div>
+						<div class="scc-col-md-12" style="padding-left:0;">
+							<input type="hidden" class="scc-date-cost-per-date" value="<?php echo esc_attr( $el->value4 ); ?>">
+						</div>
+						<div class="scc-col-md-12" style="padding-left:0; padding-top:10px;">
+							<span class="scc-warning scc-err-date-range scc-d-none trn" data-trn-key="The start date must be less than the end date">The start date must be less than the end date</span>
+						</div>
+						<?php } ?>
+					</div>
+					<div style="clear: both;"></div>
+				</div>
+				<?php echo $controller_instance->scc_frontend_alerts( 'mandatory-element' ); ?>
+				<?php } else { ?>
+				<div id="ssc-elmt-<?php echo intval( $el->id ); ?>" data-typeelement="<?php echo esc_attr( $el->type ); ?>" class="scc-form-field-item scc-date_
+												<?php
+					echo $style_scc_calculator;
+					echo $hasAccordion ? ' scc-accordion-panel section_' . $accordion_index : '';
+					?>
+					">
+				<label class="<?php echo ( $form->elementSkin == 'style_1' ) ? 'scc-col-md-4 scc-col-lg-4' : ''; ?> scc-col-xs-12 scc_font_45 scc-form-field-item-label" for="selectbasic"><?php echo scc_print_title_icon( $el ); ?><?php echo stripslashes( wp_kses( $el->titleElement, SCC_ALLOWTAGS ) ); ?> <span 
+																																			<?php
+					if ( $tooltip_config['title'] == null || $tooltip_config['title'] == '' ) {
+						echo 'style="display:none;"';
+					}
+					?>
+					class="scc-tooltip2" tooltip="<?php echo esc_attr( json_encode( $tooltip_config ) ); ?>" flow="right"><i class="scc-info-icon"><?php echo scc_get_kses_extended_ruleset( $scc_icons['help'] ); ?></i></span></label>
+				<div class="control-label 
+					<?php
+					if ( $form->elementSkin == 'style_1' ) {
+						echo 'scc-col-md-8 scc-col-lg-8 scc-col-xs-12';
+					}
+					echo $scc_date_config['enable_time_picker'] ? ' scc-has-time-picker' : ' ';
+					?>
+					scc_select_opt scc-form-field-item-control"
+				data-date-range-pricing-structure="<?php echo esc_attr( $scc_date_config['date_range_pricing_structure'] ); ?>"
+				data-subsection-id="<?php echo intval( $el->subsection_id ); ?>"
+				style="padding:0px">
+					<?php if ( $el->value1 != 'date_range' ) { ?>
+						<!-- single date input -->
+						<input type="text"
+							placeholder="<?php echo esc_attr( $scc_format_date ); ?>"
+							min="<?php echo esc_attr( $scc_date_config['min_date'] ); ?>"
+							max="<?php echo esc_attr( $scc_date_config['max_date'] ); ?>"
+							data-disable-past-days="<?php echo esc_attr( $scc_date_config['disable_past_days'] ); ?>"
+							data-include-days="<?php echo esc_attr( implode( ', ', $scc_date_config['limit_days'] ) ); ?>"
+							data-enable_limit_days="<?php echo esc_attr( $scc_date_config['enable_limit_days'] ); ?>"
+							format-date="<?php echo esc_attr( $scc_format_date ); ?>"
+							data-disabled-dates="<?php echo esc_attr( $scc_date_config['disabled_date'] ); ?>"
+							data-disable-today-date="<?php echo esc_attr( $scc_date_config['disable_today_date'] ); ?>"
+							value="<?php echo esc_attr( $el->value2 ); ?>" id="itemcreate_0_0_0_<?php echo intval( $el->id ); ?>"
+							class="comment_box_text itemCreated mandatory_no_45 scc-datepicker scc-date-input-field"
+							onchange="triggerSubmit(10, this, <?php echo intval( $el->id ); ?>, 0, <?php echo intval( $form->id ); ?>)"
+							data-formid="<?php echo intval( $form->id ); ?>"
+							data-elementtype="10"
+							data-elementid="<?php echo intval( $el->id ); ?>">
+						<?php if ( $scc_date_config['enable_time_picker'] ) { ?>
+							<input type="hidden" <?php echo df_scc_escaped_output_attr_collection( $scc_date_config_hours ); ?> class="time-input" placeholder="Select time">
+						<?php } ?>
+					<?php } else { 
+					?>
+						<!-- date range input -->
+						<div class="scc-col-md-6 scc-col-lg-6 scc-col-xs-12 scc-p-0 scc-date-range-column">
+							<label style="padding-left:5px;" class="trn" data-trn-key="From">From</label>
+							<input type="text"
+								placeholder="<?php echo esc_attr( $scc_format_date ); ?>"
+								min="<?php echo esc_attr( $scc_date_config['min_date'] ); ?>"
+								max="<?php echo esc_attr( $scc_date_config['max_date'] ); ?>"
+								data-disable-past-days="<?php echo esc_attr( $scc_date_config['disable_past_days'] ); ?>"
+								data-include-days="<?php echo esc_attr( implode( ', ', $scc_date_config['limit_days'] ) ); ?>"
+								data-enable_limit_days="<?php echo esc_attr( $scc_date_config['enable_limit_days'] ); ?>"
+								format-date="<?php echo esc_attr( $scc_format_date ); ?>"
+								data-disabled-dates="<?php echo esc_attr( $scc_date_config['disabled_date'] ); ?>"
+								data-disable-today-date="<?php echo esc_attr( $scc_date_config['disable_today_date'] ); ?>"
+								value="<?php echo esc_attr( $el->value2 ); ?>" id="itemcreate_0_0_0_<?php echo intval( $el->id ); ?>"
+								class="scc-start-date comment_box_text itemCreated mandatory_no_45 scc-datepicker scc-date-input-field"
+								onchange="triggerSubmit(11, this, <?php echo intval( $el->id ); ?>, 0, <?php echo intval( $form->id ); ?>)"
+								data-formid="<?php echo intval( $form->id ); ?>"
+								data-elementtype="11"
+								data-elementid="<?php echo intval( $el->id ); ?>">
+							<?php if ( $scc_date_config['enable_time_picker'] ) { ?>
+								<input type="hidden" <?php echo df_scc_escaped_output_attr_collection( $scc_date_config_hours ); ?> class="time-input" placeholder="Select time">
+							<?php } ?>
+						</div>
+						<div class="scc-col-md-6 scc-col-lg-6 scc-col-xs-12 scc-p-0 scc-date-range-column">
+							<label style="padding-left:5px;" class="trn" data-trn-key="To" >To</label>
+							<input type="text"
+								placeholder="<?php echo esc_attr( $scc_format_date ); ?>"
+								min="<?php echo esc_attr( $scc_date_config['min_date'] ); ?>"
+								max="<?php echo esc_attr( $scc_date_config['max_date'] ); ?>"
+								data-disable-past-days="<?php echo esc_attr( $scc_date_config['disable_past_days'] ); ?>"
+								data-include-days="<?php echo esc_attr( implode( ', ', $scc_date_config['limit_days'] ) ); ?>"
+								data-enable_limit_days="<?php echo esc_attr( $scc_date_config['enable_limit_days'] ); ?>"
+								format-date="<?php echo esc_attr( $scc_format_date ); ?>"
+								data-disabled-dates="<?php echo esc_attr( $scc_date_config['disabled_date'] ); ?>"
+								data-disable-today-date="<?php echo esc_attr( $scc_date_config['disable_today_date'] ); ?>"
+								value="<?php echo esc_attr( $el->value2 ); ?>" id="itemcreate_0_0_0_<?php echo intval( $el->id ); ?>_2"
+								class="scc-end-date comment_box_text itemCreated mandatory_no_45 scc-datepicker scc-date-input-field"
+								onchange="triggerSubmit(11, this, <?php echo intval( $el->id ); ?>, 0, <?php echo intval( $form->id ); ?>)"
+								data-elementtype="11"
+								data-formid="<?php echo intval( $form->id ); ?>"
+								data-elementid="<?php echo intval( $el->id ); ?>">
+							<?php if ( $scc_date_config['enable_time_picker'] ) { ?>
+								<input type="hidden" <?php echo df_scc_escaped_output_attr_collection( $scc_date_config_hours ); ?> class="time-input" placeholder="Select time">
+							<?php } ?>
+						</div>
+						<div class="scc-col-md-12" style="padding-left:0;">
+							<input type="hidden" class="scc-date-cost-per-date" value="<?php echo esc_attr( $el->value4 ); ?>">
+						</div>
+						<div class="scc-col-md-12">
+							<span class="scc-warning scc-err-date-range scc-d-none trn" data-trn-key="The start date must be less than the end date">The start date must be less than the end date</span>
+						</div>
+					<?php } ?>
+				</div>
+				<div style="clear: both;"></div>
+			</div>
+			<?php echo scc_frontend_alerts( 'mandatory-element' ); ?>
+					<?php
+				}
+		}
 
         if ( $el->type == 'custom math' ) {
             continue;
@@ -1306,7 +1701,8 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 }
 [id^="scc_form"] .description_section_preview {
 	color: <?php echo esc_attr( $colorObject ); ?>;
-	margin-top: 5px;
+	font-size: <?php echo esc_attr( $objectSize ); ?>;
+    margin-top: 5px;
 }
 
 /* Switch button */

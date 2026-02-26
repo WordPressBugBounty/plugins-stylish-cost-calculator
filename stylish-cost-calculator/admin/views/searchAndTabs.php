@@ -11,7 +11,7 @@ if ( ! $f1->translation ) {
     $translateArray = $f1->translation;
 }
 $translateArray = json_decode( stripslashes( $translateArray ) );
-
+$gdpr_mode = (bool) intval( get_option( 'df_scc_gdpr_mode', 0 ) );
 ?>
 <div id="calc-editor-wrapper" class="row" style="max-width: 100%;">
 
@@ -32,9 +32,9 @@ $translateArray = json_decode( stripslashes( $translateArray ) );
 				<div class="font-settings-title-head">
 					Title & Total Font Settings <i class="material-icons-outlined more-settings-info text-white" title="Choose the font settings for the section titles and the total price, in your calculator form." style="margin-right:5px">help_outline</i>
 				</div><br>
-				<div style="margin-top:20px;" class="col-md-12 clearfix use-premium-tooltip">
+				<div style="margin-top:20px;" class="col-md-12 clearfix">
 					<label class="scc_label col-xs-8 col-md-6">Font Size</label>
-					<select name="titlepricefontsize" id="titlepricefontsize" style="box-shadow: 1px 1px 1px #999; border: 0 none;" class="col-xs-4 col-md-6" disabled>
+					<select name="titlepricefontsize" id="titlepricefontsize" style="box-shadow: 1px 1px 1px #999; border: 0 none;" class="col-xs-4 col-md-6">
 						<option class="form-control servicepricefontsize" value="0">Size</option>
 						<?php
                         for ( $n = 10; $n <= 70; $n++ ) {
@@ -50,9 +50,9 @@ $translateArray = json_decode( stripslashes( $translateArray ) );
 ?>
 					</select>
 				</div>
-				<div style="margin-top:20px;" class="col-md-12 clearfix use-premium-tooltip">
+				<div style="margin-top:20px;" class="col-md-12 clearfix">
 					<label class="scc_label col-xs-8 col-md-6">Title Font Type</label>
-					<select id="titlescc_fonttype" style="box-shadow: 1px 1px 1px #999; border: 0 none;" class="col-md-6 col-xs-4" disabled>
+					<select id="titlescc_fonttype" style="box-shadow: 1px 1px 1px #999; border: 0 none;" class="col-md-6 col-xs-4">
 						<?php
 $allfonts  = json_decode( $scc_googlefonts_var->gf_get_local_fonts() );
 $fontIndex = 0;
@@ -66,11 +66,11 @@ foreach ( $allfonts->items as $allfont ) {
 ?>
 					</select>
 				</div>
-				<div  style="margin-top:20px;" class="col-md-12 clearfix use-premium-tooltip">
+				<div  style="margin-top:20px;" class="col-md-12 clearfix">
 					<label class="scc_label col-xs-8 col-md-6">Title Font Weight 
 					<i class="material-icons-outlined with-tooltip" data-setting-tooltip-type="title-font-weight-tt" data-bs-original-title="" title="" style="margin-right:5px">help_outline</i>
 					</label>
-					<select id="titlescc_fonttype_variant" class="col-xs-4 col-md-6" style="box-shadow: 1px 1px 1px #999; border: 0 none;" disabled>
+					<select id="titlescc_fonttype_variant" class="col-xs-4 col-md-6" style="box-shadow: 1px 1px 1px #999; border: 0 none;">
 					  <?php
 $allfonts  = json_decode( $scc_googlefonts_var->gf_get_local_fonts() );
 $fontIndex = 0;
@@ -84,9 +84,41 @@ foreach ( $allfonts->items as $allfont ) {
 ?>
 					</select>
 				</div>
-				<div style="margin-top:20px;margin-bottom:20px;" class="col-md-12 clearfix use-premium-tooltip">
-					<label class="scc_label col-xs-8 col-md-6" style="margin-bottom:5px;margin-bottom:5px;">Font Color</label>
-					<div class="wp-picker-container use-premium-tooltip"><button type="button" class="button wp-color-result " aria-expanded="false" style="background-color: rgb(0, 0, 0);" disabled="disabled" ><span class="wp-color-result-text">Select Color</span></button><span class="wp-picker-input-wrap hidden"><label><span class="screen-reader-text">Color value</span><input type="text" class="color-picker col-md-4 wp-color-picker" id="titlecolorPicker" value="#000"></label><input type="button" class="button button-small wp-picker-clear tooltipadmin-top" value="Clear" aria-label="Clear color" disabled="disabled"></span><div class="wp-picker-holder"><div class="iris-picker iris-border" style="display: none; width: 255px; height: 202.125px; padding-bottom: 23.2209px;"><div class="iris-picker-inner"><div class="iris-square" style="width: 182.125px; height: 182.125px;"><a class="iris-square-value ui-draggable ui-draggable-handle" href="#" style="left: 0px; top: 182.125px;"><span class="iris-square-handle ui-slider-handle"></span></a><div class="iris-square-inner iris-square-horiz" style="background-image: -webkit-linear-gradient(left, rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255));"></div><div class="iris-square-inner iris-square-vert" style="background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0), rgb(0, 0, 0));"></div></div><div class="iris-slider iris-strip" style="height: 205.346px; width: 28.2px; background-image: -webkit-linear-gradient(top, rgb(0, 0, 0), rgb(0, 0, 0));"><div class="iris-slider-offset ui-slider ui-corner-all ui-slider-vertical ui-widget ui-widget-content"><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="bottom: 0%;"></span></div></div></div><div class="iris-palette-container"><a class="iris-palette" tabindex="0" style="background-color: rgb(0, 0, 0); height: 19.5784px; width: 19.5784px; margin-left: 0px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(255, 255, 255); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(221, 51, 51); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(221, 153, 51); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(238, 238, 34); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(129, 215, 66); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(30, 115, 190); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(130, 36, 227); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a></div></div></div></div>
+
+<div style="margin-top:20px;margin-bottom:20px;" class="col-md-12 clearfix">
+				<label class="scc_label col-xs-8 col-md-6" style="margin-bottom:5px;margin-bottom:5px;">Font Color</label>
+						<input data-default-color="#000" type="text" class="color-picker col-xs-4 col-md-6 scc-col-md-6" 
+					    id="titlecolorPicker" value="<?php echo (  $f1->titleColorPicker == null ) ? '#0a0a0a' : $f1->titleColorPicker; ?>" />
+
+</div>
+<div class="row w-100 m-0">
+			    <div class="parent-div-inherit col-md-12 clearfix" style="padding:15px; padding-left: 0px;" >
+						
+						
+	    <label class="scc_label scc-accordion_switch_button" for="inherit-fontfamily">
+			 
+				<input class="col-xs-4 col-md-6" type="checkbox" id="inherit-fontfamily" 
+	    <?php
+        if ( $f1->inheritFontType == 'true' || $gdpr_mode ) {
+            echo 'checked';
+        }
+
+        if ( $gdpr_mode ) {
+            echo ' disabled';
+        }
+?>
+				>
+				<span class="scc-accordion_toggle_button round"></span>
+			</label>
+			<label  class="scc_label col-xs-8 col-md-8" style="margin-bottom: 5%;padding: 0px !important;margin-left: 3%;margin-top: 1%;">
+			<span>Use Parent Font-family <?php if ( $gdpr_mode ) {
+				echo ' ( enabled due to GDPR mode)';
+			} ?></span>
+			<i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="use-parent-font-family-tt" data-bs-original-title="" title="" style="margin-right:5px">
+								<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset(  $this->scc_icons['help-circle'] ); ?></span>
+						</i>
+		</label>
+					</div>
 				</div>
 			</div>
 			<!--- END OF TITLE FONT STTINGS --->
@@ -95,9 +127,9 @@ foreach ( $allfonts->items as $allfont ) {
 				<div class="font-settings-title-head">
 					Element Font Settings <i class="material-icons-outlined more-settings-info text-white" title="Choose the font settings for the element titles in your calculator form. For example, the title of your dropdown menu." style="margin-right:5px">help_outline</i>
 				</div><br>
-				<div style="margin-top:20px;" class="col-md-12 clearfix use-premium-tooltip">
+				<div style="margin-top:20px;" class="col-md-12 clearfix">
 					<label class="scc_label col-xs-8 col-md-6">Font Size</label>
-					<select name="servicepricefontsize" id="servicepricefontsize" style="box-shadow: 1px 1px 1px #999; border: 0 none;" class="col-md-6 col-xs-4" disabled>
+					<select name="servicepricefontsize" id="servicepricefontsize" style="box-shadow: 1px 1px 1px #999; border: 0 none;" class="col-md-6 col-xs-4" >
 						<option class="form-control servicepricefontsize" value="0">Size</option>
 						<?php
 for ( $n = 8; $n <= 40; $n++ ) {
@@ -113,12 +145,12 @@ for ( $n = 8; $n <= 40; $n++ ) {
 ?>
 					</select>
 				</div>
-				<div style="margin-top:20px;" class="col-md-12 clearfix use-premium-tooltip">
+				<div style="margin-top:20px;" class="col-md-12 clearfix">
 					<label class="scc_label col-xs-8 col-md-6">Font Type</label>
 					<?php
                     $allfonts = json_decode( $scc_googlefonts_var->gf_get_local_fonts() );
 ?>
-					<select id='scc_fonttype' class="col-xs-4 col-md-6" style="box-shadow: 1px 1px 1px #999; border: 0 none;" disabled>
+					<select id='scc_fonttype' class="col-xs-4 col-md-6" style="box-shadow: 1px 1px 1px #999; border: 0 none;">
 						<?php
     $fontIndex = 0;
 
@@ -132,26 +164,29 @@ foreach ( $allfonts->items as $allfont ) {
 ?>
 					</select>
 				</div>
-				<div style="margin-top:20px;" class="col-md-12 clearfix use-premium-tooltip">
+				<div style="margin-top:20px;" class="col-md-12 clearfix">
 					<label class="scc_label col-xs-8 col-md-6">Font Weight 
 					<i class="material-icons-outlined with-tooltip" data-setting-tooltip-type="font-weight-tt" data-bs-original-title="" title="" style="margin-right:5px">help_outline</i>
 					</label>
-					<select id='scc_fonttype_variant' class="col-xs-4 col-md-6" style="box-shadow: 1px 1px 1px #999; border: 0 none;" disabled>
+					<select id='scc_fonttype_variant' class="col-xs-4 col-md-6" style="box-shadow: 1px 1px 1px #999; border: 0 none;">
 					</select>
 				</div>
-				<div style="margin-top:20px;margin-bottom:20px;" class="col-md-12 clearfix use-premium-tooltip">
-					<label class="scc_label col-xs-8 col-md-6">Font Color</label>
-					<div class="wp-picker-container use-premium-tooltip"><button type="button" class="button wp-color-result " aria-expanded="false" style="background-color: rgb(0, 0, 0);" disabled="disabled" ><span class="wp-color-result-text">Select Color</span></button><span class="wp-picker-input-wrap hidden"><label><span class="screen-reader-text">Color value</span><input type="text" class="color-picker col-md-4 wp-color-picker" id="titlecolorPicker" value="#000"></label><input type="button" class="button button-small wp-picker-clear tooltipadmin-top" value="Clear" aria-label="Clear color" disabled="disabled"></span><div class="wp-picker-holder"><div class="iris-picker iris-border" style="display: none; width: 255px; height: 202.125px; padding-bottom: 23.2209px;"><div class="iris-picker-inner"><div class="iris-square" style="width: 182.125px; height: 182.125px;"><a class="iris-square-value ui-draggable ui-draggable-handle" href="#" style="left: 0px; top: 182.125px;"><span class="iris-square-handle ui-slider-handle"></span></a><div class="iris-square-inner iris-square-horiz" style="background-image: -webkit-linear-gradient(left, rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255));"></div><div class="iris-square-inner iris-square-vert" style="background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0), rgb(0, 0, 0));"></div></div><div class="iris-slider iris-strip" style="height: 205.346px; width: 28.2px; background-image: -webkit-linear-gradient(top, rgb(0, 0, 0), rgb(0, 0, 0));"><div class="iris-slider-offset ui-slider ui-corner-all ui-slider-vertical ui-widget ui-widget-content"><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="bottom: 0%;"></span></div></div></div><div class="iris-palette-container"><a class="iris-palette" tabindex="0" style="background-color: rgb(0, 0, 0); height: 19.5784px; width: 19.5784px; margin-left: 0px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(255, 255, 255); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(221, 51, 51); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(221, 153, 51); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(238, 238, 34); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(129, 215, 66); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(30, 115, 190); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(130, 36, 227); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a></div></div></div></div>
-				</div>
+				<div style="margin-top:20px;margin-bottom:20px;" class="col-md-12 clearfix">
+				<label class="scc_label col-xs-8 col-md-6" style="margin-bottom:5px;margin-bottom:5px;">Font Color</label>
+						<input data-default-color="#000" type="text" class="color-picker col-xs-4 col-md-6 scc-col-md-6" 
+					    id="colorPicker" value="<?php echo (  $f1->ServiceColorPicker == null ) ? '#0a0a0a' : $f1->ServiceColorPicker; ?>" />
+
+                </div>
+
 			</div>
 			<!-- END OF SERVICE FONT SETTING -->
 			<div class="col-12 col-md-3 col-lg-3 addedFieldsStyle font-settings-container scc-object-settings" style="min-height: 270px;margin-top:30px;box-shadow: 0px 0px 8px 1px rgba(163,163,163,0.27);">
 				<div class="font-settings-title-head">
 					Object Settings <i class="material-icons-outlined more-settings-info text-white" title="Choose the color for the objects in your calculator form. For example, the total bar style, slider handle bar, drodpown menu border, etc." style="margin-right:5px">help_outline</i>
 				</div><br>
-				<div style="margin-top:20px;" class="col-md-12 clearfix use-premium-tooltip">
+				<div style="margin-top:20px;" class="col-md-12 clearfix">
 					<label class="scc_label col-xs-8 col-md-6">Object Size</label>
-					<select name="servicepricefontsize" id="objectservicepricefontsize" class="col-xs-4 col-md-6" style="box-shadow: 1px 1px 1px #999; border: 0 none;" disabled>
+					<select name="servicepricefontsize" id="objectservicepricefontsize" class="col-xs-4 col-md-6" style="box-shadow: 1px 1px 1px #999; border: 0 none;">
 						<option class="form-control servicepricefontsize" value="0">Size</option>
 						<?php
 for ( $n = 1; $n <= 100; $n++ ) {
@@ -167,10 +202,12 @@ for ( $n = 1; $n <= 100; $n++ ) {
 ?>
 					</select>
 				</div>
-				<div style="margin-top:20px;margin-bottom:20px;" class="col-md-12 clearfix use-premium-tooltip">
-					<label class="scc_label col-xs-8 col-md-6">Object Color</label>
-					<div class="wp-picker-container use-premium-tooltip"><button type="button" class="button wp-color-result " aria-expanded="false" style="background-color: rgb(0, 0, 0);" disabled="disabled" ><span class="wp-color-result-text">Select Color</span></button><span class="wp-picker-input-wrap hidden"><label><span class="screen-reader-text">Color value</span><input type="text" class="color-picker col-md-4 wp-color-picker" id="titlecolorPicker" value="#000"></label><input type="button" class="button button-small wp-picker-clear tooltipadmin-top" value="Clear" aria-label="Clear color" disabled="disabled"></span><div class="wp-picker-holder"><div class="iris-picker iris-border" style="display: none; width: 255px; height: 202.125px; padding-bottom: 23.2209px;"><div class="iris-picker-inner"><div class="iris-square" style="width: 182.125px; height: 182.125px;"><a class="iris-square-value ui-draggable ui-draggable-handle" href="#" style="left: 0px; top: 182.125px;"><span class="iris-square-handle ui-slider-handle"></span></a><div class="iris-square-inner iris-square-horiz" style="background-image: -webkit-linear-gradient(left, rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255), rgb(255, 255, 255));"></div><div class="iris-square-inner iris-square-vert" style="background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0), rgb(0, 0, 0));"></div></div><div class="iris-slider iris-strip" style="height: 205.346px; width: 28.2px; background-image: -webkit-linear-gradient(top, rgb(0, 0, 0), rgb(0, 0, 0));"><div class="iris-slider-offset ui-slider ui-corner-all ui-slider-vertical ui-widget ui-widget-content"><span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default" style="bottom: 0%;"></span></div></div></div><div class="iris-palette-container"><a class="iris-palette" tabindex="0" style="background-color: rgb(0, 0, 0); height: 19.5784px; width: 19.5784px; margin-left: 0px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(255, 255, 255); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(221, 51, 51); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(221, 153, 51); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(238, 238, 34); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(129, 215, 66); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(30, 115, 190); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a><a class="iris-palette" tabindex="0" style="background-color: rgb(130, 36, 227); height: 19.5784px; width: 19.5784px; margin-left: 3.6425px;"></a></div></div></div></div>
-				</div>
+				<div style="margin-top:20px;margin-bottom:20px;" class="col-md-12 clearfix">
+				<label class="scc_label col-xs-8 col-md-6" style="margin-bottom:5px;margin-bottom:5px;">Font Color</label>
+						<input data-default-color="#000" type="text" class="color-picker col-xs-4 col-md-6 scc-col-md-6" 
+					    id="objectcolorPicker" value="<?php echo (  $f1->objectColorPicker == null ) ? '#0a0a0a' : $f1->objectColorPicker; ?>" />
+
+                </div>
 			</div>
 		</div>
 	</div>
@@ -1243,7 +1280,7 @@ for ( $n = 1; $n <= 100; $n++ ) {
 													<!-- Start Show User Details on Detailed List & PDF -->
 													<div class="row col-md-12 scc-cal-settings-row scc-vcenter">
 														<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-															<label for="show_invoice_number" class="scc-calc-settings-lbl">Show <b>User Details</b> on Detailed List & PDF <i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-user-details-detailed-list-pdf-tt" data-bs-original-title="" title="" style="margin-right:5px">
+															<label for="show_invoice_number" class="scc-calc-settings-lbl">Show <b>User Details</b> on Detailed List<i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="show-user-details-detailed-list-pdf-tt" data-bs-original-title="" title="" style="margin-right:5px">
 																	<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset($this->scc_icons['help-circle']); ?></span>
 																</i></label>
 														</div>
@@ -2130,7 +2167,7 @@ if ( $isSCCFreeVersion ) {
 	/**
 	 * *Show tooltip on hover eye
 	 */
-	jQuery(document).ready(function() {
+	jQuery(document).ready(function() {  
 		jQuery('.material-icons-outlined.more-settings-info:not(.t-img), .material-icons.v-align-middle').tooltip({
 			placement: 'right'
 		})
@@ -2297,6 +2334,23 @@ if ( $isSCCFreeVersion ) {
 			activeModal = document.querySelector('#settingsModal1');
 		}
 
+		// FONT SETTINGS
+		// title font settings
+		var inheritFontType = jQuery( "#inherit-fontfamily").is( ":checked")
+		var titleFontSize = jQuery( "#titlepricefontsize").val( )
+		var titleFontType = jQuery( "#titlescc_fonttype").val( )
+		var titleFontWeight = jQuery( "#titlescc_fonttype_variant").val( )
+		var titleColorPicker = jQuery( "#titlecolorPicker").val( )
+		// service Font Settings
+		var ServicefontSize = jQuery( "#servicepricefontsize").val( )
+		var fontType = jQuery( "#scc_fonttype").val( )
+		var fontWeight = jQuery( "#scc_fonttype_variant").val( )
+		var ServiceColorPicker = jQuery( "#colorPicker").val( )
+		// object settings
+		var objectSize = jQuery( "#objectservicepricefontsize").val( )
+		var objectColorPicker = jQuery( "#objectcolorPicker").val( )
+		var ctaBtnColorPicker = jQuery( "#ctaBtnColorPicker").val( )
+		var cta_btn_text_color = jQuery( "#cta_btn_text_color").val( )
 		// CALCULATOR SETTINGS
 		var elementSkin = jQuery('select[name="form_field_style"]').val()
 		var addContainer = jQuery('input[name="toggle_boxshadow_style2"]').is(":checked")
@@ -2343,7 +2397,20 @@ if ( $isSCCFreeVersion ) {
 			removeCurrency,
 			userCompletes,
 			userClicksf,
-			calcWrapperMaxWidth
+			calcWrapperMaxWidth,
+			inheritFontType,
+		    titleFontSize,
+		    titleFontType,
+		    titleFontWeight,
+		    titleColorPicker,
+		    ServicefontSize,
+		    fontType,
+		    fontWeight,
+		    ServiceColorPicker,
+		    objectSize,
+		    objectColorPicker,
+		    ctaBtnColorPicker,
+		    cta_btn_text_color
 		}
 		// Change form table settings names
 
@@ -2428,9 +2495,9 @@ if ( $isSCCFreeVersion ) {
 			});
 			btns.forEach(e => e.find('.material-icons-outlined').text('expand_more'))
 		}
-		<?php if ( ! $isSCCFreeVersion ) { ?>
+		
 		jQuery('.color-picker').wpColorPicker();
-		<?php } ?>
+		 
 	});
 	// fonts
 	var gFonts = JSON.parse(<?php echo json_encode( $scc_googlefonts_var->gf_get_local_fonts() ); ?>);

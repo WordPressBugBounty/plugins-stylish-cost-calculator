@@ -24,10 +24,8 @@ class PageEditTabs extends PagesBreadcrumbs {
 		wp_enqueue_script( 'scc-sortable' );
 		wp_enqueue_script( 'jquery-effects-core' );
 		wp_enqueue_script( 'jquery-ui-autocomplete' );
-
-		wp_enqueue_script( 'jquery-ui-tooltip' );
-
-		wp_enqueue_style( 'scc-admin-style' );
+        wp_enqueue_script( 'jquery-ui-tooltip' );
+        wp_enqueue_style( 'scc-admin-style' );
 
 		//added to load shortcode
 		wp_enqueue_style( 'scc-checkbox1' );
@@ -39,14 +37,39 @@ class PageEditTabs extends PagesBreadcrumbs {
 		wp_enqueue_script( 'wp-util' );
 		wp_enqueue_script( 'scc-translate-js' );
 
-		$currencies_array = 'window["scc_currencies"] = ' . json_encode(
+		$lang = isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ? substr( $_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2 ) : 'en';
+		
+		// Define the path to the l10n files
+		if ( $lang === 'en') {
+			$lang = 'default';
+		}
+
+		$l10n_path = SCC_URL . 'lib/flatpickr/js/l10n/';
+		$flatpickr_path = SCC_URL . 'lib/flatpickr/js/';
+	 
+		wp_register_style( 'scc-flatpickr', SCC_URL . 'lib/flatpickr/css/flatpickr.min.css', [], scc_get_file_version( SCC_DIR . '/lib/flatpickr/css/flatpickr.min.css' ) );
+		wp_enqueue_style( 'scc-flatpickr' );
+        wp_enqueue_script( 'scc-flatpickr', $flatpickr_path . 'flatpickr.min.js', [], scc_get_file_version( SCC_DIR . '/lib/flatpickr/js/flatpickr.min.js' ), true );
+
+		// Check if the l10n file exists for the language
+		if ( file_exists( SCC_DIR . '/lib/flatpickr/js/l10n/' . $lang . '.js' ) ) {
+			wp_enqueue_script( 'scc-flatpickr-' . $lang, $l10n_path . $lang . '.js', [], scc_get_file_version( SCC_DIR . '/lib/flatpickr/js/l10n/' . $lang . '.js' ), true );
+		}
+
+		wp_register_style( 'scc-toast', SCC_URL . 'assets/css/modals/_toast.css', [], scc_get_file_version( SCC_DIR . '/assets/css/modals/_toast.css' ) );
+		wp_enqueue_style( 'scc-toast' );
+		wp_register_style( 'scc-banner', SCC_URL . 'assets/css/modals/_banner.css', [], scc_get_file_version( SCC_DIR . '/assets/css/modals/_banner.css' ) );
+		wp_enqueue_style( 'scc-banner' );
+		wp_register_style( 'scc-modal', SCC_URL . 'assets/css/modals/_modal.css', [], scc_get_file_version( SCC_DIR . '/assets/css/modals/_toast.css' ) );
+		wp_enqueue_style( 'scc-modal' );
+		
+        $currencies_array = 'window["scc_currencies"] = ' . json_encode(
 			require_once( SCC_DIR . '/lib/currency_data.php' )
 		);
 		wp_add_inline_script( 'scc-frontend', $currencies_array );
 
 		add_thickbox();
-		// global $scc_googlefonts_var;
-
+		
 		$f1          = $formC->readWithRelations( $_GET['id_form'] );
 		$isActivated = get_option( 'df_scc_licensed', 0 ) ? true : false;
 

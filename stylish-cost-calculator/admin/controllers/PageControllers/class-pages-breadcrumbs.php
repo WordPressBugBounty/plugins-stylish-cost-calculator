@@ -19,30 +19,42 @@ class PagesBreadcrumbs {
             wp_register_script( 'scc-marked', SCC_URL . 'lib/marked/marked.min.js', [], STYLISH_COST_CALCULATOR_VERSION, true );
             wp_enqueue_script( 'scc-marked' );
             wp_register_style( 'scc-back-end', SCC_URL . 'assets/css/scc-back-end.css', [], STYLISH_COST_CALCULATOR_VERSION );
+            wp_register_style( 'scc-tom-select', SCC_URL . 'assets/css/tom-select.css', [], STYLISH_COST_CALCULATOR_VERSION );
             wp_register_script( 'scc-sweet-alert', SCC_URL . 'lib/sweetalert2/sweetalert2.min.js', [ 'jquery' ], STYLISH_COST_CALCULATOR_VERSION, true );
             wp_register_style( 'scc-sweet-alert', SCC_URL . 'lib/sweetalert2/sweetalert2.min.css', [], STYLISH_COST_CALCULATOR_VERSION );
             wp_register_script( 'scc-wizard-quiz', SCC_URL . '/assets/js/scc-wizard-quiz.js', [ 'jquery' ], STYLISH_COST_CALCULATOR_VERSION, true );
             wp_enqueue_style( 'scc-fonts', 'https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap' );
             wp_enqueue_style( 'scc-material', 'https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined' );
+            wp_enqueue_style( 'scc-font-awesome', SCC_URL . 'lib/fontawesome/font-awesome.min.css', [], '6.4' );
             wp_enqueue_style( 'scc-sweet-alert' );
             wp_enqueue_script( 'scc-sweet-alert' );
             wp_enqueue_script( 'wp-util' );
             wp_enqueue_script( 'scc-bootstrap-min2' );
             wp_enqueue_style( 'scc-bootstrap-min2' );
             wp_enqueue_style( 'scc-back-end' );
+            wp_enqueue_style( 'scc-tom-select' );
             wp_enqueue_style( 'dashicons' );
             wp_enqueue_style( 'scc-sweetalert' );
             wp_enqueue_script( 'scc-sweetalert' );
             wp_enqueue_script( 'jquery-ui-dialog' );
             wp_enqueue_style( 'scc-jquery-ui-css', SCC_URL . 'lib/jquery-ui/jquery-ui.css', [], STYLISH_COST_CALCULATOR_VERSION );
-            wp_register_script( 'scc-backend', SCC_URL . 'assets/js/scc-backend.js', [ 'jquery' ], STYLISH_COST_CALCULATOR_VERSION, true );
+            // Modal system - register scripts in dependency order
+            wp_register_script( 'scc-modal-icons', SCC_URL . 'assets/js/modals/icons.js', [], STYLISH_COST_CALCULATOR_VERSION, true );
+            wp_register_script( 'scc-modal-model', SCC_URL . 'assets/js/modals/model.js', [ 'scc-modal-icons' ], STYLISH_COST_CALCULATOR_VERSION, true );
+            wp_register_script( 'scc-modal-state', SCC_URL . 'assets/js/modals/state.js', [ 'scc-modal-model' ], STYLISH_COST_CALCULATOR_VERSION, true );
+            wp_register_script( 'scc-modal-banner-utilities', SCC_URL . 'assets/js/modals/banner-utilities.js', [ 'scc-modal-state' ], STYLISH_COST_CALCULATOR_VERSION, true );
+            wp_register_script( 'scc-modal-view', SCC_URL . 'assets/js/modals/view.js', [ 'scc-modal-banner-utilities' ], STYLISH_COST_CALCULATOR_VERSION, true );
+            wp_register_script( 'scc-modal-controller', SCC_URL . 'assets/js/modals/controller.js', [ 'scc-modal-view' ], STYLISH_COST_CALCULATOR_VERSION, true );
+            wp_register_script( 'scc-modal-init', SCC_URL . 'assets/js/modals/init.js', [ 'scc-modal-controller' ], STYLISH_COST_CALCULATOR_VERSION, true );
+            wp_enqueue_script( 'scc-modal-init' );
+            wp_register_script( 'scc-backend', SCC_URL . 'assets/js/scc-backend.js', [ 'jquery', 'scc-modal-init' ], STYLISH_COST_CALCULATOR_VERSION, true );
             wp_enqueue_script( 'scc-backend' );
-
+            wp_enqueue_script( 'jquery-ui-tooltip' );
+            wp_enqueue_style( 'jquery-ui-tooltip' );
             wp_register_script( 'scc-tour', SCC_URL . 'lib/introjs/js/introjs.min.js', [], STYLISH_COST_CALCULATOR_VERSION, true );
             wp_register_style( 'scc-tour', SCC_URL . 'lib/introjs/css/introjs.min.css', [], STYLISH_COST_CALCULATOR_VERSION );
             wp_enqueue_style( 'scc-tour' );
             wp_enqueue_script( 'scc-tour' );
-
             wp_register_script( 'scc-tom-select-backend', SCC_URL . 'lib/tom-select/tom-select.base.js', [ 'jquery' ], STYLISH_COST_CALCULATOR_VERSION, true );
             wp_register_style( 'scc-tom-select-backend', SCC_URL . 'lib/tom-select/tom-select.css', [], STYLISH_COST_CALCULATOR_VERSION );
             wp_enqueue_script( 'scc-tom-select-backend' );

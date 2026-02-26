@@ -22,6 +22,7 @@ class elementController {
 	 * @param string $value2
 	 * @param string $value3
 	 * @param string $value4
+	 * @param string $value6
 	 * @param string $length to be removed
 	 * @param string $uniqueId to be removed
 	 * @param string $mandatory
@@ -49,6 +50,7 @@ class elementController {
 		( isset( $values['value2'] ) ) ? $value2                         = $values['value2'] : $value2 = null;
 		( isset( $values['value3'] ) ) ? $value3                         = $values['value3'] : $value3 = null;
 		( isset( $values['value4'] ) ) ? $value4                         = $values['value4'] : $value4 = null;
+		( isset( $values['value6'] ) ) ? $value6                         = $values['value6'] : $value6 = null;
 		( isset( $values['length'] ) ) ? $length                         = $values['length'] : $length = '12asd';
 		( isset( $values['uniqueId'] ) ) ? $uniqueId                     = $values['uniqueId'] : $uniqueId = unique();
 		( isset( $values['mandatory'] ) ) ? $mandatory                   = $values['mandatory'] : $mandatory = 0;
@@ -59,11 +61,11 @@ class elementController {
 		( isset( $values['displayFrontend'] ) ) ? $displayFrontend       = $values['displayFrontend'] : $displayFrontend = 0;
 		( isset( $values['displayDetailList'] ) ) ? $displayDetailList   = $values['displayDetailList'] : $displayDetailList = 0;
 		( isset( $values['showInputBoxSlider'] ) ) ? $showInputBoxSlider = $values['showInputBoxSlider'] : $showInputBoxSlider = 00;
+        ( isset( $values['showTitlePdf'] ) ) ? $showTitlePdf = $values['showTitlePdf'] : $showTitlePdf = 0;
 
-		( isset( $values['showTitlePdf'] ) ) ? $showTitlePdf = $values['showTitlePdf'] : $showTitlePdf = 0;
-		$query  = $this->db->prepare(
-			"INSERT INTO {$this->db->prefix}df_scc_elements (`orden`,`titleElement`,`type`,`value1`,`value2`,`value3`,`value4`,`length`,`uniqueId`,`mandatory`,`titleColumnDesktop`, 
-        `titleColumnMobile`, `subsection_id`, `showPriceHint`, `displayFrontend`, `displayDetailList`, `showTitlePdf`,`showInputBoxSlider`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",
+	    $query  = $this->db->prepare(
+			"INSERT INTO {$this->db->prefix}df_scc_elements (`orden`,`titleElement`,`type`,`value1`,`value2`,`value3`,`value4`,`value6`,`length`,`uniqueId`,`mandatory`,`titleColumnDesktop`, 
+        `titleColumnMobile`, `subsection_id`, `showPriceHint`, `displayFrontend`, `displayDetailList`, `showTitlePdf`,`showInputBoxSlider`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);",
 			$orden,
 			$titleElement,
 			$type,
@@ -71,6 +73,7 @@ class elementController {
 			$value2,
 			$value3,
 			$value4,
+			$value6,
 			$length,
 			$uniqueId,
 			$mandatory,
@@ -83,6 +86,7 @@ class elementController {
 			$showTitlePdf,
 			$showInputBoxSlider
 		);
+		 
 		$result = $this->db->query( $query );
 		$id     = $this->db->insert_id;
 		if ( $result ) {
@@ -139,6 +143,7 @@ class elementController {
 		( isset( $values['value4'] ) ) ? $value4                         = $values['value4'] : $value4 = $todo->value4;
 		$value5 														 = isset( $values['value5'] ) ? $values['value5'] : $todo->value5;
 		$value5                                                          = intval( $value5 );
+		( isset( $values['value6'] ) ) ? $value6                         = $values['value6'] : $value6 = $todo->value6;
 		( isset( $values['length'] ) ) ? $length                         = $values['length'] : $length = $todo->length;
 		( isset( $values['uniqueId'] ) ) ? $uniqueId                     = $values['uniqueId'] : $uniqueId = $todo->uniqueId;
 		( isset( $values['mandatory'] ) ) ? $mandatory                   = $values['mandatory'] : $mandatory = $todo->mandatory;
@@ -152,8 +157,8 @@ class elementController {
 		( isset( $values['element_woocomerce_product_id'] ) ) ? $element_woocomerce_product_id = $values['element_woocomerce_product_id'] : $element_woocomerce_product_id = $todo->element_woocomerce_product_id;
 		( isset( $values['showInputBoxSlider'] ) ) ? $showInputBoxSlider                       = $values['showInputBoxSlider'] : $showInputBoxSlider = 0;
 
-		$query    = $this->db->prepare(
-			"UPDATE {$this->db->prefix}df_scc_elements SET orden =%s,titleElement=%s,`type`=%s,value1=%s,value2=%s,value3=%s,value4=%s,value5=%d,`length`=%s,uniqueId=%s,mandatory=%d,titleColumnDesktop=%s, 
+	    $query    = $this->db->prepare(
+			"UPDATE {$this->db->prefix}df_scc_elements SET orden =%s,titleElement=%s,`type`=%s,value1=%s,value2=%s,value3=%s,value4=%s,value5=%d,value6=%s,`length`=%s,uniqueId=%s,mandatory=%d,titleColumnDesktop=%s, 
         titleColumnMobile=%s, subsection_id=%d, showPriceHint=%d, displayFrontend=%d, displayDetailList=%d, showTitlePdf=%d, element_woocomerce_product_id=%s,showInputBoxSlider=%d WHERE id =%d",
 			$orden,
 			$titleElement,
@@ -163,6 +168,7 @@ class elementController {
 			$value3,
 			$value4,
 			$value5,
+			$value6,
 			$length,
 			$uniqueId,
 			$mandatory,
@@ -177,7 +183,8 @@ class elementController {
 			$showInputBoxSlider,
 			$id
 		);
-		$response = $this->db->query( $query );
+
+	    $response = $this->db->query( $query );
 		if ( $response ) {
 			return true;
 		} else {

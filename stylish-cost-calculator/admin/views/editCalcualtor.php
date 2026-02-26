@@ -755,7 +755,6 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 											</div>
 											<?php
                                         }
-										
                                         if ( $el->type == 'texthtml' ) {
                                             ?>
 											<div class="elements_added">
@@ -780,6 +779,50 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 											</div>
 											<?php
                                         }
+
+										if ( $el->type == 'date' ) {
+			    $value6_default  = DF_SCC_ELEMENT_DEFAULT_VALUES['date-picker-element']['advanced']['value6'];
+                $scc_date_config = wp_parse_args(
+                    json_decode( wp_unslash( !empty( $el->value6 ) ? $el->value6 : '' ), true ),
+                    $value6_default
+                );
+
+                ?>
+                        <div class="elements_added" data-element="<?php echo esc_attr( $el->type ); ?>">
+							<?php echo  $scc_special_loop_element; ?>
+							<?php if ( $scc_date_config['date_range_pricing_structure'] === 'quantity_mod' || $scc_date_config['date_range_pricing_structure'] === 'quantity_modifier_and_unit_price' ) { ?>
+								<div class="scc-multiplier-connector-line scc-link-line scc-hidden">
+									<div class="scc-multiplier-connector-link" data-setting-tooltip-type="element-multiplier-tt" data-bs-original-title title>
+										<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['link'] ); ?></span>
+									</div>
+								</div>
+							<?php } else { ?>
+								
+								<div class="scc-element-connector-line scc-link-line <?php echo  $scc_special_loop_class; ?>"></div>
+							<?php } ?>
+
+							
+							<input type="text" class="input_id_element" value="<?php echo intval( $el->id ); ?>" hidden>
+							<div class="elements_added_v2">
+								<div class="element-icon">
+									<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['calendar'] ); ?></span>
+								</div>
+								<div class="element-title-desc" onclick="javascript:collapseElementTitle(this)" style="cursor: pointer;">
+									<div class="title-desc-wrapper">
+										<span class="element-title">Date Picker</span>
+										<p class="element-description">
+											<?php echo esc_attr( $truncatedTitleElement ); ?>
+										</p>
+									</div>
+								</div>
+								<?php echo scc_output_editing_page_element_actions( 'date-picker-tt', false ); ?>
+							</div>
+							<?php echo $edit_page_func->renderDate( $el, $conditionsBySet ); ?>
+							<?php echo $edit_page_func->renderElementLoader(); ?>
+						</div>
+						<?php
+            }
+
 
                                         if ( $el->type == 'slider' ) {
                                             ?>
@@ -868,7 +911,7 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['paperclip'] ); ?></span>
 											<div class="btn-backend-text">File Upload</div>
 										</button>
-										<button value="custom_code" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="date-picker-tt" data-bs-original-title="" onclick="addTextHtml(this)">
+										<button value="custom_code" class="scc_button btn-backend" data-bs-original-title="" onclick="addDateElement(this)">
 											<i class="scc-btn-spinner scc-d-none"></i>
 											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['calendar'] ); ?></span>
 											<div class="btn-backend-text">Date Picker</div>
@@ -983,6 +1026,13 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	jQuery(function() {
 		var id = jQuery("#id_scc_form_").val()
 		loadPreviewForm(id)
+
+		const datepickerElement = document.querySelector('div.elements_added[data-element="date"]');
+
+		if (datepickerElement) { 
+			sccFlatpickrInitBackend(id);
+		}
+		
 		// find existing quote form fields backend buttons and register click events on it
 		addEventsToQuoteFormBtns(jQuery('.editing-action-cards.action-quoteform .btn.btn-cards:not(.btn-plus)'))
 
@@ -1001,12 +1051,12 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				const isCloudFlare = request.getResponseHeader('server') == 'cloudflare';
 				const diagMsgsWrapper = document.querySelector('#debug_messages_wrapper');
 				const sgOptimizerAlertWrapper = document.querySelector('#sg_optimizer_message_wrapper');
-				if ( sgOptimAlert.is_active && sgOptimAlert.config.show ) {
+				/*if ( sgOptimAlert.is_active && sgOptimAlert.config.show ) {
 					sgOptimizerAlertWrapper.classList.remove('d-none');
 				}
 				if ( sgOptimAlert.is_active && !sgOptimAlert.config.show && saveCount > sgOptimAlert.config.respawn ) {
 					sgOptimizerAlertWrapper.classList.remove('d-none');
-				}
+				}*/
 				diagMsgsWrapper.innerHTML = wp.template('scc-diag-alert')(debugMessages(debugItems, isCloudFlare));
 				diagMsgsWrapper.classList.remove('d-none');
 			}
@@ -1213,7 +1263,10 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		var el = jQuery(element);
 		//1 dropdown, checkboxes, coment box //2 slider
 		var id_element = el.closest('.elements_added').find(".input_id_element").val();
-		var clonedElement = el.closest('.elements_added').clone()
+		var clonedElement = el.closest('.elements_added').clone();
+		const elementSetupRoot = el.closest( '.elements_added' );
+		const elementType = elementSetupRoot.attr( 'data-element' );
+		
 		jQuery.ajax({
 			url: ajaxurl,
 			cache: false,
@@ -1223,7 +1276,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				nonce: pageEditCalculator.nonce
 			},
 			success: function(data) {
-				if (data.passed) {
+				if (data.passed) {  
 					switch (type) {
 						case 1:
 							duplicatedDrop(data.id, data.ids, data.ids_c)
@@ -1237,6 +1290,13 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 					showSweet(false, data?.error);
 				}
 				sccBackendUtils.handleSavingAlert(data, false);
+
+				if ( elementType === 'date' ) {
+					sccBackendUtils.datePickerElementCallback( clonedElement[ 0 ], true, true );
+					sccBackendUtils.initiateDatePickerAndSliderConflictResolution();
+					sccBackendUtils.handleTooltipAjaxAddedElements( clonedElement[ 0 ] );
+					sccFlatpickrInitBackend();
+				}
 			}
 		})
 		//reder duplicated element in dom
@@ -2013,6 +2073,54 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 			})
 		}, 2000);
 	}
+	function addDateElement( el ) {
+		const subContainer = jQuery( el )
+			.closest( '.boardOption' )
+			.find( '.subsection-area' );
+		const idSub = el
+			.closest( '.boardOption' )
+			.querySelector( '.input_subsection_id' )
+			.getAttribute( 'value' );
+		const containerButtons = jQuery( el ).parent();
+		const count = jQuery( el ).parent().parent().parent().find( '.elements_added' ).length + 1;
+		jQuery.ajax( {
+			url: ajaxurl,
+			cache: false,
+			data: {
+				action: 'sccAddElementDate',
+				id_sub: idSub,
+				order: count,
+				nonce: pageEditCalculator.nonce,
+			},
+			srcElement: el,
+			beforeSend() {
+				const { srcElement } = this;
+				srcElement.querySelectorAll( ':scope > :not(i)' ).forEach( ( el ) => el.classList.add( 'scc-d-none' ) );
+				srcElement.querySelector( ':scope > i' ).classList.remove( 'scc-d-none' );
+			},
+			success( data ) {
+				if ( data.passed == true ) {
+					const elementDOM = data.DOMhtml;
+					let element = insertDateEl( data.id_element, elementDOM );
+					element = jQuery( element );
+					// adding the tooltip to the new element
+					sccBackendUtils.handleTooltipAjaxAddedElements( element[ 0 ] );
+					subContainer.append( element );
+					this.element = element;
+					containerButtons.hide();
+				}
+				sccBackendUtils.handleSavingAlert( data, true );
+				sccFlatpickrInitBackend();
+			},
+			complete() {
+				const { srcElement, element } = this;
+				srcElement.querySelectorAll( ':scope > :not(i)' ).forEach( ( el ) => el.classList.remove( 'scc-d-none' ) );
+				srcElement.querySelector( ':scope > i' ).classList.add( 'scc-d-none' );
+
+				sccBackendUtils.datePickerElementCallback( element[ 0 ], true );
+			},
+		} );
+	}
 	/**
 	 * *Adds element to db with type checkbox after success the element is added to dom
 	 * @param subsection_id
@@ -2366,6 +2474,103 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 			}
 		})
 	}
+
+	let mediaUploader;
+	//type can be 'element' or 'element-item'
+	function uploadElementTitleIcon( element, type ) {
+		const formField = element;
+		if ( type.length == 0 ) {
+			type = 'element';
+		}
+		mediaUploader = wp.media.frames.file_frame = wp.media( {
+			title: 'Choose Image',
+			button: {
+				text: 'Choose Image',
+			},
+			multiple: false,
+		} );
+		mediaUploader.on( 'select', function() {
+			onEditFormMediaIconSelect( formField, type );
+		} );
+		mediaUploader.open();
+	}
+	window.uploadElementTitleIcon = uploadElementTitleIcon;
+
+	//type can be 'element' or 'element-item'
+	function onEditFormMediaIconSelect( element, type ) {
+		mediaUploaderClean();
+		const formField = element;
+		const elementType = type;
+		const attachment = mediaUploader.state().get( 'selection' ).first().toJSON();
+		let getAttachmentSize = attachment.sizes.medium;
+		if ( getAttachmentSize ) {
+			getAttachmentSize = attachment.sizes.medium.url;
+		} else {
+			getAttachmentSize = attachment.sizes.full.url;
+		}
+		const field = formField;
+
+		let data = {};
+		const dataIconConfigArray = {
+			type: 'img',
+			icon_html: '',
+			icon_class: '',
+			icon_text: '',
+			image_icon: getAttachmentSize,
+			position: '',
+			width: '',
+		};
+		if ( elementType == 'element' ) {
+			data = {
+				action: 'sccUpElement',
+				id_element: field.closest( '.elements_added' ).querySelector( '.input_id_element' ).value,
+				titleIconConfigArray: dataIconConfigArray,
+				nonce: pageEditCalculator.nonce,
+			};
+		}
+		if ( elementType == 'element-item' ) {
+			let id_elementitem = field.closest( '.scc-item-field-container' ).getAttribute( 'data-element-item-id' );
+			if ( ! id_elementitem ) {
+				id_elementitem = jQuery( field ).closest( '.scc-item-field-container' ).data( 'elementItemId' );
+			}
+			data = {
+				action: 'sccUpElementItemSwichoption',
+				id_elementitem,
+				titleIconConfigArray: dataIconConfigArray,
+				nonce: pageEditCalculator.nonce,
+			};
+		}
+
+		jQuery.ajax( {
+			url: ajaxurl,
+			cache: false,
+			data,
+			beforeSend() {
+				sccBackendUtils.disableSaveBtnAjax( true, formField );
+			},
+			success( data ) {
+				let datajson = data;
+				if ( type == 'element' ) {
+					datajson = JSON.parse( data );
+				}
+				sccBackendUtils.disableSaveBtnAjax( false, formField );
+
+				// handle frontend changes after response
+				const imageIcon = formField.closest( '.scc-icon-picker' ).querySelector( '.scc-image-icon' );
+				const fontIcon = formField.closest( '.scc-icon-picker' ).querySelector( '.scc-font-icon' );
+				imageIcon.style.display = '';
+				fontIcon.style.display = 'none';
+				imageIcon.src = getAttachmentSize;
+
+				sccBackendUtils.handleSavingAlert( datajson );
+			},
+			error( err ) {
+				sccBackendUtils.disableSaveBtnAjax( false, formField );
+			},
+		} );
+	}
+	window.onEditFormMediaIconSelect = onEditFormMediaIconSelect;
+
 	/**
 	 * *Updates the column value1 of element in db 
 	 * !this value1 is use multiple times for more than one element
@@ -2377,6 +2582,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		var isPricingStructureChoice = jQuery(element).hasClass('pricing-structure-dd')
 		var elementSetupContainer = jQuery(element).closest('.elements_added')
 		//added to change element header on change
+		
 		var elementHeader = ''
 		switch (selected) {
 			case '1':
@@ -2451,6 +2657,22 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				if (priceRanges.length > 1) {
 					elementSetupContainer.find('.price-slider-item:not(:eq(0))').removeClass('d-none')
 				}
+			}
+		}
+
+		const datePickerSetupBody = element.hasAttribute( 'data-date-structure' ) ? element.closest( '.date-setup-body' ) : null;
+		const pricePerDay = datePickerSetupBody ? datePickerSetupBody.querySelector( '.scc-price-per-date' ) : null;
+		const pricingMode = datePickerSetupBody ? datePickerSetupBody.querySelector( '.pricing-mode-dd' ) : null;
+		const pricingModeValue = pricingMode ? pricingMode.querySelector( 'input' ).value : null;
+
+		if ( selected === 'single_date' ) {
+			pricePerDay.classList.add( 'scc-d-none' );
+			pricingMode.classList.add( 'scc-d-none' );
+		}
+		if ( selected === 'date_range' ) {
+			pricingMode.classList.remove( 'scc-d-none' );
+			if ( pricingModeValue !== 'quantity_mod' ) {
+				pricePerDay.classList.remove( 'scc-d-none' );
 			}
 		}
 
@@ -3035,6 +3257,9 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				let elementEditBoxType = this.getAttribute('data-element-setup-type');
 				if (elementEditBoxType == 'slider') {
 					sccBackendUtils.handleSliderSetupBox(this);
+				}
+				if (elementEditBoxType == 'date') {  
+					sccBackendUtils.datePickerElementCallback(this);
 				}
 				relatedElementsForCollapsing.forEach((e, key) => {
 					let target = jQuery(e).closest('.elements_added').find(".scc-element-content");
@@ -3693,6 +3918,30 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		return element
 	}
 	/**
+	 * *Date element to be inserted in dom after success insert in db
+	 * @param element_id
+	 */
+	function insertDateEl(idnewElement, elementDOM) {
+		var elementHead = `<div class="elements_added_v2 ">
+			<div class="element-icon">
+				<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['calendar'] ); ?></span>
+			</div>
+			<div class="element-title-desc" onclick="javascript:collapseElementTitle(this)" style="cursor: pointer;">
+				<div class="title-desc-wrapper">
+					<span class="element-title">Date Picker</span>
+					<p class="element-description"></p>
+				</div>
+			</div>
+			<?php echo scc_output_editing_page_element_actions_js_template( 'date-picker-tt' ); ?>
+		</div>`
+		var element = '<div class="elements_added" data-element="date-picker-element" style="outline: 2px solid #ffa500;outline-style: dashed;">'
+		element += '    <input type="text" class="input_id_element" value="' + idnewElement + '" hidden="">'
+		element += elementHead
+		element += elementDOM['body']
+		element += '</div>'
+		return element
+	}
+	/**
 	 * *TextHtml element to be inserted in dom after success insert in db
 	 * @param elemen_id
 	 */
@@ -3712,14 +3961,14 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		var element = '<div class="elements_added" style="outline: 2px solid rgb(138, 153, 248);outline-style: dashed;">'
 		element += '    <input type="text" class="input_id_element" value="' + idnewElement + '" hidden="">'
 		element += elementHead
-		element += '    <div class="scc-element-content" value="selectoption" style="height: auto;">'
+		element += '    <div class="scc-element-content" data-element-setup-type="texthtml" value="selectoption" style="height: auto;">'
 		element += '        <!-- CONTENT OF EACH ELEMENT -->'
 		element += '        <!-- ELEMENT -->'
 		element += '        <div class="slider-setup-body">'
 		element += '			<label class="form-label fw-bold">Title</label>';
 		element += '			<div class="input-group mb-3"><input type="text" class="789 input_pad inputoption_title" onkeyup="clickedTitleElement(this)" style="height:35px;width:100%;" placeholder="Title" value=""></div>';
 		element += '        	<!-- ELEMENTS INSIDE ELEMENTS -->'
-		element += '        	<div class="row g-3 edit-field" style="    margin-bottom: 1rem!important;">'
+		element += '        	<div class="row g-3 edit-field" style="margin-bottom: 1rem!important;">'
 		element += '            	<div class="col">'
 		element += '               	 	<label class="form-label fw-bold">Raw Text (or HTML)</label>'
 		element += '                	<textarea data-type="texthtml" onkeyup="changeValue2(this)" rows="5" cols="33" class="input_pad inputoption_text" style="width: 100%;"></textarea>'
@@ -3803,6 +4052,31 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		element += '</div>'
 		element += '<span class="scc-saving-element-msg scc-visibility-hidden"></span>'
 		element += '            </div>'
+		return element
+	}
+
+	/**
+	 * *Date element to be inserted in dom after success insert in db
+	 * @param element_id
+	 */
+	function insertDateEl(idnewElement, elementDOM) {
+		var elementHead = `<div class="elements_added_v2 ">
+			<div class="element-icon">
+				<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['calendar'] ); ?></span>
+			</div>
+			<div class="element-title-desc" onclick="javascript:collapseElementTitle(this)" style="cursor: pointer;">
+				<div class="title-desc-wrapper">
+					<span class="element-title">Date Picker</span>
+					<p class="element-description"></p>
+				</div>
+			</div>
+			<?php echo scc_output_editing_page_element_actions_js_template( 'date-picker-tt' ); ?>
+		</div>`
+		var element = '<div class="elements_added" data-element="date-picker-element" style="outline: 2px solid #ffa500;outline-style: dashed;">'
+		element += '    <input type="text" class="input_id_element" value="' + idnewElement + '" hidden="">'
+		element += elementHead
+		element += elementDOM['body']
+		element += '</div>'
 		return element
 	}
 	/**

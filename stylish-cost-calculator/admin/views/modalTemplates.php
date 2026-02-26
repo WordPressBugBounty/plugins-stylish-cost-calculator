@@ -323,8 +323,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 												  <span class="users-price-summary-scc" id="coupon_discount_with_currency_label_3"
 													  style="position:relative; right:5px;width:100%;">£E 10.05</span></div>
 											<# } #>
+											<# if (!pdfConfig?.isTotalBarHidden) { #>
 												<div class=" scc-col-md-6 scc-col-xs-6 sscfull-height position-relative table__fricctableprice" style="border: 1px solid white;text-align:right; max-width:150px"><span class="trn Total_Price" style="font-weight:bold;" data-trn-key="Total Price">{{ sccGetTranslationByKey(data.calcId, "Total Price") }}</span></div>
 												<div style="border: 1px solid white;text-align:right; justify-content: right; align-items: center;padding-right:15px;"><span class="Total_Price" id="total_price_with_currency_label_1" style="font-weight:bold;position:relative; right:0px;width:100%;text-align:right">{{{ totalRow.attr.price }}}</span></div>
+											<# } #>	
 									</div>
 								</div>
 								<div class="scc_email_template_view" id="scc_email_temfootdiscr" style="margin-top: 84px;">

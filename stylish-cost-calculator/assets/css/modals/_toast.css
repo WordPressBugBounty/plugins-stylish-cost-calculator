@@ -1,0 +1,236 @@
+/* Toast Message Styles */
+/* Toast container */
+.scc-toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  pointer-events: none;
+}
+
+/* Toast root element */
+.scc-toast-root {
+  pointer-events: auto;
+  transform: translateX(100%);
+  opacity: 0;
+  transition: all 0.3s ease-in-out;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.scc-toast-root.active {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* Toast message wrapper */
+.scc-toast-message {
+  position: relative;
+  max-width: 400px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease-in-out;
+  border-left: 4px solid #2563eb;
+  background-color: #e6f3ff;
+  overflow: hidden;
+}
+
+/* Toast variants */
+.scc-toast-message.toast-success {
+  background-color: #f0f9f4;
+  border-left-color: #10b981;
+}
+
+.scc-toast-message.toast-success .toast-icon .scc-icn-wrapper {
+  background-color: #10b981;
+}
+
+.scc-toast-message.toast-success .toast-title {
+  color: rgba(16, 185, 129, 0.8);
+}
+
+.scc-toast-message.toast-warning {
+  background-color: #fffbeb;
+  border-left-color: #f59e0b;
+}
+
+.scc-toast-message.toast-warning .toast-icon .scc-icn-wrapper {
+  background-color: #f59e0b;
+}
+
+.scc-toast-message.toast-warning .toast-title {
+  color: rgba(245, 158, 11, 0.8);
+}
+
+.scc-toast-message.toast-error {
+  background-color: #fef2f2;
+  border-left-color: #ef4444;
+}
+
+.scc-toast-message.toast-error .toast-icon .scc-icn-wrapper {
+  background-color: #ef4444;
+}
+
+.scc-toast-message.toast-error .toast-title {
+  color: rgba(239, 68, 68, 0.8);
+}
+
+/* Hover effect */
+.scc-toast-message:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Toast content */
+.toast-content {
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem;
+  gap: 12px;
+  position: relative;
+}
+
+/* Toast icon */
+.toast-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.toast-icon .scc-icn-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #2563eb;
+  color: white;
+}
+
+.toast-icon .scc-icn-wrapper .material-icons {
+  font-size: 16px;
+}
+
+/* Toast message content */
+.toast-message {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: rgba(37, 99, 235, 0.8);
+  line-height: 1.4;
+}
+
+.toast-message-text {
+  font-size: 13px;
+  margin: 0;
+  color: #374151;
+  line-height: 1.5;
+}
+
+/* Toast actions */
+.toast-actions {
+  display: none;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.toast-actions .toast-action-btn {
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toast-actions .toast-action-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Toast close button */
+.toast-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toast-close:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #374151;
+}
+
+.toast-close .material-icons {
+  font-size: 16px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .scc-toast-container {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+  }
+
+  .scc-toast-message {
+    max-width: none;
+  }
+
+  .toast-content {
+    padding: 0.75rem;
+  }
+
+  .toast-title {
+    font-size: 13px;
+  }
+
+  .toast-message-text {
+    font-size: 12px;
+  }
+}
+
+/* Animation keyframes for additional effects */
+@keyframes toast-slide-in {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-slide-out {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Optional: Add animation classes for more control */
+.scc-toast-root.slide-in {
+  animation: toast-slide-in 0.3s ease-out;
+}
+
+.scc-toast-root.slide-out {
+  animation: toast-slide-out 0.3s ease-in;
+}

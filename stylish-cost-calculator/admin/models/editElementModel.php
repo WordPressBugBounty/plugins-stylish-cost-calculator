@@ -7,14 +7,17 @@ class Stylish_Cost_Calculator_Edit_Page {
     protected $df_scc_form_currency;
     protected $is_woocommerce_enabled;
     public $woo_commerce_products;
+	private $scc_icons;
+
     public function __construct( $calc_id = false, $is_from_ajax = false, $is_woocommerce_enabled = false ) {
         $this->calc_id                = $calc_id;
         $this->is_from_ajax           = $is_from_ajax;
         $this->df_scc_form_currency   = get_option( 'df_scc_currency', 'USD' );
         $this->is_woocommerce_enabled = false;
+		$this->scc_icons = require SCC_DIR . '/assets/scc_icons/icon_rsrc.php';
     }
 
-    public function renderAdvancedOptions( $el ) {
+    public function renderAdvancedOptions( $el ) { 
         $defaults = [
             'orden'              => 0,
             'titleElement'       => 'Title',
@@ -44,7 +47,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 		<div class="scc-content" style="display: none;">
 			<div class="scc-transition px-0 advanced-option-wrapper">
 				<?php if ( $el->type == 'custom math' ) { ?>
-						<div>
+						<p>
 							<label class="scc-accordion_switch_button">
 								<input onchange="changeDisplayFrontend(this)" class="scc_mandatory_dropdown" type="checkbox" 
 								<?php
@@ -56,8 +59,8 @@ class Stylish_Cost_Calculator_Edit_Page {
 								<span class="scc-accordion_toggle_button round"></span>
 							</label>
 							<span>Display on Frontend Form</span>
-						</div>
-						<div>
+							</p>
+						<p>
 							<label class="scc-accordion_switch_button">
 								<input onchange="changeDisplayDetail(this)" class="scc_mandatory_dropdown" type="checkbox" 
 								<?php
@@ -69,8 +72,8 @@ class Stylish_Cost_Calculator_Edit_Page {
 								<span class="scc-accordion_toggle_button round"></span>
 							</label>
 							<span>Display on Detailed List</span>
-						</div>
-						<div>
+				</p>
+						<p>
 							<label class="scc-accordion_switch_button">
 								<input onchange="changeCalculationSymbol(this)" class="scc_mandatory_dropdown" type="checkbox" 
 								<?php
@@ -82,7 +85,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 								<span class="scc-accordion_toggle_button round"></span>
 							</label>
 							<span>Show Calculation Symbol</span>
-						</div>
+				</p>
 					</div>
 				</div>
 					<?php
@@ -142,7 +145,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 					</div>
 					<?php } ?>
 					<?php if ( $el->type !== 'texthtml' ) { ?>
-					<div class="scc-advanced-option-cont">
+					<p class="scc-advanced-option-cont">
 						<label class="scc-accordion_switch_button">
 							<input onchange="changeMandatoryElement(this)" class="scc_mandatory_dropdown" name="scc_mandatory_dropdown" type="checkbox" 
 							<?php
@@ -155,9 +158,14 @@ class Stylish_Cost_Calculator_Edit_Page {
 						</label>
 						<span>
 							<span class="scc-adv-opt-lbl" >Mandatory</span>
-							<i class="material-icons-outlined with-tooltip" data-element-tooltip-type="mandatory-elements-tt" data-bs-original-title="" title="" style="margin-right:5px">help_outline</i>
+							<i
+							data-element-tooltip-type="mandatory-elements-tt"
+							class="material-icons-outlined more-settings-info"
+							style="margin-right:5px">
+							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
+						</i>
 						</span>
-					</div>
+					</p>
 					
 						<?php
 					}
@@ -180,15 +188,20 @@ class Stylish_Cost_Calculator_Edit_Page {
                     }
         ?>
 				<?php if ( in_array( $el->type, [ 'checkbox', 'slider' ] ) ) { ?>
-				<div class="scc-advanced-option-cont">
+				<p class="scc-advanced-option-cont">
 					<label class="scc-accordion_switch_button">
 						<input onchange="changeShowPriceHintElement(this)" class="scc_mandatory_dropdown" name="scc_mandatory_dropdown" type="checkbox" disabled>
 						<span class="scc-accordion_toggle_button round"></span>
 					</label>
 					<span><span class="scc-adv-opt-lbl">Show Price Hint</span>
-					<i class="material-icons-outlined with-tooltip" data-element-tooltip-type="enable-price-hint-bubble-tt" data-bs-original-title="" title="" style="margin-right:5px">help_outline</i>
+					<i
+						data-element-tooltip-type="enable-price-hint-bubble-tt"
+						class="material-icons-outlined more-settings-info"
+						style="margin-right:5px">
+						<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
+					</i>
 					</span>
-				</div>
+				<p>
 				<?php } ?>
 				<?php if ( in_array( $el->type, [ 'quantity box' ] ) ) { ?>
 					<p class="scc-advanced-option-cont">
@@ -202,13 +215,19 @@ class Stylish_Cost_Calculator_Edit_Page {
 							<span class="scc-accordion_toggle_button round"></span>
 						</label>
 						<span>
-							<span class="scc-adv-opt-lbl use-tooltip">Enable commas </span>
-							<i class="material-icons-outlined with-tooltip" data-element-tooltip-type="qnt-input-comma-number" data-bs-original-title="" title="" style="margin-right:5px">help_outline</i>
+							<span class="scc-adv-opt-lbl use-tooltip">Enable commas </span>		
+							<i
+								data-element-tooltip-type="qnt-input-comma-number"
+								class="material-icons-outlined more-settings-info"
+								style="margin-right:5px">
+								<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
+							</i>
 						</span>
 					</p>
 				<?php } ?>
-				<?php if ( in_array( $el->type, [ 'slider', 'texthtml' ] ) ) { ?>
-				<div class="scc-advanced-option-cont">
+				<?php if ( in_array( $el->type, [ 'slider', 'texthtml', 'date' ] ) ) { ?>
+					 
+				<p class="scc-advanced-option-cont">
 					<label class="scc-accordion_switch_button">
 						<input onchange="toggleSliderDisplayinDetail(this)" name="scc_hide_slider_on_detailed_view" type="checkbox" 
 						<?php
@@ -220,12 +239,18 @@ class Stylish_Cost_Calculator_Edit_Page {
 						<span class="scc-accordion_toggle_button round"></span>
 					</label>
 					<span><span class="scc-adv-opt-lbl">Show on Detailed List</span>
-					<i class="material-icons-outlined with-tooltip" data-element-tooltip-type="display-on-detailed-list-pdf-tt" data-bs-original-title="" title="" style="margin-right:5px">help_outline</i>
+				    <i
+						data-element-tooltip-type="display-on-detailed-list-pdf-tt"
+						class="material-icons-outlined more-settings-info"
+						style="margin-right:5px">
+						<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
+					</i>
+
 					</span>
-				</div>
+				</p>
 				<?php } ?>
 				<?php if ( in_array( $el->type, [ 'slider' ] ) ) { ?>
-				<div class="scc-advanced-option-cont">
+				<p class="scc-advanced-option-cont">
 					<label class="scc-accordion_switch_button">
 						<input onchange="toggleSliderInputBoxShowHide(this)" name="scc_show_inputbox_slider" type="checkbox" 
 						<?php
@@ -237,10 +262,15 @@ class Stylish_Cost_Calculator_Edit_Page {
 						<span class="scc-accordion_toggle_button round"></span>
 					</label>
 					<span><span class="scc-adv-opt-lbl">Add Input Box To Slider</span>
-					<i class="material-icons-outlined with-tooltip" data-element-tooltip-type="append-quantity-input-box-tt" data-bs-original-title="" title="" style="margin-right:5px">help_outline</i>
-					</span>
-				</div>
-				<div class="row gx-2 mt-2 scc-advanced-option-cont">
+					<i
+						data-element-tooltip-type="append-quantity-input-box-tt"
+						class="material-icons-outlined more-settings-info"
+						style="margin-right:5px">
+						<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
+					</i>
+				    </span>
+				</p>
+				<p class="row gx-2 mt-2 scc-advanced-option-cont">
 					<div class="col-md-6 input-field">
 						<input id="<?php echo esc_attr( 'slider-starting-value-' . $el->id ); ?>" type="number" onchange="changeValue3(this, true);" onkeyup="changeValue3(this)" value="<?php echo esc_attr( $el->value3 ); ?>" style="margin-bottom: 0px;">
 						<label for="<?php echo esc_attr( 'slider-starting-value-' . $el->id ); ?>" class="active form-label fw-bold">Starting value</label>
@@ -249,11 +279,11 @@ class Stylish_Cost_Calculator_Edit_Page {
 						<input id="<?php echo esc_attr( 'slider-steps-value-' . $el->id ); ?>" type="number" onchange="changeValue2(this)" onkeyup="changeValue2(this)" value="<?php echo esc_attr( $el->value2 ); ?>" style="margin-bottom: 0px;">
 						<label for="<?php echo esc_attr( 'slider-steps-value-' . $el->id ); ?>" class="active form-label fw-bold">Slider steps</label>
 					</div>
-				</div>
+				</p>
 				<p class="d-none slider-start-value-warning" style="color: red;">The starting value cannot be smaller than the base from value.</p>
 			   <?php } ?>
 				<?php if ( in_array( $el->type, [ 'math', 'Dropdown Menu' ] ) ) { ?>
-				<div class="scc-advanced-option-cont">
+				<p class="scc-advanced-option-cont">
 					<label class="scc-accordion_switch_button">
 						<input onchange="changeShowTitlePdf(this)" class="scc_mandatory_dropdown" name="scc_mandatory_dropdown" type="checkbox" 
 						<?php
@@ -264,14 +294,296 @@ class Stylish_Cost_Calculator_Edit_Page {
 						>
 						<span class="scc-accordion_toggle_button round"></span>
 					</label>
-					<span class="scc-adv-opt-lbl">Show Title on Detailed List & PDF 
-						<i class="material-icons-outlined with-tooltip" data-element-tooltip-type="show-title-on-detailed-list-tt" data-bs-original-title="" title="" style="margin-right:5px">help_outline</i>
+					<span class="scc-adv-opt-lbl">Show Title on Detailed List 
+				    <i
+						data-element-tooltip-type="show-title-on-detailed-list-tt"
+						class="material-icons-outlined more-settings-info"
+						style="margin-right:5px">
+						<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
+					</i>
 					</span>
-				</div>
+				</p>
 					<?php
 				}
 
-                if ( $el->type != 'checkbox' ) {
+					if ( in_array( $el->type, [ 'date' ] ) ) {
+					if ( $el->type == 'date') {
+						$value6_default  = 'date-picker-element';
+					}
+                $value6_default  = DF_SCC_ELEMENT_DEFAULT_VALUES[$value6_default]['advanced']['value6'];
+                $scc_date_config = wp_parse_args(
+                    json_decode( wp_unslash( !empty( $el->value6 ) ? $el->value6 : '' ), true ),
+                    $value6_default
+                );
+                $hours_12           = range( 1, 12 );
+                $hours_24           = range( 0, 23 );
+                $numbers_0_to_55    = range( 0, 55, 5 );
+                $show_time_options  = isset( $scc_date_config['enable_time_picker'] ) ? boolval( $scc_date_config['enable_time_picker'] ) : false;
+                $show_12h_options   = boolval( $scc_date_config['limit_hours'] ) && $scc_date_config['time_format'] === '12h' && $show_time_options;
+                $show_24h_options   = boolval( $scc_date_config['limit_hours'] ) && $scc_date_config['time_format'] === '24h' && $show_time_options;
+                ?>
+				<p>
+					<label class="scc-accordion_switch_button">
+						<input
+							data-element-id="<?php echo intval( $el->id ); ?>"
+							data-value6-key="disable_past_days"
+							<?php echo boolval( $scc_date_config['disable_past_days'] ) ? 'checked' : ''; ?>
+							type="checkbox">
+						<span class="scc-accordion_toggle_button round"></span>
+					</label>
+					<span class="scc-adv-opt-lbl">Disable Past Days
+						<i 
+							class="material-icons-outlined more-settings-info"
+							data-element-tooltip-type="display-past-days-tt"
+							style="margin-right:5px">
+							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
+						</i>
+					</span>
+				</p>
+				<p>
+					<label class="scc-accordion_switch_button">
+						<input
+							data-element-id="<?php echo intval( $el->id ); ?>"
+							data-value6-key="disable_today_date"
+							<?php echo boolval( $scc_date_config['disable_today_date'] ) ? 'checked' : ''; ?>
+							type="checkbox"
+							class="scc-disable-today-date"
+							>
+						<span class="scc-accordion_toggle_button round"></span>
+					</label>
+					<span class="scc-adv-opt-lbl">Disable Today's Date
+						<i 
+							class="material-icons-outlined more-settings-info"
+							data-element-tooltip-type="date-picker-disable-today-date-tt"
+							style="margin-right:5px">
+							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
+						</i>
+					</span>
+				</p>
+				<p>
+					<label class="scc-accordion_switch_button">
+						<input
+							data-element-id="<?php echo intval( $el->id ); ?>"
+							<?php echo boolval( $scc_date_config['enable_limit_days'] ) ? 'checked' : ''; ?>
+							data-value6-key="enable_limit_days"
+							type="checkbox">
+						<span class="scc-accordion_toggle_button round"></span>
+					</label>
+					<span class="scc-adv-opt-lbl"
+						data-bs-original-title="">Limit Days
+						<i
+							data-element-tooltip-type="limit-days-tt"
+							class="material-icons-outlined more-settings-info"
+							style="margin-right:5px">
+							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
+						</i>
+					</span>
+				</p>
+				<div class="scc-days-wrapper p-3 <?php echo boolval( $scc_date_config['enable_limit_days'] ) ? '' : 'd-none'; ?>">
+					<p class="scc-days-wrapper-lead">Choose days to exclude</p>
+					<div class="days-select" data-value6-key="limit_days" data-value6-type="array-checkboxes">
+						<?php foreach ( [ 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun' ] as $value ) {
+						    $is_checked = in_array( $value, $scc_date_config['limit_days'] ) ? 'checked' : '';
+						    echo "<label class='day'><input data-element-id=" . intval( $el->id ) . ' ' . $is_checked . " type='checkbox' value='$value'><span>$value</span></label>";
+						} ?>
+					</div>
+				</div>
+				<hr>
+			<div class="scc-accordion-tooltip" style="text-align:left; width:100%">
+				<div class="row gx-2 scc-edit-input-option-wrapper">
+					<div class="col-md-4" style="margin-bottom: 1rem">
+						<label class="use-tooltip fw-bold" title="Select the minimum date in which it is allowed to choose dates"
+						style="font-size:14px; transform:scale(0.8)">Min date </label>
+						<input placeholder="yyyy-mm-dd" type="text" data-date-structure data-picker-field="min-date" class="input_pad inputoption_2 scc-datepicker-editor" 
+						style="text-align:center;height:35px; min-width:158px;" placeholder=""
+						value="<?php echo esc_attr( $scc_date_config['min_date'] ); ?>" <?php echo esc_attr( $scc_date_config['min_date'] === 'today' ? 'data-today-enabled=true' : '' ); ?>>
+					</div>
+					<div class="col-md-4" style="margin-bottom: 1rem">
+						<label class="use-tooltip fw-bold" title="Select the maximum date in which it is allowed to choose dates"
+						style="font-size:14px; transform:scale(0.8)">Max date </label>
+						<input placeholder="yyyy-mm-dd" type="text" data-date-structure data-picker-field="max-date" class="input_pad inputoption_2 scc-datepicker-editor" 
+						style="text-align:center;height:35px; min-width:158px;" placeholder=""
+						value="<?php echo esc_attr( $scc_date_config['max_date'] ); ?>" <?php echo esc_attr( $scc_date_config['max_date'] === 'today' ? 'data-today-enabled=true' : '' ); ?>>
+					</div>
+					<div class="col-md-4" style="margin-bottom: 1rem">
+					<label class="use-tooltip fw-bold" title="Choose the default date for the date picker"
+						style="font-size:14px; transform:scale(0.8)">Default date </label>
+						<input placeholder="yyyy-mm-dd" type="text" data-picker-field="default-date" class="input_pad inputoption_2 scc-datepicker-editor" 
+						style="text-align:center;height:35px; min-width:158px;" placeholder=""
+						value="<?php echo esc_attr( $el->value2 ); ?>" <?php echo esc_attr( $el->value2 === 'today' ? 'data-today-enabled=true' : '' ); ?>>
+					</div>
+					
+				</div>
+				<div class="row gx-2 scc-edit-input-option-wrapper">
+					<div class="col-md-12" style="margin-bottom: 1rem">
+						<label class=" use-tooltip fw-bold" title="Manually choose the dates you want to disable so users can't select them"
+						style="font-size:14px; transform:scale(0.8)">Disabled dates </label>
+						<input placeholder="yyyy-mm-dd" type="text" data-picker-field="disabled-date" class="input_pad inputoption_2 scc-datepicker-editor" 
+						style="text-align:center;height:35px; min-width:158px;" placeholder=""
+						value="<?php echo esc_attr( $scc_date_config['disabled_date'] ); ?>">
+					</div>
+				</div>
+			</div>
+			<hr>
+			<p>
+					<label class="scc-accordion_switch_button">
+						<input
+							data-element-id="<?php echo intval( $el->id ); ?>"
+							<?php echo $show_time_options ? 'checked' : ''; ?>
+							data-value6-key="enable_time_picker"
+							type="checkbox">
+						<span class="scc-accordion_toggle_button round"></span>
+					</label>
+					<span class="scc-adv-opt-lbl"
+						data-bs-original-title="">Enable Time Picker
+						<i 
+							data-element-tooltip-type="enable-time-picker-tt"
+							class="material-icons-outlined more-settings-info"
+							style="margin-right:5px">
+							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
+						</i>
+					</span>
+				</p>
+				<p class="limit-hours <?php echo $show_time_options ? '' : 'd-none'; ?>">
+					<label class="scc-accordion_switch_button">
+						<input
+							data-element-id="<?php echo intval( $el->id ); ?>"
+							<?php echo boolval( $scc_date_config['limit_hours'] ) ? 'checked' : ''; ?>
+							data-value6-key="limit_hours"
+							type="checkbox">
+						<span class="scc-accordion_toggle_button round"></span>
+					</label>
+					<span class="scc-adv-opt-lbl"
+						data-bs-original-title="">Limit Hours
+						<i
+							class="material-icons-outlined more-settings-info"
+							data-element-tooltip-type="limit-hours-tt"
+							style="margin-right:5px">
+							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
+						</i>
+					</span>
+				</p>
+				<div class="hours-wrapper-12 start <?php echo $show_12h_options ? '' : 'd-none'; ?> ">
+					<div class="row gx-2 scc-edit-input-option-wrapper hours-select">
+						<div class="col-md-4">
+							<label class="use-tooltip fw-bold" style="font-size:14px; transform:scale(0.8)" title="Select the minimum time in which it is allowed to choose from">Start time</label>
+							<select data-value6-key="limit_hours_start_12h_hour">
+								<?php foreach ( $hours_12 as $value ) { ?>
+									<option <?php selected( $scc_date_config['limit_hours_start_12h_hour'], $value ); ?>><?php echo $value; ?></option>
+								<?php } ?>
+							</select>
+						</div>
+						<div class="col-md-4">
+							<label class="use-tooltip fw-bold fade" style="font-size:14px; transform:scale(0.8)">1</label>
+							<select data-value6-key="limit_hours_start_12h_minutes">
+								<?php foreach ( $numbers_0_to_55 as $value ) { ?>
+									<option <?php selected( $scc_date_config['limit_hours_start_12h_minutes'], $value ); ?>><?php echo $value; ?></option>
+								<?php } ?>
+							</select>
+						</div>
+						<div class="col-md-4">
+							<label class="use-tooltip fw-bold fade" style="font-size:14px; transform:scale(0.8)">1</label>
+							<select data-value6-key="limit_hours_start_am_pm">
+								<option <?php selected( $scc_date_config['limit_hours_start_am_pm'], 'AM' ); ?> value="AM">AM</option>
+								<option <?php selected( $scc_date_config['limit_hours_start_am_pm'], 'PM' ); ?> value="PM">PM</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="hours-wrapper-12 end <?php echo $show_12h_options ? '' : 'd-none'; ?>">
+					<div class="row gx-2 scc-edit-input-option-wrapper hours-select">
+						<div class="col-md-4">
+							<label class="use-tooltip fw-bold" style="font-size:14px; transform:scale(0.8)" title="Select the minimum time in which it is allowed to choose from">End time</label>
+							<select data-value6-key="limit_hours_end_12h_hour">
+								<?php foreach ( $hours_12 as $value ) { ?>
+									<option <?php selected( $scc_date_config['limit_hours_end_12h_hour'], $value ); ?>><?php echo $value; ?></option>
+								<?php } ?>
+							</select>
+						</div>
+						<div class="col-md-4">
+							<label class="use-tooltip fw-bold fade" style="font-size:14px; transform:scale(0.8)">1</label>
+							<select data-value6-key="limit_hours_end_12h_minutes">
+								<?php foreach ( $numbers_0_to_55 as $value ) { ?>
+									<option <?php selected( $scc_date_config['limit_hours_end_12h_minutes'], $value ); ?>><?php echo $value; ?></option>
+								<?php } ?>
+							</select>
+						</div>
+						<div class="col-md-4">
+							<label class="use-tooltip fw-bold fade" style="font-size:14px; transform:scale(0.8)">1</label>
+							<select data-value6-key="limit_hours_end_am_pm">
+								<option <?php selected( $scc_date_config['limit_hours_end_am_pm'], 'AM' ); ?> value="AM">AM</option>
+								<option <?php selected( $scc_date_config['limit_hours_end_am_pm'], 'PM' ); ?> value="PM">PM</option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="hours-wrapper-24 start <?php echo $show_24h_options ? '' : 'd-none'; ?>">
+					<div class="row gx-2 scc-edit-input-option-wrapper hours-select">
+						<div class="col-md-4">
+							<label class="use-tooltip fw-bold" style="font-size:14px; transform:scale(0.8)" title="Select the minimum time in which it is allowed to choose from">Start time</label>
+							<select data-value6-key="limit_hours_start_24h_hour">
+								<?php foreach ( $hours_24 as $value ) { ?>
+									<option <?php selected( $scc_date_config['limit_hours_start_24h_hour'], $value ); ?>><?php echo $value; ?></option>
+								<?php } ?>
+							</select>
+						</div>
+						<div class="col-md-4">
+							<label class="use-tooltip fw-bold fade" style="font-size:14px; transform:scale(0.8)">1</label>
+							<select data-value6-key="limit_hours_start_24h_minutes">
+								<?php foreach ( $numbers_0_to_55 as $value ) { ?>
+									<option <?php selected( $scc_date_config['limit_hours_start_24h_minutes'], $value ); ?>><?php echo $value; ?></option>
+								<?php } ?>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="hours-wrapper-24 end <?php echo $show_24h_options ? '' : 'd-none'; ?>">
+					<div class="row gx-2 scc-edit-input-option-wrapper hours-select">
+						<div class="col-md-4">
+							<label class="use-tooltip fw-bold" style="font-size:14px; transform:scale(0.8)" title="Select the minimum time in which it is allowed to choose from">End time</label>
+							<select data-value6-key="limit_hours_end_24h_hour">
+								<?php foreach ( $hours_24 as $value ) { ?>
+									<option <?php selected( $scc_date_config['limit_hours_end_24h_hour'], $value ); ?>><?php echo $value; ?></option>
+								<?php } ?>
+							</select>
+						</div>
+						<div class="col-md-4">
+							<label class="use-tooltip fw-bold fade" style="font-size:14px; transform:scale(0.8)">1</label>
+							<select data-value6-key="limit_hours_end_24h_minutes">
+								<?php foreach ( $numbers_0_to_55 as $value ) { ?>
+									<option <?php selected( $scc_date_config['limit_hours_end_24h_minutes'], $value ); ?>><?php echo $value; ?></option>
+								<?php } ?>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="row gx-2 scc-edit-input-option-wrapper scc-datepicker-time-interval <?php echo $show_time_options ? '' : 'd-none'; ?>">
+					<div class="col-md-6">
+						<label class=" use-tooltip fw-bold"
+						style="font-size:14px; transform:scale(0.8)">Time Interval</label>
+						<select class="d-block" data-value6-key="time_interval">
+							<option <?php selected( $scc_date_config['time_interval'], '15m' ); ?> value="15m">15 minutes</option>
+							<option <?php selected( $scc_date_config['time_interval'], '30m' ); ?> value="30m">30 minutes</option>
+							<option <?php selected( $scc_date_config['time_interval'], '60m' ); ?> value="60m">1 hour</option>
+						</select>
+					</div>
+					<div class="col-md-6">
+						<label class=" use-tooltip fw-bold"
+						style="font-size:14px; transform:scale(0.8)">Time Format</label>
+						<div class="d-block">
+							<div class="btn-group scc-btn-group-rounded" data-value6-key="time_format">
+								<div role="button" class="m-0 btn <?php echo $scc_date_config['time_format'] === '12h' ? 'scc-btn-brand active' : ''; ?>" data-value="12h">12H</div>
+								<div role="button" class="m-0 btn <?php echo $scc_date_config['time_format'] === '24h' ? 'scc-btn-brand active' : ''; ?>" data-value="24h">24H</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<hr>
+			<?php
+            }
+		 
+
+                if ( $el->type != 'checkbox'  ) {
                     ?>
 					<div class="text-scc-col d-flex" style="font-size:13px;">
 						<div class="col-md-12 input-field use-premium-tooltip">
@@ -282,9 +594,14 @@ class Stylish_Cost_Calculator_Edit_Page {
 					<?php
                 }
         ?>
-				<?php if ( $el->type !== 'texthtml' ) { ?>
+				<?php if ( $el->type !== 'texthtml'  ) { ?>
 				<div class="scc-accordion-tooltip px-0" style="width: 100%; text-align:left;"><span style="text-align: left;display: block;font-size:16px;margin-bottom:10px;">Responsive Options 
-				<i class="material-icons-outlined with-tooltip" data-element-tooltip-type="responsive-options-tt" data-bs-original-title="" title="" style="margin-right:5px">help_outline</i>
+			    <i
+					data-element-tooltip-type="responsive-options-tt"
+					class="material-icons-outlined more-settings-info"
+					style="margin-right:5px">
+					<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
+				</i>
 				</span>
 					<div class="row gx-2 mt-2">
 						<div class="col-md-6 input-field use-premium-tooltip">
@@ -327,7 +644,10 @@ class Stylish_Cost_Calculator_Edit_Page {
 						</select>
 					</div>
 				</div>
-				<?php } ?>
+				<?php } 
+
+			?>
+
 			</div>
 		</div>
 		<?php
@@ -1516,6 +1836,419 @@ class Stylish_Cost_Calculator_Edit_Page {
 
         return $html;
     }
+	public function get_element_type_v2( $type ) {
+        return SCC_ELEMENT_TYPES[ $type ];
+    }
+	public function renderDate( $el, $conditionsBySet ) {
+        $defaults = [
+            'orden'                         => '0',
+            'titleElement'                  => 'Title',
+            'type'                          => 'date',
+            'value1'                        => 'single_date',
+            'value2'                        => '',
+            'value3'                        => '',
+            'value4'                        => '',
+            'value5'                        => '1',
+            'length'                        => '12asd',
+            'uniqueId'                      => '',
+            'mandatory'                     => '0',
+            'showTitlePdf'                  => '0',
+            'titleColumnDesktop'            => '4',
+            'titleColumnMobile'             => '12',
+            'showPriceHint'                 => '0',
+            'displayFrontend'               => '0',
+            'displayDetailList'             => '0',
+            'showInputBoxSlider'            => '0',
+            'showSavingsSlider'             => '0',
+            'subsection_id'                 => '0',
+            'element_woocomerce_product_id' => null,
+            'tooltiptext'                   => null,
+            'conditions'                    => [],
+            'elementitems'                  => [],
+        ];
+        $el              = (object) meks_wp_parse_args( $el, $defaults );
+
+        if ( !isset( $el->type_v2 ) ) {
+            $el->type_v2 = $this->get_element_type_v2( $el->type );
+        }
+        $value6_default  = DF_SCC_ELEMENT_DEFAULT_VALUES[$el->type_v2]['advanced']['value6'];
+        $scc_date_config = wp_parse_args(
+            json_decode( wp_unslash( !empty( $el->value6 ) ? $el->value6 : '' ), true ),
+            $value6_default
+        );
+        ob_start();
+        ?>
+	<div class="scc-element-content" data-element-setup-type="date" value="selectoption" style="
+		<?php
+        if ( ! $this->is_from_ajax ) {
+            echo 'display:none;';
+        }
+		?>
+		 height:auto;">
+		<div class="slider-setup-body date-setup-body" style="border:0px none!">
+			<!-- CONTENIDO DE CADA ELEMENTO -->
+			<!-- ELEMENT -->
+			<label class="form-label fw-bold">Title</label>
+			<?php 
+				echo $this->renderElementTitle( $el ); ?>
+			<div class="col-12 mb-3 edit-field" style=" width: 100%;">
+				<div class="col scc-input-icon col-md-4 scc-pm-0">
+					<label class="form-label fw-bold">Date Type</label> <i style="margin-top:-10px;" class="material-icons-outlined v-align-middle" data-element-tooltip-type="date-picker-types-tt">
+					 <span
+							class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
+					</i>
+					<select data-date-structure class="form-select w-100" onchange="changeValue1(this)">
+						<option value="single_date" <?php selected( $el->value1, 'single_date' ); ?>>Single Date Picker</option>
+						<option value="date_range" <?php selected( $el->value1, 'date_range' ); ?>>Date Range</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-12 mb-3 pricing-mode-dd edit-field <?php echo ( $el->value1 !== 'date_range' ) ? 'scc-d-none' : ''; ?>" style=" width: 100%;">
+				<div class="col scc-input-icon col-md-4 scc-pm-0">
+					<label class="form-label fw-bold">Pricing Mode</label> <i style="margin-top:-10px;" class="material-icons-outlined v-align-middle" data-element-tooltip-type="date-picker-pricing-mode-tt">
+						<span
+							class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
+					</i>
+					<?php
+                    $scc_date_range_pricing_structure = isset( $scc_date_config['date_range_pricing_structure'] ) && !empty( $scc_date_config['date_range_pricing_structure'] )
+                        ? $scc_date_config['date_range_pricing_structure']
+                        : 'unit_price_only';
+        ?>
+					<input data-date-structure class="form-select w-100 pricing-structure-dd scc-datepicker-config" value="<?php echo esc_attr( $scc_date_range_pricing_structure ); ?>" onchange="changeValue6(this)">
+				</div>
+			</div>
+
+			<!--WooCommerce-->
+			<?php if ( isset( $this->woo_commerce_products ) ) { ?>
+			<div class="row mb-3 edit-field">
+				<div class="text-scc-col d-flex">
+					<div class="col-md-12" style="margin-top:10px;padding:0px;">
+						<div class="scc-col-xs-12 scc-col-md-12" style="padding:0px;background: #f8f9ff;height: 35px;">
+							<img class="scc-woo-logo"
+								src="<?php echo esc_url_raw( SCC_ASSETS_URL . '/images/logo-woocommerce.svg' ); ?>"
+								title="Pick an item from your WooCommerce products to link to.">
+							<i style="margin-top:-10px;" class="material-icons-outlined v-align-middle" data-element-tooltip-type="woocommerce-attach-product">
+							<span
+								class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
+							</i>
+						</div>
+						<div class="woo-product-dd scc-col-xs-12 scc-col-md-12" style="padding:0px;">
+							<select class="scc_woo_commerce_product_id scc-woo-commerce-product-selector"
+								data-selected-value=<?php echo intval( $el->element_woocomerce_product_id ); ?>
+								data-target="elements_added"
+								onchange="attachProductId(this, <?php echo intval( $el->id ); ?>, '<?php echo esc_attr( $el->type ); ?>')">
+								<option style="font-size: 10px" value=0>Select a product..</option>
+								<?php echo $this->render_woocommerce_product_options( $el->element_woocomerce_product_id ); ?>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<?php } ?>
+
+			<div class="mb-3 edit-field scc-price-per-date scc-pm-0 <?php echo ( $el->value1 == 'date_range' && $scc_date_config['date_range_pricing_structure'] !== 'quantity_mod' ) ? '' : 'scc-d-none'; ?>">
+				<div class="col scc-input-icon col-md-4 scc-pm-0">
+					<label class="form-label fw-bold" style="width: 100%;">Cost (per day)</label>
+					<div class="scc-flex-inline">
+						<span class="input-group-text"
+							style="float: left;"><?php echo df_scc_get_currency_symbol_by_currency_code( $this->df_scc_form_currency ); ?></span>
+						<input onkeyup="changeValue4(this)" onchange="changeValue4(this),checkBannerNoticeWithDebounce( true )" type="number"
+							class="input_pad check-zero-amount-input inputoption_2" data-currency-input=1 style="text-align:center;width:92% !important;height:35px;margin-right:0 !important"
+							placeholder="Price" value="<?php echo esc_attr( $el->value4 ); ?>" style="margin: 0;">
+					</div>
+				</div>
+			</div>
+
+		</div>
+		<div class="scc-element-content" value="selectoption" style="<?php
+        if ( ! $this->is_from_ajax ) {
+            echo 'display:none;';
+        }
+        ?> height:auto">
+			<div class="scc-new-accordion-container">
+				<div class="styled-accordion">
+					<div class="scc-title scc_accordion_advance" onclick="showAdvanceDateoptions(this)">
+						<i class="material-icons"> 
+							<span
+								class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['chevron-right'] ); ?></span>
+						</i>
+						<span>Advanced Options</span>
+					</div>
+					<?php echo $this->renderAdvancedOptions( $el ); ?>
+				</div>
+                <div class="styled-accordion">
+					<div class="scc-title scc_accordion_conditional ">
+							<i class="material-icons">keyboard_arrow_right</i>
+							<span style="padding-right:20px;" data-element-tooltip-type="conditional-logic-tt" data-bs-original-title="" title="">Conditional Logic </span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- ADVANCE -->
+		<?php // echo $this->scc_render_element_saving( $el ); ?>
+	</div>
+	<?php
+        $html = ob_get_clean();
+
+        return $html;
+    }
+
+	//this function render the element title input
+    public function renderElementTitle( $el ) {
+        ob_start();
+        ?>
+		<div class="input-group d-inline-flex scc-input-icon scc-title-icon mb-3">
+			<?php echo $this->renderTitleIconButton( $el, 'element' ); ?>
+			<input type="text"
+				   name="scc-element-title-field"
+				   class="scc-element-title-field" 
+			       onkeyup="clickedTitleElement(this)"
+				   placeholder="Title"
+				   value="<?php echo stripslashes( htmlentities( $el->titleElement ) ); ?>"
+			>
+		</div>
+		<?php
+        $html = ob_get_clean();
+
+        return $html;
+    }
+
+	//render title icon function. el is the element object and elementType can be 'element' or 'element-item'
+    public function renderTitleIconButton( $el, $elementType ) {
+		$sccIconConfig = wp_parse_args(
+            json_decode( wp_unslash( !empty( $el->titleIconConfigArray ) ? $el->titleIconConfigArray : '' ), true ),
+            [
+                'type'       => 'icon-font',
+                'icon_html'	 => '',
+                'icon_class' => 'material-icons',
+                'icon_text'	 => 'wallpaper',
+                'image_icon' => '',
+                'position'   => '',
+                'width'      => '',
+            ]
+        );
+        ob_start();
+		?>
+		<div class="scc-icon-picker" data-type="<?php echo esc_attr( $sccIconConfig['type'] ); ?>" data-position="<?php echo esc_attr( $sccIconConfig['position'] ); ?>" data-width="<?php echo esc_attr( $sccIconConfig['width'] ); ?>">
+			<input type="hidden" name="icon" value="">
+			<button onclick="sccShowTitleIconOptions(this, '<?php echo esc_attr( $elementType ); ?>')" class="input-group-text scc-icon-picker-button" style="height: 45px;border-radius: 6px 0px 0px 6px">
+				<?php if ( $sccIconConfig['type'] === 'img' && !empty( $sccIconConfig['image_icon'] ) ) { ?>
+				<img class="scc-selected-icon scc-image-icon" src="<?php echo $sccIconConfig['image_icon']; ?>" style="width:22px" alt="">
+				<span class="scc-selected-icon  scc-font-icon" style="display:none;">
+					<i class="<?php echo esc_attr( $sccIconConfig['icon_class'] ); ?>" ><?php echo esc_attr( $sccIconConfig['icon_text'] ); ?></i>
+				</span>
+				<?php } else { ?>
+				<img class="scc-selected-icon scc-image-icon" src="" style="width:22px; display:none" alt="">
+				<span class="scc-selected-icon  scc-font-icon">
+					<i class="<?php echo esc_attr( $sccIconConfig['icon_class'] ); ?>" ><?php echo esc_attr( $sccIconConfig['icon_text'] ); ?></i>
+				</span>	
+				<?php } ?>
+			</button>
+
+			<div class="scc-icon-picker-menu">
+				<div class="scc-icon-picker-search">
+					<input class="scc-search-input" type="text" placeholder="Search icons...">
+					<button class="btn" style="float:right;width:10%;box-shadow: none;" onclick="removeElementTitleIcon(this, '<?php echo esc_attr( $elementType ); ?>')">
+						<span class="scc-icn-wrapper" style="margin-right:4px;"><i class="material-icons-outlined scc-conditional-delete-button">delete</i></span>
+					</button>
+				</div>
+				
+				<div class="scc-icon-picker-filters">
+					<button class="scc-icon-picker-filter active" data-filter="scc-fontawesome">Font Awesome</button>
+					<button class="scc-icon-picker-filter" data-filter="scc-material-icon">Material Icons</button>
+					<button class="scc-icon-picker-filter show-all" data-filter="scc-all">Show all</button>
+					<button id="scc-upload-el-<?php echo $el->id; ?>" data-element-id="<?php echo $el->id; ?>" onclick="uploadElementTitleIcon(this,'<?php echo esc_attr( $elementType ); ?>')" class="scc-icon-picker-upload-button d-inline-flex align-items-center" style="border-radius:6px">
+								<span class="scc-icn-wrapper" style="margin-right:4px;"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['upload-cloud'] ); ?></span>	
+							 Upload </button>
+					<button style="background:white; border:none;">
+						<i class="material-icons-outlined v-align-middle" data-element-tooltip-type="upload-icon-tt">
+						<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
+					</button>
+							 
+				</i>
+				</div>
+				<ul class="scc-icon-list">
+
+				</ul>
+				<div class="text-center">
+					<span class="scc-loading-msg" style="display:none; padding-top:5px;">
+						<i class="scc-btn-spinner scc-save-btn-spinner"></i> Loading...
+					</span>
+				</div>
+			</div>
+		</div>
+		<?php
+        $html = ob_get_clean();
+
+        return $html;
+    }
+
+	public function renderConditionalLogic( $el, $conditionsBySet ) {  
+		ob_start();
+        ?>
+		<div class="scc-content" style="display: none;">
+		<div class="scc-transition scc-hidden">
+			<?php
+                                                    foreach ( $conditionsBySet as $key => $conditionCollection ) {
+                                                        ?>
+			<?php if ( $key > 1 ) { ?>
+			<div class="scc-or-label-cond">OR</div>
+			<?php } ?>
+			<div class="condition-container clearfix" data-condition-set=<?php echo intval( $key ); ?>>
+				<?php
+                                                            foreach ( $conditionCollection as $index => $condition ) {
+                                                                $is_checkbox_condition         = $condition->elementitem_id && ! $condition->condition_element_id;
+                                                                $is_checkbox_with_qtn_selector = $is_checkbox_condition && !in_array( $condition->op, [ 'chec', 'unc' ] );
+                                                                $comparisons                   = (
+                                                                    (
+                                                                        $condition->op === 'eq' ||
+                                                                        $condition->op === 'ne' ||
+                                                                        $condition->op === 'any'
+                                                                    ) &&
+                                                                    ( isset( $condition->element_condition ) ) &&
+                                                                    ! (
+                                                                        $condition->element_condition->type === 'slider' ||
+                                                                        $condition->element_condition->type === 'distance' ||
+                                                                        $condition->element_condition->type === 'quantity box' ||
+                                                                        $condition->element_condition->type === 'calctotal' ||
+                                                                        $condition->element_condition->type === 'date'
+                                                                    )
+                                                                );
+
+                                                                if ( $comparisons ) {
+                                                                    echo $this->get_conditional_logic_second_step( $condition, $index );
+                                                                }
+                                                                ?>
+				
+				<?php
+
+                                                                if ( $is_checkbox_with_qtn_selector ) {
+                                                                    echo $this->get_conditional_logic_second_step( $condition, $index );
+                                                                }
+                                                                ?>
+
+																<?php
+
+                                                                if ( $is_checkbox_condition && ! $is_checkbox_with_qtn_selector ) {
+                                                                    echo $this->get_conditional_logic_second_step( $condition, $index );
+                                                                }
+                                                                ?>
+
+				<?php
+
+                                                                if ( $condition->condition_element_id || isset( $condition->is_total_cond ) && $condition->is_total_cond ) {
+                                                                    if ( in_array( $condition->element_condition->type, [ 'slider', 'quantity box', 'date', 'distance', 'calctotal' ] ) ) {
+                                                                        ?>
+																		<!-- Cond 1 -->
+				<div class="row col-xs-12 col-md-12 conditional-selection"
+					style="padding: 0px; margin-bottom: 5px;">
+					<input type="text" class="id_conditional_item"
+						value="<?php echo intval( $condition->id ); ?>" hidden>
+					<div class="col-xs-2 col-md-2" style="padding:0px;background: #DCF1FD;max-width:70px">
+						<span class="scc_label"
+							style="text-align:center;padding-right:10px;padding-left:5px;margin-top:5px;"><?php echo $index >= 1 ? 'And' : 'Show if'; ?></span>
+					</div>
+					<div class="col-xs-10 col-md-10" style="padding:0px;">
+						<div class="conditional-selection-steps col-xs-12 col-md-12"
+							style="padding:0px;">
+							<div class="item_conditionals" data-value='{"cond":"<?php echo esc_attr( $condition->id ); ?>","operator": "<?php echo esc_attr( $condition->op ); ?>","itemId":"<?php echo intval( $condition->elementitem_id ); ?>", "value": "<?php echo esc_attr( $condition->value ); ?>"}'>
+								<input type="hidden" value="<?php echo intval( ( $condition->condition_element_id === null ) ? $condition->elementitem_id : $condition->condition_element_id  ); ?>" class="first-conditional-step scc-ts-search">
+								<input type="hidden" value="<?php echo esc_attr( $condition->op ); ?>" class="second-conditional-step">
+								<input type="hidden" value="<?php echo intval( $condition->elementitem_id ); ?>" class="third-conditional-step">
+
+								<?php
+                                $scc_is_date_type                                               = $condition->element_condition->type == 'date';
+                                                                        $scc_condition_operator = 'quantity';
+
+                                                                        /* if( $condition->op == 'eq' || $condition->op == 'ne' || $condition->op == 'any' ){
+                                                                            $scc_condition_operator = 'quantity';
+                                                                        }elseif */
+                                                                        $scc_number_class = $scc_is_date_type ? 'conditional-number-value scc-d-none' : 'conditional-number-value';
+                                                                        $scc_date_class   = $scc_is_date_type ? 'scc-conditional-date-value' : 'scc-conditional-date-value scc-d-none';
+                                                                        $scc_date_value   = $this->scc_is_valid_date( $condition->value ) ? $condition->value : '';
+                                                                        ?>
+								<input value="<?php echo esc_attr( $condition->value ); ?>" type="number" placeholder="Number" class="<?php echo $scc_number_class; ?>" min="0">
+								<input value="<?php echo esc_attr( $scc_date_value ); ?>" type="date" class="<?php echo $scc_date_class; ?>">
+
+								<div class="btn-group scc-cond-btn-group" style="margin-left: 10px;">
+									<button onclick="addConditionElement(this)"
+										class="btn btn-cond-saved">Saved</button>
+									<button onclick="deleteCondition(this)"
+										class="btn btn-transparent"><i class="material-icons-outlined scc-conditional-delete-button">delete</i></button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<?php
+                                                                    }
+                                                                }
+                                                            }
+                                                        ?>
+				<div class="row col-xs-12 col-md-12 conditional-selection  
+															<?php
+                                                        if ( count( $conditionCollection ) ) {
+                                                            echo 'hidden';
+                                                        }
+                                                        ?>
+															" style="padding: 0px; margin-bottom: 5px;">
+					<div class="col-xs-2 col-md-2" style="padding:0px;background: #DCF1FD;max-width:70px;">
+						<span class="scc_label"
+							style="text-align:center;padding-right:10px;padding-left:5px;margin-top:5px;"><?php echo empty( count( $el->conditions ) ) ? 'Show if' : 'And'; ?></span>
+					</div>
+					<div class="col-xs-10 col-md-10" style="padding:0px;">
+						<div class="conditional-selection-steps col-xs-12 col-md-12"
+							style="padding:0px;">
+							<div class="item_conditionals">
+								<input type="hidden" class="first-conditional-step scc-ts-search">
+								<input type="hidden" class="second-conditional-step">
+								<input type="hidden" class="third-conditional-step">
+								<input type="number" placeholder="Number"
+									class="conditional-number-value scc-d-none" min="0">
+								<input type="date" class="scc-conditional-date-value scc-d-none">
+								<div class="btn-group scc-cond-btn-group scc-d-none" style="margin-left: 10px;">
+									<button onclick="addConditionElement(this)"
+										class="btn btn-cond-save">Save</button>
+									<button onclick="deleteCondition(this)"
+										class="btn btn-transparent btn-delcondition"
+										style="display: none;"><i class="material-icons-outlined scc-conditional-delete-button">delete</i></button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<button
+					onclick="(($this) => {jQuery($this).prev().removeClass('hidden'); jQuery($this).addClass('hidden')})(this)"
+					class="btn btn-addcondition cond-add-btn 
+															<?php
+                                                        if ( empty( count( $el->conditions ) ) ) {
+                                                            echo 'hidden';
+                                                        }
+                                                        ?>
+															">+ AND</button>
+			</div>
+			<?php } ?>
+			<div style="width: 28%">
+				<button
+					class="btn btn-primary btn-cond-or <?php echo empty( count( $el->conditions ) ) ? 'hidden' : ''; ?>">+
+					OR</button>
+			</div>
+		</div>
+		<div class="scc-refresh-new-elements scc-d-none">
+			<?php
+                $msg  = 'New elements have been added, <a href="#" class="scc-page-refresh" onclick="event.preventDefault();location.reload()">refresh</a> to update the conditional logic.';
+        $cond         = true;
+        echo df_scc_render_alert( $cond, $msg, 'mt-3' );
+        ?>
+		</div>
+		
+	</div>
+	<?php
+        $html = ob_get_clean();
+
+        return $html;
+    }
+
     public function renderQuantityBoxSetupBody2( $el, $conditionsBySet ) {
         if ( $this->is_from_ajax ) {
             $el->value1 = 'default';
@@ -2728,6 +3461,17 @@ class Stylish_Cost_Calculator_Edit_Page {
     public function renderElementLoader() {
         ob_start(); ?>
 			<span class="scc-saving-element-msg scc-visibility-hidden"></span>
+		<?php
+        $html = ob_get_clean();
+
+        return $html;
+    }
+
+	public function scc_render_element_saving( $el ) {
+        ob_start(); ?>
+			<div class="scc-saving-element-section">
+				<span class="scc-saving-element-msg scc-visibility-hidden me-3"></span>
+			</div>
 		<?php
         $html = ob_get_clean();
 

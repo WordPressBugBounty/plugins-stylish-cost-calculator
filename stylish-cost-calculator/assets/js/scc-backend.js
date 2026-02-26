@@ -149,6 +149,52 @@ const sccBackendUtils = {
 			} );
 		} ) );
 	},
+	checkRepeatProductCount: ( showPopup = true ) => {
+		if ( ! sccBackendStore?.config?.enableWoocommerceCheckout ) {
+			return;
+		}
+		const elements = sccBackendUtils.getAllElements();
+		const productIdCount = {};
+
+		elements.forEach( ( element ) => {
+			// Adjust this line if the property is nested or named differently
+			const productId = element.element_woocomerce_product_id;
+
+			if ( productId && productId !== '0' ) {
+				if ( productIdCount[ productId ] ) {
+					productIdCount[ productId ]++;
+				} else {
+					productIdCount[ productId ] = 1;
+				}
+			}
+			if ( element.elementitems ) {
+				element.elementitems.forEach( ( q ) => {
+					const childItemProductId = q.woocomerce_product_id;
+					if ( childItemProductId && childItemProductId !== '0' ) {
+						if ( productIdCount[ childItemProductId ] ) {
+							productIdCount[ childItemProductId ]++;
+						} else {
+							productIdCount[ childItemProductId ] = 1;
+						}
+					}
+				} );
+			}
+		} );
+
+		const duplicates = Object.keys( productIdCount ).filter( ( productId ) => productIdCount[ productId ] > 1 );
+
+		if ( duplicates.length > 0 ) {
+			// There are duplicate product IDs
+			// You can trigger your modal or warning here
+			stylishCostCalculatorModal( {
+				context: 'repeat-product-warning',
+				bannerOnly: ! showPopup,
+				showBanner: true,
+				title: 'You have selected same WooCommerce product multiple times',
+				content: "This may result in the product's unit value added by two (or more) of the items chosen in the calculator.",
+			} );
+		}
+	},
 	skipPremiumDemoModal: () => {
 		jQuery.ajax({
 			url: ajaxurl,
@@ -163,7 +209,7 @@ const sccBackendUtils = {
 	    });
 	},
 	disableSaveBtnAjax: (status, element = null) => { //Handles the state of the save button when elements of the form are saved with ajax
-		const elm = JSON.stringify(element);
+		 
 		let topSaveBtn = document.querySelector(".scc-top-save-btn");
 		let elementBox = '';
 		if(element){
@@ -849,13 +895,187 @@ const sccBackendUtils = {
 	  var event = new Event("change");
 	  element.dispatchEvent(event);
 	},
-	handleTooltipAjaxAddedElements( element ) {
+	advancedOptionsEventHandler: ( settingsItem, elementId ) => {
+		if ( settingsItem.getAttribute( 'data-event-handler-setup' ) ) {
+			return;
+		}
+		const isCheckboxArray = settingsItem.getAttribute( 'data-value6-type' ) === 'array-checkboxes';
+		const isToggleSwitch = settingsItem.getAttribute( 'data-value6-key' ) === 'time_format';
+	    if ( isCheckboxArray ) {
+			const checkboxes = settingsItem.querySelectorAll( 'input[type="checkbox"]' );
+			checkboxes.forEach( ( checkbox ) => {
+				checkbox.addEventListener( 'change', ( evt ) => {
+					const settingsStore = sccBackendStore.advancedOptions[ elementId ];
+					if ( ! settingsStore ) {
+						return;
+					}
+					const targetValue = [ ...settingsItem.querySelectorAll( 'input' ) ]
+						.filter( ( z ) => z.checked )
+						.map( ( q ) => q.value );
+					const targetName = settingsItem.getAttribute( 'data-value6-key' );
+					settingsStore[ targetName ] = targetValue;
+				} );
+			} );
+			return;
+		}
+		if ( isToggleSwitch ) {
+			settingsItem.addEventListener( 'click', ( evt ) => {
+				const settingsStore = sccBackendStore.advancedOptions[ elementId ];
+				if ( ! settingsStore ) {
+					return;
+				}
+				const target = evt.target;
+				const targetValue = target.getAttribute( 'data-value' );
+				const targetName = settingsItem.getAttribute( 'data-value6-key' );
+				if ( ! targetValue ) {
+					return;
+				}
+				settingsStore[ targetName ] = targetValue;
+				// add active class to the clicked element, and remove from the rest
+				settingsItem.querySelectorAll( '.btn' ).forEach( ( el ) => {
+					if ( el === target ) {
+						el.classList.add( 'active', 'scc-btn-brand' );
+						return;
+					}
+					el.classList.remove( 'active', 'scc-btn-brand' );
+				} );
+			} );
+			return;
+		}
+		settingsItem.addEventListener( 'change', ( evt ) => {
+			const settingsStore = sccBackendStore.advancedOptions[ elementId ];
+			if ( ! settingsStore ) {
+				return;
+			}
+			const target = evt.target;
+			const targetValue = target.type === 'checkbox' ? target.checked : target.value;
+			const targetName = settingsItem.getAttribute( 'data-value6-key' );
+			settingsStore[ targetName ] = targetValue;
+		} );
+		settingsItem.setAttribute( 'data-event-handler-setup', 1 );
+	},
+	/**
+	 * The function is null to avoid call to this function while the backend page is in loading state
+	 * It will be replaced by the datePickerElementCallback function later on
+	 * @param datePicker
+	 * @param addedFromAjax
+	 * @param isCloned
+	 */
+	datePickerElementCallback: ( datePicker, addedFromAjax = false, isCloned = false ) => {
+		const pricingModeSelect = datePicker.querySelector( 'input.scc-datepicker-config' );
+        let parentSubSectionNode = datePicker.closest( '.subsection-area' );
+		const parentSubSectionId = parentSubSectionNode.closest( '.boardOption' ).querySelector( '.input_subsection_id' ).value;
+		const elementId = datePicker.querySelector( '.input_id_element' )?.value;
+		if ( pricingModeSelect.getAttribute( 'data-tomselect-available' ) && ! isCloned ) {
+			return;
+		}
+		const options = [
+			{ value: 'unit_price_only', text: 'Unit Price Only' },
+			{ value: 'quantity_mod', text: 'Quantity Modifier Only' },
+			{ value: 'quantity_modifier_and_unit_price', text: 'Quantity Modifier + Unit Price' },
+		];
+		try {
+			new TomSelect( pricingModeSelect, {
+				maxItems: 1,
+				create: false,
+				options,
+				render: {
+					option( data, escape ) {
+						return `<div>` +
+								escape( data.text ) +
+							'<i class="material-icons-outlined with-tooltip d-none" data-setting-tooltip-type="disabled-datepicker-modes-tt" style="margin-right:5px">info</i>' +
+							'</div>';
+					},
+				},
+				onInitialize() {  
+					// disabling the search input cursor, since only 2 options are there
+					this.control_input.setAttribute( 'disabled', '' );
+					this.quantityRelatedOptionsSwitcher = ( enable, disabledReason = null ) => {
+						if ( enable ) {
+							this.updateOption( 'quantity_mod', { ...options[ 1 ], disabled: false } );
+							this.updateOption( 'quantity_modifier_and_unit_price', { ...options[ 2 ], disabled: false } );
+							this.disabledReason = null;
+							return;
+						}
+						this.updateOption( 'quantity_mod', { ...options[ 1 ], disabled: true } );
+						this.updateOption( 'quantity_modifier_and_unit_price', { ...options[ 2 ], disabled: true } );
+						this.disabledReason = disabledReason;
+					};
+					this.elementId = elementId;
+					this.subsectionId = parentSubSectionId;
+					const adjustAvailablePricingModesBySlider = () => {
+						parentSubSectionNode = this.control_input.closest( '.subsection-area' );
+						const isSliderAvailable = parentSubSectionNode.querySelector( '[data-element-setup-type="slider"]' );
+						this.quantityRelatedOptionsSwitcher( ! isSliderAvailable, ( isSliderAvailable ? 'slider_available' : null ) );
+					};
+					adjustAvailablePricingModesBySlider();
+					this.adjustAvailablePricingModesBySlider = adjustAvailablePricingModesBySlider;
+					// Options for the observer (which mutations to observe)
+					const config = { childList: true, subtree: false };
+
+					// Callback function to execute when new item is added
+					const callback = ( mutationList ) => {
+						for ( const mutation of mutationList ) {
+							try {
+								if ( mutation.type === 'childList' ) {
+									adjustAvailablePricingModesBySlider();
+								}
+							} catch ( e ) {
+								//console.log(e);
+							}
+						}
+					};
+					// Create an observer instance linked to the callback function
+					const observer = new MutationObserver( callback );
+
+					// Start observing the target node for configured mutations
+					observer.observe( parentSubSectionNode, config );
+					handlePricingModeChoiceData( parentSubSectionId, elementId, this );
+					this.adjustAvailablePricingModesByOtherDatePickers = () => {
+						const otherDatePickersInSubsection = datePickerPricingChoiceRepo[ this.subsectionId ].filter( ( x ) => x.id !== this.elementId );
+						otherDatePickersInSubsection.forEach( ( x ) => {
+							if ( [ 'quantity_mod', 'quantity_modifier_and_unit_price' ].includes( x.instance.getValue() ) ) {
+								this.quantityRelatedOptionsSwitcher( false, 'date_picker_with_quantity_modifier' );
+							}
+						} );
+					};
+					// handling new datepicker setup box added via ajax
+					if ( addedFromAjax && datePickerPricingChoiceRepo && datePickerPricingChoiceRepo[ this.subsectionId ] ) {
+						this.adjustAvailablePricingModesByOtherDatePickers();
+					}
+				},
+				onDropdownOpen( dropdown ) {
+					const disabledItems = dropdown.querySelectorAll( '[aria-disabled="true"]' );
+					const activeItems = dropdown.querySelectorAll( '[aria-disabled="false"]' );
+					disabledItems.forEach( ( node ) => {
+						const infoIcon = node.querySelector( 'i' );
+						infoIcon.setAttribute( 'data-setting-tooltip-type', this.disabledReason === 'date_picker_with_quantity_modifier' ? 'disabled-datepicker-modes-tt' : 'disabled-datepicker-modes-slider-tt' );
+						//sccBackendUtils.tooltip.destroy( infoIcon );
+						applySettingTooltip( infoIcon );
+						infoIcon.classList.remove( 'd-none' );
+					} );
+					activeItems.forEach( ( node ) => {
+						const infoIcon = node.querySelector( 'i' );
+						infoIcon.classList.add( 'd-none' );
+					} );
+				},
+				onChange() {
+					// datePickerPricingChoiceRepo.flat().forEach( handleOneQuantityModifierPerSubSection );
+					sccBackendUtils.handleOneQuantityModifierPerSubSection();
+				},
+			} );
+		} catch ( e ) {
+
+		}
+
+		pricingModeSelect.setAttribute( 'data-tomselect-available', 1 );
+	},
+	handleTooltipAjaxAddedElements( element ) { 
 		// applying tooltips to ajax added elements
 		if( element ) {
 			element.querySelectorAll( '[data-element-tooltip-type]' ).forEach( function( node ) {
 			  applyElementTooltip( node );
 			});
-			//sccRefreshAlert();
 			element.querySelectorAll( '.with-tooltip:not([data-element-tooltip-type])' ).forEach( function( element ) {
 			  new bootstrap.Tooltip( element, {
 				delay: {
@@ -917,6 +1137,57 @@ const sccBackendUtils = {
 			  steps: steps,
 			  hints: hints,
 			}
+	  },
+	  initiateDatePickerAndSliderConflictResolution: () => {
+		const datePickers = document.querySelectorAll( '[data-element="date-picker-element"]' );
+		const datePickerPricingChoiceRepo = [];
+		window.datePickerPricingChoiceRepo = datePickerPricingChoiceRepo;
+		const handlePricingModeChoiceData = ( parentSubSectionId, elementId, instance ) => {
+			if ( ! datePickerPricingChoiceRepo[ parentSubSectionId ] ) {
+				datePickerPricingChoiceRepo[ parentSubSectionId ] = [ {
+					id: elementId,
+					instance,
+				} ];
+				return {
+					id: elementId,
+					instance,
+				};
+			}
+			const existingValue = datePickerPricingChoiceRepo[ parentSubSectionId ].find( ( x ) => x.id === elementId );
+			if ( existingValue ) {
+				// existingValue.value = value;
+				return existingValue;
+			}
+			datePickerPricingChoiceRepo[ parentSubSectionId ].push( {
+				id: elementId,
+				instance,
+			} );
+			return {
+				id: elementId,
+				instance,
+			};
+		};
+		//sccBackendUtils.datePickerElementCallback = datePickerElementCallback;
+	    datePickers.forEach( sccBackendUtils.datePickerElementCallback );
+		// datePickerPricingChoiceRepo.flat().forEach( handleOneQuantityModifierPerSubSection );
+		sccBackendUtils.handleOneQuantityModifierPerSubSection();
+	  },
+	  handleOneQuantityModifierPerSubSection: () => {
+		if ( typeof datePickerPricingChoiceRepo !== 'undefined' && datePickerPricingChoiceRepo ) {
+			datePickerPricingChoiceRepo.forEach( ( collection, subsectionId ) => {
+				const hasPricingModeWithQuantityModifier = collection.some( ( x ) => [ 'quantity_mod', 'quantity_modifier_and_unit_price' ].includes( x.instance.getValue() ) );
+				if ( hasPricingModeWithQuantityModifier ) {
+					collection.filter( ( x ) => ! [ 'quantity_mod', 'quantity_modifier_and_unit_price' ].includes( x.instance.getValue() ) ).forEach( ( x ) => {
+						x.instance.quantityRelatedOptionsSwitcher( false, 'date_picker_with_quantity_modifier' );
+					} );
+				} else {
+					collection.forEach( ( x ) => {
+						x.instance.quantityRelatedOptionsSwitcher( true );
+						x.instance.adjustAvailablePricingModesBySlider();
+					} );
+				}
+			} );
+		}
 	  },
 	  calculatorSettingsHints: () => {
 		const calculatorSettingsHint = document.querySelector( '#scc-calculator-settings-menu-button' );
@@ -1738,12 +2009,12 @@ const sccBackendUtils = {
 				nonce: pageEditCalculator.nonce,
 				calc_id: calcId,
 			},
-			success( { data, success } ) {
+			success( { data, success } ) {  
 				if ( success ) {
 					sccBackendStore.config = data;
 					sccBackendStore.config.sccAvailableElements = sccBackendStore.config.sections
 						.map( ( e, i ) =>
-							sccBackendStore.config.sections[ i ].subsection.map( ( e ) => {
+							sccBackendStore.config.sections[ i ].subsection.map( ( e ) => {  
 								e.element.forEach( ( eq ) => {
 									eq.sectionName = sccBackendStore.config.sections[ i ].name;
 									eq.parentSectionId = sccBackendStore.config.sections[ i ].id;
@@ -1767,7 +2038,8 @@ const sccBackendUtils = {
 					const checkboxesAvailable = sccBackendStore.config.sccAvailableElements.filter(
 						( e ) => e.type == 'checkbox',
 					);
-					checkboxesAvailable.forEach( ( checkboxItem, index ) => {
+					
+				    checkboxesAvailable.forEach( ( checkboxItem, index ) => {
 						/* Including the checkbox item from the available elements search,
 							* as the ID can match against non-checkbox items
 							* due to the elements are stored in a separate tables and the ID is sequential
@@ -1788,11 +2060,10 @@ const sccBackendUtils = {
 							...sccBackendStore.config.sccAvailableElements.slice( targetIndex + 1 ),
 						];
 					} );
-					//sccBackendUtils.updateFeaturesAndElementsUsage( 'init', 'check' );
+					 
+					sccBackendUtils.updateFeaturesAndElementsUsage( 'init', 'check' );
 				}
-				if ( callbackFn ) {
-					callbackFn();
-				}
+				
 				const calcId = getCalcId();
 				if ( typeof ( sccData ) === 'undefined' ) {
 					window.sccData = [];
@@ -1801,8 +2072,553 @@ const sccBackendUtils = {
 				} else {
 					sccData[ calcId ].config = sccBackendStore.config;
 				}
+				if ( callbackFn ) {
+					callbackFn();
+				}
 			},
 		} );
+	},
+	async updateValue6ByElementId( elementId, config, sourceElement = null ) {
+		if ( sourceElement ) {
+			sccBackendUtils.disableSaveBtnAjax( true, sourceElement );
+		}
+		const data = await fetch( wp.ajax.settings.url + '?action=scc_update_value_6_by_id' + '&elementId=' + elementId + '&nonce=' + window.pageEditCalculator.nonce, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify( config ),
+		} );
+		if ( sourceElement ) {
+			sccBackendUtils.disableSaveBtnAjax( false, sourceElement );
+		}
+		sccBackendUtils.updateRefreshButtonStatus();
+	},
+	async checkBannerNotice() {
+		const checkForZeroValuedInputs = () => {
+			const inputsForZeroValueCheck = [ ...document.querySelectorAll( '.check-zero-amount-input' ) ];
+			let zeroValueInputsCount = 0;
+			inputsForZeroValueCheck.forEach( ( q ) => {
+				if ( sccBackendUtils.handleZeroValuedCurrencyInputBoxes( q ) ) {
+					zeroValueInputsCount++;
+				}
+			} );
+			if ( zeroValueInputsCount == 0 ) {
+				const banner = document.getElementById( 'scc-banner-display-hide-element' );
+				if ( banner ) {
+					banner.remove();
+				}
+			}
+		};
+
+		const checkForNegativeValuedInputs = () => {
+			const inputsForNegativeValueCheck = [ ...document.querySelectorAll( '.check-zero-amount-input' ) ];
+			let negativeValueInputsCount = 0;
+			inputsForNegativeValueCheck.forEach( ( q ) => {
+				if ( sccBackendUtils.handleNegativeValuedInputBoxes( q ) ) {
+					negativeValueInputsCount++;
+				}
+			} );
+			if ( negativeValueInputsCount == 0 ) {
+				const banner = document.getElementById( 'scc-banner-negative-value-warning' );
+				if ( banner ) {
+					banner.remove();
+				}
+			}
+		};
+
+		// Check zero-valued inputs, negative-valued inputs, SMTP status, email log status, and WooCommerce config
+		checkForZeroValuedInputs();
+		checkForNegativeValuedInputs();
+		await sccBackendUtils.checkSmtpStatus();
+		await sccBackendUtils.checkEmailLogStatus();
+		await sccBackendUtils.checkWooCommerceConfig();
+	},
+	handleZeroValuedCurrencyInputBoxes: ( inputBox ) => {
+		const inputBoxValue = inputBox.value;
+		if ( inputBoxValue == 0 && sccBackendStore.zeroValueWarningShownTimes < 2 ) {
+			// Get element information
+			const elementContainer = inputBox.closest( '.elements_added' );
+			let elementTitle = 'Unknown Element';
+			let elementId = null;
+			
+			if ( elementContainer ) {
+				// Try to get title from element-description or scc-element-title-field
+				const titleElement = elementContainer.querySelector( '.element-description' ) || 
+									 elementContainer.querySelector( '.scc-element-title-field' );
+				if ( titleElement ) {
+					elementTitle = titleElement.textContent?.trim() || titleElement.value?.trim() || 'Untitled Element';
+				}
+				
+				// Get element ID
+				const idElement = elementContainer.querySelector( '.input_id_element' );
+				if ( idElement ) {
+					elementId = idElement.value || idElement.getAttribute( 'value' );
+				}
+			}
+			
+			// Store reference to element container using a unique data attribute
+			// This allows the button to find the element later
+			if ( elementContainer && elementId ) {
+				elementContainer.setAttribute( 'data-zero-value-element-id', elementId );
+			}
+			
+			// Function to scroll to and highlight the element
+			const showElement = () => {
+				if ( ! elementContainer ) {
+					return;
+				}
+				
+				// Scroll to element
+				const offset = window.sccGetOffset( elementContainer );
+				window.scrollTo( {
+					top: offset.top - 100,
+					behavior: 'smooth',
+				} );
+				
+				// Handle iframe case
+				if ( window.self !== window.top ) {
+					window.parent.postMessage( { action: 'scroll', top: ( offset.top - 100 ) }, '*' );
+				}
+				
+				// Add highlight effect
+				const originalBorder = elementContainer.style.border;
+				const originalBoxShadow = elementContainer.style.boxShadow;
+				elementContainer.style.border = '3px solid #ff9800';
+				elementContainer.style.boxShadow = '0 0 20px rgba(255, 152, 0, 0.5)';
+				elementContainer.style.transition = 'all 0.3s ease';
+				
+				// Remove highlight after 3 seconds
+				setTimeout( () => {
+					elementContainer.style.border = originalBorder;
+					elementContainer.style.boxShadow = originalBoxShadow;
+					setTimeout( () => {
+						elementContainer.style.transition = '';
+					}, 300 );
+				}, 3000 );
+			};
+			
+			// Build content with element information
+			const elementInfo = elementId ? 
+				`<strong>Element:</strong> "${ elementTitle }" (ID: ${ elementId })` : 
+				`<strong>Element:</strong> "${ elementTitle }"`;
+			
+			// Create a unique function name for this specific element
+			const showElementFunctionName = `showZeroValueElement_${ elementId || Date.now() }`;
+			
+			// Store the function globally so it can be called from the button
+			window[ showElementFunctionName ] = showElement;
+			
+			const showElementButton = `<button type="button" class="df-btn df-btn-primary" onclick="if(typeof window.${ showElementFunctionName } === 'function') { window.${ showElementFunctionName }(); } return false;" style="cursor: pointer; float: right;">
+				<i class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 5px;">visibility</i>
+				Show Element
+			</button>`;
+			
+			const content = `
+				<ul style="margin-bottom: 15px;">
+					<li>${ elementInfo }</li>
+					<li>This element has a value of <strong>0</strong>. Are you looking to display or hide this element from the PDF Quotes or Detailed List View?</li>
+				</ul>
+				<div style="clear: both; overflow: hidden;">
+					<a class='df-btn df-btn-secondary scc-text-black text-decoration-none' target='_blank' href='${ sccHelpdeskLinks[ 'faq-display-or-hide-items' ] }' style="float: right; margin-left: 0px;">Learn More</a>
+					${ showElementButton }
+				</div>
+			`;
+			
+			stylishCostCalculatorModal( {
+				context: 'display-hide-element',
+				showBanner: true,
+				bannerOnly: true,
+				title: 'Display or Hide Element',
+				content: content,
+				affirmativeButtonCallback: () => {
+					sccBackendStore.zeroValueWarningShownTimes += 1;
+					// Clean up the function after modal is closed
+					if ( window[ showElementFunctionName ] ) {
+						setTimeout( () => {
+							delete window[ showElementFunctionName ];
+						}, 1000 );
+					}
+				},
+			} );
+			return true;
+		}
+		return false;
+	},
+	async checkSmtpStatus( showPopup = false ) {
+		// Only check SMTP status on the editing page
+		if ( typeof pageEditCalculator === 'undefined' || ! pageEditCalculator.nonce ) {
+			return;
+		}
+        try {
+			const response = await fetch( ajaxurl, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: new URLSearchParams( {
+					action: 'scc_get_smtp_status',
+					nonce: pageEditCalculator.nonce
+				} )
+			} );
+
+			if ( ! response.ok ) {
+				throw new Error( 'Network response was not ok' );
+			}
+           
+			const data = await response.json();
+			
+			if ( data.success && data.data ) {
+				const smtpData = data.data;
+				
+				// Only show banner if SMTP is not configured
+				if ( ! smtpData.has_smtp || ! smtpData.is_configured ) {
+					sccBackendUtils.showSmtpBanner( smtpData, showPopup );
+				} else {
+					// Remove banner if SMTP is properly configured
+					const banner = document.getElementById( 'scc-banner-smtp-status' );
+					if ( banner ) {
+						banner.remove();
+					}
+				}
+			}
+		} catch ( error ) {
+			console.error( 'Error checking SMTP status:', error );
+		}
+	},
+	showSmtpBanner( smtpData, showPopup = false ) {
+		// Check if banner already exists
+		const existingBanner = document.getElementById( 'scc-banner-smtp-status' );
+		if ( existingBanner ) {
+			return;
+		}
+
+		// Check if user has closed this banner before
+		if ( typeof sccBackendStore !== 'undefined' ) {
+			const closedBanner = sccBackendStore.closedBanners.find( ( q ) => q.id === 'smtp-status' );
+			if ( closedBanner && closedBanner.closed ) {
+				return;
+			}
+		}
+
+		const bannerTitle = smtpData.has_smtp ? 'SMTP Plugin Not Configured' : 'No SMTP Plugin Detected';
+		const bannerMessage = smtpData.message;
+		const helpUrl = smtpData.help_url || '#';
+		const recommendation = smtpData.recommendation || 'We recommend installing and configuring an SMTP plugin for reliable email delivery.';
+
+		// Create plugin installation URL
+		const adminUrl = typeof ajaxurl !== 'undefined' ? ajaxurl.replace( '/admin-ajax.php', '' ) : '/wp-admin';
+		const installPluginUrl = `${ adminUrl }/plugin-install.php?s=wp-mail-smtp&tab=search&type=term`;
+		
+		stylishCostCalculatorModal( {
+			context: 'smtp-status',
+			showBanner: true,
+			bannerOnly: ! showPopup,
+			title: bannerTitle,
+			content: `<ul><li>${ bannerMessage }</li><li><strong>Recommendation:</strong> ${ recommendation }</li></ul>
+				<a target="_blank" href="${ helpUrl }" class="df-btn df-btn-secondary banner-action-btn scc-text-black" style="text-decoration: none;">Learn More</a>
+				<a target="_blank" href="${ installPluginUrl }" class="df-btn df-btn-primary banner-action-btn" style="text-decoration: none; color: white !important;">Install WP Mail SMTP</a>`,
+			banner: {
+				closeCallback: () => {
+					// Show confirmation modal before closing
+					stylishCostCalculatorModal( {
+						context: 'smtp-banner-close-warning',
+						title: 'Are you sure?',
+						content: 'These warnings are important and help identify potential issues with your calculator.<br><br><strong>We recommend using "Remind me later" instead</strong> to temporarily hide this message until the issue is fixed.',
+						affirmativeButtonText: 'Close anyway',
+						negativeButtonText: 'Cancel',
+						affirmativeButtonCallback: () => {
+							// User confirmed, allow the banner to close
+							const smtpBanner = document.getElementById( 'scc-banner-smtp-status' );
+							if ( smtpBanner ) {
+								smtpBanner.remove();
+							}
+						},
+					} );
+					// Return false to prevent default close behavior
+					return false;
+				},
+			},
+			affirmativeButtonCallback: () => {
+				// Banner will be closed by the modal system
+			},
+		} );
+	},
+	async checkEmailLogStatus( showPopup = false ) {
+		// Only check on the editing page
+		if ( typeof pageEditCalculator === 'undefined' || ! pageEditCalculator.nonce ) {
+			return;
+		}
+
+		try {
+			const response = await fetch( ajaxurl, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: new URLSearchParams( {
+					action: 'scc_get_email_log_status',
+					nonce: pageEditCalculator.nonce
+				} )
+			} );
+
+			if ( ! response.ok ) {
+				throw new Error( 'Network response was not ok' );
+			}
+
+			const data = await response.json();
+			
+			if ( data.success && data.data && data.data.has_error_or_alert ) {
+				sccBackendUtils.showEmailDeliveryIssuesBanner( data.data, showPopup );
+			} else {
+				// Remove banner if no errors/alerts
+				const banner = document.getElementById( 'scc-banner-email-delivery-issues' );
+				if ( banner ) {
+					banner.remove();
+				}
+			}
+		} catch ( error ) {
+			console.error( 'Error checking email log status:', error );
+		}
+	},
+	async checkWooCommerceConfig( showPopup = false ) {
+		// Only check on the editing page
+		if ( typeof pageEditCalculator === 'undefined' || ! pageEditCalculator.nonce ) {
+			return;
+		}
+        // Get form ID from URL
+		const urlParams = new URLSearchParams( window.location.search );
+		const formId = urlParams.get( 'id_form' );
+
+		if ( ! formId ) {
+			return;
+		}
+
+		try {
+			const response = await fetch( ajaxurl, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: new URLSearchParams( {
+					action: 'scc_check_woocommerce_config',
+					nonce: pageEditCalculator.nonce,
+					form_id: formId,
+				} ),
+			} );
+
+			if ( ! response.ok ) {
+				throw new Error( 'Network response was not ok' );
+			}
+
+			const data = await response.json();
+
+			sccBackendUtils.showWooCommerceConfigBanner( data.data, showPopup );
+			if ( data.success && data.data && data.data.has_config_issue ) {
+				sccBackendUtils.showWooCommerceConfigBanner( data.data, showPopup );
+			} else {
+				// Remove banner if no issues
+				const banner = document.getElementById( 'scc-banner-woocommerce-config' );
+				if ( banner ) {
+					banner.remove();
+				}
+			}
+		} catch ( error ) {
+			console.error( 'Error checking WooCommerce config:', error );
+		}
+	},
+	showWooCommerceConfigBanner( configData, showPopup = false ) {
+		// Check if banner already exists
+		const existingBanner = document.getElementById( 'scc-banner-woocommerce-config' );
+		if ( existingBanner ) {  
+			return;
+		}
+
+		// Check if user has closed this banner before
+		if ( typeof sccBackendStore !== 'undefined' ) { 
+			const closedBanner = sccBackendStore.closedBanners.find( ( q ) => q.id === 'woocommerce-config' );
+			if ( closedBanner && closedBanner.closed ) {
+				return;
+			}
+		}
+
+	    let bannerTitle = 'WooCommerce Configuration Issue';
+		let bannerMessage = configData.message;
+		let actionButtons = '';
+
+		if ( configData.issue_type === 'combined_checkout_no_product' ) {
+			bannerTitle = 'WooCommerce Product Not Selected';
+			bannerMessage = '<strong>Combined Line Items</strong> is enabled, but no WooCommerce product is selected for checkout. The "Add to Cart" button will not appear on the frontend until you select a product.';
+			actionButtons = `
+				<a href="https://help.stylishcostcalculator.com/en/article/woocommerce-integration-a-complete-guide-19esndu/" target="_blank" class="df-btn df-btn-secondary banner-action-btn scc-text-black" style="text-decoration: none;">Learn More</a>
+				<a href="#" class="df-btn df-btn-primary banner-action-btn" style="text-decoration: none; color: white !important;" onclick="bootstrap.Modal.getOrCreateInstance( document.getElementById('paymentSettingsModal') ).show(); return false;">Go To Payment Settings</a>`;
+		}
+
+		stylishCostCalculatorModal( {
+			context: 'woocommerce-config',
+			showBanner: true,
+			bannerOnly: ! showPopup,
+			title: bannerTitle,
+			content: `<ul><li>${ bannerMessage }</li></ul>
+				<div style="clear: both; overflow: hidden;">
+					${ actionButtons }
+				</div>`,
+			banner: {
+				closeCallback: () => {
+					// Show confirmation modal before closing
+					stylishCostCalculatorModal( {
+						context: 'woocommerce-config-banner-close-warning',
+						title: 'Are you sure?',
+						content: 'These warnings are important and help identify potential issues with your calculator.<br><br><strong>We recommend using "Remind me later" instead</strong> to temporarily hide this message until the issue is fixed.',
+						affirmativeButtonText: 'Close anyway',
+						negativeButtonText: 'Cancel',
+						affirmativeButtonCallback: () => {
+							// User confirmed, allow the banner to close
+							const wcBanner = document.getElementById( 'scc-banner-woocommerce-config' );
+							if ( wcBanner ) {
+								wcBanner.remove();
+							}
+						},
+					} );
+					// Return false to prevent default close behavior
+					return false;
+				},
+			},
+			affirmativeButtonCallback: () => {
+				// Banner will be closed by the modal system
+			},
+		} );
+	},
+	handleNegativeValuedInputBoxes: ( inputBox ) => {
+		const inputBoxValue = parseFloat( inputBox.value );
+		if ( inputBoxValue < 0 ) {
+			// Check if there are any payment options enabled
+			const enabledPaymentOptions = [ ...document.querySelectorAll( '.editing-action-cards.action-payment .active' ) ].map( ( e ) => e.getAttribute( 'data-btn-type' ) );
+			if ( enabledPaymentOptions.length === 0 ) {
+				return false;
+			}
+
+			// Check if combine items is already enabled
+			const isCombinedCheckoutEnabled = document.querySelector( '#combine-checkout-items' )?.checked;
+			if ( isCombinedCheckoutEnabled ) {
+				return false;
+			}
+
+			// Get element information
+			const elementContainer = inputBox.closest( '.elements_added' );
+			let elementTitle = 'Unknown Element';
+			let elementId = null;
+
+			if ( elementContainer ) {
+				// Try to get title from element-description or scc-element-title-field
+				const titleElement = elementContainer.querySelector( '.element-description' ) ||
+									 elementContainer.querySelector( '.scc-element-title-field' );
+				if ( titleElement ) {
+					elementTitle = titleElement.textContent?.trim() || titleElement.value?.trim() || 'Untitled Element';
+				}
+
+				// Get element ID
+				const idElement = elementContainer.querySelector( '.input_id_element' );
+				if ( idElement ) {
+					elementId = idElement.value || idElement.getAttribute( 'value' );
+				}
+			}
+
+			// Store reference to element container
+			if ( elementContainer && elementId ) {
+				elementContainer.setAttribute( 'data-negative-value-element-id', elementId );
+			}
+
+			// Function to scroll to and highlight the element
+			const showElement = () => {
+				if ( ! elementContainer ) {
+					return;
+				}
+
+				// Scroll to element
+				const offset = window.sccGetOffset( elementContainer );
+				window.scrollTo( {
+					top: offset.top - 100,
+					behavior: 'smooth',
+				} );
+
+				// Handle iframe case
+				if ( window.self !== window.top ) {
+					window.parent.postMessage( { action: 'scroll', top: ( offset.top - 100 ) }, '*' );
+				}
+
+				// Add highlight effect
+				const originalBorder = elementContainer.style.border;
+				const originalBoxShadow = elementContainer.style.boxShadow;
+				elementContainer.style.border = '3px solid #f44336';
+				elementContainer.style.boxShadow = '0 0 20px rgba(244, 67, 54, 0.5)';
+				elementContainer.style.transition = 'all 0.3s ease';
+
+				// Remove highlight after 3 seconds
+				setTimeout( () => {
+					elementContainer.style.border = originalBorder;
+					elementContainer.style.boxShadow = originalBoxShadow;
+					setTimeout( () => {
+						elementContainer.style.transition = '';
+					}, 300 );
+				}, 3000 );
+			};
+
+			// Build content with element information
+			const elementInfo = elementId ?
+				`<strong>Element:</strong> "${ elementTitle }" (ID: ${ elementId })` :
+				`<strong>Element:</strong> "${ elementTitle }"`;
+
+			// Create a unique function name for this specific element
+			const showElementFunctionName = `showNegativeValueElement_${ elementId || Date.now() }`;
+
+			// Store the function globally so it can be called from the button
+			window[ showElementFunctionName ] = showElement;
+
+			const showElementButton = `<button type="button" class="df-btn df-btn-primary" onclick="if(typeof window.${ showElementFunctionName } === 'function') { window.${ showElementFunctionName }(); } return false;" style="cursor: pointer; float: right;">
+				<i class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 5px;">visibility</i>
+				Show Element
+			</button>`;
+
+			const content = `
+				<ul style="margin-bottom: 15px;">
+					<li>${ elementInfo }</li>
+					<li>This element has a negative value of <strong>${ inputBoxValue }</strong>.</li>
+					<li>We recommend you enable the 'Combine All Line-Items into One Item' setting (Payment Settings) to show the correct amount in the WooCommerce, PayPal or Stripe checkout.</li>
+				</ul>
+				<div style="clear: both; overflow: hidden;">
+					<a class='df-btn df-btn-secondary scc-text-black text-decoration-none' target='_blank' href='${ sccHelpdeskLinks[ 'feature-payment-option-paypal' ] }' style="float: right; margin-left: 0px;">Learn More</a>
+					${ showElementButton }
+				</div>
+			`;
+
+			stylishCostCalculatorModal( {
+				context: 'negative-value-warning',
+				showBanner: true,
+				bannerOnly: true,
+				title: 'Negative Value Warning - <span>Payment Integration Issue</span>',
+				content: content,
+				affirmativeButtonText: 'Enable Combine Items',
+				affirmativeButtonCallback: () => {
+					// Enable the combine items checkbox
+					const combineItemsCheckbox = document.getElementById( 'combine-checkout-items' );
+					if ( combineItemsCheckbox && ! combineItemsCheckbox.checked ) {
+						combineItemsCheckbox.checked = true;
+						// Trigger the change event to save the setting
+						const event = new Event( 'change', { bubbles: true } );
+						combineItemsCheckbox.dispatchEvent( event );
+					}
+					// Clean up the function after modal is closed
+					if ( window[ showElementFunctionName ] ) {
+						setTimeout( () => {
+							delete window[ showElementFunctionName ];
+						}, 1000 );
+					}
+				},
+			} );
+			return true;
+		}
+		return false;
 	},
 	updateRefreshButtonStatus( status = true ) {
 		const reloadButton = document.querySelectorAll( '.scc-refresh-button' );
@@ -1873,11 +2689,17 @@ const sccBackendUtils = {
 		} );
 		sccAiUtils.updateCalculatorDataSchema();
 	},
+
   };
 
 
 const updateSliderRangesWithDebounce = _.debounce(sccBackendUtils.updateSliderRanges, 3000);
 const updateBackendSideConfigWithDebounce = _.debounce( sccBackendUtils.updateBackendSideConfig, 3000 );
+const updateValue6WithDebounce = _.debounce( sccBackendUtils.updateValue6ByElementId, 3000 );
+const checkBannerNoticeWithDebounce = _.debounce( sccBackendUtils.checkBannerNotice, 3000 );
+window.updateValue6WithDebounce = updateValue6WithDebounce;
+window.checkBannerNoticeWithDebounce = checkBannerNoticeWithDebounce;
+
 
 /* Message for premium options tooltips (used in settingTooltips) */
 const premiumMessage = '<span class="scc-premium-msg"><i class="material-icons scc-icon-tooltips pe-1">info_outline</i> You need to purchase a <b><a class="scc-text-orange px-1" href="https://stylishcostcalculator.com/pricing-plans/" >premium license</a></b> to use this feature.</span>'
@@ -2626,6 +3448,9 @@ const settingTooltips = {
 				'images/tooltip-images/for-settings/infographic-feat-price-rounding.png',
 	},
 }
+
+
+
 /* Tool Tip for added Elements*/
 const elementTooltips = {
 	'dropdown': {
@@ -2772,6 +3597,71 @@ const elementTooltips = {
 				</div>`,
 		coverImage:
       'images/tooltip-images/for-elements/infographics-date-picker.png',
+	},
+	'date-picker-types-tt': {
+		msg: `<h5 class='text-start'><b>Date</b> Types</h5>
+				<p class='text-start mt-2'>Choose between two types of Datepicker, Single Date Picker and Date Range Picker according to your needs</p>
+				<div class="example-description text-start">
+					<h5 class="mt-3">Differences & Use Cases</h5>
+					<p class='text-start mb-0'><strong>1. Single Date: </strong>Choose a specific date. This is useful when you need to choose a single date for an event, appointment, or deadline.</p>
+		  <br>
+		  <p class='text-start mb-0'><strong>2. Date Range: </strong>Choose a date range and generate an estimated cost based on a daily rate. This feature is excellent for creating quotes for services or rentals, and for planning multi-day events such as conferences, festivals, or weddings.</p>
+					<br>
+					<a href="${ sccHelpdeskLinks[ 'element-date-picker' ] }" target="_blank"><div class="btn btn-primary btn-lg">Learn More</div></a>
+				</div>`,
+	},
+	'date-picker-pricing-mode-tt': {
+		msg: `<h5 class='text-start'><b>Date Picker Pricing</b> Mode</h5>
+		<p class='text-start mt-2'>Choose how pricing is calculated based on the selected date range.</p>
+		<div class="example-description text-start">
+			<h5 class="mt-3">Use Cases</h5>
+			<p class='text-start mb-0'><strong>1. Daily Rate Calculation: </strong>Calculates the total cost by multiplying the number of days by the daily rate.</p>
+			<br>
+			<p class='text-start mb-0'><strong>2. Adjacent Quantity Multiplier: </strong>Multiplies the unit value of adjacent items in the same subsection.</p>
+			<br>
+			<p class='text-start mb-0'><strong>3. Combined Pricing & Quantity: </strong>Uses both date-based pricing and quantity multiplier for a comprehensive calculation.</p>
+			<br>
+		</div>`,
+	},
+	'date-picker-disable-weekends-tt': {
+		msg: `<h5 class='text-start'><b>Disable</b> Weekends</h5>
+				<p class='text-start mt-2'>Allows to disable the weekends of the datepicker</p>
+				<div class="example-description text-start">
+					<br>
+					<a href="${ sccHelpdeskLinks[ 'element-date-picker' ] }" target="_blank"><div class="btn btn-primary btn-lg">Learn More</div></a>
+				</div>`,
+	},
+	'date-picker-disabled-dates-tt': {
+		msg: `<h5 class='text-start'><b>Disabled</b> Dates</h5>
+				<p class='text-start mt-2'>Manually choose the dates you want to disable so users can't select them</p>
+				<div class="example-description text-start">
+					<br>
+					<a href="${ sccHelpdeskLinks[ 'element-date-picker' ] }" target="_blank"><div class="btn btn-primary btn-lg">Learn More</div></a>
+				</div>`,
+	},
+	'date-picker-disable-today-date-tt': {
+		msg: `<h5 class='text-start'><b>Disable</b> Today's Date</h5>
+				<p class='text-start mt-2'>Disable the today date from the datepicker</p>
+				<div class="example-description text-start">
+					<br>
+					<a href="${ sccHelpdeskLinks[ 'element-date-picker' ] }" target="_blank"><div class="btn btn-primary btn-lg">Learn More</div></a>
+				</div>`,
+	},
+	'date-picker-min-tt': {
+		msg: `<h5 class='text-start'><b>Min</b> Date</h5>
+				<p class='text-start mt-2'>Select the minimum date in which it is allowed to choose dates</p>
+				<div class="example-description text-start">
+					<br>
+					<a href="${ sccHelpdeskLinks[ 'element-date-picker' ] }" target="_blank"><div class="btn btn-primary btn-lg">Learn More</div></a>
+				</div>`,
+	},
+	'date-picker-max-tt': {
+		msg: `<h5 class='text-start'><b>Max</b> Date</h5>
+				<p class='text-start mt-2'>Select the maximum date in which it is allowed to choose dates</p>
+				<div class="example-description text-start">
+					<br>
+					<a href="${ sccHelpdeskLinks[ 'element-date-picker' ] }" target="_blank"><div class="btn btn-primary btn-lg">Learn More</div></a>
+				</div>`,
 	},
 	'distance-cost-tt': {
 		msg: `<h4 class='text-start'><b>Distance-Based Cost</b></h4>
@@ -2990,10 +3880,21 @@ const elementTooltips = {
 		coverImage:
 		  "/images/tooltip-images/for-ad-settings/infographic-ad-redquired-field.png",
 	  },
+	  'display-past-days-tt': {
+		msg: `<p>Prevent past date selection.</p>`,
+	  },
+	  'date-picker-disable-today-date-tt': {
+		msg: `<h5 class='text-start'><b>Disable</b> Today's Date</h5>
+				<p class='text-start mt-2'>Disable the today date from the datepicker</p>
+				<div class="example-description text-start">
+					<br>
+					<a href="${ sccHelpdeskLinks[ 'element-date-picker' ] }" target="_blank"><div class="btn btn-primary btn-lg">Learn More</div></a>
+				</div>`,
+	},
 	  "display-on-detailed-list-pdf-tt": {
 		msg: `<h5 class='text-start'>Display
-		on <b>Detailed List & PDF</b></h4>
-		<p class='text-start mt-2'>Show this element in the Detailed List view & PDF. When this is not activated, it will only add to the calculator price and will not appear on the invoice.</p>
+		on <b>Detailed List</b></h4>
+		<p class='text-start mt-2'>Show this element in the Detailed List view. When this is not activated, it will only add to the calculator price and will not appear on the invoice.</p>
 		<div class="example-description text-start">
 			</div>`,
 		coverImage:
@@ -3008,6 +3909,15 @@ const elementTooltips = {
 			</div>`,
 		coverImage:
 		  "/images/tooltip-images/for-elements/infographic-append-quantity-input-box.png",
+	  },
+	  'limit-days-tt': {
+		msg: `<p>Restrict date picker to specific weekdays.</p>`,
+	  },
+	  'enable-time-picker-tt': {
+		msg: `<p>Allow users to choose both date and time.</p>`,
+	  },
+	  'limit-hours-tt': {
+		msg: `<p>Choose when you want the time picker to show available times.</p>`,
 	  },
 	  "convert-to-quantity-input-box-tt": {
 		msg: `<h5 class='text-start'>Convert to <b>Quantity Input Box</b></h4>
@@ -3736,10 +4646,205 @@ document.querySelectorAll('.add-element-btn.save_button').forEach(element => {
 	})
 })
 
+const flatpickr = window.flatpickr;
+
+function sccClearButtonPlugin( pluginConfig ) {
+	const defaultConfig = {
+		clear: 'Clear',
+	};
+
+	// the config object used to configure this instance of the plugin
+	const config = Object.assign( {}, defaultConfig, pluginConfig );
+
+	return function( fp ) {
+		let clearButton;
+
+		function onReady() {
+			clearButton = fp._createElement( 'div', 'scc-flatpickr-clear ' + config.class, config.clear );
+			clearButton.setAttribute( 'data-trn-key', 'Clear' );
+			clearButton.addEventListener( 'click', fp.clear );
+
+			fp.calendarContainer.appendChild( clearButton );
+		}
+
+		return {
+			onReady,
+		};
+	};
+}
+window.sccClearButtonPlugin = sccClearButtonPlugin;
+
+function sccCloseButtonPlugin( pluginConfig ) {
+	const defaultConfig = {
+		label: 'Close',
+	};
+
+	const config = Object.assign( {}, defaultConfig, pluginConfig );
+
+	return function( fp ) {
+		let closeButton;
+
+		function onReady() {
+			closeButton = fp._createElement( 'div', 'scc-flatpickr-close', config.label );
+			closeButton.setAttribute( 'data-trn-key', 'Close' );
+			closeButton.addEventListener( 'click', function() {
+				fp.close();
+			} );
+
+			fp.calendarContainer.appendChild( closeButton );
+		}
+
+		return {
+			onReady,
+		};
+	};
+}
+function sccTodayButtonPlugin( pluginConfig ) {
+	const defaultConfig = {
+		label: 'Today',
+	};
+
+	const config = Object.assign( {}, defaultConfig, pluginConfig );
+
+	return function( fp ) {
+		let todayButton;
+
+		function onReady() {
+			todayButton = fp._createElement( 'div', 'scc-flatpickr-today', config.label );
+			todayButton.setAttribute( 'data-trn-key', 'Today' );
+			todayButton.addEventListener( 'click', function() {
+				const currentDate = new Date();
+
+				fp.open(); // Open the date picker
+				fp.input.setAttribute( 'data-today-enabled', 'true' );
+				fp.input.setAttribute( 'data-today-triggered', 'true' );
+				fp.setDate( 'today', true ); // Set the date to today's date and trigger change (second parameter is `triggerChange`)
+				fp.close(); // Close the date picker
+			} );
+
+			fp.calendarContainer.appendChild( todayButton );
+		}
+
+		return {
+			onReady,
+		};
+	};
+}
+
+function addDateElement( el ) { 
+	const subContainer = jQuery( el )
+		.closest( '.boardOption' )
+		.find( '.subsection-area' );
+	const idSub = el
+		.closest( '.boardOption' )
+		.querySelector( '.input_subsection_id' )
+		.getAttribute( 'value' );
+	const containerButtons = jQuery( el ).parent();
+	const count = jQuery( el ).parent().parent().parent().find( '.elements_added' ).length + 1;
+	jQuery.ajax( {
+		url: ajaxurl,
+		cache: false,
+		data: {
+			action: 'sccAddElementDate',
+			id_sub: idSub,
+			order: count,
+			nonce: pageEditCalculator.nonce,
+		},
+		srcElement: el,
+		beforeSend() {
+			const { srcElement } = this;
+			srcElement.querySelectorAll( ':scope > :not(i)' ).forEach( ( el ) => el.classList.add( 'scc-d-none' ) );
+			srcElement.querySelector( ':scope > i' ).classList.remove( 'scc-d-none' );
+		},
+		success( data ) {
+			if ( data.passed == true ) {
+				const elementDOM = data.DOMhtml;
+				let element = insertDateEl( data.id_element, elementDOM );
+				element = jQuery( element );
+				// adding the tooltip to the new element
+				sccBackendUtils.handleTooltipAjaxAddedElements( element[ 0 ] );
+				subContainer.append( element );
+				this.element = element;
+				containerButtons.hide();
+			}
+			sccBackendUtils.handleSavingAlert( data, true );
+			sccFlatpickrInitBackend();
+		},
+		complete() {
+			const { srcElement, element } = this;
+			srcElement.querySelectorAll( ':scope > :not(i)' ).forEach( ( el ) => el.classList.remove( 'scc-d-none' ) );
+			srcElement.querySelector( ':scope > i' ).classList.add( 'scc-d-none' );
+
+			sccBackendUtils.datePickerElementCallback( element[ 0 ], true );
+		},
+	} );
+}
+window.addDateElement = addDateElement;
+
+async function sccFlatpickrInitBackend( formId = null ) {  
+    const sccDatePickersEditor = document.querySelectorAll( '.scc-datepicker-editor' );
+	sccDatePickersEditor.forEach(   ( e ) => {
+	  const context = e.closest( '.advanced-option-wrapper' );
+	  const minDate = context.querySelector( '[data-picker-field="min-date"]' );
+	  const maxDate = context.querySelector( '[data-picker-field="max-date"]' );
+	  const disableWeekends = context.querySelector( '[data-picker-field="disable-weekends"]' );
+	  let mode = 'single';
+	  if ( e.getAttribute( 'data-picker-field' ) === 'disabled-date' ) {
+			mode = 'multiple';
+	  }
+	  if ( ! [ 'disable-weekends', 'enable-quantity-modifier' ].includes( e.getAttribute( 'data-picker-field' ) ) ) {
+		  const picker = flatpickr( e, {
+		  mode,
+		  plugins: [ sccCloseButtonPlugin( {} ), sccTodayButtonPlugin( {} ), sccClearButtonPlugin( {} ) ],
+		  onChange: ( selectedDates, dateStr, instance ) => {
+					if ( e.getAttribute( 'data-picker-field' ) !== 'disabled-date' ) {
+						e.value = dateStr;
+						const dataPickerField = e.getAttribute( 'data-picker-field' );
+						const dataTodayTriggered = e.getAttribute( 'data-today-triggered' );
+						// We recognize which button generated the change, if the today button is pressed then today-triggered will be true
+						if ( dataTodayTriggered ) {
+							e.removeAttribute( 'data-today-triggered' );
+						} else {
+							e.removeAttribute( 'data-today-enabled' );
+						}
+						if ( dataPickerField == 'default-date' ) {
+							changeValue2( e );
+						}
+						if ( dataPickerField === 'min-date' || dataPickerField === 'max-date' || dataPickerField === 'disabled-date' ) {
+							if ( dataPickerField === 'min-date' ) {
+								maxDate.setAttribute( 'min', dateStr );
+							}
+							if ( dataPickerField === 'max-date' ) {
+								minDate.setAttribute( 'max', dateStr );
+							}
+							changeValue6( e );
+						}
+					}
+		  },
+		  onClose: ( selectedDates, dateStr, instance ) => {
+					if ( e.getAttribute( 'data-picker-field' ) === 'disabled-date' ) {
+						e.value = dateStr;
+						const dataPickerField = e.getAttribute( 'data-picker-field' );
+						if ( dataPickerField === 'default-date' ) {
+							changeValue2( e );
+						}
+						if ( dataPickerField === 'min-date' || dataPickerField === 'max-date' || dataPickerField === 'disabled-date' ) {
+							changeValue6( e );
+						}
+					}
+		  },
+			} );
+			e.readOnly = true;
+			picker.calendarContainer.classList.add( 'scc-flatpickr-edit-' + formId );
+	  }
+	} );
+}
+window.sccFlatpickrInitBackend = sccFlatpickrInitBackend;
+
 function unabled(e) {
 	let premiumClass = e.classList.contains('scc-premium-element');
 	let o = e.innerText.trim()
-	if (o == 'File Upload' || o == 'Fee & Discount Adjuster' || o == 'Image Button' || o == 'Advanced Pricing Formula' || o == 'Date Picker' || o == 'Distance-Based Cost' || o == 'Signature Box') {
+	if (o == 'File Upload' || o == 'Fee & Discount Adjuster' || o == 'Image Button' || o == 'Advanced Pricing Formula' || o == 'Distance-Based Cost' || o == 'Signature Box') {
 		let p = ''
 		let tooltipImageUrl = ''
 		switch (o) {
@@ -3754,9 +4859,6 @@ function unabled(e) {
 				break
 			case 'Advanced Pricing Formula':
 				p = sccHelpdeskLinks[ 'element-variable-math' ]
-				break
-			case 'Date Picker':
-				p = sccHelpdeskLinks[ 'element-date-picker' ]
 				break
 			case 'Distance-Based Cost':
 				p = sccHelpdeskLinks[ 'element-distance-cost' ]
@@ -3936,14 +5038,6 @@ function processSettingTooltipContent(settingType) {
 	return settingType;
 }
 
-//Deprecated function?
-/* function getTooltipCoverImage(elementType) {
-	if (typeof (elementTooltips[elementType]) == 'object') {
-		return df_scc_resources.assetsPath + '/' + elementTooltips[elementType].coverImage;
-	}
-	return 'https://picsum.photos/200/100';
-} */
-
 function getTooltipCoverImage(elementType) {
 	if (typeof elementTooltips[elementType]?.coverImage !== "undefined") {
 	  return (
@@ -3968,7 +5062,7 @@ function getSettingTooltipCoverImage(elementType) {
   }
 
 //Element tooltip callback
-function applyElementTooltip(node) {
+function applyElementTooltip(node) {  
 	let elementType = node.getAttribute('data-element-tooltip-type');
 	let coverImage = getTooltipCoverImage(elementType);
 	let imgCard = "";
@@ -3978,7 +5072,7 @@ function applyElementTooltip(node) {
 	new bootstrap.Tooltip(node, {
 		delay: { show: 600, hide: 300 },
 		trigger: 'hover focus',
-		template: `<div class="tooltip opacity-100 bg-dark" role="tooltip">
+		template: `<div class="tooltip opacity-100 bg-dark p-0" role="tooltip">
 		<div class="tooltip-arrow"></div>
 		<div class="card tooltip-element">
 		${imgCard}
@@ -4006,7 +5100,7 @@ function applySettingTooltip(node) {
 		<div class="tooltip-arrow"></div>
 		<div class="card tooltip-element">
 		${imgCard}
-		<div class="card-body bg-dark tooltip-inner rounded-0 border-0">
+		<div class="card-body bg-dark tooltip-inner p-3 rounded-0 border-0">
 		</div>
 		</div>
 	  </div>`,
@@ -4193,9 +5287,134 @@ const handlePreviewDockMode = ( element, mode, event, scroll = true ) => {
 	}
 };
 
+//call to get the icon list from the server
+//type can be 'material' or 'fa'
+function sccGetIconList( container, type = '' ) { 
+	//write ajax request to get the icon list from wp_ajax_scc_get_icon_list function
+	const iconPickerMenu = container.querySelector( '.scc-icon-picker-menu' );
+	const iconPickerList = iconPickerMenu.querySelector( '.scc-icon-list' );
+	const loadingMsg = iconPickerMenu.querySelector( '.scc-loading-msg' );
+	iconPickerMenu.querySelector( '.scc-btn-spinner' ).classList.remove( 'scc-d-none' );
+	const iconFilter = iconPickerMenu.querySelectorAll( '.scc-icon-picker-filter' );
+	iconFilter.forEach( ( filter ) => {
+		filter.setAttribute( 'disabled', true );
+		filter.style.opacity = '0.5';
+	} );
+	let iconList = '';
+	jQuery.ajax( {
+		url: ajaxurl,
+		cache: false,
+		data: {
+			action: 'scc_get_icon_list',
+			nonce: pageEditCalculator.nonce,
+			type,
+		},
+		beforeSend() {
+			loadingMsg.style.display = 'inline-flex';
+		},
+		success( data ) { 
+			loadingMsg.style.display = 'none';
+			iconFilter.forEach( ( filter ) => {
+				filter.removeAttribute( 'disabled' );
+				filter.style.opacity = '1';
+			} );
+			iconList = data.data;
+			const iconListHTML = createIconList( iconList, type );
+			iconPickerList.innerHTML += iconListHTML;
+		},
+	} );
+}
+
+//show the icon picker menu when the button is clicked
+//elementType can be 'element or 'element-item'
+function sccShowTitleIconOptions( $this, elementType ) {
+	const titleContainer = $this.closest( '.scc-icon-picker' );
+	const iconPickerMenu = titleContainer.querySelector( '.scc-icon-picker-menu' );
+	const selectedIcon = titleContainer.querySelector( '.scc-font-icon' );
+	const fontIcon = titleContainer.querySelector( '.scc-font-icon i' );
+	const imgIcon = titleContainer.querySelector( '.scc-image-icon' );
+	const hiddenInput = titleContainer.querySelector( '.scc-icon-picker input[type="hidden"]' );
+	const iconPickerSearch = titleContainer.querySelector( '.scc-icon-picker-search input' );
+	const iconPickerFilters = titleContainer.querySelectorAll( '.scc-icon-picker-filter' );
+	//load the icon list if it hasn't been loaded yet
+	const iconList = iconPickerMenu.querySelector( '.scc-icon-list' );
+	if ( ! iconList.classList.contains( 'fa-loaded' ) ) {
+		iconList.classList.add( 'fa-loaded' );
+		sccGetIconList( titleContainer );
+	}
+	// Show/hide the icon picker menu when the button is clicked
+	iconPickerMenu.style.display = iconPickerMenu.style.display === 'block' ? 'none' : 'block';
+	// Select an icon when it is clicked and update the UI
+	const clickHandler = ( event ) => {
+		if ( event.target.closest( '.scc-icon-list' ) ) {
+			const icon = event.target.closest( 'li' ).querySelector( 'i' );
+			if ( icon ) {
+				try {
+					iconPickerMenu.removeEventListener( 'click', clickHandler );
+					imgIcon.style.display = 'none';
+					selectedIcon.style.display = '';
+					fontIcon.className = icon.className;
+					fontIcon.innerHTML = icon.innerHTML;
+					hiddenInput.value = icon.className;
+					changeElementTitleIconConfig( icon, elementType );
+					iconPickerMenu.style.display = 'none';
+				} catch ( e ) {
+					// console.error(e);
+				}
+			}
+		}
+	};
+	iconPickerMenu.addEventListener( 'click', clickHandler );
+
+	// Filter icons based on the search type
+	function filterIcons( type ) {
+		const icons = iconPickerMenu.querySelectorAll( 'li' );
+		Array.from( icons ).forEach( ( icon ) => {
+			const iconClass = icon.querySelector( 'i' ).className;
+			if ( iconClass.includes( type ) || type === 'scc-all' ) {
+				icon.style.display = 'inline-block';
+			} else {
+				icon.style.display = 'none';
+			}
+		} );
+	}
+	
+
+	//filterIcons('scc-all');
+	// Update the icon list when the search term changes
+	iconPickerSearch.addEventListener( 'input', () => {
+		const term = iconPickerSearch.value.trim().toLowerCase();
+		filterIcons( term );
+	} );
+
+	// add an active class to the selected filter and filter the icons
+	iconPickerFilters.forEach( ( filter ) => {
+		filter.addEventListener( 'click', () => {
+			iconPickerFilters.forEach( ( f ) => f.classList.remove( 'active' ) );
+			filter.classList.add( 'active' );
+			const type = filter.dataset.filter;
+
+			if ( ( type == 'scc-material-icon' || type == 'scc-all' ) && ! iconList.classList.contains( 'material-loaded' ) ) {
+				iconList.classList.add( 'material-loaded' );
+				sccGetIconList( titleContainer, 'material' );
+			}
+			filterIcons( type );
+		} );
+	} );
+
+	//close the icon picker menu when clicking outside of it
+	document.addEventListener( 'click', ( event ) => {
+		if ( ! event.target.closest( '.scc-icon-picker' ) ) {
+			iconPickerMenu.style.display = 'none';
+		}
+	} );
+}
+window.sccShowTitleIconOptions = sccShowTitleIconOptions;
 
 jQuery(document).ready(function () {
 	window.sccBackendStore = {
+		advancedOptions: [],
+		closedBanners: [],
 		enabledFeaturesAndElements: [],
 		toCheckConditions: [],
 		choicesData: JSON.parse( document.querySelector( '#choices-data' )?.textContent || '[]' ),
@@ -4392,6 +5611,105 @@ jQuery(document).ready(function () {
 	sccAiUtils.updateMultiplierGUI();
 })
 
+/**
+ * *Shows/hides advance option content of elements
+ * @param element
+ */
+function showAdvanceDateoptions( element ) { 
+	const advance = jQuery( element ).next( '.scc-content' );
+	advance.toggle( function() {
+		if ( jQuery( this ).is( ':visible' ) ) {
+			const elementId = this.closest( '.elements_added' ).querySelector( '.input_id_element' ).value;
+			const values = {};
+			this.querySelectorAll( '[data-value6-key]' ).forEach( ( element, index ) => {
+				if ( element.getAttribute( 'data-value6-type' ) ) {
+					values[ element.getAttribute( 'data-value6-key' ) ] = [ ...element.querySelectorAll( 'input' ) ]
+						.filter( ( z ) => z.checked )
+						.map( ( q ) => q.value );
+					sccBackendUtils.advancedOptionsEventHandler( element, elementId );
+					return;
+				}
+				if ( element.getAttribute( 'data-value6-key' ) === 'time_format' ) {
+					values[ element.getAttribute( 'data-value6-key' ) ] = element.querySelector( '.btn.active' ).getAttribute( 'data-value' );
+					sccBackendUtils.advancedOptionsEventHandler( element, elementId );
+					return;
+				}
+				sccBackendUtils.advancedOptionsEventHandler( element, elementId );
+				values[ element.getAttribute( 'data-value6-key' ) ] = element.type == 'checkbox' ? element.checked : element.value;
+			} );
+			if ( ! sccBackendStore.advancedOptions[ elementId ] ) { 
+				const optionsRoot = this;
+				const timeNodes = {
+					hour12: optionsRoot.querySelector( '.hours-wrapper-12.start' ),
+					hour12End: optionsRoot.querySelector( '.hours-wrapper-12.end' ),
+					hour24: optionsRoot.querySelector( '.hours-wrapper-24.start' ),
+					hour24End: optionsRoot.querySelector( '.hours-wrapper-24.end' ),
+				};
+				const timeFormatNodes = {
+					timeInterval: optionsRoot.querySelector( '.scc-datepicker-time-interval' ),
+					timeFormat: optionsRoot.querySelector( '.scc-datepicker-time-format' ),
+				};
+				const limitHoursNode = optionsRoot.querySelector( '.limit-hours' );
+				sccBackendStore.advancedOptions[ elementId ] = new Proxy( values, {
+					set( target, key, value ) {
+						target[ key ] = value;
+						const showTimeNodes = ( target.limit_hours && target.enable_time_picker );
+						if ( [ 'enable_time_picker', 'limit_hours' ].includes( key ) ) {
+							if ( target.enable_time_picker ) {
+								limitHoursNode.classList.remove( 'd-none' );
+							}
+							if ( ! target.enable_time_picker ) {
+								limitHoursNode.classList.add( 'd-none' );
+							}
+							Object.values( timeFormatNodes ).forEach( ( node ) => {
+								if ( node && target.enable_time_picker ) {
+									node.classList.remove( 'd-none' );
+								}
+								if ( node && ! target.enable_time_picker ) {
+									node.classList.add( 'd-none' );
+								}
+							} );
+						}
+						if ( showTimeNodes && target.time_format === '12h' ) {
+							timeNodes.hour12.classList.remove( 'd-none' );
+							timeNodes.hour12End.classList.remove( 'd-none' );
+						} else {
+							timeNodes.hour12.classList.add( 'd-none' );
+							timeNodes.hour12End.classList.add( 'd-none' );
+						}
+						if ( showTimeNodes && target.time_format === '24h' ) {
+							timeNodes.hour24.classList.remove( 'd-none' );
+							timeNodes.hour24End.classList.remove( 'd-none' );
+						} else {
+							timeNodes.hour24.classList.add( 'd-none' );
+							timeNodes.hour24End.classList.add( 'd-none' );
+						}
+						if ( ! showTimeNodes ) {
+							timeNodes.hour24.classList.add( 'd-none' );
+							timeNodes.hour24End.classList.add( 'd-none' );
+							timeNodes.hour12.classList.add( 'd-none' );
+							timeNodes.hour12End.classList.add( 'd-none' );
+						}
+						if ( target.enable_limit_days ) {
+							optionsRoot.querySelector( '.scc-days-wrapper' ).classList.remove( 'd-none' );
+						} else {
+							optionsRoot.querySelector( '.scc-days-wrapper' ).classList.add( 'd-none' );
+						}
+						updateValue6WithDebounce( elementId, target, optionsRoot );
+						// sccBackendUtils.handleSavingAlert( { passed: true }, true, true );
+						return true;
+					},
+				} );
+			}
+			sccHandleDistanceRestrictCountriesDropdown( element );
+			jQuery( this ).closest( '.styled-accordion' ).find( '.scc_accordion_conditional .material-icons:eq(0), .scc_accordion_advance .material-icons:eq(0)' ).html( 'keyboard_arrow_down' );
+		} else {
+			jQuery( this ).closest( '.styled-accordion' ).find( '.scc_accordion_advance .material-icons:eq(0), .scc_accordion_advance .material-icons:eq(0)' ).html( 'keyboard_arrow_right' );
+		}
+	} );
+}
+
+window.showAdvanceDateoptions = showAdvanceDateoptions;
 
 function skipSGOptimWarning($this) {
 	jQuery.ajax({
@@ -4521,3 +5839,299 @@ function showLoadingChanges() {
 		}
 	})
 }
+
+//return an HTML list of icons ready for rendering
+//type can be 'material' or 'fa'
+function createIconList( json, type = '' ) {
+	let iconList = '';
+	if ( type == 'material' ) {
+		json.icons.forEach( ( icon ) => {
+			iconList += `<li><i class="scc-material-icon ${ json.prefix } ${ icon }">${ icon }</i></li>`;
+		} );
+	}
+	if ( type == 'fa' || type == '' ) {
+		json.icons.forEach( ( icon ) => {
+			iconList += `<li><i class="scc-fontawesome ${ json.prefix }${ icon }"></i></li>`;
+		} );
+	}
+	return iconList;
+}
+
+function hideelements( cntx ) {
+	cntx.querySelector( '.second-conditional-step' ).style.display = 'none';
+	cntx.querySelector( '.third-conditional-step' ).style.display = 'none';
+	cntx.querySelector( '.conditional-number-value' ).style.display = 'none';
+	cntx.querySelector( '.scc-conditional-date-value' ).style.display = 'none';
+	cntx.querySelector( '.btn-group' ).style.display = 'none';
+}
+
+function sccStripHtmlTags( input ) {
+	return input.replace( /<\/?[^>]+(>|$)/g, '' );
+}
+
+/**
+ * *Updates the column value6 of element in db
+ * !this value6 is used for default value quantity input
+ * !this value6 is used for align center buttons (checkbox element)
+ * !this value6 is used for Image Buttons aspect ratio feature
+ * !this value6 is used for datepicker array (min, max, disabled dates and disabled weekends)
+ * !this value6 is used for distance element config array (default distance...)
+ */
+let timeElementValue6 = null;
+function changeValue6( element ) {
+	const id_element = jQuery( element ).closest( '.elements_added' ).find( '.input_id_element' ).val();
+	let value = jQuery( element ).val();
+	let time = 2000;
+	const elementRelatedToDatePicker = element.classList.contains( 'scc-datepicker-editor' ) || element.classList.contains( 'scc-datepicker-config' );
+	const datePickerSetupBody = ( element.hasAttribute( 'data-date-structure' ) || elementRelatedToDatePicker ) ? element.closest( '.elements_added' ).querySelector( '.date-setup-body' ) : null;
+	const pricePerDay = datePickerSetupBody ? datePickerSetupBody.querySelector( '.scc-price-per-date' ) : null;
+	const elementType = element.closest( '.elements_added' ).querySelector( '.input_id_element' );
+	const isImageButton = elementType?.hasAttribute( 'data-checkbox-type' ) && elementType.getAttribute( 'data-checkbox-type' ) === 'image-buttons';
+
+	//Updating simple buttons / checkbox config
+	//added for simple buttons and Multi item radio align center
+	if ( jQuery( element ).hasClass( 'scc_align_center_buttons' ) ) {
+		value = jQuery( element ).prop( 'checked' );
+		if ( value == true ) {
+			value = 'center';
+		} else {
+			value = null;
+		}
+		time = 0;
+	}
+	// Updating datepicker config
+	if ( elementRelatedToDatePicker ) {
+		const elementDate = element.closest( '.elements_added' );
+		const disabledDateInput = elementDate.querySelector( '[data-picker-field="disabled-date"]' );
+		const disableTodayDateCheck = elementDate.querySelector( '.scc-disable-today-date' );
+		let disableTodayDate = false;
+		const minDateInput = elementDate.querySelector( '[data-picker-field="min-date"]' );
+		const maxDateInput = elementDate.querySelector( '[data-picker-field="max-date"]' );
+		const pricingStructureModeDropdown = elementDate.querySelector( '.pricing-mode-dd' );
+
+		let disabledDate = null;
+		let minDate = null;
+		let maxDate = null;
+		const pricingStructureMode = pricingStructureModeDropdown ? pricingStructureModeDropdown.querySelector( 'input' ).value : 'unit_price_only';
+
+		if ( pricingStructureMode === 'quantity_mod' ) {
+			pricePerDay.classList.add( 'scc-d-none' );
+		} else {
+			pricePerDay.classList.remove( 'scc-d-none' );
+		}
+
+		if ( pricingStructureMode !== 'unit_price_only' ) {
+			sccAiUtils.switchMultiplierLines( elementDate, true );
+		} else {
+			sccAiUtils.switchMultiplierLines( elementDate, false );
+		}
+
+		if ( disabledDateInput ) {
+			if ( disabledDateInput.getAttribute( 'data-today-enabled' ) === 'true' ) {
+				disabledDate = 'today';
+			} else {
+				disabledDate = disabledDateInput.value;
+			}
+		}
+		if ( disableTodayDateCheck ) {
+			disableTodayDate = disableTodayDateCheck.checked;
+		}
+		if ( minDateInput ) {
+			if ( minDateInput.getAttribute( 'data-today-enabled' ) === 'true' ) {
+				minDate = 'today';
+			} else {
+				minDate = minDateInput.value;
+			}
+		}
+		if ( maxDateInput ) {
+			if ( maxDateInput.getAttribute( 'data-today-enabled' ) === 'true' ) {
+				maxDate = 'today';
+			} else {
+				maxDate = maxDateInput.value;
+			}
+		}
+		value = {
+			min_date: minDate,
+			max_date: maxDate,
+			disabled_date: disabledDate,
+			disable_today_date: disableTodayDate,
+			date_range_pricing_structure: pricingStructureMode,
+		};
+		time = 0;
+	}
+	// Updating Distance element config
+
+	if ( element.querySelector( '.scc-distance-config' ) ||
+		jQuery( element ).hasClass( 'scc-distance-min' ) ||
+		jQuery( element ).hasClass( 'scc-distance-max' ) ||
+		jQuery( element ).hasClass( 'scc-round-trip' ) ||
+		jQuery( element ).hasClass( 'scc-distance-restrict-countries' ) ||
+		jQuery( element ).hasClass( 'scc-enable-restrict-countries' )
+	) {
+		const elementDistance = element.closest( '.elements_added' );
+		const default_from_address = elementDistance.querySelector( '.scc-default-from-address' ).getAttribute( 'data-address' );
+		const default_from_place = elementDistance.querySelector( '.scc-default-from-address' ).value;
+
+		const min_distance_value = elementDistance.querySelector( '.scc-distance-min' ).value;
+		const max_distance_value = elementDistance.querySelector( '.scc-distance-max' ).value;
+
+		const round_trip = elementDistance.querySelector( '.scc-round-trip' ).checked;
+
+		const restrict_countries = elementDistance.querySelector( '.scc-distance-restrict-countries' );
+		const restrict_countries_values = sccGetSelectValuesFromMultipleSelect( restrict_countries );
+
+		const enable_restrict_countries = elementDistance.querySelector( '.scc-enable-restrict-countries' ).checked;
+
+		const restrict_countries_config = {
+			enabled: enable_restrict_countries ? 'true' : 'false',
+			countries: restrict_countries_values,
+		};
+
+		value = {
+			default_from_address,
+			default_from_place,
+			round_trip: round_trip ? 1 : 0,
+			restrict_countries_config,
+		};
+
+		if ( min_distance_value && parseFloat( min_distance_value ) > 0 ) {
+			value.min_distance_value = min_distance_value;
+		}
+
+		if ( max_distance_value && parseFloat( max_distance_value ) > 0 ) {
+			value.max_distance_value = max_distance_value;
+		}
+
+		if ( restrict_countries_values.length > 0 ) {
+			value.restrict_countries = restrict_countries_values;
+		}
+
+		time = 0;
+	}
+
+	if ( isImageButton ) {
+		const settingsContainer = element.closest( '.advanced-option-wrapper' );
+		const image_aspect_ratio = settingsContainer.querySelector( '.scc_image_button_aspect_ratio' );
+		const image_height = settingsContainer.querySelector( '.scc_image_button_height' );
+		value = {
+			image_aspect_ratio: image_aspect_ratio.value,
+			image_height: image_height.value,
+		};
+	}
+
+	jQuery( element ).focusout( function() {
+		timeElementValue6 = 0;
+	} );
+
+	sccBackendUtils.disableSaveBtnAjax( true, element );
+	clearTimeout( timeElementValue6 );
+	timeElementValue6 = setTimeout( () => {
+		jQuery.ajax( {
+			url: ajaxurl,
+			cache: false,
+			data: {
+				action: 'sccUpElement',
+				id_element,
+				value6: value,
+				nonce: pageEditCalculator.nonce,
+			},
+			success( data ) {
+				sccBackendUtils.disableSaveBtnAjax( false, element );
+				const datajson = JSON.parse( data );
+				sccBackendUtils.handleSavingAlert( datajson );
+			},
+			error() {
+				sccBackendUtils.disableSaveBtnAjax( false, element );
+			},
+		} );
+	}, time );
+}
+
+function registerCustomJsSetupActions( calcId ) {
+	const { customJsConfig } = sccBackendStore.config;
+	customJsConfig
+		.map( ( e ) => Object.keys( e )[ 0 ] )
+		.forEach( ( ctx ) => {
+			const { enabled, customJs } = customJsConfig.filter(
+				( ee ) => Object.keys( ee )[ 0 ] == ctx,
+			)[ 0 ][ ctx ];
+			const ctxNode = jQuery( `#${ ctx }` );
+			ctxNode.prop( 'checked', enabled );
+			const ctxLink = jQuery(
+				`.custom-js-setup[data-event-type=${ ctxNode.data( 'target' ) }`,
+			);
+			ctxLink.data( 'customJs', customJs );
+		} );
+}
+window.registerCustomJsSetupActions = registerCustomJsSetupActions;
+
+/**
+ * Initializes TomSelect for country restriction dropdown
+ * @param {HTMLElement} element - Parent element containing the country selector
+ * @return {TomSelect|null} - Returns TomSelect instance or null if selector not found
+ */
+function sccHandleDistanceRestrictCountriesDropdown( element ) {
+	const container = element.nextElementSibling;
+	// Get the country selector element
+	const countrySelector = container.querySelector( '#scc-distance-restrict-countries' );
+
+	// Check if selector exists in DOM
+	if ( ! countrySelector ) {
+		return null;
+	}
+
+	// Initialize TomSelect with configuration
+	let scc_secondary_select = null;
+	try {
+		scc_secondary_select = new TomSelect( countrySelector, {
+			create: false,
+			plugins: {
+				remove_button: {
+					title: 'Remove this item',
+				},
+			},
+			valueField: 'value',
+			labelField: 'title',
+			optgroupField: 'class',
+			maxOptions: null,
+			maxItems: 5,
+			// Clear textbox and refresh options after item is added
+			onItemAdd() {
+				this.setTextboxValue( '' );
+				this.refreshOptions();
+			},
+			// Custom rendering for options and selected items
+			render: {
+				option( data, escape ) {
+					const title = data.title ? escape( data.title ) : '';
+					return `<div class="d-flex">
+                    <span>${ title }</span>
+                    <span class="ms-auto text-muted"></span>
+                </div>`;
+				},
+				item( data, escape ) {
+					const title = data.title ? escape( data.title ) : '';
+					return `<div>${ title }</div>`;
+				},
+			},
+		} );
+	} catch ( e ) {
+		console.error( 'Failed to initialize TomSelect:', e );
+	}
+
+	// Return the TomSelect instance for potential further use
+	return scc_secondary_select;
+}
+
+document.addEventListener( 'DOMContentLoaded', ( event ) => {
+	if ( isInsideEditingPage() ) { 
+		const calcId = getCalcId();
+		// fetching the calculator config for the backend, and updating the customJS and webhook settings information
+		sccBackendUtils.updateBackendSideConfig( calcId, function() {   
+			registerWebhookActions( calcId );
+			registerCustomJsSetupActions( calcId );
+			sccBackendUtils.checkRepeatProductCount( false );
+			} );
+	}
+});
+

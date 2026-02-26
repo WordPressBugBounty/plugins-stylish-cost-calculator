@@ -27,6 +27,16 @@ if ( ! function_exists( 'meks_wp_parse_args' ) ) {
     }
 }
 
+// Add dynamic version to css and js files when in beta mode
+if ( ! function_exists( 'scc_get_file_version' ) ) {
+    function scc_get_file_version( $file ) {
+        $version = STYLISH_COST_CALCULATOR_VERSION;
+        
+        return $version;
+    }
+}
+
+
 if ( ! function_exists( 'scc_feedback_invocation' ) ) {
     /**
      * Sets feedback modal invocation to compare against 'scc_save_count' option
@@ -108,6 +118,21 @@ if ( ! function_exists( 'df_scc_get_currency_symbol_by_currency_code' ) ) {
         }
 
         return $currency_symbol_label;
+    }
+}
+
+if ( ! function_exists( 'df_scc_escaped_output_attr_collection' ) ) {
+    function df_scc_escaped_output_attr_collection( $collection ) {
+        return join(
+            ' ',
+            array_map(
+                function ( $key, $value ) {
+                    return $key . '="' . esc_attr( $value ) . '"';
+                },
+                array_keys( $collection ),
+                $collection
+            )
+        );
     }
 }
 
@@ -258,6 +283,61 @@ if ( ! function_exists( 'scc_output_editing_page_element_actions_js_template' ) 
 			</div>
 		<?php
         return ob_get_clean();
+    }
+}
+
+if ( ! function_exists( 'scc_parse_quote_form_fields' ) ) {
+    function scc_parse_quote_form_fields( $current_key, $args ) {
+        $default_field_keys  = [ 'name', 'email', 'phone' ];
+        $common_defaults     = [
+            'name'           => 'Field Name',
+            'description'    => 'Field Description',
+            'type'           => 'text',
+            'isMandatory'    => false,
+            'trnKey'         => 'Field Translation',
+            'isDefaultField' => in_array( $current_key, $default_field_keys ),
+            'view_state'     => true,
+            'deletable'      => in_array( $current_key, $default_field_keys ) ? false : true,
+        ];
+        $name_field_defaults = [
+            'useSeparateFields'         => false,
+            'firstNameFieldLabel'       => 'First Name',
+            'firstNameFieldDescription' => 'First Name',
+            'lastNameFieldLabel'        => 'Last Name',
+            'lastNameFieldDescription'  => 'Last Name',
+            'typeSwitchingAllowed'      => false,
+        ];
+
+        if ( $current_key === 'name' ) {
+            return wp_parse_args( $args, array_merge( $common_defaults, $name_field_defaults ) );
+        }
+        // if email field, ensuring email specific mandatory defaults
+        if ( $current_key === 'email' ) {
+            $args['isMandatory'] = true;
+            $args['type']        = 'email';
+            $args['view_state']  = true;
+
+            return wp_parse_args( $args, $common_defaults );
+        }
+
+        return wp_parse_args( $args, $common_defaults );
+    }
+}
+
+if ( ! function_exists( 'df_scc_get_text_messaging_config' ) ) {
+    function df_scc_get_text_messaging_config( $calc_id ) {
+        // Fallback to default text template if no custom text template is set.
+        $default_settings        = [
+            'enableTextingLeads'        => 0,
+            'textMessageTemplate'       => '',
+            'twilioSendFromPhoneNumber' => '',
+            'twilioAPIKey'              => '',
+            'twilioAccountSID'          => '',
+        ];
+        $global_texting_settings = get_option( 'df-scc-texting-settings', $default_settings );
+        $text_message_settings   = wp_parse_args( get_option( 'df-scc-texting-settings-' . $calc_id ), $global_texting_settings );
+
+        return $text_message_settings;
     }
 }
 

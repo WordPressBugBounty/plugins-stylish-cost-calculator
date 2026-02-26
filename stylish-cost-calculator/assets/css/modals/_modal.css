@@ -1,0 +1,425 @@
+.df-modal-root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1060;
+  opacity: 1;
+  background: rgba(27, 24, 24, 0.92);
+  visibility: hidden;
+  transition: all 0.3s ease-in-out;
+}
+
+.df-modal-root.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.df-modal-overlay-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10400;
+}
+
+.df-modal-info-icon {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.df-modal-info-icon svg {
+  width: 32px;
+  height: 32px;
+  fill: #ef4444;
+}
+
+.df-modal-info-icon-symbol {
+  width: 32px;
+  height: 32px;
+  position: relative;
+  color: #ef4444;
+}
+
+.df-modal-info-icon-symbol::before {
+  content: 'ℹ';
+  font-size: 28px;
+  font-weight: bold;
+  line-height: 1;
+  display: block;
+}
+
+.df-modal-container {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 10rem auto;
+  transform: translateY(-20px);
+  transition: all 0.3s ease-in-out;
+  z-index: 1060;
+}
+
+.active .df-modal-container {
+  transform: translateY(0);
+}
+
+.df-modal-content {
+  position: relative;
+  background-color: #fff;
+  border-radius: 8px;
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.df-modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  padding-top: 2rem;
+  border-bottom: none;
+  background: #fff;
+  border-radius: 8px 8px 0 0;
+  text-align: center;
+}
+
+.df-modal-title {
+  margin: 0;
+  margin-top: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #000;
+}
+
+.df-btn-secondary.scc-text-black {
+  color: #000 !important;
+}
+
+.df-modal-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: 2px solid #e6e8eb;
+  padding: 0.5rem;
+  cursor: pointer;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  transition: all 0.2s linear;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+}
+
+.df-modal-close-btn:hover {
+  transform: scale(1.1);
+  border: none;
+}
+
+.df-modal-close-btn:active {
+  transform: scale(0.95);
+}
+
+.df-modal-close-btn-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  color: #6b7280;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.df-modal-close-btn-icon::before,
+.df-modal-close-btn-icon::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background-color: currentColor;
+  top: 50%;
+  left: 0;
+  border-radius: 1px;
+}
+
+.df-modal-close-btn-icon::before {
+  transform: rotate(45deg);
+}
+
+.df-modal-close-btn-icon::after {
+  transform: rotate(-45deg);
+}
+
+.df-modal-body {
+  padding: 1rem 1.5rem 1.5rem;
+  max-height: calc(100vh - 210px);
+  overflow-y: auto;
+  background: #fff;
+  text-align: center;
+}
+
+.df-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  padding-bottom: 2rem;
+  border-top: none;
+  gap: 0.75rem;
+  background: #fff;
+  border-radius: 0 0 8px 8px;
+}
+
+.df-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.df-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.df-btn:hover::before {
+  left: 100%;
+}
+
+.df-btn-primary {
+  background: #314AF3;
+  color: white;
+  box-shadow: none;
+  flex: 1;
+  gap: 0.5rem;
+}
+
+.df-btn-primary:hover {
+  background: #273ccd;
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+.df-btn-primary:active {
+  transform: translateY(0);
+}
+
+.df-btn-primary .scc-btn-icon {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.df-btn-secondary {
+  background: #fff;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  box-shadow: none;
+  flex: 1;
+}
+
+.df-btn-secondary:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+.df-btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Modal content area styling */
+.df-modal-content > .df-modal-content {
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Content wrapper styling */
+.df-modal-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 0;
+}
+
+/* Inner content area styling */
+.df-modal-content-wrapper .df-modal-content {
+  flex: 1;
+  padding: 0;
+  line-height: 1.6;
+  color: #6b7280;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.df-modal-content-wrapper .df-modal-content p {
+  margin: 0 0 1rem 0;
+}
+
+.df-modal-content-wrapper .df-modal-content p:last-child {
+  margin-bottom: 0;
+}
+
+.df-modal-content-wrapper .df-modal-content ul,
+.df-modal-content-wrapper .df-modal-content ol {
+  margin: 0 0 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.df-modal-content-wrapper .df-modal-content li {
+  margin-bottom: 0.5rem;
+}
+
+.df-modal-content-wrapper .df-modal-content h1,
+.df-modal-content-wrapper .df-modal-content h2,
+.df-modal-content-wrapper .df-modal-content h3,
+.df-modal-content-wrapper .df-modal-content h4,
+.df-modal-content-wrapper .df-modal-content h5,
+.df-modal-content-wrapper .df-modal-content h6 {
+  margin: 1.5rem 0 1rem 0;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.df-modal-content-wrapper .df-modal-content h1:first-child,
+.df-modal-content-wrapper .df-modal-content h2:first-child,
+.df-modal-content-wrapper .df-modal-content h3:first-child,
+.df-modal-content-wrapper .df-modal-content h4:first-child,
+.df-modal-content-wrapper .df-modal-content h5:first-child,
+.df-modal-content-wrapper .df-modal-content h6:first-child {
+  margin-top: 0;
+}
+
+.df-modal-content-wrapper .df-modal-content a {
+  color: #2563eb;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.df-modal-content-wrapper .df-modal-content a:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.df-modal-content-wrapper .df-modal-content code {
+  background: #f3f4f6;
+  padding: 0.125rem 0.25rem;
+  border-radius: 4px;
+  font-size: 0.875em;
+  color: #dc2626;
+}
+
+.df-modal-content-wrapper .df-modal-content blockquote {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid #2563eb;
+  background: #f8fafc;
+  border-radius: 0 4px 4px 0;
+  font-style: italic;
+}
+
+@media (max-width: 640px) {
+  .df-modal-container {
+    margin: 1rem;
+    max-width: calc(100% - 2rem);
+  }
+
+  .df-modal-header,
+  .df-modal-body,
+  .df-modal-footer {
+    padding: 1rem;
+  }
+
+  .df-modal-content-wrapper {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .df-modal-info-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .df-modal-info-icon .df-modal-info-icon-symbol {
+    width: 20px;
+    height: 20px;
+  }
+
+  .df-modal-info-icon .df-modal-info-icon-symbol::before {
+    font-size: 16px;
+  }
+
+  .df-modal-footer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .df-modal-footer .df-btn {
+    width: 100%;
+  }
+}
+
+/* Animation keyframes for modal entrance */
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.df-modal-container.active {
+  animation: modalSlideIn 0.3s ease-out;
+}

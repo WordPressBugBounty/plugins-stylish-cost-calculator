@@ -334,6 +334,11 @@ $scc_screen       = get_current_screen();
     color: white;
   }
 
+  .scc-icn-wrapper svg{
+	height: 18px;
+	width: 18px;
+  }
+
 	@keyframes scc-sk-chase {
 		100% {
 			transform: rotate(360deg);
@@ -405,7 +410,7 @@ $scc_screen       = get_current_screen();
 	// Update the menu toggle icon based on current state
 	function sccUpdateMenuToggleIcon() {
 		const body = document.body;
-		const isCurrentlyFolded = body.classList.contains('folded');
+		const isCurrentlyFolded = body.classList.contains( 'folded' );
 		const iconWrapper = document.getElementById('scc-menu-toggle-icon');
 		
 		if (iconWrapper) {
@@ -415,6 +420,11 @@ $scc_screen       = get_current_screen();
 			const chevronLeft = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left"><path d="M15 18l-6-6 6-6"/></svg>';
 			
 			iconWrapper.innerHTML = isCurrentlyFolded ? chevronRight : chevronLeft;
+
+			const toggleButton = iconWrapper.closest( '.scc-btn-header-back' );
+			if ( toggleButton ) {
+				toggleButton.setAttribute( 'aria-expanded', isCurrentlyFolded ? 'false' : 'true' );
+			}
 		}
 	}
 	
@@ -742,6 +752,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="container-fluid col-12" id="settings-tabs-wrapper">
 		<!--Main Content Container-->
 		<div id="debug_messages_wrapper" class="d-none"></div>
+		<div id="notices_wrapper" class="d-none"></div>
 		<div id="sg_optimizer_message_wrapper" class="d-none alert alert-danger" role="alert">
 			<div class="diag-msg-container">
 				<p>

@@ -3,7 +3,7 @@
  * Plugin Name: Stylish Cost Calculator
  * Plugin URI:  https://stylishcostcalculator.com
  * Description: A Stylish Cost Calculator / Price Estimate Form for your site.
- * Version:     8.1.9
+ * Version:     8.2.1
  * Author:      Designful
  * Author URI:  https://stylishcostcalculator.com
  * License:     GPL2
@@ -14,7 +14,8 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
-define( 'STYLISH_COST_CALCULATOR_VERSION', '8.1.9' );
+
+define( 'STYLISH_COST_CALCULATOR_VERSION', '8.2.1' );
 define( 'SCC_URL', plugin_dir_url( __FILE__ ) );
 define( 'SCC_DIR', __DIR__ );
 define( 'SCC_LIB_DIR', __DIR__ . '/lib' );
@@ -37,6 +38,7 @@ require SCC_DIR . '/utils/class-cache-plugins-exclusion-hook.php';
 if ( is_admin() ) {
     require SCC_DIR . '/admin/views/setupWizard.php';
     require SCC_DIR . '/admin/controllers/support-controller.php';
+    require SCC_DIR . '/stylish-cost-sero.php';
 }
 define(
     'SCC_ALLOWTAGS',
@@ -87,6 +89,8 @@ if ( ! defined( 'SCC_TELEMETRY_ENDPOINT' ) ) {
 }
 class df_scc_plugin {
 
+     // Add static property to store shared data
+    private static $shared_data = [];
     public function __construct() {
         $cache_plugin_exclusion = new \DF_SCC\Utils\CachePluginExclusionHook();
         //?Handles ajax requests
@@ -138,6 +142,29 @@ class df_scc_plugin {
             }
         );
     }
+
+    /**
+     * Set shared data that can be accessed across shortcode callbacks
+     *
+     * @param string $key   The key to store the data under
+     * @param mixed  $value The value to store
+     */
+    public static function set_shared_data( $key, $value ) {
+        self::$shared_data[$key] = $value;
+    }
+
+    /**
+     * Get shared data that was stored across shortcode callbacks
+     *
+     * @param string $key     The key to retrieve
+     * @param mixed  $default Default value if key doesn't exist
+     *
+     * @return mixed The stored value or default
+     */
+    public static function get_shared_data( $key, $default = null ) {
+        return isset( self::$shared_data[$key] ) ? self::$shared_data[$key] : $default;
+    }
+
     public function checkTablesExists() {
         global $wpdb;
         $res = $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}df_scc_forms'" );
@@ -197,6 +224,10 @@ class df_scc_plugin {
         if ( ! in_array( 'value5', $elements_table_cols ) ) {
             $wpdb->query( "ALTER TABLE `{$wpdb->prefix}df_scc_elements` ADD value5 tinyint(10) DEFAULT 1" );
         }
+
+        if ( ! in_array( 'value6', $elements_table_cols ) ) {
+            $wpdb->query( "ALTER TABLE `{$wpdb->prefix}df_scc_elements` ADD value6 text COLLATE utf8mb4_unicode_ci DEFAULT NULL" );
+        }
     }
     public function scc_bar_menu( $adminBar ) {
         $args = [
@@ -240,6 +271,8 @@ class df_scc_plugin {
     `value2` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     `value3` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     `value4` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `value5` tinyint(10) DEFAULT 1,
+    `value6` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     `length` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
     `uniqueId` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
     `mandatory` tinyint(1) NOT NULL DEFAULT 0,
@@ -599,6 +632,7 @@ class df_scc_plugin {
         wp_enqueue_script( 'scc-tom-select' );
         wp_enqueue_style( 'scc-bootstrapslider-css' );
         wp_enqueue_script( 'scc-bootstrapslider-js' );
+        wp_enqueue_style( 'scc-flatpickr' );
         wp_enqueue_script( 'scc-frontend' );
         wp_enqueue_script( 'scc-nouislider' );
         wp_enqueue_script( 'wp-util' );
@@ -709,8 +743,6 @@ class df_scc_plugin {
          */
         $fontFamilyService2 = 'inherit';
         $fontFamilyTitle2   = 'inherit';
-        // always set font types to inherit on free copy
-        $form->inheritFontType = 'true';
 
         if ( $form->inheritFontType == 'null' || $form->inheritFontType == 'false' ) {
             $fonts[0]['kind']     = $fontUsed2->kind;
@@ -740,6 +772,7 @@ class df_scc_plugin {
         /**
          *Object font
          */
+        $objectSize                    = $form->objectSize;
         $colorObject                   = $form->objectColorPicker;
         $currency_style                = get_option( 'df_scc_currency_style', 'default' ); // dot or comma
         $currency                      = get_option( 'df_scc_currency', 'USD' );
@@ -856,7 +889,9 @@ class df_scc_plugin {
         wp_register_style( 'scc-checkbox1', SCC_URL . 'assets/css/checkboxes/checkboxes.css', [], STYLISH_COST_CALCULATOR_VERSION );
         wp_register_script( 'scc-tom-select', SCC_URL . 'lib/tom-select/tom-select.base.min.js', [], STYLISH_COST_CALCULATOR_VERSION, true );
         wp_register_style( 'scc-tom-select', SCC_URL . 'lib/tom-select/tom-select.css', [], STYLISH_COST_CALCULATOR_VERSION );
-        wp_register_script( 'scc-frontend', SCC_URL . 'assets/js/scc-frontend.js', [ 'jquery', 'wp-util' ], STYLISH_COST_CALCULATOR_VERSION, true );
+        wp_register_script( 'scc-flatpickr', SCC_URL . 'lib/flatpickr/js/flatpickr.min.js', [], STYLISH_COST_CALCULATOR_VERSION, true );
+        wp_register_style( 'scc-flatpickr', SCC_URL . 'lib/flatpickr/css/flatpickr.min.css', [], STYLISH_COST_CALCULATOR_VERSION );
+        wp_register_script( 'scc-frontend', SCC_URL . 'assets/js/scc-frontend.js', [ 'jquery', 'wp-util', 'scc-flatpickr' ], STYLISH_COST_CALCULATOR_VERSION, true );
         wp_register_script( 'scc-bootstrapslider-js', SCC_URL . 'lib/bootstrap-slider/js/bootstrap-slider.js', [ 'jquery' ], STYLISH_COST_CALCULATOR_VERSION, false );
         wp_register_script( 'scc-translate-js', SCC_URL . 'lib/translate/jquery.translate.js', [ 'jquery' ], STYLISH_COST_CALCULATOR_VERSION, false );
         wp_register_script( 'scc-nouislider', SCC_URL . 'lib/nouislider/nouislider.min.js', [], STYLISH_COST_CALCULATOR_VERSION );
