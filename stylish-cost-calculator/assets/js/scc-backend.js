@@ -895,7 +895,7 @@ const sccBackendUtils = {
 	  var event = new Event("change");
 	  element.dispatchEvent(event);
 	},
-	advancedOptionsEventHandler: ( settingsItem, elementId ) => {
+	advancedOptionsEventHandler: ( settingsItem, elementId ) => {  
 		if ( settingsItem.getAttribute( 'data-event-handler-setup' ) ) {
 			return;
 		}
@@ -5639,17 +5639,7 @@ function showAdvanceDateoptions( element ) {
 			} );
 			if ( ! sccBackendStore.advancedOptions[ elementId ] ) { 
 				const optionsRoot = this;
-				const timeNodes = {
-					hour12: optionsRoot.querySelector( '.hours-wrapper-12.start' ),
-					hour12End: optionsRoot.querySelector( '.hours-wrapper-12.end' ),
-					hour24: optionsRoot.querySelector( '.hours-wrapper-24.start' ),
-					hour24End: optionsRoot.querySelector( '.hours-wrapper-24.end' ),
-				};
-				const timeFormatNodes = {
-					timeInterval: optionsRoot.querySelector( '.scc-datepicker-time-interval' ),
-					timeFormat: optionsRoot.querySelector( '.scc-datepicker-time-format' ),
-				};
-				const limitHoursNode = optionsRoot.querySelector( '.limit-hours' );
+			    const limitHoursNode = optionsRoot.querySelector( '.limit-hours' );
 				sccBackendStore.advancedOptions[ elementId ] = new Proxy( values, {
 					set( target, key, value ) {
 						target[ key ] = value;
@@ -5669,26 +5659,6 @@ function showAdvanceDateoptions( element ) {
 									node.classList.add( 'd-none' );
 								}
 							} );
-						}
-						if ( showTimeNodes && target.time_format === '12h' ) {
-							timeNodes.hour12.classList.remove( 'd-none' );
-							timeNodes.hour12End.classList.remove( 'd-none' );
-						} else {
-							timeNodes.hour12.classList.add( 'd-none' );
-							timeNodes.hour12End.classList.add( 'd-none' );
-						}
-						if ( showTimeNodes && target.time_format === '24h' ) {
-							timeNodes.hour24.classList.remove( 'd-none' );
-							timeNodes.hour24End.classList.remove( 'd-none' );
-						} else {
-							timeNodes.hour24.classList.add( 'd-none' );
-							timeNodes.hour24End.classList.add( 'd-none' );
-						}
-						if ( ! showTimeNodes ) {
-							timeNodes.hour24.classList.add( 'd-none' );
-							timeNodes.hour24End.classList.add( 'd-none' );
-							timeNodes.hour12.classList.add( 'd-none' );
-							timeNodes.hour12End.classList.add( 'd-none' );
 						}
 						if ( target.enable_limit_days ) {
 							optionsRoot.querySelector( '.scc-days-wrapper' ).classList.remove( 'd-none' );

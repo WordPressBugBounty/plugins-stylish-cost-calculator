@@ -432,7 +432,7 @@ class SCCQuoteListView {
 		$this->crm_table->prepare_items();
 	}
 	function admin_menu() {
-		add_submenu_page( 'scc-tabs', 'Quote Viewer', null, 'manage_options', 'df-scc-view-quotes', array( $this, 'page' ) );
+		add_submenu_page( 'scc-tabs', 'Quote Viewer', 'Quote Viewer', 'manage_options', 'df-scc-view-quotes', array( $this, 'page' ) );
 	}
 }
 new SCCQuoteListView();

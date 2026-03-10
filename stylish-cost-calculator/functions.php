@@ -138,6 +138,10 @@ if ( ! function_exists( 'df_scc_escaped_output_attr_collection' ) ) {
 
 if ( ! function_exists( 'scc_get_kses_extended_ruleset' ) ) {
     function scc_get_kses_extended_ruleset( $svg ) {
+        if ( ! is_string( $svg ) || '' === $svg ) {
+            return '';
+        }
+
         $kses_defaults = wp_kses_allowed_html( 'post' );
         $svg_args      = [
             'svg'    => [

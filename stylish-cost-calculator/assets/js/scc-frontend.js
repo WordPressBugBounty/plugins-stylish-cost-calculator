@@ -782,9 +782,15 @@ function sccApplyColors() {
 function sccLoadGFonts() {
 	Object.keys(sccData).forEach((calcId, i) => {
 		let { fontConfig } = sccData[calcId].config;
+		if (!fontConfig || !Array.isArray(fontConfig.googleFontLinks)) {
+			return;
+		}
 		fontConfig.googleFontLinks.forEach((e, index) => {
+			if (typeof e !== 'string' || !e.length || e === 'null') {
+				return;
+			}
 			var cssId = 'scc_gfont_' + calcId + '_' + index;  // you could encode the css path itself to generate id..
-			if (!document.getElementById(cssId)) {
+			if (!document.getElementById(cssId) && !document.querySelector(`link[href="${e}"]`)) {
 				var head = document.getElementsByTagName('head')[0];
 				var link = document.createElement('link');
 				link.id = cssId;

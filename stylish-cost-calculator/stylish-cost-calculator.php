@@ -3,7 +3,7 @@
  * Plugin Name: Stylish Cost Calculator
  * Plugin URI:  https://stylishcostcalculator.com
  * Description: A Stylish Cost Calculator / Price Estimate Form for your site.
- * Version:     8.2.1
+ * Version:     8.2.2
  * Author:      Designful
  * Author URI:  https://stylishcostcalculator.com
  * License:     GPL2
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'STYLISH_COST_CALCULATOR_VERSION', '8.2.1' );
+define( 'STYLISH_COST_CALCULATOR_VERSION', '8.2.2' );
 define( 'SCC_URL', plugin_dir_url( __FILE__ ) );
 define( 'SCC_DIR', __DIR__ );
 define( 'SCC_LIB_DIR', __DIR__ . '/lib' );
@@ -106,6 +106,7 @@ class df_scc_plugin {
         add_action( 'upgrader_process_complete', [ $this, 'post_upgrade_tasks' ], 10, 2 );
         //*Loads menu
         add_action( 'admin_menu', [ $this, 'admin_menu' ] );
+        add_action( 'current_screen', [ $this, 'ensure_admin_page_title' ] );
         // add the stylish cost calculator free version to exclusion list of All in One SEO
         add_filter(
             'aioseo_conflicting_shortcodes',
@@ -732,7 +733,6 @@ class df_scc_plugin {
         if ( ! $form ) {
             return "<h4 style='color:red'>Invalid calculator with ID " . intval( $atts['idvalue'] ) . "</h4>";
         }
-        $form->showFieldsQuoteArray = json_decode( stripslashes( $form->showFieldsQuoteArray ), true );
         $allfonts2                  = json_decode( $scc_googlefonts_var->gf_get_local_fonts() );
         $allfonts2i                 = $allfonts2->items;
         $fontUsed2                  = ! empty( $form->titleFontType ) && isset( $allfonts2i[ $form->titleFontType ] ) ? $allfonts2i[ $form->titleFontType ] : null;
@@ -766,7 +766,7 @@ class df_scc_plugin {
             $fonts2[0]['variants'] = [ $fontUsed3Variant ];
             $fonts2[0]['subsets']  = $fontUsed3->subsets;
             $fontFamilyService2    = $fonts2[0]['family'];
-            $font_link             = $scc_googlefonts_var->style_late( $fonts );
+            $font_link             = $scc_googlefonts_var->style_late( $fonts2 );
             array_push( $google_font_links, $font_link ); //load google fonts css
         }
         /**
@@ -903,6 +903,35 @@ class df_scc_plugin {
         if ( is_admin() && get_current_screen()->base == 'stylish-cost-calculator_page_scc_edit_items' ) {
         }
     }
+    public function ensure_admin_page_title() {
+        if ( ! is_admin() ) {
+            return;
+        }
+
+        $page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+
+        if ( '' === $page ) {
+            return;
+        }
+
+        $page_titles = [
+            'scc_edit_items'                   => 'Edit Calculator Form',
+            'scc-quote-management-screen'      => 'Quote Viewer',
+            'scc-coupons-management'           => 'Coupon Codes',
+            'Stylish_Cost_Calculator_Migration' => 'Migrate',
+        ];
+
+        if ( ! isset( $page_titles[ $page ] ) ) {
+            return;
+        }
+
+        global $title;
+
+        if ( ! is_string( $title ) || '' === $title ) {
+            $title = $page_titles[ $page ];
+        }
+    }
+
     public function admin_menu() {
         if ( ! class_exists( 'migrateController' ) ) {
             require __DIR__ . '/admin/controllers/migrateController.php';
@@ -913,7 +942,7 @@ class df_scc_plugin {
         // ADD PAGE
         add_submenu_page( 'scc-tabs', 'Add New', 'Add New', 'manage_options', 'scc-tabs', 'ssc_test_data' );
         // EDIT PAGE
-        $editing_page_hook = add_submenu_page( '', 'Edit Calculator Form', '', 'read', 'scc_edit_items', 'ssc_test_data' );
+        $editing_page_hook = add_submenu_page( '', 'Edit Calculator Form', 'Edit Calculator Form', 'read', 'scc_edit_items', 'ssc_test_data' );
         // List PAGE
         add_submenu_page( 'scc-tabs', 'All Calculator Forms', 'All Calculator Forms ', 'read', 'scc-list-all-calculator-forms', 'ssc_test_data' );
 
@@ -923,11 +952,11 @@ class df_scc_plugin {
         add_submenu_page( 'scc-tabs', 'Coupon', 'Coupon Codes', 'manage_options', 'scc-coupons-management', 'ssc_test_data', null );
 
         // QUOTE FOR CALCULATOR
-        add_submenu_page( '', 'Quote Viewer', null, 'manage_options', 'scc-quote-management-screen', 'ssc_test_data', null );
+        add_submenu_page( '', 'Quote Viewer', 'Quote Viewer', 'manage_options', 'scc-quote-management-screen', 'ssc_test_data', null );
         // DIAGNOSTICS
         //add_submenu_page( 'scc-tabs', 'Diagnostics', 'Diag & Sys Info', 'manage_options', 'scc-diagnostics', 'ssc_test_data', null );
         //COUPON
-        add_submenu_page( '', 'Quote Viewer', null, 'manage_options', 'scc-coupons-management', 'ssc_test_data', null );
+        add_submenu_page( '', 'Coupon Codes', 'Coupon Codes', 'manage_options', 'scc-coupons-management', 'ssc_test_data', null );
         // GLOBAL SETTINGS
         add_submenu_page( 'scc-tabs', 'Global Settings', 'Global Settings', 'manage_options', 'scc-global-settings', 'ssc_test_data', null );
         // Uncomment to use migration page

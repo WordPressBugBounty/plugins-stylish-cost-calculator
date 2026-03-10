@@ -6,8 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! function_exists( 'get_scc_font_variables' ) ) {
 	function get_scc_font_variables( $form, $no_gfont_css_output = false ) {
 		require SCC_DIR . '/lib/wp-google-fonts/google-fonts.php';
-		
-		$form->showFieldsQuoteArray = json_decode( stripslashes( ! empty( $form->showFieldsQuoteArray ) ? $form->showFieldsQuoteArray : '' ), true );
+
 		$allfonts2                  = json_decode( $scc_googlefonts_var->gf_get_local_fonts() );
 		$allfonts2i                 = $allfonts2->items;
 		$fontUsed2                  = ! empty( $form->titleFontType ) || '0' === $form->titleFontType ? $allfonts2i[ $form->titleFontType ] : $allfonts2i['432'];
@@ -70,6 +69,8 @@ $isSCCFreeVersion      = defined( 'STYLISH_COST_CALCULATOR_VERSION' );
 $defaultFields         = json_decode( '[{"name":{"name":"Your Name","description":"Type in your name","type":"text","isMandatory":null,"trnKey":"Your Name","deletable":false}},{"email":{"name":"Your Email","description":"Type in your email","type":"email","isMandatory":null,"trnKey":"Your Email","deletable":false}},{"phone":{"name":"Your Phone","description":"phone","type":"phone","isMandatory":null,"trnKey":"Your Phone (Optional)","deletable":false}}]', true );
 $formFieldsArray       = empty( $form->formFieldsArray ) ? $defaultFields : json_decode( $form->formFieldsArray, true );
 $form->formFieldsArray = $formFieldsArray;
+$scc_icons             = isset( $scc_icons ) && is_array( $scc_icons ) ? $scc_icons : require SCC_DIR . '/assets/scc_icons/icon_rsrc.php';
+$scc_help_icon         = $scc_icons['help'] ?? $scc_icons['help-circle'] ?? '';
 global $calculatorCount;
 
 if ( ! isset( $calculatorCount ) ) {
@@ -1207,7 +1208,7 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 						echo 'style="display:none;"';
 					}
 					?>
-						class="scc-tooltip2" tooltip="<?php echo esc_attr( json_encode( $tooltip_config ) ); ?>" flow="right"><i class="scc-info-icon"><?php echo scc_get_kses_extended_ruleset( $scc_icons['help'] ); ?></i></span></label>
+						class="scc-tooltip2" tooltip="<?php echo esc_attr( json_encode( $tooltip_config ) ); ?>" flow="right"><i class="scc-info-icon"><?php echo scc_get_kses_extended_ruleset( $scc_help_icon ); ?></i></span></label>
 					<div 
 						class="control-label <?php echo "scc-col-sm-$secondMobileColumnSize scc-col-md-$secondColumnSize scc-col-lg-$secondColumnSize scc-p-0";
 					echo $scc_date_config['enable_time_picker'] ? ' scc-has-time-picker' : ' '; ?> scc_select_opt scc-form-field-item-control"
@@ -1311,7 +1312,7 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 						echo 'style="display:none;"';
 					}
 					?>
-					class="scc-tooltip2" tooltip="<?php echo esc_attr( json_encode( $tooltip_config ) ); ?>" flow="right"><i class="scc-info-icon"><?php echo scc_get_kses_extended_ruleset( $scc_icons['help'] ); ?></i></span></label>
+					class="scc-tooltip2" tooltip="<?php echo esc_attr( json_encode( $tooltip_config ) ); ?>" flow="right"><i class="scc-info-icon"><?php echo scc_get_kses_extended_ruleset( $scc_help_icon ); ?></i></span></label>
 				<div class="control-label 
 					<?php
 					if ( $form->elementSkin == 'style_1' ) {

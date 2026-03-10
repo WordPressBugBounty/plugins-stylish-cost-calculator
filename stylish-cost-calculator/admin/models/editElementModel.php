@@ -426,10 +426,9 @@ class Stylish_Cost_Calculator_Edit_Page {
 			</div>
 			<hr>
 			<p>
-					<label class="scc-accordion_switch_button">
-						<input
+					<label class="scc-accordion_switch_button use-premium-tooltip">
+						<input disabled
 							data-element-id="<?php echo intval( $el->id ); ?>"
-							<?php echo $show_time_options ? 'checked' : ''; ?>
 							data-value6-key="enable_time_picker"
 							type="checkbox">
 						<span class="scc-accordion_toggle_button round"></span>
@@ -444,141 +443,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 						</i>
 					</span>
 				</p>
-				<p class="limit-hours <?php echo $show_time_options ? '' : 'd-none'; ?>">
-					<label class="scc-accordion_switch_button">
-						<input
-							data-element-id="<?php echo intval( $el->id ); ?>"
-							<?php echo boolval( $scc_date_config['limit_hours'] ) ? 'checked' : ''; ?>
-							data-value6-key="limit_hours"
-							type="checkbox">
-						<span class="scc-accordion_toggle_button round"></span>
-					</label>
-					<span class="scc-adv-opt-lbl"
-						data-bs-original-title="">Limit Hours
-						<i
-							class="material-icons-outlined more-settings-info"
-							data-element-tooltip-type="limit-hours-tt"
-							style="margin-right:5px">
-							<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
-						</i>
-					</span>
-				</p>
-				<div class="hours-wrapper-12 start <?php echo $show_12h_options ? '' : 'd-none'; ?> ">
-					<div class="row gx-2 scc-edit-input-option-wrapper hours-select">
-						<div class="col-md-4">
-							<label class="use-tooltip fw-bold" style="font-size:14px; transform:scale(0.8)" title="Select the minimum time in which it is allowed to choose from">Start time</label>
-							<select data-value6-key="limit_hours_start_12h_hour">
-								<?php foreach ( $hours_12 as $value ) { ?>
-									<option <?php selected( $scc_date_config['limit_hours_start_12h_hour'], $value ); ?>><?php echo $value; ?></option>
-								<?php } ?>
-							</select>
-						</div>
-						<div class="col-md-4">
-							<label class="use-tooltip fw-bold fade" style="font-size:14px; transform:scale(0.8)">1</label>
-							<select data-value6-key="limit_hours_start_12h_minutes">
-								<?php foreach ( $numbers_0_to_55 as $value ) { ?>
-									<option <?php selected( $scc_date_config['limit_hours_start_12h_minutes'], $value ); ?>><?php echo $value; ?></option>
-								<?php } ?>
-							</select>
-						</div>
-						<div class="col-md-4">
-							<label class="use-tooltip fw-bold fade" style="font-size:14px; transform:scale(0.8)">1</label>
-							<select data-value6-key="limit_hours_start_am_pm">
-								<option <?php selected( $scc_date_config['limit_hours_start_am_pm'], 'AM' ); ?> value="AM">AM</option>
-								<option <?php selected( $scc_date_config['limit_hours_start_am_pm'], 'PM' ); ?> value="PM">PM</option>
-							</select>
-						</div>
-					</div>
-				</div>
-				<div class="hours-wrapper-12 end <?php echo $show_12h_options ? '' : 'd-none'; ?>">
-					<div class="row gx-2 scc-edit-input-option-wrapper hours-select">
-						<div class="col-md-4">
-							<label class="use-tooltip fw-bold" style="font-size:14px; transform:scale(0.8)" title="Select the minimum time in which it is allowed to choose from">End time</label>
-							<select data-value6-key="limit_hours_end_12h_hour">
-								<?php foreach ( $hours_12 as $value ) { ?>
-									<option <?php selected( $scc_date_config['limit_hours_end_12h_hour'], $value ); ?>><?php echo $value; ?></option>
-								<?php } ?>
-							</select>
-						</div>
-						<div class="col-md-4">
-							<label class="use-tooltip fw-bold fade" style="font-size:14px; transform:scale(0.8)">1</label>
-							<select data-value6-key="limit_hours_end_12h_minutes">
-								<?php foreach ( $numbers_0_to_55 as $value ) { ?>
-									<option <?php selected( $scc_date_config['limit_hours_end_12h_minutes'], $value ); ?>><?php echo $value; ?></option>
-								<?php } ?>
-							</select>
-						</div>
-						<div class="col-md-4">
-							<label class="use-tooltip fw-bold fade" style="font-size:14px; transform:scale(0.8)">1</label>
-							<select data-value6-key="limit_hours_end_am_pm">
-								<option <?php selected( $scc_date_config['limit_hours_end_am_pm'], 'AM' ); ?> value="AM">AM</option>
-								<option <?php selected( $scc_date_config['limit_hours_end_am_pm'], 'PM' ); ?> value="PM">PM</option>
-							</select>
-						</div>
-					</div>
-				</div>
-				<div class="hours-wrapper-24 start <?php echo $show_24h_options ? '' : 'd-none'; ?>">
-					<div class="row gx-2 scc-edit-input-option-wrapper hours-select">
-						<div class="col-md-4">
-							<label class="use-tooltip fw-bold" style="font-size:14px; transform:scale(0.8)" title="Select the minimum time in which it is allowed to choose from">Start time</label>
-							<select data-value6-key="limit_hours_start_24h_hour">
-								<?php foreach ( $hours_24 as $value ) { ?>
-									<option <?php selected( $scc_date_config['limit_hours_start_24h_hour'], $value ); ?>><?php echo $value; ?></option>
-								<?php } ?>
-							</select>
-						</div>
-						<div class="col-md-4">
-							<label class="use-tooltip fw-bold fade" style="font-size:14px; transform:scale(0.8)">1</label>
-							<select data-value6-key="limit_hours_start_24h_minutes">
-								<?php foreach ( $numbers_0_to_55 as $value ) { ?>
-									<option <?php selected( $scc_date_config['limit_hours_start_24h_minutes'], $value ); ?>><?php echo $value; ?></option>
-								<?php } ?>
-							</select>
-						</div>
-					</div>
-				</div>
-				<div class="hours-wrapper-24 end <?php echo $show_24h_options ? '' : 'd-none'; ?>">
-					<div class="row gx-2 scc-edit-input-option-wrapper hours-select">
-						<div class="col-md-4">
-							<label class="use-tooltip fw-bold" style="font-size:14px; transform:scale(0.8)" title="Select the minimum time in which it is allowed to choose from">End time</label>
-							<select data-value6-key="limit_hours_end_24h_hour">
-								<?php foreach ( $hours_24 as $value ) { ?>
-									<option <?php selected( $scc_date_config['limit_hours_end_24h_hour'], $value ); ?>><?php echo $value; ?></option>
-								<?php } ?>
-							</select>
-						</div>
-						<div class="col-md-4">
-							<label class="use-tooltip fw-bold fade" style="font-size:14px; transform:scale(0.8)">1</label>
-							<select data-value6-key="limit_hours_end_24h_minutes">
-								<?php foreach ( $numbers_0_to_55 as $value ) { ?>
-									<option <?php selected( $scc_date_config['limit_hours_end_24h_minutes'], $value ); ?>><?php echo $value; ?></option>
-								<?php } ?>
-							</select>
-						</div>
-					</div>
-				</div>
-				<div class="row gx-2 scc-edit-input-option-wrapper scc-datepicker-time-interval <?php echo $show_time_options ? '' : 'd-none'; ?>">
-					<div class="col-md-6">
-						<label class=" use-tooltip fw-bold"
-						style="font-size:14px; transform:scale(0.8)">Time Interval</label>
-						<select class="d-block" data-value6-key="time_interval">
-							<option <?php selected( $scc_date_config['time_interval'], '15m' ); ?> value="15m">15 minutes</option>
-							<option <?php selected( $scc_date_config['time_interval'], '30m' ); ?> value="30m">30 minutes</option>
-							<option <?php selected( $scc_date_config['time_interval'], '60m' ); ?> value="60m">1 hour</option>
-						</select>
-					</div>
-					<div class="col-md-6">
-						<label class=" use-tooltip fw-bold"
-						style="font-size:14px; transform:scale(0.8)">Time Format</label>
-						<div class="d-block">
-							<div class="btn-group scc-btn-group-rounded" data-value6-key="time_format">
-								<div role="button" class="m-0 btn <?php echo $scc_date_config['time_format'] === '12h' ? 'scc-btn-brand active' : ''; ?>" data-value="12h">12H</div>
-								<div role="button" class="m-0 btn <?php echo $scc_date_config['time_format'] === '24h' ? 'scc-btn-brand active' : ''; ?>" data-value="24h">24H</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<hr>
+			    <hr>
 			<?php
             }
 		 

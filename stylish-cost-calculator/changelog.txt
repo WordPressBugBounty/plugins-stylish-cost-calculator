@@ -1,3 +1,21 @@
+## 8.2.2 - 2026-03-10
+
+**Frontend Changes:**
+- Fixed: Google Fonts requests to prevent font loading errors on calculator forms.
+
+**Dashboard Changes:**
+- Added: Dual navigation bars in the dashboard for faster access to plugin sections.
+- Improved: Secondary navigation spacing and layout for a cleaner dashboard experience.
+- Updated: The dashboard header logo now includes a Free badge.
+- Fixed: Quote Viewer and leads-related dashboard pages now open correctly from plugin navigation.
+
+**Editing Page Changes:**
+- Updated: Date Picker editor options were aligned with the free version by removing unavailable time picker controls.
+
+**Backend Changes:**
+- Fixed: Quote field visibility settings no longer trigger errors when forms are saved or rendered.
+- Improved: Premium-only variable handling and sanitization to reduce admin and form rendering errors.
+
 ## 8.2.1 - 2026-02-26
 
 **Frontend Changes:**

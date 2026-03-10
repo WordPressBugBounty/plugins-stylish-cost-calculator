@@ -14,6 +14,14 @@ class formController {
 
 	protected $db;
 
+	private function normalize_json_text_field( $value ) {
+		if ( is_array( $value ) || is_object( $value ) ) {
+			return wp_json_encode( $value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+		}
+
+		return $value;
+	}
+
 	public function __construct() {
 		global $wpdb;
 		$this->db = $wpdb;
@@ -115,7 +123,7 @@ class formController {
 		( isset( $values['showTaxBeforeTotal'] ) ) ? $showTaxBeforeTotal     = $values['showTaxBeforeTotal'] : $showTaxBeforeTotal = 'false';
 		( isset( $values['formFieldsArray'] ) ) ? $formFieldsArray           = $values['formFieldsArray'] : $formFieldsArray = null;
 		( isset( $values['webhookSettings'] ) ) ? $webhookSettings           = $values['webhookSettings'] : $webhookSettings = null;
-		( isset( $values['showFieldsQuoteArray'] ) ) ? $showFieldsQuoteArray = $values['showFieldsQuoteArray'] : $showFieldsQuoteArray = null;
+		( isset( $values['showFieldsQuoteArray'] ) ) ? $showFieldsQuoteArray = $this->normalize_json_text_field( $values['showFieldsQuoteArray'] ) : $showFieldsQuoteArray = null;
 		( isset( $values['translation'] ) ) ? $translation                   = $values['translation'] : $translation = null;
 		( isset( $values['paypalConfigArray'] ) ) ? $paypalConfigArray       = $values['paypalConfigArray'] : $paypalConfigArray = null;
 		( isset( $values['isWoocommerceCheckoutEnabled'] ) ) ? $isWoocommerceCheckoutEnabled = $values['isWoocommerceCheckoutEnabled'] : $isWoocommerceCheckoutEnabled = null;
@@ -321,7 +329,7 @@ class formController {
 		( isset( $values['showTaxBeforeTotal'] ) ) ? $showTaxBeforeTotal     = $values['showTaxBeforeTotal'] : $showTaxBeforeTotal = $todo->showTaxBeforeTotal;
 		( isset( $values['formFieldsArray'] ) ) ? $formFieldsArray           = $values['formFieldsArray'] : $formFieldsArray = $todo->formFieldsArray;
 		( isset( $values['webhookSettings'] ) ) ? $webhookSettings           = $values['webhookSettings'] : $webhookSettings = $todo->webhookSettings;
-		( isset( $values['showFieldsQuoteArray'] ) ) ? $showFieldsQuoteArray = $values['showFieldsQuoteArray'] : $showFieldsQuoteArray = $todo->showFieldsQuoteArray;
+		( isset( $values['showFieldsQuoteArray'] ) ) ? $showFieldsQuoteArray = $this->normalize_json_text_field( $values['showFieldsQuoteArray'] ) : $showFieldsQuoteArray = $todo->showFieldsQuoteArray;
 		( isset( $values['translation'] ) ) ? $translation                   = $values['translation'] : $translation = $todo->translation;
 		( isset( $values['paypalConfigArray'] ) ) ? $paypalConfigArray       = $values['paypalConfigArray'] : $paypalConfigArray = $todo->paypalConfigArray;
 		( isset( $values['isWoocommerceCheckoutEnabled'] ) ) ? $isWoocommerceCheckoutEnabled = $values['isWoocommerceCheckoutEnabled'] : $isWoocommerceCheckoutEnabled = $todo->isWoocommerceCheckoutEnabled;

@@ -57,6 +57,39 @@ class SccFrontendController {
             ),
             0
         ) ? true : false;
+        $form             = (object) wp_parse_args(
+            (array) $form,
+            [
+                'emailQuoteRecipients'                     => 0,
+                'show_total_price_float_mobile'            => 0,
+                'showUnitPrice'                            => 'false',
+                'ctaBtnColorPicker'                        => '',
+                'cta_btn_text_color'                       => '',
+                'blurTotalPrice'                           => 'false',
+                'show_price_column'                        => 1,
+                'quote_form_show_pdf_name'                 => 0,
+                'remove_pdf_attachment'                    => 0,
+                'quote_form_position'                      => '',
+                'custom_css_config_array'                  => '',
+                'price_rounding_config_array'              => '',
+                'floating_bar_config_array'                => '',
+                'showSearchBar'                            => 0,
+                'enable_smarturl'                          => 0,
+                'progress_indicator_style'                 => '',
+                'progress_buttons_style'                   => 'space-between',
+                'allow_currency_switching'                 => 0,
+                'send_quote_form_data_to_user'             => 0,
+                'include_quote_form_data'                  => 0,
+                'accordionStyle'                           => 'style_1',
+                'flatpickr_localization'                   => '',
+                'post_quote_redirect_page'                 => 0,
+                'stripe_subscription_settings'             => '',
+                'unit_price_config_array'                  => '',
+                'preCheckoutQuoteForm'                     => 'false',
+                'combine_checkout_woocommerce_product_id'  => 0,
+                'combine_checkout_items'                   => 0,
+            ]
+        );
 
         $scc_font_variables = $this->get_scc_font_variables( $form, $no_gfont_css_output );
 
@@ -462,7 +495,6 @@ class SccFrontendController {
 
     public function get_scc_font_variables( $form, $no_gfont_css_output = false ) {
         require SCC_DIR . '/lib/wp-google-fonts/google-fonts.php';
-        $form->showFieldsQuoteArray = json_decode( stripslashes( ! empty( $form->showFieldsQuoteArray ) ? $form->showFieldsQuoteArray : '' ), true );
         $allfonts2                  = json_decode( $scc_googlefonts_var->gf_get_local_fonts() );
         $allfonts2i                 = $allfonts2->items;
         $fontUsed2                  = ! empty( $form->titleFontType ) || '0' === $form->titleFontType ? $allfonts2i[ $form->titleFontType ] : $allfonts2i['432'];
