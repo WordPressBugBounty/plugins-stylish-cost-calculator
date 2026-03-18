@@ -1703,7 +1703,7 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 [id^="scc_form"] .description_section_preview {
 	color: <?php echo esc_attr( $colorObject ); ?>;
 	font-size: <?php echo esc_attr( $objectSize ); ?>;
-    margin-top: 5px;
+    margin-top: 20px;
 }
 
 /* Switch button */

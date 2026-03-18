@@ -1037,7 +1037,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		addEventsToQuoteFormBtns(jQuery('.editing-action-cards.action-quoteform .btn.btn-cards:not(.btn-plus)'))
 
 		// checking for debug points
-		jQuery.ajax({
+	jQuery.ajax({
 			url: ajaxurl,
 			cache: false,
 			data: {
@@ -1062,10 +1062,6 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 			}
 		})
 	})
-	const df_scc_resources = {
-		dropdownTumbnailDefaultImage: "<?php echo esc_url( SCC_ASSETS_URL . '/images/image.png' ); ?>",
-		assetsPath: "<?php echo esc_url( SCC_ASSETS_URL ); ?>"
-	}
 
 	const debugMessages = (data, isCloudFlare = false) => {
 		let msgs = data.diag_items

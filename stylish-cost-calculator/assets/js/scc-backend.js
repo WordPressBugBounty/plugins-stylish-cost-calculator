@@ -209,60 +209,66 @@ const sccBackendUtils = {
 	    });
 	},
 	disableSaveBtnAjax: (status, element = null) => { //Handles the state of the save button when elements of the form are saved with ajax
-		 
-		let topSaveBtn = document.querySelector(".scc-top-save-btn");
-		let elementBox = '';
-		if(element){
-		elementBox = element.closest('.elements_added');
+		const topSaveBtn = document.querySelector( ".scc-top-save-btn, .btn.scc-btn-green.btn-action.text-white" );
+		let elementBox = null;
+		if ( element ) {
+			elementBox = element.closest( '.elements_added' );
 		}
 		// disable save button while the ajax is being processed
-		if(status == true){	
-		if(element){
-			let loaderSelector = elementBox.querySelector('.scc-saving-element-msg');
-			loaderSelector.innerHTML = '<i class="scc-btn-spinner scc-save-btn-spinner"></i> Saving...'
-			loaderSelector.classList.remove('scc-visibility-hidden');
-		}
-		
-		topSaveBtn.setAttribute("disabled", "");
-		topSaveBtn.style.paddingLeft = "20px";
-		topSaveBtn.style.paddingRight = "20px";
-		document.querySelectorAll(".scc-save-btn-cont").forEach((el) => {
-			el.setAttribute("data-bs-original-title", "<h5>Saving changes</h5>");
-			el.setAttribute("data-setting-tooltip-type","disabled-save-button-tt");
-		});
-		document.querySelectorAll(".scc-save-btn-spinner").forEach((el) => {
-			el.classList.remove("scc-d-none");
-		});
-		}
-		// enable save button while the ajax is being processed
-		if(status == false){
-		if(element){
-			let loaderSelector = elementBox.querySelector('.scc-saving-element-msg');
-		loaderSelector.innerHTML = '<span style="color:#314af3;">Saved</span>';
+		if ( status == true ) {
+			if ( elementBox ) {
+				const loaderSelector = elementBox.querySelector( '.scc-saving-element-msg' );
+				if ( loaderSelector ) {
+					loaderSelector.innerHTML = '<i class="scc-btn-spinner scc-save-btn-spinner"></i> Saving...';
+					loaderSelector.classList.remove( 'scc-visibility-hidden' );
+				}
+			}
 
-			setTimeout(() => {
-			loaderSelector.classList.add('scc-visibility-hidden')
-			}, 500);
-		}else{
-			document.querySelectorAll('.scc-saving-element-msg').forEach((el) => {
-			el.innerHTML = '<span style="color:#314af3;">Saved</span>';
-			setTimeout(() => {
-				el.classList.add('scc-visibility-hidden')
-			}, 500);
+			if ( topSaveBtn ) {
+				topSaveBtn.setAttribute( "disabled", "" );
+				topSaveBtn.style.paddingLeft = "20px";
+				topSaveBtn.style.paddingRight = "20px";
+			}
+			document.querySelectorAll(".scc-save-btn-cont").forEach((el) => {
+				el.setAttribute("data-bs-original-title", "<h5>Saving changes</h5>");
+				el.setAttribute("data-setting-tooltip-type","disabled-save-button-tt");
+			});
+			document.querySelectorAll(".scc-save-btn-spinner").forEach((el) => {
+				el.classList.remove("scc-d-none");
 			});
 		}
-			
-		elementBox.removeChild
-		topSaveBtn.removeAttribute("disabled");
-		topSaveBtn.style.paddingLeft = "35px";
-		topSaveBtn.style.paddingRight = "35px";
-		document.querySelectorAll(".scc-save-btn-cont").forEach((el) => {
-			el.setAttribute("data-bs-original-title", "");
-			el.setAttribute("data-setting-tooltip-type","");
-		});
-		document.querySelectorAll(".scc-save-btn-spinner").forEach((el) => {
-			el.classList.add("scc-d-none");
-		});
+		// enable save button while the ajax is being processed
+		if ( status == false ) {
+			if ( elementBox ) {
+				const loaderSelector = elementBox.querySelector( '.scc-saving-element-msg' );
+				if ( loaderSelector ) {
+					loaderSelector.innerHTML = '<span style="color:#314af3;">Saved</span>';
+
+					setTimeout(() => {
+						loaderSelector.classList.add( 'scc-visibility-hidden' );
+					}, 500);
+				}
+			} else {
+				document.querySelectorAll('.scc-saving-element-msg').forEach((el) => {
+					el.innerHTML = '<span style="color:#314af3;">Saved</span>';
+					setTimeout(() => {
+						el.classList.add('scc-visibility-hidden');
+					}, 500);
+				});
+			}
+
+			if ( topSaveBtn ) {
+				topSaveBtn.removeAttribute( "disabled" );
+				topSaveBtn.style.paddingLeft = "35px";
+				topSaveBtn.style.paddingRight = "35px";
+			}
+			document.querySelectorAll(".scc-save-btn-cont").forEach((el) => {
+				el.setAttribute("data-bs-original-title", "");
+				el.setAttribute("data-setting-tooltip-type","");
+			});
+			document.querySelectorAll(".scc-save-btn-spinner").forEach((el) => {
+				el.classList.add("scc-d-none");
+			});
 		}
 	},
 	updateFeaturesAndElementsUsage: ( sourceEvent, action ) => {
@@ -2754,6 +2760,18 @@ const settingTooltips = {
 		  </div>`,
 		coverImage:
 		'images/tooltip-images/quote-lead-dashboard-img.png',
+	},
+	'sms-dashboard-tt': {
+		msg: `<h5 class='text-start'>SMS Dashboard</h4>
+				  <p class='text-start mt-2'>Send quote updates by text message as soon as a customer completes the calculator form.</p>
+				  <p class='text-start mt-2'>This helps you deliver estimates instantly, keep clients engaged with real-time communication, and reduce manual follow-up.</p>
+				  <p class='text-start mt-2'>Includes automated SMS sending, simple integration with Stylish Cost Calculator, and customizable message content.</p>
+				  <div class="example-description text-start">
+          
+          <a href="${ sccHelpdeskLinks[ 'feature-sms-quote' ] }" target="_blank"><div class="btn btn-primary btn-lg">Learn More</div></a>
+		  <br> <br> 
+		  ${premiumMessage}		  
+		  </div>`,
 	},
 	'require-acceptance-tt': {
 		msg: `<h5 class='text-start'>Require acceptance (GDPR/Terms & Conditions)</h4>

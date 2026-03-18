@@ -7456,6 +7456,28 @@ textarea.comment_box_text::placeholder {
   width: 80%;
 }
 
+/* Align tom-select option rows vertically center and drop legacy floats */
+.form-select-tom .ts-control .item,
+.form-select-tom .ts-dropdown .option {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.form-select-tom .ts-control .item img,
+.form-select-tom .ts-dropdown .option img {
+	float: none;
+	flex: 0 0 auto;
+	margin: 0 8px 0 0;
+	width: 40px;
+	height: auto;
+}
+
+.form-select-tom .scc-option-content {
+	float: none;
+	width: auto;
+}
+
 .scc-tom-select-placeholder,
 .ts-control .item img {
   width: 10%;
@@ -7481,17 +7503,19 @@ textarea.comment_box_text::placeholder {
 
 .scc-dropdown-opt-title {
   font-weight: bold;
-  margin-bottom: 1.5%;
-  font-size: 16px;
+  /*margin-bottom: 1.5%;*/
+  font-size: 18px;
 }
 
 .scc-dropdown-opt-description {
-  font-size: 16px;
+  font-size: 12px;
   font-weight: normal;
+  margin-top: 2px;
 }
 
 .ts-control .scc-dropdown-opt-description {
-  line-height: 16px;
+  line-height: 1.4;
+  margin-top: 2px;
 }
 
 .form-select-tom .ts-dropdown-content {

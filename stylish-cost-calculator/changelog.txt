@@ -1,3 +1,20 @@
+## 8.2.3 - 2026-03-18
+
+**Frontend Changes:**
+- Fixed: Free calculator forms now handle date field display details more reliably, including spacing and tooltip-related UI issues.
+
+**Dashboard Changes:**
+- Updated: The All Calculators page now uses a new card-based layout with search, filters, sorting, and faster access to calculator actions.
+- Improved: Spacing, sizing, and filter behavior on the All Calculators page for a cleaner dashboard experience.
+- Added: The dashboard header now includes profile access and a direct SMS dashboard link.
+- Fixed: Dashboard pages no longer break when shared admin resources fail to load.
+
+**Editing Page Changes:**
+- Fixed: The top Save button on the editing page now updates correctly while changes are being saved.
+
+**Backend Changes:**
+- Improved: Shared admin resource loading for dashboard tools to reduce script-related errors.
+
 ## 8.2.2 - 2026-03-10
 
 **Frontend Changes:**

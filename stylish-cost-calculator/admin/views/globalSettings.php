@@ -187,10 +187,6 @@ class Stylish_Cost_Calculator_Settings {
 			}
 		</style>
 		<script type="text/javascript">
-			const df_scc_resources = {
-				dropdownTumbnailDefaultImage: "<?php echo esc_url( SCC_ASSETS_URL . '/images/image.png' ); ?>",
-				assetsPath: "<?php echo esc_url( SCC_ASSETS_URL ); ?>"
-			}
 			jQuery(document).ready(function($) {
 				// Upload button click
 				$('.scc-media-upload-button').click(function(event) {

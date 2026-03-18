@@ -1082,7 +1082,7 @@
 								{
 									"id": "3436",
 									"order": "0",
-									"name": "Standar",
+									"name": "Standard",
 									"price": "0",
 									"description": "",
 									"value1": "",
@@ -1161,7 +1161,7 @@
 									"elementitem_id": "3436",
 									"condition_set": "1",
 									"elementitem_name": {
-										"name": "Standar",
+										"name": "Standard",
 										"uniqueId": "G4zRLrDvyM"
 									}
 								}
@@ -1548,7 +1548,7 @@
 								{
 									"id": "3459",
 									"order": "5",
-									"name": "matte",
+									"name": "Matte",
 									"price": "30",
 									"description": "",
 									"value1": "",

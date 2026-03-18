@@ -5,6 +5,39 @@ if ( ! defined( 'ABSPATH' ) ) {
 $isSCCFreeVersion = defined( 'STYLISH_COST_CALCULATOR_VERSION' );
 $scc_icons        = require SCC_DIR . '/assets/scc_icons/icon_rsrc.php';
 $scc_screen       = get_current_screen();
+$current_user         = wp_get_current_user();
+$scc_profile_name     = '';
+$scc_profile_initials = '';
+
+if ( $current_user instanceof WP_User ) {
+	$scc_profile_name = ! empty( $current_user->display_name ) ? $current_user->display_name : $current_user->user_login;
+}
+
+if ( ! empty( $scc_profile_name ) ) {
+	$scc_profile_parts = preg_split( '/[\s\-_]+/', trim( $scc_profile_name ) );
+
+	if ( is_array( $scc_profile_parts ) ) {
+		foreach ( $scc_profile_parts as $scc_profile_part ) {
+			if ( '' === $scc_profile_part ) {
+				continue;
+			}
+
+			$scc_profile_initials .= strtoupper( substr( $scc_profile_part, 0, 1 ) );
+
+			if ( strlen( $scc_profile_initials ) >= 2 ) {
+				break;
+			}
+		}
+	}
+
+	if ( '' === $scc_profile_initials ) {
+		$scc_profile_initials = strtoupper( substr( preg_replace( '/[^A-Za-z0-9]/', '', $scc_profile_name ), 0, 2 ) );
+	}
+}
+
+if ( '' === $scc_profile_initials ) {
+	$scc_profile_initials = 'AD';
+}
 ?>
 <style>
 	.scc-smiling-loader * {
@@ -412,6 +445,7 @@ $scc_screen       = get_current_screen();
 	}
 	
 	.scc-primary-nav-links .scc-nav-link {
+		position: relative;
 		color: var(--scc-text-muted);
 		text-decoration: none;
 		display: flex;
@@ -421,12 +455,49 @@ $scc_screen       = get_current_screen();
 		font-weight: 500;
 		font-size: 14px;
 		gap: 8px;
-		transition: color 0.2s;
+		transition: color 0.2s ease;
+	}
+
+	.scc-primary-nav-links .scc-nav-link::after {
+		content: "";
+		position: absolute;
+		left: 16px;
+		right: 16px;
+		bottom: 0;
+		height: 3px;
+		border-radius: 999px;
+		background: var(--scc-color-primary, #314AF3);
+		box-shadow: 0 0 12px rgba(49, 74, 243, 0.45);
+		opacity: 0;
+		transform: scaleX(0.7);
+		transform-origin: center;
+		transition: opacity 0.2s ease, transform 0.2s ease;
 	}
 	
 	.scc-primary-nav-links .scc-nav-link:hover,
 	.scc-primary-nav-links .scc-nav-link.active {
 		color: var(--scc-text-light);
+	}
+
+	.scc-primary-nav-links .scc-nav-link:hover::after,
+	.scc-primary-nav-links .scc-nav-link.active::after {
+		opacity: 1;
+		transform: scaleX(1);
+	}
+
+	.scc-primary-nav-links .scc-nav-link.scc-nav-link-disabled {
+		color: #64748B;
+		opacity: 0.7;
+		cursor: not-allowed;
+	}
+
+	.scc-primary-nav-links .scc-nav-link.scc-nav-link-disabled::after {
+		display: none;
+	}
+
+	.scc-primary-nav-links .scc-nav-link.scc-nav-link-disabled:hover,
+	.scc-primary-nav-links .scc-nav-link.scc-nav-link-disabled:focus {
+		color: #CBD5E1;
 	}
 	
 	.scc-primary-nav-links .scc-icn-wrapper svg {
@@ -440,22 +511,69 @@ $scc_screen       = get_current_screen();
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-
-		background-color: #314AF3;
+		gap: 6px;
+		min-height: 32px;
+		padding: 0 12px;
+		background: rgba(49, 74, 243, 0.14);
+		background: color-mix(in srgb, var(--scc-color-primary, #314AF3) 16%, transparent);
+		border: 1px solid rgba(122, 131, 245, 0.45);
+		border: 1px solid color-mix(in srgb, var(--scc-color-primary, #314AF3) 42%, white 18%);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 		color: #FFF !important;
 		font-size: 11px;
 		font-weight: 600;
-		padding: 2px 6px;
-		border-radius: 4px;
+		letter-spacing: 0.06em;
+		border-radius: 8px;
 		margin-left: 5px;
 		line-height: 1;
+		text-transform: uppercase;
+		transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 	}
 	.scc-new-btn-badge:hover {
+		background: rgba(49, 74, 243, 0.24);
+		background: color-mix(in srgb, var(--scc-color-primary, #314AF3) 24%, transparent);
+		border-color: rgba(122, 131, 245, 0.72);
+		border-color: color-mix(in srgb, var(--scc-color-primary, #314AF3) 60%, white 12%);
 		color: #FFF !important;
 	}
 	.scc-new-btn-badge svg {
-		width: 12px;
-		height: 12px;
+		width: 14px;
+		height: 14px;
+	}
+
+	.scc-profile-nav-item {
+		display: flex;
+		align-items: center;
+	}
+
+	.scc-profile-button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		padding: 0;
+		border-radius: 999px;
+		border: 1px solid #273ccd;
+		border: 1px solid color-mix(in srgb, var(--scc-color-primary, #314AF3) 88%, black 12%);
+		background: var(--scc-color-primary, #314AF3);
+		box-shadow: 0 8px 20px rgba(49, 74, 243, 0.22);
+		color: #FFFFFF;
+		font-size: 12px;
+		font-weight: 700;
+		letter-spacing: 0.02em;
+		line-height: 1;
+		text-align: center;
+		text-decoration: none;
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.scc-profile-button:hover,
+	.scc-profile-button:focus {
+		color: #FFFFFF;
+		transform: translateY(-1px);
+		background: var(--scc-color-primary-dark, var(--scc-color-primary, #314AF3));
+		box-shadow: 0 10px 24px rgba(49, 74, 243, 0.28);
 	}
 	
 	/* Secondary Navbar */
@@ -500,7 +618,18 @@ $scc_screen       = get_current_screen();
 	.scc-calc-name-input-wrapper {
 		display: flex;
 		align-items: center;
-		gap: 12px;
+		gap: 8px;
+	}
+
+	.scc-calc-name-edit-icon {
+		display: inline-flex;
+		align-items: center;
+		color: #64748B;
+	}
+
+	.scc-calc-name-edit-icon svg {
+		width: 16px;
+		height: 16px;
 	}
 	
 	.scc-calc-name-input-wrapper input[type="text"] {
@@ -667,7 +796,7 @@ $scc_screen       = get_current_screen();
 			<ul class="scc-primary-nav-links" style="margin-left: 10px;">
 				<?php if ( $scc_screen->base === 'stylish-cost-calculator_page_scc-list-all-calculator-forms' || true ) { ?>
 				<li>
-					<a href="<?php echo esc_url( menu_page_url( 'scc-tabs', false ) ); ?>" class="scc-new-btn-badge text-decoration-none mt-0 ms-0" style="margin-left: -5px !important; margin-top: 0 !important; cursor: pointer; padding: 5px 10px;">
+					<a href="<?php echo esc_url( menu_page_url( 'scc-tabs', false ) ); ?>" class="scc-new-btn-badge text-decoration-none mt-0 ms-0" style="margin-left: -5px !important; margin-top: 0 !important; cursor: pointer;">
 						<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['plus'] ?? $scc_icons['plus-circle'] ); ?></span>	
 						NEW
 					</a>
@@ -686,9 +815,15 @@ $scc_screen       = get_current_screen();
 					}
 				?>
 				<li>
-					<a href="javascript:void()" data-setting-tooltip-type="quote-screen-tt" class="scc-nav-link use-tooltip use-premium-tooltip <?php echo (isset($_REQUEST['page']) && $_REQUEST['page'] === 'scc-quote-management-screen') ? 'active' : ''; ?>" onclick="event.preventDefault();">
+					<a href="javascript:void()" data-setting-tooltip-type="quote-screen-tt" class="scc-nav-link scc-nav-link-disabled use-tooltip use-premium-tooltip <?php echo (isset($_REQUEST['page']) && $_REQUEST['page'] === 'scc-quote-management-screen') ? 'active' : ''; ?>" onclick="event.preventDefault();" aria-disabled="true">
 						<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['file-text'] ); ?></span>
-						Quotes
+						Orders
+					</a>
+				</li>
+				<li>
+					<a href="javascript:void()" data-setting-tooltip-type="sms-dashboard-tt" class="scc-nav-link scc-nav-link-disabled use-tooltip use-premium-tooltip" onclick="event.preventDefault();" aria-disabled="true">
+						<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['message-square'] ?? $scc_icons['message-circle'] ); ?></span>
+						SMS Dashboard
 					</a>
 				</li>
 				<li>
@@ -724,6 +859,11 @@ $scc_screen       = get_current_screen();
 							<span class="scc-icn-wrapper me-2"><?php echo scc_get_kses_extended_ruleset( $scc_icons['life-buoy'] ); ?></span>
 							Contact Support</a></li>
 					</ul>
+				</li>
+				<li class="scc-profile-nav-item">
+					<a href="https://members.stylishcostcalculator.com/" class="scc-profile-button" aria-label="Open Members Portal" title="<?php echo esc_attr( $scc_profile_name ? $scc_profile_name : 'Members Portal' ); ?>" target="_blank" rel="noopener noreferrer">
+						<?php echo esc_html( $scc_profile_initials ); ?>
+					</a>
 				</li>
 			</ul>
 		</div>
@@ -793,12 +933,12 @@ $scc_screen       = get_current_screen();
 	<div class="scc-secondary-navbar col-12 mx-auto w-100">
 		<div class="scc-secondary-nav-left">
 			<a href="<?php echo esc_url( admin_url( 'admin.php?page=scc-list-all-calculator-forms' ) ); ?>">
-				<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['chevron-left'] ); ?></span>
 				Calculators
 			</a>
 			<span class="scc-breadcrumb-separator">></span>
 			<div class="scc-calc-name-input-wrapper">
 				<input type="text" id="id_form_input" value="<?php echo intval( $f1->id ); ?>" hidden>
+				<span class="scc-calc-name-edit-icon" aria-hidden="true"><?php echo scc_get_kses_extended_ruleset( $scc_icons['edit-3'] ?? $scc_icons['pen-tool'] ); ?></span>
 				<input type="text" id="costcalculatorname" placeholder="Enter the name of this calculator" value="<?php echo esc_attr( wp_unslash( $f1->formname ) ); ?>" />
 			</div>
 		</div>
@@ -890,7 +1030,7 @@ $scc_screen       = get_current_screen();
 				</div>
 			</div>
 
-			<button class="btn scc-btn-green btn-action text-white" onClick="saveDataFields()">
+			<button class="btn scc-btn-green btn-action text-white scc-top-save-btn" onClick="saveDataFields()">
 				<i class="scc-btn-spinner scc-save-btn-spinner scc-d-none ms-0"></i>Save
 			</button>
 		</div>

@@ -48,6 +48,14 @@ class PagesBreadcrumbs {
             wp_register_script( 'scc-modal-init', SCC_URL . 'assets/js/modals/init.js', [ 'scc-modal-controller' ], STYLISH_COST_CALCULATOR_VERSION, true );
             wp_enqueue_script( 'scc-modal-init' );
             wp_register_script( 'scc-backend', SCC_URL . 'assets/js/scc-backend.js', [ 'jquery', 'scc-modal-init' ], STYLISH_COST_CALCULATOR_VERSION, true );
+            wp_localize_script(
+                'scc-backend',
+                'df_scc_resources',
+                [
+                    'dropdownTumbnailDefaultImage' => esc_url( SCC_ASSETS_URL . '/images/image.png' ),
+                    'assetsPath'                   => esc_url( SCC_ASSETS_URL ),
+                ]
+            );
             wp_enqueue_script( 'scc-backend' );
             wp_enqueue_script( 'jquery-ui-tooltip' );
             wp_enqueue_style( 'jquery-ui-tooltip' );
