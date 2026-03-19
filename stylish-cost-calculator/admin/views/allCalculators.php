@@ -138,7 +138,6 @@ wp_localize_script( 'scc-backend', 'pageAllCalculators', [ 'nonce' => wp_create_
 						<h2 class="scc-calculator-title" title="<?php echo esc_attr( $created_at_text ); ?>">
 							<a class="scc-calculator-title-link" href="<?php echo esc_url( admin_url( 'admin.php?page=scc_edit_items' ) . '&id_form=' . $form_id ); ?>">
 								<span class="scc-calculator-title-text"><?php echo esc_html( $form_name ); ?></span>
-								<span class="scc-calculator-title-icon scc-icn-wrapper" aria-hidden="true"><?php echo scc_get_kses_extended_ruleset( $icon_edit ); ?></span>
 							</a>
 						</h2>
 						<div class="scc-card-footer">
@@ -146,10 +145,16 @@ wp_localize_script( 'scc-backend', 'pageAllCalculators', [ 'nonce' => wp_create_
 								<span class="scc-card-footer-label">Updated:</span>
 								<span class="scc-calc-update-info-time"><?php echo esc_html( $updated_at_label ); ?></span>
 							</div>
-							<button type="button" class="scc-shortcode-chip" data-shortcode="<?php echo esc_attr( $shortcode ); ?>">
-								<span class="scc-shortcode-text"><?php echo esc_html( $shortcode ); ?></span>
-								<span class="scc-icn-wrapper" aria-hidden="true"><?php echo scc_get_kses_extended_ruleset( $icon_copy ); ?></span>
-							</button>
+							<div class="scc-card-footer-actions">
+								<button type="button" class="scc-shortcode-chip" data-shortcode="<?php echo esc_attr( $shortcode ); ?>">
+									<span class="scc-shortcode-text"><?php echo esc_html( $shortcode ); ?></span>
+									<span class="scc-icn-wrapper" aria-hidden="true"><?php echo scc_get_kses_extended_ruleset( $icon_copy ); ?></span>
+								</button>
+								<a class="scc-card-edit-button" href="<?php echo esc_url( admin_url( 'admin.php?page=scc_edit_items' ) . '&id_form=' . $form_id ); ?>">
+									<span class="scc-icn-wrapper" aria-hidden="true"><?php echo scc_get_kses_extended_ruleset( $icon_edit ); ?></span>
+									<span>Edit</span>
+								</a>
+							</div>
 						</div>
 
 						<script id="urlstats-<?php echo esc_attr( $form_id ); ?>" type="text/json"><?php echo wp_json_encode( $url_stats ); ?></script>
@@ -244,6 +249,7 @@ wp_localize_script( 'scc-backend', 'pageAllCalculators', [ 'nonce' => wp_create_
 	.scc-toolbar-button .scc-icn-wrapper,
 	.scc-card-action-item .scc-icn-wrapper,
 	.scc-shortcode-chip .scc-icn-wrapper,
+	.scc-card-edit-button .scc-icn-wrapper,
 	.scc-create-card-link .scc-icn-wrapper,
 	.scc-card-menu-toggle .scc-icn-wrapper {
 		display: inline-flex;
@@ -485,6 +491,7 @@ wp_localize_script( 'scc-backend', 'pageAllCalculators', [ 'nonce' => wp_create_
 	.scc-card-action-item .scc-icn-wrapper svg,
 	.scc-card-menu-toggle .scc-icn-wrapper svg,
 	.scc-shortcode-chip .scc-icn-wrapper svg,
+	.scc-card-edit-button .scc-icn-wrapper svg,
 	.scc-create-card-link .scc-icn-wrapper svg,
 	.scc-toolbar-button .scc-icn-wrapper svg,
 	.scc-search-field .scc-icn-wrapper svg {
@@ -513,18 +520,6 @@ wp_localize_script( 'scc-backend', 'pageAllCalculators', [ 'nonce' => wp_create_
 		overflow-wrap: anywhere;
 	}
 
-	.scc-calculator-title-icon {
-		display: inline-flex;
-		flex-shrink: 0;
-		color: #7c8ea3;
-	}
-
-	.scc-calculator-title-icon svg {
-		display: block;
-		width: 16px;
-		height: 16px;
-	}
-
 	.scc-calculator-title-link:hover,
 	.scc-calculator-title-link:focus {
 		color: #314af3;
@@ -537,6 +532,15 @@ wp_localize_script( 'scc-backend', 'pageAllCalculators', [ 'nonce' => wp_create_
 		gap: 10px;
 		padding-top: 14px;
 		border-top: 1px solid #e5ebf2;
+	}
+
+	.scc-card-footer-actions {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		flex-wrap: nowrap;
+		justify-content: flex-end;
+		min-width: 0;
 	}
 
 	.scc-calc-update-info {
@@ -564,6 +568,11 @@ wp_localize_script( 'scc-backend', 'pageAllCalculators', [ 'nonce' => wp_create_
 		font-family: monospace;
 		font-size: 12px;
 		white-space: nowrap;
+		flex: 0 1 auto;
+		min-width: 0;
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.scc-shortcode-chip:hover,
@@ -575,6 +584,30 @@ wp_localize_script( 'scc-backend', 'pageAllCalculators', [ 'nonce' => wp_create_
 	.scc-shortcode-chip.is-copied {
 		background: #e7f7ef;
 		color: #1c9f68;
+	}
+
+	.scc-card-edit-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 7px 12px;
+		border: 0;
+		border-radius: 8px;
+		background: #314af3;
+		color: #fff;
+		font-size: 13px;
+		font-weight: 700;
+		text-decoration: none;
+		white-space: nowrap;
+		box-shadow: 0 10px 18px rgba(49, 74, 243, 0.18);
+		flex: 0 0 auto;
+	}
+
+	.scc-card-edit-button:hover,
+	.scc-card-edit-button:focus {
+		background: #253cd1;
+		color: #fff;
+		text-decoration: none;
 	}
 
 	.scc-create-card-link {
@@ -627,15 +660,28 @@ wp_localize_script( 'scc-backend', 'pageAllCalculators', [ 'nonce' => wp_create_
 		border: none !important;
 	}
 
-	@media (max-width: 1100px) {
+	@media (max-width: 1490px) {
+		.scc-calc-update-info {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 2px;
+		}
+	}
+
+	@media (max-width: 1240px) {
+		.scc-search-field {
+			max-width: none;
+		}
+
 		.scc-all-calculators-toolbar,
 		.scc-card-footer {
 			flex-direction: column;
 			align-items: stretch;
 		}
 
-		.scc-search-field {
-			max-width: none;
+		.scc-card-footer-actions {
+			justify-content: flex-start;
+			flex-wrap: nowrap;
 		}
 	}
 

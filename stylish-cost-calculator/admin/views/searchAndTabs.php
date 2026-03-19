@@ -2499,6 +2499,27 @@ if ( $isSCCFreeVersion ) {
 		jQuery('.color-picker').wpColorPicker();
 		 
 	});
+	function validateColorCompatibility() {
+		const buttonStyle = jQuery('select[name="scc_user_action_btn_style"]').val();
+		const ctaBtnColor = jQuery('#ctaBtnColorPicker').val();
+		const warning = jQuery('.scc-err-btn-style');
+
+		if (!warning.length) {
+			return;
+		}
+
+		const isBlackBackground = ctaBtnColor === '#000000' || ctaBtnColor === '#000';
+		if (buttonStyle === '3' && isBlackBackground) {
+			warning.removeClass('d-none').addClass('d-flex');
+		} else {
+			warning.removeClass('d-flex').addClass('d-none');
+		}
+	}
+
+	jQuery(function() {
+		validateColorCompatibility();
+		jQuery('select[name="scc_user_action_btn_style"], #ctaBtnColorPicker').on('change input', validateColorCompatibility);
+	});
 	// fonts
 	var gFonts = JSON.parse(<?php echo json_encode( $scc_googlefonts_var->gf_get_local_fonts() ); ?>);
 

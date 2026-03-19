@@ -14879,7 +14879,6 @@ select.scc-woo-commerce-product-selector{
     font-size: 13px;
     line-height: 2.3;
     gap: 5px;
-    width: 100%;
   }
 .scc-new-tag{
   background: var(--scc-color-primary);

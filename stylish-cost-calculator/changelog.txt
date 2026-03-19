@@ -1,3 +1,12 @@
+## 8.2.5 - 2026-03-19
+
+**Dashboard Changes:**
+- Improved: The All Calculators page now includes a dedicated Edit button on each calculator card for faster access.
+- Improved: Calculator cards on the All Calculators page now reflow better on smaller screens, keeping actions and update info readable.
+
+**Editing Page Changes:**
+- Fixed: Color settings in the editor no longer trigger a compatibility warning when the CTA button style uses a black color.
+
 ## 8.2.3 - 2026-03-18
 
 **Frontend Changes:**
