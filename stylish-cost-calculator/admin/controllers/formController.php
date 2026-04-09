@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class formController {
 
 	protected $db;
+    private const RELATIONS_CACHE_GROUP = 'scc_forms';
+    private const RELATIONS_CACHE_TTL   = 15 * MINUTE_IN_SECONDS;
 
 	private function normalize_json_text_field( $value ) {
 		if ( is_array( $value ) || is_object( $value ) ) {
@@ -22,14 +24,82 @@ class formController {
 		return $value;
 	}
 
-	public function __construct() {
-		global $wpdb;
-		$this->db = $wpdb;
-	}
 
-	public function __destruct() {
-		// $this->db->close();
-	}
+    public function __construct() {
+        global $wpdb;
+        $this->db = $wpdb;
+    }
+
+    public function __destruct() {
+        // $this->db->close();
+    }
+
+    private static function get_relations_cache_key( int $form_id ) {
+        return 'with_relations:' . $form_id;
+    }
+
+    private static function get_relations_transient_key( int $form_id ) {
+        return 'scc_form_rel_' . $form_id;
+    }
+
+    private static function get_cached_relations( int $form_id ) {
+        $cache_key = self::get_relations_cache_key( $form_id );
+        $cached    = wp_cache_get( $cache_key, self::RELATIONS_CACHE_GROUP );
+
+        if ( false !== $cached ) {
+            return $cached;
+        }
+
+        $cached = get_transient( self::get_relations_transient_key( $form_id ) );
+
+        if ( false !== $cached ) {
+            delete_transient( self::get_relations_transient_key( $form_id ) );
+            wp_cache_set( $cache_key, $cached, self::RELATIONS_CACHE_GROUP, self::RELATIONS_CACHE_TTL );
+            return $cached;
+        }
+
+        return false;
+    }
+
+    private static function set_cached_relations( int $form_id, $data ) {
+        wp_cache_set( self::get_relations_cache_key( $form_id ), $data, self::RELATIONS_CACHE_GROUP, self::RELATIONS_CACHE_TTL );
+        set_transient( self::get_relations_transient_key( $form_id ), $data, self::RELATIONS_CACHE_TTL );
+    }
+
+    public static function flush_relations_cache( int $form_id ) {
+        wp_cache_delete( self::get_relations_cache_key( $form_id ), self::RELATIONS_CACHE_GROUP );
+        delete_transient( self::get_relations_transient_key( $form_id ) );
+    }
+
+    public static function flush_by_section( int $section_id ) {
+        global $wpdb;
+        $form_id = $wpdb->get_var( $wpdb->prepare( "SELECT form_id FROM {$wpdb->prefix}df_scc_sections WHERE id = %d", $section_id ) );
+        if ( $form_id ) { self::flush_relations_cache( (int) $form_id ); }
+    }
+
+    public static function flush_by_subsection( int $subsection_id ) {
+        global $wpdb;
+        $form_id = $wpdb->get_var( $wpdb->prepare( "SELECT s.form_id FROM {$wpdb->prefix}df_scc_subsections sub JOIN {$wpdb->prefix}df_scc_sections s ON sub.section_id = s.id WHERE sub.id = %d", $subsection_id ) );
+        if ( $form_id ) { self::flush_relations_cache( (int) $form_id ); }
+    }
+
+    public static function flush_by_element( int $element_id ) {
+        global $wpdb;
+        $form_id = $wpdb->get_var( $wpdb->prepare( "SELECT s.form_id FROM {$wpdb->prefix}df_scc_elements e JOIN {$wpdb->prefix}df_scc_subsections sub ON e.subsection_id = sub.id JOIN {$wpdb->prefix}df_scc_sections s ON sub.section_id = s.id WHERE e.id = %d", $element_id ) );
+        if ( $form_id ) { self::flush_relations_cache( (int) $form_id ); }
+    }
+
+    public static function flush_by_elementitem( int $elementitem_id ) {
+        global $wpdb;
+        $form_id = $wpdb->get_var( $wpdb->prepare( "SELECT s.form_id FROM {$wpdb->prefix}df_scc_elementitems ei JOIN {$wpdb->prefix}df_scc_elements e ON ei.element_id = e.id JOIN {$wpdb->prefix}df_scc_subsections sub ON e.subsection_id = sub.id JOIN {$wpdb->prefix}df_scc_sections s ON sub.section_id = s.id WHERE ei.id = %d", $elementitem_id ) );
+        if ( $form_id ) { self::flush_relations_cache( (int) $form_id ); }
+    }
+
+    public static function flush_by_condition( int $condition_id ) {
+        global $wpdb;
+        $form_id = $wpdb->get_var( $wpdb->prepare( "SELECT s.form_id FROM {$wpdb->prefix}df_scc_conditions c JOIN {$wpdb->prefix}df_scc_elements e ON c.element_id = e.id JOIN {$wpdb->prefix}df_scc_subsections sub ON e.subsection_id = sub.id JOIN {$wpdb->prefix}df_scc_sections s ON sub.section_id = s.id WHERE c.id = %d", $condition_id ) );
+        if ( $form_id ) { self::flush_relations_cache( (int) $form_id ); }
+    }
 
 	/**
 	 * @param string $formname
@@ -199,6 +269,13 @@ class formController {
 	 * @return object form with all realtion
 	 */
 	function readWithRelations( int $id ) {
+
+		$cached = self::get_cached_relations( $id );
+
+        if ( false !== $cached ) {
+           return $cached;
+        }
+
 		$scc_form = $this->db->get_row( $this->db->prepare( "SELECT * FROM {$this->db->prefix}df_scc_forms WHERE id =%d ;", $id ) );
 		if ( $scc_form ) {
 			$form_id            = $scc_form->id;
@@ -234,6 +311,9 @@ class formController {
 					}
 				}
 			}
+
+			self::set_cached_relations( $id, $scc_form );
+
 			return $scc_form;
 		}
 	}
@@ -394,6 +474,7 @@ class formController {
 		);
 
 		if ( $request ) {
+            self::flush_relations_cache( (int) $id );
 			return json_encode( array( 'msj' => 'the form was updated' ) );
 		} else {
 			return json_encode( array( 'msj' => 'There was an error' ) );
@@ -408,6 +489,7 @@ class formController {
 	function delete( int $id ) {
 		$query = $this->db->delete( "{$this->db->prefix}df_scc_forms", array( 'id' => $id ) );
 		if ( $query ) {
+            self::flush_relations_cache( $id );
 			return json_encode( array( 'msj' => 'the form was deleted' ) );
 		} else {
 			return json_encode( array( 'msj' => 'An error occured, please contact support team' ) );

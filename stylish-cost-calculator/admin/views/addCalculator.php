@@ -303,16 +303,6 @@ include 'partials/template-loader-page.php';
 	}
 </style>
 
-<script>
-	// Collapse WordPress admin menu by default
-	jQuery(document).ready(function() {
-		if (!document.body.classList.contains('folded')) {
-			document.body.classList.add('folded');
-			// Trigger WordPress's native event to update the menu state
-			jQuery(document).trigger('wp-collapse-menu', { 'fold': 'fold' });
-		}
-	});
-</script>
 <script type="text/json" id="svgCollection">
 <?php
 echo wp_json_encode(
@@ -331,4 +321,3 @@ $opted_in_for_telemetry = get_option( 'scc_opted_in_for_telemetry', false );
 echo wp_json_encode( [ 'usageTrackingAllowed' => $opted_in_for_telemetry ] );
 ?>
 </script>
-

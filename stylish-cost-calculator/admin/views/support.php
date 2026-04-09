@@ -1356,8 +1356,13 @@ class SCCSupportPage {
                 $commit_time = isset( $commit_meta['timestamp'] ) ? $commit_meta['timestamp'] : '';
 
                 if ( $commit_time ) {
-                    $date        = new DateTime( $commit_time, new DateTimeZone( 'Canada/Eastern' ) );
-                    $commit_time = $date->format( 'd M Y H:i:s' );
+                    try {
+                        $date        = new DateTime( $commit_time, new DateTimeZone( 'Canada/Eastern' ) );
+                        $commit_time = $date->format( 'd M Y H:i:s' );
+                    } catch ( Exception $e ) {
+                        // Keep raw string or set to 'Invalid Date' if fatal error
+                        $commit_time = esc_html( $commit_time ) . ' (Invalid Format)';
+                    }
                 }
 
                 $gh_tree = 'https://github.com/DesignMike/stylish-cost-calculator-premium/tree/' . $commit_hash;

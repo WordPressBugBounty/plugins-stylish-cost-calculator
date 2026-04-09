@@ -46,6 +46,7 @@ if ( $isWoocommerceActive && get_option( 'df_scc_licensed' ) == 1 && $isWoocomme
 }
 // preparing an array for use in dropdown choices in the elements added via ajax
 $woocommerce_products_array = [];
+$icon_trash                 = $scc_icons['trash-2'] ?? $scc_icons['trash'] ?? '';
 
 if ( $isWoocommerceCheckoutEnabled && $isWoocommerceActive ) {
     foreach ( $woo_commerce_products as $product ) {
@@ -146,9 +147,25 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 </script>
 
 
-<div class="row ms-2 mt-4 scc-no-gutter" id="calc-editor-root">
-	<input type="text" id="id_scc_form_" value="<?php echo intval( $f1->id ); ?>" hidden>
-	<div class="scc-left-pane clearfix">
+<div class="scc-editor-shell>
+	<?php
+	require_once SCC_DIR . '/admin/controllers/notificationsController.php';
+	ob_start();
+	$editor_notifications = new SCC_Notifications( 'diag', null );
+	$editor_notifications->output();
+	$editor_notifications_html = trim( ob_get_clean() );
+
+	if ( ! empty( $editor_notifications_html ) ) {
+		?>
+		<div class="scc-editor-notices">
+			<?php echo $editor_notifications_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+		</div>
+		<?php
+	}
+	?>
+	<div class="d-flex container-fluid col-12 <?php echo esc_attr( $f1->elementSkin ); ?>" id="calc-editor-root">
+		<input type="text" id="id_scc_form_" value="<?php echo intval( $f1->id ); ?>" hidden>
+		<div class="scc-left-pane clearfix">
 		<div class="scc-pane-container" data-link-icon="<?php echo esc_attr( SCC_URL . 'assets/images/link-icon.svg' ); ?>">
 			<div class="scc-calculator-builder-pane">
 				<div class="scc-pane-options row">
@@ -163,19 +180,21 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 		<div id="allinputstoadd" class="scc-col-xs-6 scc-col-lg-12 scc-col-md-12">
 			<?php
             foreach ( $f1->sections as $section_key => $section ) {
+                $is_section_open = 0 === $section_key;
                 ?>
 				<div class="addedFieldsStyle scc-section-container" style="display:grid;" id="Sccvo_0">
 					<input class="id_section_class" type="text" value="<?php echo intval( $section->id ); ?>" hidden>
 					<div id="title54-bar-btns" class="scc-section-setting-container">
 						<div class="scc-section-setting-bar">
-							<button id="up-btn" class="scc-section-setting-btn up d-none" title="Push this section above" href="javascript:void(0)" onclick="rup(this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['push-up'] ); ?></span></button>
-							<button id="down-btn" class="scc-section-setting-btn down" title="Push this section below" href="javascript:void(0)" onclick="rdown(this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['push-down'] ); ?></span></button>	
-							<button id="settings-btn" class="scc-section-setting-btn" href="javascript:void(0)" title="Section settings" onclick="settingsIconShow(this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['sliders'] ); ?></span></button>
-							<button id="close-btn" class="scc-section-setting-btn" href="javascript:void(0)" title="Delete Section" onclick="preDeletionDialog('section', removeSection, this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['x'] ); ?></span></button>
+							<button id="up-btn" class="scc-settings-btn-section scc-section-setting-btn up d-none" title="Push this section above" href="javascript:void(0)" onclick="rup(this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['push-up-settings'] ?? $scc_icons['push-up'] ); ?></span></button>
+							<button id="down-btn" class="scc-settings-btn-section scc-section-setting-btn down" title="Push this section below" href="javascript:void(0)" onclick="rdown(this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['push-down-settings'] ?? $scc_icons['push-down'] ); ?></span></button>	
+							<button id="settings-btn" class="scc-settings-btn-section scc-section-setting-btn" href="javascript:void(0)" title="Section settings" onclick="settingsIconShow(this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['scc-slider-settings'] ?? $scc_icons['sliders'] ); ?></span></button>
+							<button id="close-btn" class="scc-section-setting-btn" href="javascript:void(0)" title="Delete Section" onclick="preDeletionDialog('section', removeSection, this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $icon_trash ); ?></span></button>
+							<button type="button" class="scc-section-setting-btn scc-section-collapse-btn <?php echo $is_section_open ? '' : 'collapsed'; ?>" title="Toggle section" aria-label="Toggle section" aria-expanded="<?php echo $is_section_open ? 'true' : 'false'; ?>" onclick="sccToggleSectionFromControl(event, this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['chevron-down'] ); ?></span></button>
 						</div>
 					</div>
 					<div class="scc-accordion-container scc-accordion-tooltip-hidden">
-							<div class="scc-accordion-tooltip scc-accordion-content">
+							<div class="scc-accordion-tooltip scc-accordion-content section-settings">
 								<!-- SETTINGS TOOGLE -->
 								<p>
 									<label class="scc-accordion_switch_button">
@@ -226,38 +245,50 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 								</p>
 							</div>
 					</div>
-					<!-- TITLE -->
-					<div class="title_section_no_edit_container" style="">
-						<!--<div class="scc-col-md-1" style="padding:0px;margin-right:5px;">
-							<img style="cursor: pointer" onclick="toggleEditTitle(this)" src="<?php echo esc_url( SCC_URL . '/assets/images/pen-blue.png' ); ?>" width="15">
-						</div>-->
-						<div class="scc-col-md-10" style="padding:0px" onclick="toggleEditTitle(this)">
-							<i class="fa fa-pen text-primary"></i>
-							<p style="margin-top:-5px; margin-bottom: 1px;font-size: 20px" class="title_section_no_edit d-inline">
-								<?php echo esc_attr( wp_unslash( $section->name ) ); ?>
-							</p>
-						</div>
-						<div class="section-title-edit-wrapper">
-							<i class="fa fa-check text-warning" onclick="toggleEditTitle(this)" style="display:none" role="button"></i>
-							<input value="<?php echo esc_attr( wp_unslash( $section->name ) ); ?>" onkeyup="changeTitleSection(this)" type="text" class="input_pad sectiontitle scc_edit_section_input" placeholder="Section Title" value="" style="border: none !important;box-shadow: none !important; outline: 0; width: 95%; font-size: 20px; border-bottom: 1px solid #314af3 !important;border-radius:10px;margin-top:10px;height: 50px;margin-bottom:10px;display:none">
-							<span class="mandatory" style="display:none">*</span>
-						</div>
-					</div>
-					<!-- DESCRIPTION -->
-					<div class="description_section_no_edit_container" style="">
-						<div class="scc-col-md-10" style="padding:0px" onclick="toggleEditDescription(this)">
-							<i class="fa fa-pen text-primary"></i>
-							<p class="description_section_no_edit d-inline">
-								<?php echo esc_attr( wp_unslash( $section->description ) ); ?>
-							</p>
-						</div>
-						<div class="description-wrapper">
-							<i class="fa fa-check text-warning" onclick="toggleEditDescription(this)" style="display:none" role="button"></i>
-							<textarea onkeyup="changeDescriptionSection(this)" class="input_pad sectionDescription scc_section_description_textarea" placeholder="Description of the products/services that will be listed below. (Optional)" style="background: rgb(255, 255, 255); height: 125px; padding: 15px; width: 95%; margin-bottom: 20px; border-bottom: 1px solid #314af3 !important; margin-top: 15px; display: none;"><?php echo wp_kses( $section->description, SCC_ALLOWTAGS ); ?></textarea>
-						</div>
-					</div>
-					<!-- SUBSECTION -->
-					<div class="fieldDatatoAdd">
+					<div class="accordion" id="sccAccordion" style="margin-top:15px">
+						<div class="accordion-item" style="border: none !important;">
+							<button class="accordion-button scc-section-accordion-button <?php echo $is_section_open ? '' : 'collapsed'; ?>" type="button" data-bs-toggle="collapse" data-bs-target="#sccCollapse<?php echo intval( $section->id ); ?>" aria-expanded="<?php echo $is_section_open ? 'true' : 'false'; ?>" aria-controls="sccCollapse<?php echo intval( $section->id ); ?>">
+								<span class="scc-section-order-tag" role="button" tabindex="0" aria-label="Toggle section" onclick="sccToggleSectionFromTag(event, this)" onkeydown="sccToggleSectionFromTag(event, this)"></span>
+								<div class="scc-title scc_accordion_advance" style="display:grid;">
+									<div class="title_section_no_edit_container" style="display: contents; margin: 0px;">
+										<div class="scc-col-md-10 d-flex scc-section-field-row" style="padding:0px" onclick="sccHandleSectionFieldInteraction(this, 'title', event)">
+											<span class="scc-section-edit-trigger" role="button" tabindex="0" onclick="sccHandleSectionFieldInteraction(this.closest('.scc-section-field-row'), 'title', event, true)" aria-label="Edit section title">
+												<?php echo scc_get_kses_extended_ruleset( $scc_icons['edit-3'] ); ?>
+											</span>
+											<p style="margin-top:-5px; margin-bottom: 1px;font-size: 22px;margin-left:0" class="title_section_no_edit d-inline">
+												<?php echo esc_attr( wp_unslash( $section->name ) ); ?>
+											</p>
+										</div>
+										<div class="section-title-edit-wrapper">
+											<span class="scc-icn-wrapper text-warning" onclick="toggleEditTitle(null, event)" style="display:none" role="button">
+												<?php echo scc_get_kses_extended_ruleset( $scc_icons['scc-checkbox'] ); ?>
+											</span>
+											<input value="<?php echo esc_attr( wp_unslash( $section->name ) ); ?>" onkeyup="changeTitleSection(this)" onblur="toggleEditTitle(null, event)" type="text" class="input_pad sectiontitle scc_edit_section_input" placeholder="Section Title" value="" style="border: none !important;box-shadow: none !important;outline: 0;border-radius:10px;margin-top:10px;width: 95%;height: 50px; border-bottom: 1px solid #2b2b2b; box-shadow: none; margin-bottom:10px;display:none">
+											<span class="mandatory" style="display:none">*</span>
+										</div>
+									</div>
+									<div class="description_section_no_edit_container" style="">
+										<div class="scc-col-md-10 d-flex scc-section-field-row" style="padding:0px" onclick="sccHandleSectionFieldInteraction(this, 'description', event)">
+											<span class="scc-section-edit-trigger" role="button" tabindex="0" onclick="sccHandleSectionFieldInteraction(this.closest('.scc-section-field-row'), 'description', event, true)" aria-label="Edit section description">
+												<?php echo scc_get_kses_extended_ruleset( $scc_icons['edit-3'] ); ?>
+											</span>
+											<p style="margin-top:-5px; margin-bottom: 1px;font-size: 17.5px;margin-left:0" class="description_section_no_edit d-inline">
+												<?php echo esc_attr( wp_unslash( $section->description ) ); ?>
+											</p>
+										</div>
+										<div class="description-wrapper">
+											<span class="scc-icn-wrapper text-warning" onclick="toggleEditDescription(null, event)" style="display:none" role="button">
+												<?php echo scc_get_kses_extended_ruleset( $scc_icons['scc-checkbox'] ); ?>
+											</span>
+											<textarea onkeyup="changeDescriptionSection(this)" onblur="toggleEditDescription(null, event)" class="input_pad sectionDescription scc_section_description_textarea" placeholder="Description of the products/services that will be listed below. (Optional)" style="background: rgb(255, 255, 255); height: 125px; padding: 15px; width: 95%; margin-bottom: 20px; border: none !important; margin-top: 15px; display: none;"><?php echo wp_kses( $section->description, SCC_ALLOWTAGS ); ?></textarea>
+										</div>
+									</div>
+								</div>
+							</button>
+							<div id="sccCollapse<?php echo intval( $section->id ); ?>" class="accordion-collapse collapse <?php echo $is_section_open ? 'show' : ''; ?>" aria-labelledby="sccHeading">
+								<div class="scc-content">
+									<div class="scc-transition advanced-option-wrapper">
+										<div class="fieldDatatoAdd">
 						<?php
                         foreach ( $section->subsection as $sub ) {
                             ?>
@@ -270,7 +301,7 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 									</div>
 									
 									<div class="scc-section-setting-bar">
-										<button id="close-btn" class="scc-section-setting-btn" title="Delete Subsection" onclick="preDeletionDialog('subsection', removeSubsection, this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['x'] ); ?></span></button>
+										<button id="close-btn" class="scc-section-setting-btn" title="Delete Subsection" onclick="preDeletionDialog('subsection', removeSubsection, this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $icon_trash ); ?></span></button>
 									</div>
 								</div>
 								<div class="subsection-area BodyOption ">
@@ -911,7 +942,7 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['paperclip'] ); ?></span>
 											<div class="btn-backend-text">File Upload</div>
 										</button>
-										<button value="custom_code" class="scc_button btn-backend" data-bs-original-title="" onclick="addDateElement(this)">
+										<button value="date" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="date-picker-tt" data-bs-original-title="" onclick="addDateElement(this)">
 											<i class="scc-btn-spinner scc-d-none"></i>
 											<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $scc_icons['calendar'] ); ?></span>
 											<div class="btn-backend-text">Date Picker</div>
@@ -955,9 +986,14 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 						<div class="boardOption1">
 							<label class="add-subsection-btn">
 								<!-- This one works -->
-								<a href="javascript:void(0)" onclick="addSubSectionElement(this)" style="border-radius:6px;padding:8px;background:#314af3;color:white" class="crossnadd2">+ Add Subsection
+								<a href="javascript:void(0)" onclick="addSubSectionElement(this)" style="border-radius:6px;padding:8px;background:var(--scc-color-primary);color:white" class="crossnadd2">+ Add Subsection
 								</a>
 							</label>
+						</div>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -977,13 +1013,13 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 		<div class="scc-preview-pane">
 			<div class="scc-pane-options row">
 				<div class="col-6">
-					<div class="scc-pane-title">Preview Pane</div>
+					<div class="scc-pane-title">Calculator Preview</div>
 					<div class="scc-pane-description">See how will look your calculator </div>
 				</div>
 				<div class="col-6 scc-preview-pane-actions">
-					<div class="btn-group scc-btn-group-pill scc-btn-group-dock-switcher me-2">
-						<div id="dock-to-bottom" title="Dock the preview pane to the bottom" data-dock-mode="bottom" role="button" onclick="handlePreviewDockMode(this, 'bottom', event)" class="use-tooltip m-0 btn"><?php echo scc_get_kses_extended_ruleset( $scc_icons['dock-to-bottom'] ); ?></div>
-						<div id="dock-to-right" title="Dock the preview pane to the right" data-dock-mode="right" role="button" onclick="handlePreviewDockMode(this, 'right', event)" class="use-tooltip m-0 btn"><?php echo scc_get_kses_extended_ruleset( $scc_icons['dock-to-right'] ); ?></div>
+					<div class="scc-preview-layout-controls me-2">
+						<div id="dock-to-bottom" title="Dock the preview pane to the bottom" data-dock-mode="bottom" role="button" onclick="handlePreviewDockMode(this, 'bottom', event)" class="use-tooltip m-0 btn scc-preview-layout-btn"><?php echo scc_get_kses_extended_ruleset( $scc_icons['dock-to-bottom'] ); ?></div>
+						<div id="dock-to-right" title="Dock the preview pane to the right" data-dock-mode="right" role="button" onclick="handlePreviewDockMode(this, 'right', event)" class="use-tooltip m-0 btn scc-preview-layout-btn"><?php echo scc_get_kses_extended_ruleset( $scc_icons['dock-to-right'] ); ?></div>
 					</div>
 
 					<button class="btn btn-disabled scc-refresh-button scc-hidden" disabled onclick="sccBackendUtils.refreshPreview(this)"
@@ -1001,21 +1037,28 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 
 		</div>
 		<!-- PREVIEW -->
-		<div class="preview_form_right_side">
-			<div class="df-scc-progress df-scc-progress-striped active">
-				<div class="df-scc-progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="background-color: orange; width: 100%"></div>
-			</div>
+		<div id="preview-pane-main" class="preview_form_right_side">
+			<section class="scc-iframe-display">
+				<div class="scc-iframe-container">
+					<div id="scc-preview-container">
+						<div class="df-scc-progress df-scc-progress-striped active">
+							<div class="df-scc-progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="background-color: orange; width: 100%"></div>
+						</div>
+					</div>
+				</div>
+			</section>
 		</div>
 		<!-- END PREVIEW -->
 		
 	</div>
-	
-</div>
-<?php
+
+	<?php
         require_once SCC_DIR . '/admin/models/ai-wizard-model.php';
 $scc_ai_wizard_model = new SCCAiWizardModel();
 echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 ?>
+	</div>
+</div>
 <div class="modal df-scc-modal fade in" id="webhook-setup-placeholder" style="padding-right: 0px;" role="dialog" data-backdrop="0"></div>
 <script type="text/javascript">
 	/** preview */
@@ -1119,9 +1162,11 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	}
 
 	function loadPreviewForm(formId) {
-		var previewContainer = jQuery("body").find(".preview_form_right_side")
-		var load = jQuery("body").find(".loading")
-		// load.empty()
+		var previewRoot = jQuery("body").find("#preview-pane-main")
+		if (!previewRoot.length) {
+			previewRoot = jQuery("body").find(".preview_form_right_side")
+		}
+		previewRoot.html(sccGetPreviewLoadingMarkup())
 		jQuery.ajax({
 			url: ajaxurl,
 			cache: false,
@@ -1131,11 +1176,39 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				nonce: pageEditCalculator.nonce
 			},
 			success: function(data) {
-				previewContainer.html(data)
-				previewContainer.trigger('previewLoaded')
+				previewRoot.html(sccGetPreviewPanelMarkup(data))
+				previewRoot.trigger('previewLoaded')
 				registerWebhookActions(formId)
 			}
 		})
+	}
+
+	function sccGetPreviewLoadingMarkup() {
+		return `<section class="scc-iframe-display">
+			<div class="scc-iframe-container">
+				<div id="scc-preview-container">
+					<div class="scc-preview-stage">
+						<div class="scc-preview-stage__inner">
+							<div class="df-scc-progress df-scc-progress-striped active">
+								<div class="df-scc-progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="background-color: orange; width: 100%"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>`;
+	}
+
+	function sccGetPreviewPanelMarkup(content) {
+		return `<section class="scc-iframe-display">
+			<div class="scc-iframe-container">
+				<div id="scc-preview-container">
+					<div class="scc-preview-stage">
+						<div class="scc-preview-stage__inner">${content}</div>
+					</div>
+				</div>
+			</div>
+		</section>`;
 	}
 	/**
 	 * 
@@ -1308,7 +1381,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				e.setAttribute('data-element-item-id', arrayItemsIds[i])
 			})
 			clonedElement.css({
-				outline: '2px solid rgb(138, 153, 248)'
+				outline: '2px solid var(--scc-input-field-border-color-focus)'
 			}).delay(10000).queue(function(next) {
 				jQuery(this).css({
 					outline: 'unset'
@@ -1328,7 +1401,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				jQuery(this).attr("value", arrayConditional[e])
 			})
 			clonedElement.css({
-				outline: '2px solid rgb(138, 153, 248)'
+				outline: '2px solid var(--scc-input-field-border-color-focus)'
 			}).delay(10000).queue(function(next) {
 				jQuery(this).css({
 					outline: 'unset'
@@ -1419,34 +1492,153 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 			},
 			success: function(data) {
 				var datajson = JSON.parse(data)
-				sccBackendUtils.handleSavingAlert(datajson, true);
+								sccBackendUtils.handleSavingAlert(datajson, true);
 			}
 		})
 	}
 	/**
+	 * *Expands a collapsed section first, otherwise toggles the selected field editor.
+	 */
+	function sccHandleSectionFieldInteraction(element, fieldType, evt, forceEdit = false) {
+		if (evt) {
+			evt.stopPropagation();
+		}
+
+		var accordionButton = element.closest('.accordion-button')
+		var isCollapsed = accordionButton ? accordionButton.classList.contains('collapsed') : false
+
+		if (isCollapsed) {
+			accordionButton.click()
+
+			if (forceEdit) {
+				setTimeout(function() {
+					if (!accordionButton.classList.contains('collapsed')) {
+						if (fieldType === 'title') {
+							toggleEditTitle(element)
+						}
+
+						if (fieldType === 'description') {
+							toggleEditDescription(element)
+						}
+					}
+				}, 250)
+			}
+
+			return
+		}
+
+		if (fieldType === 'title') {
+			toggleEditTitle(element)
+		}
+
+		if (fieldType === 'description') {
+			toggleEditDescription(element)
+		}
+	}
+
+	function sccToggleSectionFromTag(evt, element) {
+		if (evt.type === 'keydown' && evt.key !== 'Enter' && evt.key !== ' ') {
+			return
+		}
+
+		evt.preventDefault()
+		evt.stopPropagation()
+
+		var accordionButton = element.closest('.scc-section-container').querySelector('.scc-section-accordion-button')
+
+		if (accordionButton) {
+			accordionButton.click()
+		}
+	}
+
+	function sccSyncSectionCollapseControl(sectionContainer) {
+		if (!sectionContainer) {
+			return
+		}
+
+		var accordionButton = sectionContainer.querySelector('.scc-section-accordion-button')
+		var collapseButton = sectionContainer.querySelector('.scc-section-collapse-btn')
+
+		if (!accordionButton || !collapseButton) {
+			return
+		}
+
+		var isExpanded = !accordionButton.classList.contains('collapsed')
+
+		collapseButton.classList.toggle('collapsed', !isExpanded)
+		collapseButton.setAttribute('aria-expanded', isExpanded ? 'true' : 'false')
+	}
+
+	function sccToggleSectionFromControl(evt, element) {
+		evt.preventDefault()
+		evt.stopPropagation()
+
+		var sectionContainer = element.closest('.scc-section-container')
+
+		if (!sectionContainer) {
+			return
+		}
+
+		var accordionButton = sectionContainer.querySelector('.scc-section-accordion-button')
+
+		if (accordionButton) {
+			accordionButton.click()
+			setTimeout(function() {
+				sccSyncSectionCollapseControl(sectionContainer)
+			}, 0)
+		}
+	}
+
+	window.sccToggleSectionFromTag = sccToggleSectionFromTag
+	window.sccToggleSectionFromControl = sccToggleSectionFromControl
+
+	document.addEventListener('shown.bs.collapse', function(evt) {
+		sccSyncSectionCollapseControl(evt.target.closest('.scc-section-container'))
+	})
+
+	document.addEventListener('hidden.bs.collapse', function(evt) {
+		sccSyncSectionCollapseControl(evt.target.closest('.scc-section-container'))
+	})
+
+	document.addEventListener('DOMContentLoaded', function() {
+		document.querySelectorAll('.scc-section-container').forEach(sccSyncSectionCollapseControl)
+	})
+	/**
 	 * *Shows/hides Title input field in section 
 	 */
-	function toggleEditTitle(element) {
+	function toggleEditTitle(element, evt) {
+		if ( ! element ) {
+			jQuery(evt.target).closest('.title_section_no_edit_container').find('.scc-col-md-10').click();
+		}
 		var input = jQuery(element).parents(".title_section_no_edit_container").find(".scc_edit_section_input")
-		var penIcon = jQuery(element).parents(".title_section_no_edit_container").find(".fa-pen.text-primary")
+		var penIcon = jQuery(element).parents(".title_section_no_edit_container").find(".scc-section-edit-trigger")
 		jQuery(input).next().toggle()
 		jQuery(input).prev().toggle()
 		penIcon.toggle()
 		input.toggle()
 		var text = jQuery(element).parents(".title_section_no_edit_container").find(".title_section_no_edit")
 		text.toggleClass('d-none')
+		if (input.is(":visible")) {
+			input.focus();
+		}
 	}
 	/**
 	 * *Shows/hide Description input field in section 
 	 */
-	function toggleEditDescription(element) {
+	function toggleEditDescription(element, evt) {
+		if ( ! element ) {
+			jQuery(evt.target).closest('.description_section_no_edit_container').find('.scc-col-md-10').click();
+		}
 		var textarea = jQuery(element).parents(".description_section_no_edit_container").find(".scc_section_description_textarea")
-		var penIcon = jQuery(element).parents(".description_section_no_edit_container").find(".fa-pen.text-primary")
+		var penIcon = jQuery(element).parents(".description_section_no_edit_container").find(".scc-section-edit-trigger")
 		textarea.toggle()
 		textarea.prev().toggle()
 		penIcon.toggle()
 		var text = jQuery(element).parents(".description_section_no_edit_container").find(".description_section_no_edit")
 		text.toggleClass('d-none')
+		if (textarea.is(":visible")) {
+			textarea.focus();
+		}
 	}
 	/**
 	 * *On keyup changes title section in db and updates title text in section
@@ -2442,7 +2634,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		var elementContainer = jQuery(element).closest('.elements_added');
 		var itemsContainer = elementContainer.find('.selectoption_2')
 		var id_element = elementContainer.find(".input_id_element").val();
-		var count = jQuery(itemsContainer).find(".selopt3").length + 1
+		var count = jQuery(itemsContainer).find(".selopt3, .dd-item-field-container, .scc-item-field-container").length + 1
 		var ocho = jQuery(element).closest("img")
 		var type = elementContainer.find('select').val()
 		var enableWoocommerce = sccData[getCalcId()].config["enableWoocommerceCheckout"]
@@ -2787,14 +2979,18 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	var titmeNameElementItem = null
 
 	function changeNameElementItem(element, idFromDataAttribute = false) {
-		var id_elemntItem = jQuery(element).parent().parent().find(".swichoptionitem_id").val()
-		if (idFromDataAttribute) {
-			id_elemntItem = jQuery(element).closest(".dd-item-field-container").data('elementItemId')
+		var itemContainer = jQuery(element).closest(".scc-item-field-container, .dd-item-field-container");
+		var id_elemntItem = jQuery(element).closest(".selopt3").find(".swichoptionitem_id").val()
+		if (itemContainer.length) {
+			id_elemntItem = itemContainer.data('elementItemId')
 		}
 		jQuery(element).focusout(function() {
 			titmeNameElementItem = 0
 		});
 		var name = jQuery(element).val();
+		if (itemContainer.length) {
+			jQuery(".display_title_" + itemContainer.data('elementItemId')).text(name);
+		}
 		sccBackendUtils.disableSaveBtnAjax(true, element);
 		clearTimeout(titmeNameElementItem)
 		titmeNameElementItem = setTimeout(() => {
@@ -2822,9 +3018,10 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	var timeDescriptionElementItem = null
 
 	function changeDescriptionElementItem(element, idFromDataAttribute = false) {
-		var id_elemntItem = jQuery(element).parent().parent().find(".swichoptionitem_id").val()
-		if (idFromDataAttribute) {
-			id_elemntItem = jQuery(element).closest(".dd-item-field-container").data('elementItemId')
+		var itemContainer = jQuery(element).closest(".scc-item-field-container, .dd-item-field-container");
+		var id_elemntItem = jQuery(element).closest(".selopt3").find(".swichoptionitem_id").val()
+		if (itemContainer.length) {
+			id_elemntItem = itemContainer.data('elementItemId')
 		}
 		var description = jQuery(element).val();
 		jQuery(element).focusout(function() {
@@ -2856,9 +3053,10 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	var timePriceElementItem = null
 
 	function changePriceElementItem(element, idFromDataAttribute = false) {
-		var id_elemntItem = jQuery(element).parent().parent().find(".swichoptionitem_id").val()
-		if (idFromDataAttribute) {
-			id_elemntItem = jQuery(element).closest(".dd-item-field-container").data('elementItemId')
+		var itemContainer = jQuery(element).closest(".scc-item-field-container, .dd-item-field-container");
+		var id_elemntItem = jQuery(element).closest(".selopt3").find(".swichoptionitem_id").val()
+		if (itemContainer.length) {
+			id_elemntItem = itemContainer.data('elementItemId')
 		}
 		var price = jQuery(element).val()
 		jQuery(element).focusout(function() {
@@ -2890,7 +3088,62 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * !two types multiple and single
 	 */
 	function setDefaultOption(element, multi = true, idFromDataAttribute = false) {
-		return
+		let optBtn = jQuery(element);
+		let optBtnParent = element.parentElement;
+		if (optBtn.attr("data-selected")) {
+			optBtn.removeAttr('data-selected');
+			optBtnParent.classList.remove('is-set-default');
+			optBtnParent.setAttribute('data-tooltip', 'Click me make this option default.');
+		} else {
+			optBtn.attr('data-selected', true);
+			optBtnParent.classList.add('is-set-default');
+			optBtnParent.removeAttribute('data-tooltip');
+		}
+
+		let itemContainer = jQuery(element).closest(".scc-item-field-container, .dd-item-field-container");
+		let id_elementitem = itemContainer.length ? itemContainer.data('elementItemId') : jQuery(element).parent().find(".swichoptionitem_id").val();
+		let id_element = jQuery(element).closest(".elements_added").find(".input_id_element").val() || 0;
+		let multiCheckbox = element.closest(".scc-element-content.checkbox-content")?.getAttribute('data-multi-select');
+
+		if (element.closest(".scc-element-content.dropdown-content")) {
+			multiCheckbox = 0;
+		}
+
+		if (!multiCheckbox) {
+			multiCheckbox = 0;
+		}
+
+		if (Number(multiCheckbox) === 0) {
+			let optRoot = jQuery(element).closest(".scc-element-content[value='selectoption']");
+			let opts = optRoot.find('.dd-item-def-checkbox').not(element);
+			opts.prop('checked', false);
+			opts.removeAttr('data-selected');
+			opts.parent().removeClass('is-set-default');
+			opts.parent().attr('data-tooltip', 'Click me make this option default.');
+		}
+
+		let isDef = optBtn.attr('data-selected') ? 1 : 0;
+		jQuery.ajax({
+			url: ajaxurl,
+			cache: false,
+			data: {
+				action: 'sccUpElementItemSwichoption',
+				id_elementitem: id_elementitem,
+				id_element: id_element,
+				default: isDef,
+				nonce: pageEditCalculator.nonce
+			},
+			beforeSend: function(){
+				sccBackendUtils.disableSaveBtnAjax(true, element);
+			},
+			success: function(data) {
+				sccBackendUtils.disableSaveBtnAjax(false, element);
+				sccBackendUtils.handleSavingAlert(data, false);
+			},
+			error: function() {
+				sccBackendUtils.disableSaveBtnAjax(false, element);
+			}
+		})
 	}
 	/**
 	 * *Loads to dom selected image of slider dropdown elementitem   
@@ -2923,7 +3176,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		var src = field.attr("src")
 		var id_elementitem = jQuery(field).parent().parent().find(".swichoptionitem_id").val()
 		if (!id_elementitem) {
-			id_elementitem = jQuery(field).closest(".dd-item-field-container").data('elementItemId')
+			id_elementitem = jQuery(field).closest(".scc-item-field-container, .dd-item-field-container").data('elementItemId')
 		}
 		jQuery.ajax({
 			url: ajaxurl,
@@ -3061,7 +3314,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		
 		var container = jQuery(element).parent().find(".selectoption_2")
 		var id_element = jQuery(element).closest('.elements_added').find(".input_id_element").val();
-		var count = jQuery(container).find(".selopt3").length + 1
+		var count = jQuery(container).find(".selopt3, .dd-item-field-container, .scc-item-field-container").length + 1
 		jQuery.ajax({
 			url: ajaxurl,
 			cache: false,
@@ -3101,13 +3354,13 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		input.attr('disabled',true)
 		input.removeAttr('checked')
 		oo.css('width','fit-content')
-		new bootstrap.Tooltip(oo, {
+		/*new bootstrap.Tooltip(oo, {
 			delay: { show: 600, hide: 300 },
 			trigger: 'hover focus',
 			html: true,
 			title: needLicenseKeyTooltip,
 			placement: 'right'
-		})
+		})*/
 	}
 	/**
 	 * *Shows/hides conditional content of elements
@@ -3156,8 +3409,8 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	function removeSwitchOptionDropdown(element, idFromDataAttribute = false) {
 		var elementitem = jQuery(element).closest(".selopt3")
 		var idElementItem = jQuery(elementitem).find(".swichoptionitem_id").val()
-		if (idFromDataAttribute) {
-			elementitem = jQuery(element).closest(".dd-item-field-container")
+		if (idFromDataAttribute || jQuery(element).closest(".scc-item-field-container, .dd-item-field-container").length) {
+			elementitem = jQuery(element).closest(".scc-item-field-container, .dd-item-field-container")
 			idElementItem = elementitem.data('elementItemId')
 		}
 		jQuery.ajax({
@@ -3249,7 +3502,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		var textNode = jQuery(item).closest('.elements_added').find('.element-action-icons .material-icons-outlined:first');
 		s.slideToggle(function() {
 			if (jQuery(this).is(":visible")) {
-				jQuery(item).closest('.elements_added').css('outline', '2px solid rgb(138, 153, 248)');
+				jQuery(item).closest('.elements_added').css('outline', '2px solid var(--scc-input-field-border-color-focus)');
 				let elementEditBoxType = this.getAttribute('data-element-setup-type');
 				if (elementEditBoxType == 'slider') {
 					sccBackendUtils.handleSliderSetupBox(this);
@@ -3273,6 +3526,45 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				})
 			} else {
 				jQuery(item).closest('.elements_added').css('outline', '')
+			}
+		});
+		textNode.text(function(index, text) {
+			return text === "expand_more" ? "expand_less" : "expand_more";
+		});
+	}
+	function collapseElementBox(item) {
+		var elementTitleWrapper = jQuery(item).closest('.scc-item-field-container').find(".element-box-title-desc");
+		collapseElementBoxTitle(elementTitleWrapper[0]);
+	}
+	function collapseElementBoxTitle(item) {
+		var s = jQuery(item).closest('.scc-item-field-container').find(".scc-element-box-content");
+		let relatedElementsForCollapsing = [...document.querySelectorAll('.element-box-title-desc')].filter(e => e !== item );
+		var textNode = jQuery(item).closest('.scc-item-field-container').find('.element-action-icons .material-icons-outlined:first');
+		s.slideToggle(function() {
+			if (jQuery(this).is(":visible")) {
+				jQuery(this).parent().css('outline', '2px solid var(--scc-input-field-border-color-focus)');
+				jQuery(this).parent().removeClass('gray_shutter');
+				jQuery(this).parent().addClass('green_shutter');
+				relatedElementsForCollapsing.forEach((e, key) => {
+					let target = jQuery(e).closest('.scc-item-field-container').find(".scc-element-box-content");
+					var relatedTextNode = jQuery(e).closest('.scc-item-field-container').find('.element-action-icons .material-icons-outlined:first');
+					let targetVisible = target.is(':visible');
+					if (targetVisible) {
+						relatedTextNode.text(function(index, text) {
+							return text === "expand_more" ? "expand_less" : "expand_more";
+						});
+						jQuery(target).hide().parent().css('outline', '');
+						jQuery(target).hide().parent().addClass('gray_shutter');
+						jQuery(target).hide().parent().removeClass('green_shutter');
+					}
+					if ( key + 1 == relatedElementsForCollapsing.length && targetVisible ) {
+						window.scrollTo(0, sccGetOffset(jQuery(this).parent()[0]).top - 80)
+					}
+				})
+			} else {
+				jQuery(this).parent().removeClass('green_shutter');
+				jQuery(this).parent().addClass('gray_shutter');
+				jQuery(this).parent().css('outline', '')
 			}
 		});
 		textNode.text(function(index, text) {
@@ -3425,30 +3717,33 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * @param subsection id
 	 */
 	function insertSubSection(idsubsection) {
-		var subs = '                            <div class="boardOption" style="outline: 2px solid rgb(138, 153, 248);">'
+		var subs = '                            <div class="boardOption" style="outline: 2px solid var(--scc-input-field-border-color-focus);">'
 		subs += '                                <input class="input_subsection_id" type="text" value="' + idsubsection + '" hidden="">'
 		subs += '                                <div class="scc-subsection">'
 		subs += '									<div>'
-		subs += '										<button class="collapsible subsect-title">Subsection <i class="material-icons-outlined with-tooltip"  data-setting-tooltip-type="subsection-note-tt" data-bs-original-title="" title="" style="margin-right:5px">help_outline</i></button>'
-		subs += '										<div class="scc_help_btn_right" style="left:26px;float:right;top:23px;font-size:18px;"></div>'
-		subs += '									</div>'				
+		subs += '										<button class="scc-subsect-title">Subsection '
+		subs += '											<i class="material-icons-outlined more-settings-info" data-setting-tooltip-type="subsection-note-tt" data-bs-original-title="" title="">'
+		subs += '												<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>'
+		subs += '											</i>'
+		subs += '										</button>'
+		subs += '									</div>'
 		subs += '									<div class="scc-section-setting-bar">'
-		subs += '										<button id="close-btn" class="scc-section-setting-btn" title="Delete Subsection" onclick="preDeletionDialog(\'subsection\', removeSubsection, this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['x'] ); ?></span></button>'
+		subs += '										<button id="close-btn" class="scc-section-setting-btn" title="Delete Subsection" onclick="preDeletionDialog(\'subsection\', removeSubsection, this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $icon_trash ); ?></span></button>'
 		subs += '									</div>'
 		subs += '								</div>'
-		subs += '                                <div class="subsection-area BodyOption ">'
+		subs += '                                <div class="subsection-area BodyOption "><div class="scc-section-connection-line scc-link-line scc-hidden"></div>'
 		subs += '                                                                        <!-- ELEMENTS SHOWS HERE -->'
 		subs += '                                </div>'
 		subs += '                                 <!-- BUTTONS AREA -->'
-		subs += '                                <div class="row scc-add-element-actions-row">'
+		subs += '                                 <div class="row scc-add-element-actions-row">'
 		subs += '                                  <div class="scc-col-md-12 scc-col-xs-12">'
-		subs += '                                      <label class="scc_label_2 scc-add-element-btn-container">'
-		subs += '                                          <a class="add-element-btn save_button" onclick="togglebuttonsadd(this)">'
-		subs += '                                              + Add Element'
-		subs += '                                          </a>'
-		subs += '                                      </label>'
+		subs += '                                       <label class="scc_label_2 scc-add-element-btn-container">'
+		subs += '                                           <a class="add-element-btn save_button" onclick="togglebuttonsadd(this)" role="button">'
+		subs += '                                               + Add Element'
+		subs += '                                           </a>'
+		subs += '                                       </label>'
 		subs += '                                  </div>'
-		subs += '                                  <div class="df_scc_groupbuttonsadd scc-col-md-12 scc-col-xs-12" style="margin:15px; display:none ">'
+		subs += '                                  <div class="df_scc_groupbuttonsadd scc-col-md-12 scc-col-xs-12" style="margin-top:15px;margin-bottom:15px;padding:0; display:none ">'
 		subs += '                                      <button class="scc_button btn-backend" onclick="addSliderElement(this)"><div class="scc-slider-tooltip-panel use-tooltip" data-setting-tooltip-type="slider-disabled-tt" data-bs-original-title="" title=""></div><i class="scc-btn-spinner scc-d-none"></i>'
 		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-slider'] ); ?></span>'
 		subs += '                                          <div class="btn-backend-text">Slider</div>'
@@ -3486,7 +3781,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['paperclip'] ); ?></span>'
 		subs += '                                          <div class="btn-backend-text">File Upload</div>'
 		subs += '                                      </button>'
-		subs += ' 										<button value="custom_code" class="scc_button btn-backend scc-premium-element" onclick="addTextHtml(this)"><i class="scc-btn-spinner scc-d-none"></i>'
+		subs += ' 										<button value="date" class="scc_button btn-backend scc-premium-element with-tooltip" data-element-tooltip-type="date-picker-tt" onclick="addDateElement(this)"><i class="scc-btn-spinner scc-d-none"></i>'
 		subs += '                                          <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['calendar'] ); ?></span>'
 		subs += '											<div class="btn-backend-text">Date Picker</div>'
 		subs += '										</button>'
@@ -3526,182 +3821,108 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * @param section_id, subsection_id
 	 */
 	function insertSection(idsection, idsubsection) {
-		var section = '        <div class="addedFieldsStyle scc-section-container" style="display:grid;" id="Sccvo_0">'
-		section += '                    <input class="id_section_class" type="text" value="' + idsection + '" hidden>'
-		section += '                <div id="title54-bar-btns" class="scc-section-setting-container">'
-		section += '						<div class="scc-section-setting-bar">'
-		section += '							<button id="up-btn" class="scc-section-setting-btn up d-none" title="Push this section above" href="javascript:void(0)" onclick="rup(this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['push-up'] ); ?></span></button>'
-		section += '							<button id="down-btn" class="scc-section-setting-btn down" title="Push this section below" href="javascript:void(0)" onclick="rdown(this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['push-down'] ); ?></span></button>'	
-		section += '							<button id="settings-btn" class="scc-section-setting-btn" href="javascript:void(0)" title="Section settings" onclick="settingsIconShow(this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['sliders'] ); ?></span></button>'
-		section += '							<button id="close-btn" class="scc-section-setting-btn" href="javascript:void(0)" title="Delete Section" onclick="preDeletionDialog(\'section\', removeSection, this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['x'] ); ?></span></button>'
-		section += '						</div>'
-		section += '					</div>'
-		section += '                    <div class="scc-accordion-container scc-accordion-tooltip-hidden">'
-		section += '                        <div class="scc-accordion-tooltip scc-accordion-content">'
-		section += '                            <!-- SETTINGS TOOGLE -->'
-		section += '                            <p>'
-		section += '                            <label class="scc-accordion_switch_button">'
-		section += '                                <input class="scc_accordion_section" onchange="changeAccordion(this)" name="scc_accordion_section" type="checkbox" '
-		section += '                                 <?php if ( $section->accordion == 'true' ) { echo 'checked';}?>'
-		section += '                                 >'
-		section += '                                <span class="scc-accordion_toggle_button round"></span>'
-		section += '                            </label>'
-		section += '                            Accordion'
-		section += '                            </p>'
-		section += '                            <p>'
-		section += '                            <label class="scc-accordion_switch_button use-premium-tooltip" data-tooltip-image="<?php echo esc_url( SCC_TOOLTIP_BASEURL . '/section-total.png' ); ?>">'
-		section += '                                <input class="scc-section-total" onchange="changeShowSectionTotal(this)" name="scc-section-total" type="checkbox" disabled>'
-		section += '                                <span class="scc-accordion_toggle_button round"></span>'
-		section += '                            </label>'
-		section += '                            Show Section Total'
-		section += '                            </p>'
-		section += '                        </div>'
-		section += '                    </div>'
-		section += '                    <!-- TITLE -->'
-		section += '                    <div class="title_section_no_edit_container">'
-		section += '                        <div class="scc-col-md-10" style="padding:0px" onclick="toggleEditTitle(this)">'
-		section += '                            <i class="fa fa-pen text-primary"></i>'
-		section += '                            <p style="margin-top:-5px; margin-bottom: 1px;font-size: 20px" class="title_section_no_edit d-inline">'
-		section += '                                Section title </p>'
-		section += '                        </div>'
-		section += '                    <div class="section-title-edit-wrapper">'
-		section += '                        <i class="fa fa-check text-warning" onclick="toggleEditTitle(this)" style="display:none" role="button"></i>'
-		section += '                        <input value="section" onkeyup="changeTitleSection(this)" type="text" class="input_pad sectiontitle scc_edit_section_input" placeholder="Section Title" value="" style="outline: 0px; border-radius: 10px; margin-top: 10px; width: 95%; height: 50px; margin-bottom: 10px; border-top: none !important; border-right: none !important; border-left: none !important; border-image: initial !important; box-shadow: none !important; border-bottom: 1px solid rgb(49, 74, 243) !important; display: none;">'
-		section += '                        <span class="mandatory" style="display:none">*</span>'
-		section += '                    </div>'
-		section += '                    </div>'
-		section += '                    <!-- DESCRIPTION -->'
-		section += '                    <div class="description_section_no_edit_container">'
-		section += '                        <div class="scc-col-md-10" style="padding:0px" onclick="toggleEditDescription(this)">'
-		section += '                            <i class="fa fa-pen text-primary" role="button"></i>'
-		section += '                            <p class="description_section_no_edit d-inline">'
-		section += '                                Section description </p>'
-		section += '                        </div>'
-		section += '                        <div class="description-wrapper">'
-		section += '                            <i class="fa fa-check text-warning" onclick="toggleEditDescription(this)" style="display:none" role="button"></i>'
-		section += '                            <textarea onkeyup="changeDescriptionSection(this)" class="input_pad sectionDescription scc_section_description_textarea" placeholder="Description of the products/services that will be listed below. (Optional)" style="background: rgb(255, 255, 255); height: 125px; padding: 15px; width: 95%; margin-bottom: 20px; margin-top: 15px; border-bottom: 1px solid rgb(49, 74, 243) !important; display: none;">description</textarea>'
-		section += '                        </div>'
-		section += '                    </div>'
-		section += '                    <!-- SUBSECTION -->'
-		section += '                    <div class="fieldDatatoAdd">'
-		section += '                           <div class="boardOption">'
-		section += '                               <input class="input_subsection_id" type="text" value="' + idsubsection + '" hidden>'
-		section += '                                <div class="scc-subsection">'
-		section += '									<div>'
-		section += '										<button class="collapsible subsect-title">Subsection <i class="material-icons-outlined with-tooltip"  data-setting-tooltip-type="subsection-note-tt" data-bs-original-title="" title="" style="margin-right:5px">help_outline</i></button>'
-		section += '										<div class="scc_help_btn_right" style="left:26px;float:right;top:23px;font-size:18px;"></div>'
-		section += '									</div>'				
-		section += '									<div class="scc-section-setting-bar">'
-		section += '										<button id="close-btn" class="scc-section-setting-btn" title="Delete Subsection" onclick="preDeletionDialog(\'subsection\', removeSubsection, this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['x'] ); ?></span></button>'
-		section += '									</div>'
-		section += '								</div>'
-		section += '                                <div class="subsection-area BodyOption ">'
-		section += '                                                                        <!-- ELEMENTS SHOWS HERE -->'
-		section += '                                </div>'
-		section += '                                <!-- BUTTONS AREA -->'
-		section += '                                <div class="row scc-add-element-actions-row">'
-		section += '                                <div class="scc-col-md-12 scc-col-xs-12">'
-		section += '                                    <label class="scc_label_2  scc-add-element-btn-container">'
-		section += '                                        <a class="add-element-btn save_button" onclick="togglebuttonsadd(this)">'
-		section += '                                            + Add Element'
-		section += '                                        </a>'
-		section += '                                    </label>'
-		section += '                                </div>'
-		section += '                                <div class="df_scc_groupbuttonsadd scc-col-md-12 scc-col-xs-12" style="margin:15px; display:none ">'
-		section += '																	<button class="scc_button btn-backend" onclick="addSliderElement(this)">'
-		section += '																		<div class="scc-slider-tooltip-panel use-tooltip" data-setting-tooltip-type="slider-disabled-tt" data-bs-original-title="" title=""></div>'
-		section += '																			<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																			<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['sliders'] ); ?></span>'
-		section += '																		<div class="btn-backend-text">Slider</div>'
-		section += '																	</button>'
-		section += '																	<button value="number_input" class="scc_button btn-backend" onclick="addQuantityBox(this)">'
-		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																	  <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-quantity'] ); ?></span>'
-		section += '	                                  <div class="btn-backend-text">Quantity Box</div>'
-		section += '                                  </button>'
-		section += '																	<button value="dropdowninput" class="scc_button btn-backend" onclick="addDropdownMenuElement(this)">'
-		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-dropdown'] ); ?></span>'
-		section += '																		<div class="btn-backend-text">Dropdown</div>'
-		section += '																	</button>'
-		section += '																	<button value="switchinput" class="scc_button btn-backend" onclick="addCheckboxElement(this,1)">'
-		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-checkbox'] ); ?></span>'
-		section += '																		<div class="btn-backend-text">Checkbox</div>'
-		section += '																	</button>'
-		section += '																	<button value="switchinput" class="scc_button btn-backend" onclick="addCheckboxElement(this,6)">'
-		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-button'] ); ?></span>'
-		section += '																		<div class="btn-backend-text">Simple Button</div>'
-		section += '																	</button>'
-		section += '																	<button value="switchinput" class="scc_button btn-backend  with-tooltip" data-element-tooltip-type="image-buttons-tt" data-bs-original-title="" onclick="addCheckboxElement(this,8)">'
-		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['image'] ); ?></span>'
-		section += '																		<div class="btn-backend-text">Image Button </div>'
-		section += '																	</button>'
-		section += '																	<input class="inputoption_slidchk" type="checkbox" onClick="addSlider(this)" style="display:none;" />'
-		section += '																	<button class="scc_button btn-backend with-tooltip" data-element-tooltip-type="custom-math-tt" data-bs-original-title="" onclick="addCustomMath(this)">'
-		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['percent'] ); ?></span>'
-		section += '																		<div class="btn-backend-text">Fee & Discount Adjuster</div>'
-		section += '																	</button>'
-		section += '																	<button value="custom_code" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="variable-math-tt" data-bs-original-title="" onclick="addTextHtml(this)">'
-		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-math'] ); ?></span>'
-		section += '																		<div class="btn-backend-text">Advanced Pricing Formula</div>'
-		section += '																	</button>'
-		section += '																	<button value="file_input" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="file-upload-tt" data-bs-original-title="" onclick="addFileUpload(this)">'
-		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['paperclip'] ); ?></span>'
-		section += '																		<div class="btn-backend-text">File Upload</div>'
-		section += '																	</button>'
-		section += '																	<button value="custom_code" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="text-html-field-tt" data-bs-original-title="" onclick="addTextHtml(this)">'
-		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['calendar'] ); ?></span>'
-		section += '																		<div class="btn-backend-text">Date Picker</div>'
-		section += '																	</button>'
-		section += '																	<button value="distance" class="scc_button btn-backend with-tooltip"  data-element-tooltip-type="distance-cost-tt" data-bs-original-title="" >'
-		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['map-pin'] ); ?></span>'
-		section += '																		<div class="btn-backend-text">Distance-Based Cost</div>'
-		section += '																	</button>'
-		section += '																	<input class="inputoption_slidchk" type="checkbox" onClick="addSlider(this)" style="display:none;" />'
-		section += '																	<button value="comment_input" class="scc_button btn-backend" onclick="addCommentBoxElement(this)">'
-		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['message-circle'] ); ?></span>'
-		section += '																		<div class="btn-backend-text">Comment Box</div>'
-		section += '																		</button>'
-		section += '																	<button value="custom_code" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="text-html-field-tt" data-bs-original-title="" onclick="addTextHtml(this)">'
-		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-code'] ); ?></span>'
-		section += '																		<div class="btn-backend-text">Text/HTML Field</div>'
-		section += '																	</button>'
-		section += '																	<button value="signature_box" class="scc_button btn-backend with-tooltip" data-element-tooltip-type="signature-box-tt" data-bs-original-title="" onclick="">'
-		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['signature'] ); ?></span>'
-		section += '																		<div class="btn-backend-text">Signature Box</div>'
-		section += '																	</button>'
-		section += '																	<button value="signature_box" class="scc_button btn-backend" onclick="sccAiUtils.openIntelligentElementSuggester();">'
-		section += '																		<i class="scc-btn-spinner scc-d-none"></i>'
-		section += '																		<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['ai-wizard'] ); ?></span>'
-		section += '																		<div class="btn-backend-text">AI Suggested Element</div>'
-		section += '																	</button>'
-		section += '                                    <br>'
-		section += '                                    <p style="font-size:13px;margin-top:5px;">Add 1 or more elements to this subsection</p>'
-		section += '                                    <input class="scc_custom_math_checkbox" type="checkbox" style="display:none;" />'
-		section += '                                    <a href="https://stylishcostcalculator.com/test-drive-premium/" target="_blank">Test Drive The Premium Feature today on the Playground</a>  '
-		section += '                                </div>'
-		section += '                            </div>'
-		section += '                                                <div class="boardOption1">'
-		section += '                            <label class="add-subsection-btn">'
-		section += '                                <!-- This one works -->'
-		section += '                                <a href="javascript:void(0)" onclick="addSubSectionElement(this)" style="border-radius:6px;padding:8px;background:#314af3;color:white" class="crossnadd2">+ Add Subsection'
-		section += '                                </a>'
-		section += '                            </label>'
-		section += '                        </div>'
-		section += '                    </div>'
-		section += '                </div>'
-		return section;
+		var newSection = `<div class="addedFieldsStyle scc-section-container" style="display:grid;" id="Sccvo_0">
+	<input class="id_section_class" type="text" value="${idsection}" hidden>
+	<div id="title54-bar-btns" class="scc-section-setting-container">
+		<div class="scc-section-setting-bar">
+			<button id="up-btn" class="scc-settings-btn-section scc-section-setting-btn up" title="Push this section above" href="javascript:void(0)" onclick="rup(this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['push-up-settings'] ?? $this->scc_icons['push-up'] ); ?></span></button>
+			<button id="down-btn" class="scc-settings-btn-section scc-section-setting-btn down d-none" title="Push this section below" href="javascript:void(0)" onclick="rdown(this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['push-down-settings'] ?? $this->scc_icons['push-down'] ); ?></span></button>
+			<button id="settings-btn" class="scc-settings-btn-section scc-section-setting-btn" href="javascript:void(0)" title="Section settings" onclick="settingsIconShow(this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-slider-settings'] ?? $this->scc_icons['sliders'] ); ?></span></button>
+			<button id="close-btn" class="scc-section-setting-btn" href="javascript:void(0)" title="Delete Section" onclick="preDeletionDialog('section', removeSection, this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $icon_trash ); ?></span></button>
+			<button type="button" class="scc-section-setting-btn scc-section-collapse-btn" title="Toggle section" aria-label="Toggle section" aria-expanded="true" onclick="sccToggleSectionFromControl(event, this)"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['chevron-down'] ); ?></span></button>
+		</div>
+	</div>
+	<div class="scc-accordion-container scc-accordion-tooltip-hidden">
+		<div class="scc-accordion-tooltip scc-accordion-content section-settings">
+			<p>
+				<label class="scc-accordion_switch_button">
+					<input class="scc_accordion_section" onchange="changeAccordion(this)" name="scc_accordion_section" type="checkbox">
+					<span class="scc-accordion_toggle_button round"></span>
+				</label>
+				Accordion
+			</p>
+			<p class="scc-opacity-05 tool-premium">
+				<label class="scc-accordion_switch_button use-premium-tooltip" data-tooltip-image="<?php echo esc_url( SCC_TOOLTIP_BASEURL . '/section-total.png' ); ?>">
+					<input class="scc-section-total" onchange="changeShowSectionTotal(this)" name="scc-section-total" type="checkbox" disabled>
+					<span class="scc-accordion_toggle_button round"></span>
+				</label>
+				Show Section Total
+			</p>
+			<p class="section-total-on-pdf-container" style="display : none">
+				<label class="scc-accordion_switch_button use-premium-tooltip">
+					<input disabled onchange="changeShowSectionTotalOnPdf(this)" name="scc-section-total-on-pdf" type="checkbox">
+					<span class="scc-accordion_toggle_button round"></span>
+				</label>
+				Show Section Total on PDF/Detail View
+			</p>
+			<p class="section-split-to-page scc-opacity-05 tool-premium">
+				<label class="scc-accordion_switch_button">
+					<input disabled onchange="changeSectionToPage(this)" name="section-split-to-page" type="checkbox">
+					<span class="scc-accordion_toggle_button round"></span>
+				</label>
+				<span class="scc-adv-opt-lbl use-premium-tooltip">
+					Activate Multi-Step Form</span>
+			</p>
+		</div>
+	</div>
+	<div class="accordion" id="sccAccordion" style="margin-top:15px">
+		<div class="accordion-item" style="border: none !important;">
+			<button class="accordion-button scc-section-accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#sccCollapse${idsection}" aria-expanded="true" aria-controls="sccCollapse${idsection}">
+				<span class="scc-section-order-tag" role="button" tabindex="0" aria-label="Toggle section" onclick="sccToggleSectionFromTag(event, this)" onkeydown="sccToggleSectionFromTag(event, this)"></span>
+				<div class="scc-title scc_accordion_advance" style="display:grid;">
+					<div class="title_section_no_edit_container" style="display: contents; margin: 0px;">
+						<div class="scc-col-md-10 d-flex scc-section-field-row" style="padding:0px" onclick="sccHandleSectionFieldInteraction(this, 'title', event)">
+							<span class="scc-section-edit-trigger" role="button" tabindex="0" onclick="sccHandleSectionFieldInteraction(this.closest('.scc-section-field-row'), 'title', event, true)" aria-label="Edit section title">
+								<?php echo scc_get_kses_extended_ruleset( $this->scc_icons['edit-3'] ); ?>
+							</span>
+							<p style="margin-top:-5px; margin-bottom: 1px;font-size: 22px;margin-left:0" class="title_section_no_edit d-inline">
+								Section title
+							</p>
+						</div>
+						<div class="section-title-edit-wrapper">
+							<span class="scc-icn-wrapper text-warning" onclick="toggleEditTitle(null, event)" style="display:none" role="button">
+								<?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-checkbox'] ); ?>
+							</span>
+							<input value="Section title" onkeyup="changeTitleSection(this)" onblur="toggleEditTitle(null, event)" type="text" class="input_pad sectiontitle scc_edit_section_input" placeholder="Section Title" style="border: none !important;box-shadow: none !important;outline: 0;border-radius:10px;margin-top:10px;width: 95%;height: 50px; border-bottom: 1px solid #2b2b2b; margin-bottom:10px;display:none">
+							<span class="mandatory" style="display:none">*</span>
+						</div>
+					</div>
+					<div class="description_section_no_edit_container" style="">
+						<div class="scc-col-md-10 d-flex scc-section-field-row" style="padding:0px" onclick="sccHandleSectionFieldInteraction(this, 'description', event)">
+							<span class="scc-section-edit-trigger" role="button" tabindex="0" onclick="sccHandleSectionFieldInteraction(this.closest('.scc-section-field-row'), 'description', event, true)" aria-label="Edit section description">
+								<?php echo scc_get_kses_extended_ruleset( $this->scc_icons['edit-3'] ); ?>
+							</span>
+							<p style="margin-top:-5px; margin-bottom: 1px;font-size: 17.5px;margin-left:0" class="description_section_no_edit d-inline">
+								Section description
+							</p>
+						</div>
+						<div class="description-wrapper">
+							<span class="scc-icn-wrapper text-warning" onclick="toggleEditDescription(null, event)" style="display:none" role="button">
+								<?php echo scc_get_kses_extended_ruleset( $this->scc_icons['scc-checkbox'] ); ?>
+							</span>
+							<textarea onkeyup="changeDescriptionSection(this)" onblur="toggleEditDescription(null, event)" class="input_pad sectionDescription scc_section_description_textarea" placeholder="Description of the products/services that will be listed below. (Optional)" style="background: rgb(255, 255, 255); height: 125px; padding: 15px; width: 95%; margin-bottom: 20px; border: none !important; margin-top: 15px; display: none;">Section description</textarea>
+						</div>
+					</div>
+				</div>
+			</button>
+			<div id="sccCollapse${idsection}" class="accordion-collapse collapse show" aria-labelledby="sccHeading">
+				<div class="scc-content">
+					<div class="scc-transition advanced-option-wrapper">
+						<div class="fieldDatatoAdd">
+${insertSubSection(idsubsection)}
+							<div class="boardOption1">
+								<label class="add-subsection-btn">
+									<a href="javascript:void(0)" onclick="addSubSectionElement(this)" style="border-radius:6px;padding:8px;background:var(--scc-color-primary);color:white" class="crossnadd2">+ Add Subsection
+									</a>
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>`;
+		return newSection;
 	}
 	/**
 	 * *Checkbox element to be inserted in dom after success insert in db
@@ -3759,7 +3980,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 			</div>
 			<?php echo scc_output_editing_page_element_actions_js_template( '${tooltip_type}' ); ?>
 		</div>`
-		var element = '<div class="elements_added" style="outline: 2px solid rgb(138, 153, 248);outline-style: dashed;">'
+		var element = '<div class="elements_added" style="outline: 2px solid var(--scc-input-field-border-color-focus);outline-style: dashed;">'
 		element += '<input type="text" class="input_id_element" value="' + idElement + '" hidden="">'
 		element += elementHead
 		element += elementDOM['checkbox_body']
@@ -3783,7 +4004,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 			</div>
 			<?php echo scc_output_editing_page_element_actions_js_template( 'custom-math' ); ?>
 		</div>`
-		var element = '<div class="elements_added" style="outline: 2px solid rgb(138, 153, 248);outline-style: dashed;">'
+		var element = '<div class="elements_added" style="outline: 2px solid var(--scc-input-field-border-color-focus);outline-style: dashed;">'
 		element += '    <input type="text" class="input_id_element" value="' + idnewElement + '" hidden="">'
 		element += elementHead
 		element += '    <div class="scc-element-content" value="selectoption" style="height: auto;">'
@@ -3905,7 +4126,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 			</div>
 			<?php echo scc_output_editing_page_element_actions_js_template( 'slider-element' ); ?>
 		</div>`;
-		var element = '<div class="elements_added" style="outline: 2px solid rgb(138, 153, 248);outline-style: dashed;">'
+		var element = '<div class="elements_added" style="outline: 2px solid var(--scc-input-field-border-color-focus);outline-style: dashed;">'
 		element += '    <input type="text" class="input_id_element" value="' + idnewElement + '" hidden="">'
 		element += elementHead
 		element += elementDOM['slider_body']
@@ -3954,7 +4175,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 			</div>
 			<?php echo scc_output_editing_page_element_actions_js_template( 'text-html-field' ); ?>
 		</div>`
-		var element = '<div class="elements_added" style="outline: 2px solid rgb(138, 153, 248);outline-style: dashed;">'
+		var element = '<div class="elements_added" style="outline: 2px solid var(--scc-input-field-border-color-focus);outline-style: dashed;">'
 		element += '    <input type="text" class="input_id_element" value="' + idnewElement + '" hidden="">'
 		element += elementHead
 		element += '    <div class="scc-element-content" data-element-setup-type="texthtml" value="selectoption" style="height: auto;">'
@@ -4092,7 +4313,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 			</div>
 			<?php echo scc_output_editing_page_element_actions_js_template( 'file-upload' ); ?>
 		</div>`
-		var element = '<div class="elements_added" style="outline: 2px solid rgb(138, 153, 248);outline-style: dashed;">'
+		var element = '<div class="elements_added" style="outline: 2px solid var(--scc-input-field-border-color-focus);outline-style: dashed;">'
 		element += '    <input type="text" class="input_id_element" value="' + idnewElement + '" hidden="">'
 		element += elementHead
 		element += elementDOM['fileupload_body']
@@ -4165,7 +4386,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 			</div>
 			<?php echo scc_output_editing_page_element_actions_js_template( 'quantity-input-box' ); ?>
 		</div>`
-		var element = '<div class="elements_added" style="outline: 2px solid rgb(138, 153, 248);outline-style: dashed;">'
+		var element = '<div class="elements_added" style="outline: 2px solid var(--scc-input-field-border-color-focus);outline-style: dashed;">'
 
 		element += '    <input type="text" class="input_id_element" value="' + idnewElement + '" hidden="">'
 
@@ -4294,7 +4515,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 			</div>
 			<?php echo scc_output_editing_page_element_actions_js_template( 'comment-box' ); ?>
 		</div>`
-		var element = ' <div class="elements_added" style="outline: 2px solid rgb(138, 153, 248);outline-style: dashed;">'
+		var element = ' <div class="elements_added" style="outline: 2px solid var(--scc-input-field-border-color-focus);outline-style: dashed;">'
 		element += elementHead
 		element += elementDOM['commentbox_body']
 
@@ -4371,7 +4592,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 			</div>
 			<?php echo scc_output_editing_page_element_actions_js_template( 'dropdown' ); ?>
 		</div>`
-		var dropd = '<div class="elements_added" style="oueline: 2px solid rgb(138, 153, 248);outline-style: dashed;">'
+		var dropd = '<div class="elements_added" style="oueline: 2px solid var(--scc-input-field-border-color-focus);outline-style: dashed;">'
 		dropd += '    <input type="text" class="input_id_element" value="' + idElement + '" hidden="">'
 		dropd += elementHead
 		dropd += elementDOM['slider_body']
@@ -4545,10 +4766,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 
 	function reloadform() {
 		var id_form = jQuery("#id_scc_form_").val()
-		jQuery(".preview_form_right_side").html(`<div class="df-scc-progress df-scc-progress-striped active">
-				<div class="df-scc-progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="background-color: orange; width: 100%">
-				</div>
-				</div>`);
+		jQuery(".preview_form_right_side").html(sccGetPreviewLoadingMarkup());
 		loadPreviewForm(id_form)
 	}
 </script>
@@ -4556,28 +4774,20 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	body{
 		background-color: #f8f9ff;
 	}
-	/* #adminmenumain,  */
+	#adminmenumain,
+	#adminmenuback,
+	#adminmenuwrap,
+	#adminmenu,
 	#wpfooter {
-		display: none !important
+		display: none !important;
 	}
-	/* Adjust content margin based on menu state */
-	body.folded #wpcontent {
-		margin-left: 36px !important;
+
+	#wpcontent,
+	#wpfooter {
+		margin-left: 0 !important;
 	}
-	body:not(.folded) #wpcontent {
-		margin-left: 160px !important;
-	}
+
 	#crisp-chatbox > div > a{
 		right: 115px !important;
 	}
 </style>
-<script>
-	// Collapse WordPress admin menu by default
-	jQuery(document).ready(function() {
-		if (!document.body.classList.contains('folded')) {
-			document.body.classList.add('folded');
-			// Trigger WordPress's native event to update the menu state
-			jQuery(document).trigger('wp-collapse-menu', { 'fold': 'fold' });
-		}
-	});
-</script>

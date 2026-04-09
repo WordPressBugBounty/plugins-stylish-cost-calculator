@@ -541,11 +541,16 @@ class AiWizardController {
                 $decoded_response = array();
             } else {
                 // Decode the nested JSON in 'ai_message'
-                $ai_message = str_replace('\n', "\n", $first_decode['ai_message']);
-                $decoded_response = json_decode($ai_message, true);
+                try {
+                    $ai_message = str_replace('\n', "\n", $first_decode['ai_message']);
+                    $decoded_response = json_decode($ai_message, true);
 
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    error_log('Second JSON decoding error: ' . json_last_error_msg());
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        error_log('Second JSON decoding error: ' . json_last_error_msg());
+                        $decoded_response = array();
+                    }
+                } catch (\Throwable $e) {
+                    error_log('AI message parsing error: ' . $e->getMessage());
                     $decoded_response = array();
                 }
             }
@@ -584,11 +589,16 @@ class AiWizardController {
                 $decoded_response = array();
             } else {
                 // Decode the nested JSON in 'ai_message'
-                $ai_message = str_replace('\n', "\n", $first_decode['ai_message']);
-                $decoded_response = json_decode($ai_message, true);
+                try {
+                    $ai_message = str_replace('\n', "\n", $first_decode['ai_message']);
+                    $decoded_response = json_decode($ai_message, true);
 
-                if (json_last_error() !== JSON_ERROR_NONE) {
-                    error_log('Second JSON decoding error: ' . json_last_error_msg());
+                    if (json_last_error() !== JSON_ERROR_NONE) {
+                        error_log('Second JSON decoding error: ' . json_last_error_msg());
+                        $decoded_response = array();
+                    }
+                } catch (\Throwable $e) {
+                    error_log('AI message parsing error: ' . $e->getMessage());
                     $decoded_response = array();
                 }
             }

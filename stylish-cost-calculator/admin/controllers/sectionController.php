@@ -38,6 +38,10 @@ class sectionController {
 		$result = $this->db->query( $query );
 		$id     = $this->db->insert_id;
 		if ( $result ) {
+            if ( ! class_exists( 'formController' ) ) {
+                require_once __DIR__ . '/formController.php';
+            }
+            formController::flush_relations_cache( (int) $form_id );
 			return $id;
 		} else {
 			return $this->db->last_error;
@@ -83,12 +87,21 @@ class sectionController {
 		);
 		$result = $this->db->query( $query );
 		if ( $result ) {
+            if ( ! class_exists( 'formController' ) ) {
+                require_once __DIR__ . '/formController.php';
+            }
+            formController::flush_relations_cache( (int) $form_id );
 			return true;
 		} else {
 			return false;
 		}
 	}
 	function delete( int $id ) {
+        if ( ! class_exists( 'formController' ) ) {
+            require_once __DIR__ . '/formController.php';
+        }
+        formController::flush_by_section( $id );
+
 		$query    = $this->db->prepare( "DELETE FROM {$this->db->prefix}df_scc_sections WHERE id = %d", $id );
 		$response = $this->db->query( $query );
 		if ( $response ) {

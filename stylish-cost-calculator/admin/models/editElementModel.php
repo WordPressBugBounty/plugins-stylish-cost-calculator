@@ -188,7 +188,7 @@ class Stylish_Cost_Calculator_Edit_Page {
                     }
         ?>
 				<?php if ( in_array( $el->type, [ 'checkbox', 'slider' ] ) ) { ?>
-				<p class="scc-advanced-option-cont">
+				<p class="scc-advanced-option-cont use-premium-tooltip">
 					<label class="scc-accordion_switch_button">
 						<input onchange="changeShowPriceHintElement(this)" class="scc_mandatory_dropdown" name="scc_mandatory_dropdown" type="checkbox" disabled>
 						<span class="scc-accordion_toggle_button round"></span>
@@ -201,7 +201,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 						<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
 					</i>
 					</span>
-				<p>
+				</p>
 				<?php } ?>
 				<?php if ( in_array( $el->type, [ 'quantity box' ] ) ) { ?>
 					<p class="scc-advanced-option-cont">
@@ -250,7 +250,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 				</p>
 				<?php } ?>
 				<?php if ( in_array( $el->type, [ 'slider' ] ) ) { ?>
-				<p class="scc-advanced-option-cont">
+				<p class="scc-advanced-option-cont use-premium-tooltip">
 					<label class="scc-accordion_switch_button">
 						<input onchange="toggleSliderInputBoxShowHide(this)" name="scc_show_inputbox_slider" type="checkbox" 
 						<?php
@@ -460,31 +460,38 @@ class Stylish_Cost_Calculator_Edit_Page {
                 }
         ?>
 				<?php if ( $el->type !== 'texthtml'  ) { ?>
-				<div class="scc-accordion-tooltip px-0" style="width: 100%; text-align:left;"><span style="text-align: left;display: block;font-size:16px;margin-bottom:10px;">Responsive Options 
-			    <i
-					data-element-tooltip-type="responsive-options-tt"
-					class="material-icons-outlined more-settings-info"
-					style="margin-right:5px">
-					<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
-				</i>
-				</span>
-					<div class="row gx-2 mt-2">
-						<div class="col-md-6 input-field use-premium-tooltip">
-							<input disabled onchange="changeColumnDesktop(this)" id="<?php echo esc_attr( 'scc_title_column_dskp_r-' . $el->id ); ?>" onkeyup="changeColumnDesktop(this)" class="scc_title_column_dskp" min="1" max="12" name="scc_title_column_dskp" type="number" value="<?php echo intval( $el->titleColumnDesktop ); ?>">
-							<label class="active form-label fw-bold" for="<?php echo esc_attr( 'scc_title_column_dskp_r-' . $el->id ); ?>" title="Please enter a number between 1 and 12. 1 being the smallest and 12 being the largest, for your title. If you have a large title, we recommend between 6 and 12.">Title column (desktop)</label>
-						</div>
-						<div class="col-md-6 input-field use-premium-tooltip">
-							<input disabled onchange="changeColumnMobile(this)" id="<?php echo esc_attr( 'scc_title_column_mobl_r-' . $el->id ); ?>" onkeyup="changeColumnMobile(this)" class="scc_title_column_mobl" min="1" max="12" name="scc_title_column_mobl" type="number" value="<?php echo intval( $el->titleColumnMobile ); ?>">
-							<label class="active form-label fw-bold" for="<?php echo esc_attr( 'scc_title_column_mobl_r-' . $el->id ); ?>" title="Please enter a number between 1 and 12. 1 being the smallest and 12 being the largest, for your title. If you have a large title, we recommend between 6 and 12.">Title column (mobile)</label>
+				<div class="scc-accordion-tooltip px-0 scc-responsive-options-block" style="width: 100%; text-align:left;">
+					<span style="text-align: left;display: block;font-size:16px;margin-bottom:10px;">Responsive Options 
+					<i
+						data-element-tooltip-type="responsive-options-tt"
+						class="material-icons-outlined more-settings-info"
+						style="margin-right:5px">
+						<span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ); ?></span>
+					</i>
+					</span>
+					<div class="row tooltip-settings-wrapper scc-responsive-options-panel p-3 rounded">
+						<div class="col-md-12 p-0">
+							<div class="row gx-2">
+								<div class="col-md-6 input-field use-premium-tooltip">
+									<input disabled onchange="changeColumnDesktop(this)" id="<?php echo esc_attr( 'scc_title_column_dskp_r-' . $el->id ); ?>" onkeyup="changeColumnDesktop(this)" class="scc_title_column_dskp" min="1" max="12" name="scc_title_column_dskp" type="number" value="<?php echo intval( $el->titleColumnDesktop ); ?>">
+									<label class="active form-label fw-bold" for="<?php echo esc_attr( 'scc_title_column_dskp_r-' . $el->id ); ?>" title="Please enter a number between 1 and 12. 1 being the smallest and 12 being the largest, for your title. If you have a large title, we recommend between 6 and 12.">Title column (desktop)</label>
+								</div>
+								<div class="col-md-6 input-field use-premium-tooltip">
+									<input disabled onchange="changeColumnMobile(this)" id="<?php echo esc_attr( 'scc_title_column_mobl_r-' . $el->id ); ?>" onkeyup="changeColumnMobile(this)" class="scc_title_column_mobl" min="1" max="12" name="scc_title_column_mobl" type="number" value="<?php echo intval( $el->titleColumnMobile ); ?>">
+									<label class="active form-label fw-bold" for="<?php echo esc_attr( 'scc_title_column_mobl_r-' . $el->id ); ?>" title="Please enter a number between 1 and 12. 1 being the smallest and 12 being the largest, for your title. If you have a large title, we recommend between 6 and 12.">Title column (mobile)</label>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 				<?php } ?>
 				<?php if ( in_array( $el->type, [ 'checkbox' ] ) ) { ?>
-				<div class="scc-accordion-tooltip px-0" style="width: 100%; text-align:left;">
+				<div class="scc-accordion-tooltip px-0 scc_checkbox_columns_option" style="width: 100%; text-align:left; <?php echo ( $el->value1 == 6 || $el->value1 == 9 || $el->value1 == 8 ) ? 'display:none;' : ''; ?>">
 					<span style="text-align: left;display: block;font-weight:bold">Checkbox Columns</span>
-					<div class="row gx-0">
-						<select onchange="changeColumnsCheckbox(this)" name="" id="" style="width: 100%; min-width: 100%;">
+					<div class="scc-checkbox-columns-panel">
+						<div class="row gx-2 scc-edit-input-option-wrapper">
+							<div class="col-md-6 p-0">
+								<select onchange="changeColumnsCheckbox(this)" class="form-select" name="" id="">
 							<option value="1" 
 							<?php
                     if ( $el->value2 == '1' ) {
@@ -506,7 +513,9 @@ class Stylish_Cost_Calculator_Edit_Page {
 				    }
 				    ?>
 							 >Three</option>
-						</select>
+								</select>
+							</div>
+						</div>
 					</div>
 				</div>
 				<?php } 
@@ -1213,7 +1222,7 @@ class Stylish_Cost_Calculator_Edit_Page {
         $el       = (object) meks_wp_parse_args( $el, $defaults );
         ob_start();
         ?>
-	<div class="scc-element-content checkbox-content" data-element-setup-type="<?php echo esc_attr( $el->type ); ?>" value="selectoption" style="
+	<div class="scc-element-content checkbox-content" data-element-setup-type="<?php echo esc_attr( $el->type ); ?>" data-multi-select="<?php echo intval( $el->value1 !== '7' ); ?>" value="selectoption" style="
 		<?php
         if ( ! $this->is_from_ajax ) {
             echo 'display:none;';
@@ -1224,9 +1233,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 		<!-- Simple Buttons - ELEMENT -->
 		<div class="slider-setup-body">
 		<label class="form-label fw-bold" title="For checkboxes, this will not appear on the frontend. Its for internal references only.">Title (Internal reference only)</label>
-			<div class="input-group mb-3">
-			<input type="text" class="form-control" onkeyup="clickedTitleElement(this)" value="<?php echo esc_attr( wp_unslash( $el->titleElement ) ); ?>">
-		</div>
+			<?php echo $this->renderElementTitle( $el, false ); ?>
 		<div class="row g-3 edit-field scc-quantity-input">
 			<div class="col col-md-4">
 				<label class="form-label fw-bold" style="align-items: center;
@@ -1289,15 +1296,39 @@ class Stylish_Cost_Calculator_Edit_Page {
 														</div>
 									</div>
 		<!-- Image Button & Checkboxes & Simple Buttons Elements - (Pulled from DB) -->
-		<div class="selectoption_2 col-xs-12 col-md-12" style="margin-top:20px;">
+		<div class="scc-items-container selectoption_2 scc-selectoption_2 col-xs-12 col-md-12 checkbox-wrapper mb-3" style="margin-top:20px;">
 			<?php
-            foreach ( $el->elementitems as $key => $elit ) {
+            $sorted_element_items = array_fill( 0, count( $el->elementitems ), null );
+
+            foreach ( $el->elementitems as $element ) {
+                $empty_indexes = array_keys( array_filter( $sorted_element_items, function ( $sorted_element ) {
+                    return is_null( $sorted_element );
+                } ) );
+                $is_target_index_filled_up = isset( $sorted_element_items[ intval( $element->order ) ] ) ? ( ! is_null( $sorted_element_items[ intval( $element->order ) ] ) ) : false;
+
+                if ( $is_target_index_filled_up ) {
+                    $sorted_element_items[ intval( $empty_indexes[0] ) ] = $element;
+                } else {
+                    $sorted_element_items[ intval( $element->order ) ] = $element;
+                }
+            }
+
+            foreach ( $sorted_element_items as $key => $elit ) {
+                $element_item_id = 0;
+                if ( is_object( $elit ) && isset( $elit->id ) ) {
+                    $element_item_id = intval( $elit->id );
+                } elseif ( is_array( $elit ) && isset( $elit['id'] ) ) {
+                    $element_item_id = intval( $elit['id'] );
+                }
+                if ( empty( $elit ) || $element_item_id === 0 ) {
+                    continue;
+                }
                 $count = $key + 1;
                 echo $this->checkbox_setup_checkbox_item( $count, $elit, $el->value1 == 8 );
             }
         ?>
 		</div>
-		<div style="margin-top:5px;"><a onclick="addCheckboxItems(this)" data-type="<?php echo ( $el->value1 == 8 ) ? 'image-button' : 'otro'; ?>" class="crossnadd" style="margin-top:5px;margin-bottom:20px;">+ Item </a>
+		<div style="margin-top:5px;"><a onclick="addCheckboxItems(this)" data-type="<?php echo ( $el->value1 == 8 ) ? 'image-button' : 'otro'; ?>" class="crossnadd scc-element-item-action-link" style="margin-top:5px;margin-bottom:20px;">+ Item </a>
 		</div>
 		</div>
 		</div>
@@ -1573,33 +1604,42 @@ class Stylish_Cost_Calculator_Edit_Page {
         $elit     = (object) wp_parse_args( $elit, $defaults );
         ob_start();
         ?>
-		<div class="row m-0 selopt3 col-md-12 col-xs-12" style="margin-bottom:5px;padding:0px;">
-					<div class="row" style="margin:0; padding: 0;">
-						<div class="row p-0 m-0 mt-2 col-md-12 col-xs-12">
-							<input class="666 swichoptionitem_id" type="text" value="<?php echo intval( $elit->id ); ?>" hidden>
-							<div class="scc-input 123 el_1 col-xs-1 col-md-1 
-																			<?php
-                                                                            if ( $elit->opt_default == '1' ) {
-                                                                                echo 'is-set-default';
-                                                                            }
-        ?>
-																			" id="dropdownOpt" style="padding:0px;">
-								<label class="scc-elm-num-lbl"><?php echo intval( $count ); ?></label>
+		<div class="scc-item-field-container <?php echo $this->is_from_ajax ? 'green_shutter' : 'gray_shutter'; ?>" data-element-item-id="<?php echo intval( $elit->id ); ?>">
+			<div style="padding:7px;" class="scc-row d-flex justify-content-between" role="button" onclick="javascript:if (event.target !== event.currentTarget) return; collapseElementBoxTitle(this.querySelector('.element-box-title-desc'))">
+				<div class="element-box-title-desc" role="button" onclick="javascript:if (event.target !== event.currentTarget) return; collapseElementBoxTitle(this.closest('.element-box-title-desc'))">
+					<div class="display_title_<?php echo intval( $elit->id ); ?>"><?php echo stripslashes( wp_kses( $elit->name, SCC_ALLOWTAGS ) ); ?></div>
+				</div>
+				<div class="element-action-icons">
+					<label class="scc-accordion_switch_button tooltipadmin-left <?php echo ( $elit->opt_default == '1' ) ? 'is-set-default' : ''; ?>" <?php echo ( $elit->opt_default == '1' ) ? 'data-selected="true"' : 'data-tooltip="Set as Default Option on Load."'; ?>>
+						<input data-bs-original-title="Preselected: make this item selected on page load." type="checkbox" class="dd-item-def-checkbox" style="width: 80%;" <?php echo ( $elit->opt_default == '1' ) ? 'checked data-selected="true"' : ''; ?> onchange="setDefaultOption(this, true, true)">
+						<span class="scc-accordion_toggle_button round"></span>
+					</label>
+					<i class="material-icons-outlined scc-element-box-icons" onclick="javascript:collapseElementBox(this)" data-bs-original-title="Expand or collapse this item"><?php echo $this->is_from_ajax ? 'expand_less' : 'expand_more'; ?></i>
+					<i class="material-icons-outlined with-tooltip scc-element-box-icons" onclick="removeSwitchOptionDropdown(this, true)" title="" data-bs-original-title="Delete this item"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['trash-2'] ?? $this->scc_icons['trash'] ); ?></span></i>
+				</div>
+			</div>
+			<div class="scc-element-box-content" style="<?php if ( ! $this->is_from_ajax ) { echo 'display:none;'; } ?>">
+				<input class="swichoptionitem_id" type="text" value="<?php echo intval( $elit->id ); ?>" hidden>
+				<div class="row">
+					<div class="col-md-12 p-0">
+						<div class="row">
+							<div class="col-md-8">
+								<input type="text" onkeyup="changeNameElementItem(this, true)" class="form-control scc-input" value="<?php echo stripslashes( wp_kses( $elit->name, SCC_ALLOWTAGS ) ); ?>" placeholder="Product or service name">
 							</div>
-							<div class="col-md-6 col-xs-6 el_2" style="padding: 0px 5px 0px 1px;">
-								<input type="text" onkeyup="changeNameElementItem(this)" class="input_pad inputoption scc-input" style="width:100%;" value="<?php echo stripslashes( wp_kses( $elit->name, SCC_ALLOWTAGS ) ); ?>" placeholder="Product or service name">
-							</div>
-							<div class="col-md-4 d-flex scc-input-icon scc-input" style="padding:0px;">
-								<span class="input-group-text"><?php echo df_scc_get_currency_symbol_by_currency_code( $this->df_scc_form_currency ); ?></span>
-								<input type="number" onchange="changePriceElementItem(this)" onkeyup="changePriceElementItem(this)" class="input_pad inputoption_2" style="width:100%;text-align:center;height:35px;" placeholder="Price" value="<?php echo floatval( $elit->price ); ?>">
-							</div>
-							<div class="col-md-1 col-xs-1" style="padding-left: 0;">
-								<button onclick="removeSwitchOptionDropdown(this)" class="deleteBackendElmnt"><i class="fa fa-trash"></i></button>
+							<div class="col-md-4 d-inline-flex scc-input-icon">
+								<span class="input-group-text" style="height: 45px;border-radius: 6px 0px 0px 6px"><?php echo df_scc_get_currency_symbol_by_currency_code( $this->df_scc_form_currency ); ?></span>
+								<input type="number" onchange="changePriceElementItem(this, true)" onkeyup="changePriceElementItem(this, true)" class="form-control check-zero-amount-input" value="<?php echo floatval( $elit->price ); ?>" data-currency-input=1>
 							</div>
 						</div>
-						<!-- < -->
+						<div class="row">
+							<div class="col-md-12 col-xs-6 pb-2">
+								<input type="text" onkeyup="changeDescriptionElementItem(this, true)" class="input_pad scc_inputoption_desc" placeholder="Description" value="<?php echo stripslashes( wp_kses( $elit->description, SCC_ALLOWTAGS ) ); ?>">
+							</div>
+						</div>
 					</div>
 				</div>
+			</div>
+		</div>
 		<?php
         $html = ob_get_clean();
 
@@ -1754,8 +1794,8 @@ class Stylish_Cost_Calculator_Edit_Page {
 			<!-- CONTENIDO DE CADA ELEMENTO -->
 			<!-- ELEMENT -->
 			<label class="form-label fw-bold">Title</label>
-			<?php 
-				echo $this->renderElementTitle( $el ); ?>
+			<?php
+				echo $this->renderElementTitle( $el, false ); ?>
 			<div class="col-12 mb-3 edit-field" style=" width: 100%;">
 				<div class="col scc-input-icon col-md-4 scc-pm-0">
 					<label class="form-label fw-bold">Date Type</label> <i style="margin-top:-10px;" class="material-icons-outlined v-align-middle" data-element-tooltip-type="date-picker-types-tt">
@@ -1859,16 +1899,19 @@ class Stylish_Cost_Calculator_Edit_Page {
     }
 
 	//this function render the element title input
-    public function renderElementTitle( $el ) {
+    public function renderElementTitle( $el, $showTitleIconButton = true ) {
         ob_start();
         ?>
-		<div class="input-group d-inline-flex scc-input-icon scc-title-icon mb-3">
+		<div class="input-group<?php echo $showTitleIconButton ? ' d-inline-flex scc-input-icon scc-title-icon' : ''; ?> mb-3">
+			<?php if ( $showTitleIconButton ) { ?>
 			<?php echo $this->renderTitleIconButton( $el, 'element' ); ?>
+			<?php } ?>
 			<input type="text"
 				   name="scc-element-title-field"
-				   class="scc-element-title-field" 
+				   class="<?php echo $showTitleIconButton ? 'scc-element-title-field' : 'input_pad scc-element-title-field'; ?>"
 			       onkeyup="clickedTitleElement(this)"
 				   placeholder="Title"
+				   style="<?php echo $showTitleIconButton ? '' : 'height:35px;width:100%;margin:0;'; ?>"
 				   value="<?php echo stripslashes( htmlentities( $el->titleElement ) ); ?>"
 			>
 		</div>
@@ -2891,33 +2934,50 @@ class Stylish_Cost_Calculator_Edit_Page {
         if ( ! $this->is_from_ajax ) {
             echo 'display:none;';
         }
+        $sorted_element_items = array_fill( 0, count( $el->elementitems ), null );
+
+        foreach ( $el->elementitems as $element ) {
+            $empty_indexes = array_keys( array_filter( $sorted_element_items, function ( $sorted_element ) {
+                return is_null( $sorted_element );
+            } ) );
+            $is_target_index_filled_up = isset( $sorted_element_items[ intval( $element->order ) ] ) ? ( ! is_null( $sorted_element_items[ intval( $element->order ) ] ) ) : false;
+
+            if ( $is_target_index_filled_up ) {
+                $sorted_element_items[ intval( $empty_indexes[0] ) ] = $element;
+            } else {
+                $sorted_element_items[ intval( $element->order ) ] = $element;
+            }
+        }
         ?>
 			 height:auto">
-			<!-- CONTENIDO DE CADA ELEMENTO -->
-			<!-- ELEMENT -->
 			<div class="slider-setup-body">
-			<label class="form-label fw-bold">Title</label>
-			<div class="input-group mb-3"><input type="text" onkeyup="clickedTitleElement(this)" style="height:35px;width:100%;" placeholder="Title" value="<?php echo stripslashes( htmlentities( $el->titleElement ) ); ?>"></div>
-			<!-- Dropdown Menu Element - ELEMENTS INSIDE ELEMENTS -->
-			<div class="col-titles">
-				<div class="row g-3 dd-item-edit-field">
-				<div class="col-md-7">
-					<label class="form-label fw-bold">Items</label>
+				<label class="form-label fw-bold">Title</label>
+				<?php echo $this->renderElementTitle( $el, false ); ?>
+				<div class="col-titles">
+					<div class="row g-3 dd-item-edit-field">
+						<div class="col-md-7">
+							<label class="form-label fw-bold">Items</label>
+						</div>
+					</div>
 				</div>
-				<div class="col-md-2">
-					<label class="form-label fw-bold">Unit Price</label>
+				<div class="scc-items-container selectoption_2 scc-selectoption_2 col-xs-12 col-md-12 mb-3">
+					<?php foreach ( $sorted_element_items as $key => $elit ) { ?>
+						<?php
+                        $element_item_id = 0;
+                        if ( is_object( $elit ) && isset( $elit->id ) ) {
+                            $element_item_id = intval( $elit->id );
+                        } elseif ( is_array( $elit ) && isset( $elit['id'] ) ) {
+                            $element_item_id = intval( $elit['id'] );
+                        }
+                        if ( empty( $elit ) || $element_item_id === 0 ) {
+                            continue;
+                        }
+                        echo $this->element_setup_part_dropdown_item_beta( $key, $elit );
+                        ?>
+					<?php } ?>
 				</div>
-				</div>
+				<a onclick="addOptiontoSelect(this)" class="crossnadd scc-element-item-action-link">+ Item</a>
 			</div>
-			<div class="selectoption_2 col-xs-12 col-md-12">
-				<?php foreach ( $el->elementitems as $key => $elit ) { ?>
-					<?php echo true ? $this->element_setup_part_dropdown_item_beta( $key, $elit ) : $this->element_setup_part_dropdown_item( $key, $elit ); ?>
-					<?php
-				}
-        ?>
-			</div>
-			<a onclick="addOptiontoSelect(this)" class="crossnadd" style="margin-top:5px;margin-bottom:20px;">+ Item </a>
-				</div>
 		</div>
 		<div class="scc-element-content"  value="selectoption" style="
 		<?php
@@ -3189,11 +3249,7 @@ class Stylish_Cost_Calculator_Edit_Page {
             'opt_default'           => '0',
         ];
         $elit     = (object) wp_parse_args( $elit, $defaults );
-
-        if ( $this->is_from_ajax ) {
-            $elit = (object) $elit;
-            ob_start();
-        }
+        ob_start();
         ?>
 		<div class="row m-0 selopt3 col-md-12 col-xs-12" style="margin-top:10px;padding:0px">
 			<div class="row p-0 m-0 col-md-11 col-xs-11">
@@ -3257,70 +3313,84 @@ class Stylish_Cost_Calculator_Edit_Page {
             ob_start();
         }
         ?>
-		<div class="dd-item-field-container" data-element-item-id="<?php echo intval( $elit->id ); ?>">
-			<div class="row g-3 dd-item-edit-field">
-				<div class="col-md-1">
-					
+		<div class="dd-item-field-container scc-item-field-container <?php echo $this->is_from_ajax ? 'green_shutter' : 'gray_shutter'; ?>" data-element-item-id="<?php echo intval( $elit->id ); ?>">
+			<div style="padding:7px;" class="scc-row d-flex justify-content-between" role="button" onclick="javascript:if (event.target !== event.currentTarget) return; collapseElementBoxTitle(this.querySelector('.element-box-title-desc'))">
+				<div class="element-box-title-desc" role="button" onclick="javascript:if (event.target !== event.currentTarget) return; collapseElementBoxTitle(this.closest('.element-box-title-desc'))">
+					<div class="display_title_<?php echo intval( $elit->id ); ?>"><?php echo stripslashes( wp_kses( $elit->name, SCC_ALLOWTAGS ) ); ?></div>
 				</div>
-				<div class="col-md-6 scc-dd-title-column">
-					<input type="text" class="form-control scc-input" onkeyup="changeNameElementItem(this, true)" value="<?php echo stripslashes( wp_kses( $elit->name, SCC_ALLOWTAGS ) ); ?>">
-				</div>
-				<div class="col-md-2 d-inline-flex scc-input-icon">
-					<span class="input-group-text" style="height: fit-content;"><?php echo df_scc_get_currency_symbol_by_currency_code( $this->df_scc_form_currency ); ?></span>
-					<input type="number" onchange="changePriceElementItem(this, true)" class="form-control" value="<?php echo floatval( $elit->price ); ?>">
-				</div>
-				<i onclick="removeSwitchOptionDropdown(this, true)" class="material-icons-outlined range-close-btn">close</i>
-			</div>
-			<div class="row g-3">
-				<span class="col-xs-0 col-md-2 image_container scc-dd-image-container">
-					<img class="scc-image-picker" style="height: 80px;width:80px" onclick="choseImageElementItem(this)" src="<?php echo ( $elit->value1 == null || $elit->value1 == '0' ) ? SCC_ASSETS_URL . '/images/image.png' : $elit->value1; ?>" title="Pick an image. Please choose an image with a 1:1 aspect ratio for best results.">
-					<span class="scc-dropdown-image-remove" style="" onclick="removeDropdownImage(this, true)">x</span>
-				</span>
-				<div class="col-md-10 col-xs-6">
-					<textarea onkeyup="changeDescriptionElementItem(this, true)" class="input_pad inputoption_desc" style="width:100%;height:75px;" placeholder="Description"><?php echo stripslashes( wp_kses( $elit->description, SCC_ALLOWTAGS ) ); ?></textarea>
+				<div class="element-action-icons">
+					<label class="scc-accordion_switch_button tooltipadmin-left <?php echo ( $elit->opt_default == '1' ) ? 'is-set-default' : ''; ?>" <?php echo ( $elit->opt_default == '1' ) ? 'data-selected="true"' : 'data-tooltip="Set as Default Option on Load."'; ?>>
+						<input data-bs-original-title="Preselected: make this item selected on page load." type="checkbox" class="dd-item-def-checkbox" style="width: 80%;" <?php echo ( $elit->opt_default == '1' ) ? 'checked data-selected="true"' : ''; ?> onchange="setDefaultOption(this, false, true)">
+						<span class="scc-accordion_toggle_button round"></span>
+					</label>
+					<i class="material-icons-outlined scc-element-box-icons" onclick="javascript:collapseElementBox(this)" data-bs-original-title="Expand or collapse this item"><?php echo $this->is_from_ajax ? 'expand_less' : 'expand_more'; ?></i>
+					<i class="material-icons-outlined with-tooltip scc-element-box-icons" onclick="removeSwitchOptionDropdown(this, true)" title="" data-bs-original-title="Delete this item"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['trash-2'] ?? $this->scc_icons['trash'] ); ?></span></i>
 				</div>
 			</div>
-			<div class="col-12 mb-3 edit-field" data-edit-field-type="wc_choices" style="width: 105%;">
-														<?php if ( ! empty( $this->woo_commerce_products ) ) { ?>
-															<label class="form-label fw-bold"><img class="scc-woo-logo" src="<?php echo esc_url_raw( SCC_ASSETS_URL . '/images/logo-woocommerce.svg' ); ?>" title="Pick an item from your WooCommerce products to link to."></label>
-															<!--WooCommerce for Slider Element-->
-															<select class="form-select w-100" data-target="elements_added" onchange="attachProductId(this, null, null, true)">
-																<option style="font-size: 10px" value=0>Select a product..</option>
-																<?php
-                                                                foreach ( $this->woo_commerce_products as $product ) {
-                                                                    ?>
-																	<?php
-                                                                    if ( $product->is_type( 'variable' ) ) {
-                                                                        $available_variations = $product->get_available_variations();
+			<div class="scc-element-box-content" style="<?php if ( ! $this->is_from_ajax ) { echo 'display:none;'; } ?>">
+				<input class="swichoptionitem_id" type="text" value="<?php echo intval( $elit->id ); ?>" hidden>
+				<div class="row">
+					<div class="col-md-2">
+						<span class="image_container">
+							<img class="scc-image-picker scc-image-picker-shape" onclick="choseImageElementItem(this)" src="<?php echo ( $elit->value1 == null || $elit->value1 == '0' ) ? SCC_ASSETS_URL . '/images/image.png' : $elit->value1; ?>" title="Pick an image. Please choose an image with a 1:1 aspect ratio for best results.">
+							<span class="scc-dropdown-image-remove" onclick="removeDropdownImage(this, true)">x</span>
+						</span>
+					</div>
+					<div class="col-md-10">
+						<div class="row">
+							<div class="col-md-8">
+								<input type="text" class="form-control scc-input" onkeyup="changeNameElementItem(this, true)" value="<?php echo stripslashes( wp_kses( $elit->name, SCC_ALLOWTAGS ) ); ?>">
+							</div>
+							<div class="col-md-4 d-inline-flex scc-input-icon">
+								<span class="input-group-text" style="height: 45px;border-radius: 6px 0px 0px 6px"><?php echo df_scc_get_currency_symbol_by_currency_code( $this->df_scc_form_currency ); ?></span>
+								<input type="number" onchange="changePriceElementItem(this, true)" onkeyup="changePriceElementItem(this, true)" class="form-control check-zero-amount-input" value="<?php echo floatval( $elit->price ); ?>" data-currency-input=1>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 col-xs-6 pb-2">
+								<input type="text" onkeyup="changeDescriptionElementItem(this, true)" class="input_pad scc_inputoption_desc" placeholder="Description" value="<?php echo stripslashes( wp_kses( $elit->description, SCC_ALLOWTAGS ) ); ?>">
+							</div>
+						</div>
+					</div>
+				</div>
+				<?php if ( ! empty( $this->woo_commerce_products ) ) { ?>
+					<div class="col-12 mb-3 edit-field" data-edit-field-type="wc_choices" style="width: 100%;padding-left:12px;">
+						<label class="form-label fw-bold">
+							<img class="scc-woo-logo" src="<?php echo esc_url_raw( SCC_ASSETS_URL . '/images/logo-woocommerce.svg' ); ?>" title="Pick an item from your WooCommerce products to link to.">
+						</label>
+						<select class="form-select w-100" data-target="elements_added" onchange="attachProductId(this, <?php echo intval( $elit->id ); ?>)">
+							<option style="font-size: 10px" value=0>Select a product..</option>
+							<?php
+                            foreach ( $this->woo_commerce_products as $product ) {
+                                if ( $product->is_type( 'variable' ) ) {
+                                    $available_variations = $product->get_available_variations();
 
-                                                                        foreach ( $available_variations as $product_variable ) {
-                                                                            $attributes = [];
+                                    foreach ( $available_variations as $product_variable ) {
+                                        $attributes = [];
 
-                                                                            foreach ( $product_variable['attributes'] as $key => $value ) {
-                                                                                $attributes[] = $product->get_name() . ': ' . $value;
-                                                                            }
-                                                                            ?>
-																			<option value=<?php echo esc_html( $product_variable['variation_id'] ); ?> <?php echo selected( $product->get_id() == intval( $elit->woocomerce_product_id ) ); ?>><?php echo esc_html( implode( ' | ', $attributes ) ) . ' | Price: ' . get_woocommerce_currency_symbol() . '' . esc_html( $product_variable['display_regular_price'] ); ?></option>
-																			<?php
-                                                                        }
-                                                                    } else {
-                                                                        ?>
-																		<option value=<?php echo esc_html( $product->get_id() ); ?> <?php echo selected( $product->get_id() == intval( $elit->woocomerce_product_id ) ); ?>><?php echo esc_html( $product->get_name() ) . ' | Price: ' . get_woocommerce_currency_symbol() . '' . esc_html( $product->get_price() ); ?></option>
-																		<?php
-                                                                    }
-                                                                }
-														    ?>
-															</select>
-															<i class="material-icons-outlined v-align-middle">info</i>
-														<?php } ?>
-													</div>
+                                        foreach ( $product_variable['attributes'] as $key => $value ) {
+                                            $attributes[] = $product->get_name() . ': ' . $value;
+                                        }
+                                        ?>
+										<option value=<?php echo esc_html( $product_variable['variation_id'] ); ?> <?php echo selected( $product->get_id() == intval( $elit->woocomerce_product_id ) ); ?>><?php echo esc_html( implode( ' | ', $attributes ) ) . ' | Price: ' . get_woocommerce_currency_symbol() . '' . esc_html( $product_variable['display_regular_price'] ); ?></option>
+										<?php
+                                    }
+                                } else {
+                                    ?>
+									<option value=<?php echo esc_html( $product->get_id() ); ?> <?php echo selected( $product->get_id() == intval( $elit->woocomerce_product_id ) ); ?>><?php echo esc_html( $product->get_name() ) . ' | Price: ' . get_woocommerce_currency_symbol() . '' . esc_html( $product->get_price() ); ?></option>
+									<?php
+                                }
+                            }
+                            ?>
+						</select>
+					</div>
+				<?php } ?>
+			</div>
 		</div>
 		<?php
-        if ( $this->is_from_ajax ) {
-            $html = ob_get_clean();
+        $html = ob_get_clean();
 
-            return $html;
-        }
+        return $html;
     }
 
     public function renderElementLoader() {

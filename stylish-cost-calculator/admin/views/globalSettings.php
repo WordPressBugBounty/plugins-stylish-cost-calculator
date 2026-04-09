@@ -62,7 +62,7 @@ class Stylish_Cost_Calculator_Settings {
             'action_cb'     => 'updateStripeKey(this)',
         ];
         $pdfFooterField              = [
-            'name'       => 'Detailed List/PDF Settings',
+            'name'       => 'Footer: Detailed List & PDF',
             'fields'     => [
                 'pdf_footer_notes',
             ],
@@ -146,7 +146,15 @@ class Stylish_Cost_Calculator_Settings {
         ];
         ?>
 		<div class="container-fluid" id="scc-global-settings">
-			<button type="button" class="btn btn-primary btn-lg" style="margin-top:15px;"><a class="lead text-decoration-none" id="coupon-page" style="color:#fff" href="<?php echo get_admin_url() . 'admin.php?page=scc-coupons-management'; ?>">Manage Coupons</a></button>
+			<?php if ( (int) get_option( 'df_scc_licensed', 0 ) === 1 ) { ?>
+				<a class="btn btn-primary btn-lg text-decoration-none" id="coupon-page" style="margin-top:15px; color:#fff;" href="<?php echo esc_url( get_admin_url() . 'admin.php?page=scc-coupons-management' ); ?>">Manage Coupons</a>
+			<?php } else { ?>
+				<div class="scc-coupon-premium-cta-wrapper" style="display:inline-block; cursor:not-allowed;">
+					<button id="coupon-page" type="button" class="btn btn-primary btn-lg scc-coupon-premium-cta scc-premium-badge" aria-disabled="true" aria-label="You need to purchase a premium license to use this feature." onclick="event.preventDefault(); return false;">
+						<span class="scc-coupon-premium-cta-label">Manage Coupons</span>
+					</button>
+				</div>
+			<?php } ?>
 			<div class="accordion mt-2" id="settings-page-accordion">
 				<?php
                     $global_settings_sections_order = [
@@ -184,6 +192,262 @@ class Stylish_Cost_Calculator_Settings {
 			}
 			.accordion-collapse.collapse.show .accordion-body {
 				padding: 4rem 1.25rem;
+			}
+			.scc-coupon-premium-cta-wrapper {
+				margin-top: 15px;
+				display: inline-block;
+				cursor: not-allowed;
+			}
+			.scc-coupon-premium-cta {
+				display: inline-flex;
+				align-items: center;
+				justify-content: flex-start;
+				gap: 0;
+				min-width: 236px;
+				padding: 0 46px 0 18px;
+				border-radius: 14px;
+				box-shadow: 0 10px 24px rgba(49, 74, 243, 0.15);
+				overflow: hidden;
+				position: relative;
+			}
+			.scc-coupon-premium-cta:disabled {
+				opacity: 1;
+			}
+				.scc-coupon-premium-cta-label {
+					line-height: 1;
+					white-space: nowrap;
+				}
+				#scc-global-settings .accordion-button {
+					align-items: center;
+				}
+					#scc-global-settings .scc-settings-card-title {
+						display: inline-flex;
+						align-items: center;
+						gap: 8px;
+						line-height: 1;
+					}
+					#scc-global-settings .accordion-button::after {
+						align-self: center;
+					}
+					#scc-global-settings .scc-settings-card-title a.material-icons-outlined {
+						display: inline-flex;
+						align-items: center;
+						justify-content: center;
+						line-height: 1;
+						text-decoration: none;
+					}
+					#scc-global-settings .scc-settings-card-title .scc-settings-card-icon,
+					#scc-global-settings .scc-settings-card-title .material-icons-outlined,
+					#scc-global-settings .scc-settings-card-title .scc-icn-wrapper {
+						display: inline-flex;
+						align-items: center;
+						justify-content: center;
+						line-height: 1;
+					margin-left: 0 !important;
+				}
+			.scc-coupon-premium-cta.scc-premium-badge::after {
+				right: -1px;
+				top: -1px;
+				width: 40px;
+				height: 40px;
+				border-start-end-radius: 0;
+				border-start-start-radius: 0;
+				border-end-start-radius: 0;
+				border-end-end-radius: 0;
+				color: #000;
+				background-color: #ffab03;
+					clip-path: polygon(0 0, 100% 0, 100% 100%);
+					line-height: 28px;
+					padding-left: 16px;
+				}
+			#scc-global-settings .scc-premium-field-lock {
+				cursor: not-allowed;
+			}
+			#scc-global-settings .scc-premium-field-lock select.form-select.form-select-lg:disabled {
+				opacity: 1;
+				cursor: not-allowed;
+				background-color: #f8fafc;
+				border-color: #d6dde8;
+				color: #6c757d;
+			}
+			#scc-global-settings .scc-settings-card-note {
+				margin: 0 0 24px;
+				white-space: pre-line;
+			}
+			#scc-global-settings .scc-global-settings-card--currency_settings .scc-global-settings-field {
+				margin-bottom: 28px;
+			}
+			#scc-global-settings .scc-global-settings-card--currency_settings .scc-global-settings-field:last-of-type {
+				margin-bottom: 24px;
+			}
+			#scc-global-settings .scc-global-settings-card--currency_settings label.col-form-label {
+				display: block;
+				width: 100%;
+				max-width: none;
+				margin-bottom: 12px;
+				padding: 0;
+				font-size: 16px;
+				font-weight: 600;
+				line-height: 1.45;
+				color: #0f172a;
+			}
+			#scc-global-settings .scc-global-settings-card--currency_settings .scc-global-settings-field-control {
+				position: relative;
+				width: 100%;
+				max-width: 100%;
+			}
+			#scc-global-settings .scc-global-settings-card--currency_settings .scc-global-settings-field-control .form-select.form-select-lg {
+				width: 100%;
+				max-width: 100%;
+				min-height: 56px;
+				border: 1px solid #d6dde8;
+				border-radius: 16px;
+				background: #fff;
+				box-shadow: none;
+				font-size: 16px;
+				line-height: 1.4;
+				color: #475569;
+				padding: 14px 48px 14px 20px;
+			}
+			#scc-global-settings .scc-global-settings-card--currency_settings .scc-global-settings-field-control .form-select.form-select-lg:focus,
+			#scc-global-settings .scc-global-settings-card--currency_settings .scc-global-settings-field-control .form-select.form-select-lg:focus-visible {
+				border-color: #aeb8cb;
+				box-shadow: none;
+			}
+			#scc-global-settings .scc-global-settings-card--currency_settings .scc-global-settings-field-control.scc-premium-badge {
+				overflow: hidden;
+			}
+			#scc-global-settings .scc-global-settings-card--currency_settings .scc-global-settings-field-control.scc-premium-badge::after {
+				z-index: 2;
+				border-start-end-radius: 8px;
+			}
+			#scc-global-settings .scc-global-settings-card--currency_settings .scc-global-settings-field-control.scc-premium-badge .form-select.form-select-lg:disabled {
+				background-image: none;
+				padding-right: 20px;
+			}
+			#scc-global-settings .scc-global-settings-card--currency_settings .scc-settings-card-note {
+				color: #1d4ed8;
+				font-size: 16px;
+				line-height: 1.65;
+			}
+			#scc-global-settings .scc-global-settings-premium-overlay {
+				position: absolute;
+				inset: 0;
+				z-index: 100;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				padding: 24px;
+				background:
+					linear-gradient(180deg, rgba(103, 116, 137, 0.74) 0%, rgba(67, 78, 99, 0.86) 100%);
+				backdrop-filter: blur(6px);
+			}
+			#scc-global-settings .accordion-body.scc-global-settings-premium-locked {
+				min-height: 580px;
+			}
+			#scc-global-settings .scc-global-settings-premium-overlay__panel {
+				width: min(100%, 440px);
+				padding: 34px 32px 32px;
+				border: 1px solid rgba(255, 255, 255, 0.18);
+				border-radius: 28px;
+				background:
+					linear-gradient(180deg, rgba(42, 52, 70, 0.52) 0%, rgba(29, 39, 57, 0.72) 100%);
+				box-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
+				text-align: center;
+				color: #fff;
+			}
+			#scc-global-settings .scc-global-settings-premium-overlay__icon {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				width: 72px;
+				height: 72px;
+				margin: 0 auto 18px;
+				border: 4px solid rgba(255, 255, 255, 0.94);
+				border-radius: 999px;
+				background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+				box-shadow: 0 12px 28px rgba(37, 99, 235, 0.3);
+			}
+			#scc-global-settings .scc-global-settings-premium-overlay__icon svg {
+				width: 30px;
+				height: 30px;
+				stroke: #fff;
+			}
+			#scc-global-settings .scc-global-settings-premium-overlay__eyebrow {
+				display: block;
+				margin: 0 0 8px;
+				font-size: 12px;
+				font-weight: 700;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				color: rgba(226, 232, 240, 0.92);
+			}
+			#scc-global-settings .scc-global-settings-premium-overlay__title {
+				margin: 0 0 12px;
+				font-size: 32px;
+				font-weight: 700;
+				line-height: 1.15;
+				letter-spacing: -0.03em;
+				color: #fff;
+			}
+			#scc-global-settings .scc-global-settings-premium-overlay__text {
+				margin: 0 auto 24px;
+				max-width: 310px;
+				font-size: 17px;
+				font-weight: 500;
+				line-height: 1.6;
+				color: rgba(241, 245, 249, 0.94);
+			}
+			#scc-global-settings .scc-global-settings-premium-overlay__cta {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				gap: 10px;
+				min-height: 48px;
+				padding: 0 24px;
+				border-radius: 14px;
+				background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+				box-shadow: 0 16px 30px rgba(37, 99, 235, 0.26);
+				color: #fff;
+				font-size: 18px;
+				font-weight: 700;
+				text-decoration: none;
+				transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+			}
+			#scc-global-settings .scc-global-settings-premium-overlay__cta:hover,
+			#scc-global-settings .scc-global-settings-premium-overlay__cta:focus {
+				color: #fff;
+				transform: translateY(-1px);
+				box-shadow: 0 20px 36px rgba(37, 99, 235, 0.32);
+				filter: brightness(1.03);
+			}
+			#scc-global-settings .scc-global-settings-premium-overlay__cta svg {
+				width: 18px;
+				height: 18px;
+				flex: 0 0 auto;
+			}
+			#scc-global-settings .scc-global-settings-premium-overlay__cta i {
+				font-size: 18px;
+				line-height: 1;
+				flex: 0 0 auto;
+			}
+			@media (max-width: 767px) {
+				#scc-global-settings .accordion-body.scc-global-settings-premium-locked {
+					min-height: 520px;
+				}
+				#scc-global-settings .scc-global-settings-premium-overlay {
+					padding: 18px;
+				}
+				#scc-global-settings .scc-global-settings-premium-overlay__panel {
+					padding: 28px 20px 24px;
+					border-radius: 22px;
+				}
+				#scc-global-settings .scc-global-settings-premium-overlay__title {
+					font-size: 28px;
+				}
+				#scc-global-settings .scc-global-settings-premium-overlay__text {
+					font-size: 16px;
+				}
 			}
 		</style>
 		<script type="text/javascript">
@@ -243,12 +507,6 @@ class Stylish_Cost_Calculator_Settings {
 				}, 300)
 			}
 			handleEditBox();
-			document.addEventListener('DOMContentLoaded', (event) => {
-				new TomSelect("#currency_code",{
-				allowEmptyOption: false,
-				create: false
-			});
-			})
 			function toggleShortCodes() {
 				if (jQuery('#email_form_short_codes_section').css('display') === 'none') {
 					jQuery('#email_form_short_codes_section').css('display', 'block')
@@ -616,7 +874,7 @@ class Stylish_Cost_Calculator_Settings {
 					jQuery('#scc_currency_coversion_global_container').css('display', 'none')
 				} else {
 					jQuery('#currency_conversion_incompatibility_message').html('')
-					jQuery('#scc_currency_coversion_global_container').css('display', 'inline')
+					jQuery('#scc_currency_coversion_global_container').css('display', '')
 				}
 			}
 
@@ -629,14 +887,16 @@ class Stylish_Cost_Calculator_Settings {
         $settings_slug  = trim( $settings_slug, '_' );
         $settings_slug  = strtolower( $settings_slug );
         ?>
-		<div class="accordion-item" style="max-width: 40rem;">
+		<div class="accordion-item scc-global-settings-card scc-global-settings-card--<?php echo esc_attr( $settings_slug ); ?>" style="max-width: 40rem;">
 			<h2 class="accordion-header">
 			<button class="accordion-button py-4 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-<?php echo esc_attr( $settings_slug ); ?>" aria-expanded="true" aria-controls="<?php echo 'accordion-' . esc_attr( $settings_slug ); ?>">
-				<?php
-                echo isset( $card_props['icon'] ) ? '<i class="material-icons-outlined scc-icn-wrapper" style="margin-left:5px;">' . $card_props['icon'] . '</i>&nbsp;' : '';
-        echo sanitize_text_field( $card_props['name'] );
-        echo isset( $card_props['helpdesk_link'] ) ? ' ' . scc_get_kses_extended_ruleset( $card_props['helpdesk_link'] ) : '';
-        ?>
+				<span class="scc-settings-card-title">
+					<?php
+					echo isset( $card_props['icon'] ) ? '<i class="material-icons-outlined scc-icn-wrapper scc-settings-card-icon">' . $card_props['icon'] . '</i>' : '';
+					echo '<span class="scc-settings-card-title-text">' . sanitize_text_field( $card_props['name'] ) . '</span>';
+					echo isset( $card_props['helpdesk_link'] ) ? scc_get_kses_extended_ruleset( $card_props['helpdesk_link'] ) : '';
+					?>
+				</span>
 			</button>
 			</h2>
 			<div id="<?php echo 'accordion-' . esc_attr( $settings_slug ); ?>" class="accordion-collapse collapse" data-bs-parent="#settings-page-accordion">
@@ -644,13 +904,13 @@ class Stylish_Cost_Calculator_Settings {
 			<?php if ( isset( $card_props['hasShortcodes'] ) && $card_props['hasShortcodes'] ) { ?>
 						<div class="text-primary mb-0" role="button" onclick="toggleShortCodes()">Shortcodes</div>
 				<?php } ?>
-			<?php
+				<?php
         for ( $i = 0; $i < count( $card_props['fields'] ); $i++ ) {
             call_user_func( [ $this, 'field_' . $card_props['fields'][ $i ] ] );
         }
         ?>
 				<?php if ( isset( $card_props['notes'] ) ) { ?>
-					<p><?php echo esc_attr( $card_props['notes'] ); ?></p>
+					<p class="scc-settings-card-note"><?php echo esc_html( $card_props['notes'] ); ?></p>
 				<?php } ?>
 				<?php if ( isset( $card_props['action_btn'] ) && $card_props['action_cb'] ) { ?>
 				<div class="d-flex w-100 justify-content-between">
@@ -673,10 +933,10 @@ class Stylish_Cost_Calculator_Settings {
         $currency      = get_option( 'df_scc_currency', 'USD' );
         $currency_data = require SCC_DIR . '/lib/currency_data.php';
         ?>
-		 <div class="mb-3 row scc-currency">
-			<label for="currency_code" class="col-sm-5 col-form-label" data-setting-tooltip-type="currency-selector-tt">Currency</label>
-			<div class=" col-sm-7">
-			<select class="form-select form-select-lg mb-3" id="currency_code"   autocomplete="off" name="currency_code" class="form-control"  onchange="handleCurrency()">
+		 <div class="mb-3 scc-global-settings-field scc-currency">
+			<label for="currency_code" class="col-form-label" data-setting-tooltip-type="currency-selector-tt">Currency</label>
+			<div class="scc-global-settings-field-control">
+			<select class="form-select form-select-lg" id="currency_code" autocomplete="off" name="currency_code" onchange="handleCurrency()">
 				<option value="">Select one currency</option>			
 				<?php foreach ( $currency_data as $key => $value ) { ?>
 					<option value="<?php echo esc_attr( $value['code'] ); ?>" <?php echo ( $currency == $value['code'] ) ? 'selected' : ''; ?>><?php echo esc_attr( $value['currency'] ); ?></option>
@@ -691,16 +951,10 @@ class Stylish_Cost_Calculator_Settings {
         $currency_conversion_mode      = get_option( 'df_scc_currency_coversion_mode', 'off' );
         $currency_data                 = require SCC_DIR . '/lib/currency_data.php';
         ?>
-		<div class="mb-3 row 
-		<?php
-        if ( $currency_conversion_mode !== 'manual_selection' ) {
-            echo 'd-none';
-        }
-        ?>
-		" id="scc_currency_coversion_manual_selection_container">
-		<label class="col-sm-5 col-form-label" for="scc_currency_coversion_manual_selection">Select your currency for automatic conversion: </label>
-			<div class=" col-sm-7">
-			<select class="form-select form-select-lg mb-3" name="scc_currency_coversion_manual_selection" id="scc_currency_coversion_manual_selection">
+		<div class="mb-3 scc-global-settings-field" id="scc_currency_coversion_manual_selection_container" <?php echo ( $currency_conversion_mode !== 'manual_selection' ) ? 'style="display:none;"' : ''; ?>>
+		<label class="col-form-label" for="scc_currency_coversion_manual_selection">Select your currency for automatic conversion:</label>
+			<div class="scc-global-settings-field-control">
+			<select class="form-select form-select-lg" name="scc_currency_coversion_manual_selection" id="scc_currency_coversion_manual_selection">
 				<option value="">Select currency</option>
 				<?php foreach ( $currency_data as $key => $value ) { ?>
 					<option value="<?php echo esc_attr( $value['code'] ); ?>" <?php selected( $currency_conversion_selection == $value['code'] ); ?>><?php echo esc_attr( $value['currency'] ); ?></option>
@@ -713,10 +967,10 @@ class Stylish_Cost_Calculator_Settings {
     private function field_currency_num_format() {
         $currency_style = get_option( 'df_scc_currency_style', 'default' ); // dot or comma
         ?>
-		<div class="mb-3 row">
-			<label class="col-sm-5 col-form-label" data-setting-tooltip-type="currency-format-tt"  for="currency-style">Currency Format:</label>
-			<div class=" col-sm-7">
-				<select class="form-select form-select-lg mb-3" name="currency-style" id="currency-style">
+		<div class="mb-3 scc-global-settings-field">
+			<label class="col-form-label" data-setting-tooltip-type="currency-format-tt"  for="currency-style">Currency Format:</label>
+			<div class="scc-global-settings-field-control">
+				<select class="form-select form-select-lg" name="currency-style" id="currency-style">
 					<option value="default" <?php echo ( $currency_style == 'default' ) ? 'selected' : ''; ?>>Browser Locale</option>
 					<option value="comma" <?php echo ( $currency_style == 'comma' ) ? 'selected' : ''; ?>>Comma separated</option>
 				</select>
@@ -726,19 +980,14 @@ class Stylish_Cost_Calculator_Settings {
     }
     private function field_currency_conversion_type() {
         $currency_conversion_mode = get_option( 'df_scc_currency_coversion_mode', 'off' );
+        $is_locked                = $this->isSCCFreeVersion;
         ?>
-		<div class="mb-3 row 
-		<?php
-        if ( $this->isSCCFreeVersion ) {
-            echo '';
-        }
-        ?>
-		" >
-			<label class="col-sm-5 col-form-label" data-setting-tooltip-type="auto-currency-conversion-tt" for="scc_currency_coversion_mode">Currency Conversion: </label>
-			<span class=" col-sm-7">
-				<select class="form-select form-select-lg mb-3" 
+		<div class="mb-3 scc-global-settings-field" id="scc_currency_coversion_global_container">
+			<label class="col-form-label" data-setting-tooltip-type="auto-currency-conversion-tt" for="scc_currency_coversion_mode">Currency Conversion:</label>
+			<div class="scc-global-settings-field-control<?php echo $is_locked ? ' scc-premium-badge use-premium-tooltip scc-premium-field-lock' : ''; ?>"<?php echo $is_locked ? ' tabindex="0" aria-disabled="true"' : ''; ?>>
+				<select class="form-select form-select-lg" 
 				<?php
-                if ( $this->isSCCFreeVersion ) {
+                if ( $is_locked ) {
                     echo 'disabled';
                 }
         ?>
@@ -747,7 +996,7 @@ class Stylish_Cost_Calculator_Settings {
 					<option value="manual_selection" <?php echo ( $currency_conversion_mode == 'manual_selection' ) ? 'selected' : ''; ?>>Select a currency</option>
 					<option value="auto_detect" <?php echo ( $currency_conversion_mode == 'auto_detect' ) ? 'selected' : ''; ?>>Auto detect currency</option>
 				</select>
-				</span>
+			</div>
 		</div>
 		<?php
     }

@@ -4,7 +4,6 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-require_once SCC_DIR . '/lib/dompdf/autoload.inc.php';
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -917,6 +916,12 @@ class ajaxRequest {
     }
 
     public function generate_tutorial_pdf_from_wizard( $title, $recipient_name, $website_name, $template_collection ) {
+        
+        // Load Dompdf only when needed to avoid overhead on every AJAX request.
+        if ( ! class_exists( '\\Dompdf\\Dompdf' ) ) {
+            require_once SCC_DIR . '/lib/dompdf/autoload.inc.php';
+        }
+
         $message_body = $this->email_suggestion_template_builder( $template_collection );
         $data         = '<!doctype html>
         <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">

@@ -4599,63 +4599,93 @@ document.querySelectorAll('[id^=scc_calculator_]').forEach(element => {
 		}
 	});
 })
-function disableGlobalSettingsSection(arr) {
+function disableGlobalSettingsSection(sectionTargets) {
 	let param = new URLSearchParams(window.location.search)
 	if (param.get('page') != 'scc-global-settings') return
 	// set tooltips at the right
 	document.querySelectorAll('.mb-3.row[title]').forEach(e => new bootstrap.Tooltip(e, { placement: 'right', delay: { show: 600, hide: 300 }, }))
 	let couponLink = document.querySelector('#coupon-page');
-	couponLink.setAttribute('href', 'javascript:void(0)');
-	couponLink.setAttribute('title', needLicenseKeyTooltip);
-	new bootstrap.Tooltip(couponLink, { placement: 'right', delay: { show: 600, hide: 300 } })
-
-	let style = {
-		"background-color": "rgba(0,0,0,0.28)",
-		"position": "absolute",
-		"width": "100%",
-		"height": "100%",
-		"top": "0",
-		"left": "0",
-		"right": "0",
-		"bottom": "0",
-		"z-index": "100",
-		"display": "flex",
-		"align-items": "center",
-		"justify-content": "end",
-		"backdrop-filter": "blur(1px)",
-		"padding-right": "30px"
+	if (couponLink) {
+		if (couponLink.tagName && couponLink.tagName.toLowerCase() === 'a') {
+			couponLink.setAttribute('href', 'javascript:void(0)');
+		}
+		couponLink.setAttribute('title', needLicenseKeyTooltip);
+		new bootstrap.Tooltip(couponLink, {
+			placement: 'right',
+			delay: { show: 600, hide: 300 },
+			trigger: 'hover focus',
+			html: true,
+			title: needLicenseKeyTooltip,
+		})
 	}
-	let u = document.querySelector('.scc-footer-logo-link').getAttribute('href') + '?utm_source=inside-plugin&utm_medium=wordpress&utm_content=buy-premium-cta-banner'
-	arr.forEach(e => {
-		var cont = document.querySelectorAll('.accordion-body')[e]
+
+	let footerLogoLink = document.querySelector('.scc-footer-logo-link')
+	let premiumUrl = 'https://www.stylishcostcalculator.com/?utm_source=inside-plugin&utm_medium=wordpress&utm_content=buy-premium-cta-banner'
+	if (footerLogoLink?.getAttribute('href')) {
+		premiumUrl = footerLogoLink.getAttribute('href') + '?utm_source=inside-plugin&utm_medium=wordpress&utm_content=buy-premium-cta-banner'
+	}
+	sectionTargets.forEach(target => {
+		let cont = null
+		if (typeof target === 'number') {
+			cont = document.querySelectorAll('#settings-page-accordion .accordion-body')[target]
+		} else {
+			cont = document.querySelector(`#accordion-${target} .accordion-body`)
+		}
+		if (!cont || cont.querySelector('.scc-global-settings-premium-overlay')) {
+			return
+		}
 		cont.style.position = 'relative'
-		let frag = document.createDocumentFragment()
-		let content = document.createElement('div')
-		let div = document.createElement('div')
-		Object.assign(content.style, style)
-		let text = document.createElement('h5')
-		text.style.color = '#000'
-		text.style.textAlign = 'center'
-		text.style.maxWidth = '200px'
-		text.style.marginBottom = '40px'
-		text.style.fontWeight = '700'
-		text.innerText = 'Upgrade to unlock this setting'
-		let link_cont = document.createElement('center')
+		cont.classList.add('scc-global-settings-premium-locked')
+		let overlay = document.createElement('div')
+		overlay.className = 'scc-global-settings-premium-overlay'
+		overlay.setAttribute('aria-hidden', 'true')
+
+		let panel = document.createElement('div')
+		panel.className = 'scc-global-settings-premium-overlay__panel'
+
+		let icon = document.createElement('div')
+		icon.className = 'scc-global-settings-premium-overlay__icon'
+		icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>'
+
+		let eyebrow = document.createElement('span')
+		eyebrow.className = 'scc-global-settings-premium-overlay__eyebrow'
+		eyebrow.innerText = 'Upgrade to unlock this setting'
+
+		let title = document.createElement('h3')
+		title.className = 'scc-global-settings-premium-overlay__title'
+		title.innerText = 'Unlock Premium Feature'
+
+		let description = document.createElement('p')
+		description.className = 'scc-global-settings-premium-overlay__text'
+		description.innerText = 'Access advanced global settings, integrations, and customization controls with Premium.'
+
 		let link = document.createElement('a')
-		link.classList.add('scc-a-over-blue')
-		link_cont.appendChild(link)
+		link.className = 'scc-global-settings-premium-overlay__cta'
 		link.setAttribute('target', '_blank')
-		link.setAttribute('href', u)
-		link.innerText = 'Buy Premium'
-		link.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg> <span style="margin-left:5px">Buy Premium</span>'
-		div.appendChild(text)
-		div.appendChild(link_cont)
-		content.appendChild(div)
-		frag.appendChild(content)
-		cont.appendChild(frag)
+		link.setAttribute('rel', 'noopener noreferrer')
+		link.setAttribute('href', premiumUrl)
+		link.innerHTML = '<i class="far fa-gem" aria-hidden="true"></i><span>Buy Premium</span>'
+
+		panel.appendChild(icon)
+		panel.appendChild(eyebrow)
+		panel.appendChild(title)
+		panel.appendChild(description)
+		panel.appendChild(link)
+		overlay.appendChild(panel)
+		cont.appendChild(overlay)
 	});
 }
-disableGlobalSettingsSection([1, 2, 3, 4, 6, 7, 8])
+disableGlobalSettingsSection([
+	'email_quote_settings',
+	'sms_quotes_twilio',
+	'header_detailed_list_pdf',
+	'footer_detailed_list_pdf',
+	'stripe_settings',
+	'recaptcha_settings',
+	'integration_settings',
+	'google_maps_settings',
+	'restore_import_calculator_form',
+])
 document.querySelectorAll('.add-element-btn.save_button').forEach(element => {
 	element.addEventListener('click', function () {
 		element.closest('.boardOption').querySelectorAll('.scc_button.btn-backend').forEach(e => {
@@ -5149,17 +5179,24 @@ const calcEditorWrapper = document.querySelector( '#calc-editor-wrapper' );
 const calcNameFieldWrapper = document.querySelector( '#settings-tabs-wrapper' );
 const leftPane = document.querySelector( '.scc-left-pane' );
 const previewPane = document.querySelector( '.scc-right-pane' );
+const PREVIEW_DOCK_BREAKPOINT = 1180;
 
 const adjustPreviewPaneDockByWidth = () => {
+	if ( ! calcEditorRoot ) {
+		return;
+	}
+
 	const dockToBottomBtn = document.querySelector( '#dock-to-bottom' );
 	const dockToRightBtn = document.querySelector( '#dock-to-right' );
-	// get the viewport width
 	const vw = Math.max( document.documentElement.clientWidth || 0, window.innerWidth || 0 );
-	if ( vw >= 1401 ) {
-		handlePreviewDockMode( dockToRightBtn, 'right', new Event( 'click' ), false );
+
+	if ( vw <= PREVIEW_DOCK_BREAKPOINT && dockToBottomBtn ) {
+		handlePreviewDockMode( dockToBottomBtn, 'bottom', null, false );
+		return;
 	}
-	if ( vw < 1400 ) {
-		handlePreviewDockMode( dockToBottomBtn, 'bottom', new Event( 'click' ), false );
+
+	if ( dockToRightBtn ) {
+		handlePreviewDockMode( dockToRightBtn, 'right', null, false );
 	}
 }
 
@@ -5256,7 +5293,8 @@ window.initiateSetupWizard = async () => {
 };
 
 const handlePreviewDockMode = ( element, mode, event, scroll = true ) => {
-	const buttons = element.parentElement.querySelectorAll( '.btn' );
+	const buttons = document.querySelectorAll( '[data-dock-mode]' );
+	const previewPaneRoot = document.querySelector( '#preview-pane-main' );
 	// remove btn-primary from all buttons
 	buttons.forEach( ( button ) => {
 		button.classList.remove( 'scc-btn-white' );
@@ -5271,8 +5309,11 @@ const handlePreviewDockMode = ( element, mode, event, scroll = true ) => {
 		leftPane.classList.add( 'preview-docked-bottom' );
 		calcNameFieldWrapper.classList.add( 'p-0' );
 		element.classList.add( 'scc-btn-white' );
-		if ( event ) {
+		if ( previewPane ) {
 			previewPane.classList.add( 'preview-docked-bottom' );
+		}
+		if ( previewPaneRoot ) {
+			previewPaneRoot.classList.add( 'preview_form_right_side' );
 		}
 		if ( scroll ) {
 			previewPane.scrollIntoView( { behavior: 'smooth' } );
@@ -5291,8 +5332,11 @@ const handlePreviewDockMode = ( element, mode, event, scroll = true ) => {
 		leftPane.classList.remove( 'preview-docked-bottom' );
 		calcNameFieldWrapper.classList.remove( 'p-0' );
 		element.classList.add( 'scc-btn-white' );
-		if ( event ) {
+		if ( previewPane ) {
 			previewPane.classList.remove( 'preview-docked-bottom' );
+		}
+		if ( previewPaneRoot ) {
+			previewPaneRoot.classList.add( 'preview_form_right_side' );
 		}
 		if ( scroll ) {
 			previewPane.scrollIntoView( { behavior: 'smooth' } );
@@ -5463,6 +5507,16 @@ jQuery(document).ready(function () {
 
 	if ( isInsideEditingPage() ) {
 		adjustPreviewPaneDockByWidth();
+		let previewDockResizeFrame = null;
+		window.addEventListener( 'resize', () => {
+			if ( previewDockResizeFrame ) {
+				window.cancelAnimationFrame( previewDockResizeFrame );
+			}
+
+			previewDockResizeFrame = window.requestAnimationFrame( () => {
+				adjustPreviewPaneDockByWidth();
+			} );
+		} );
 	}
 
 

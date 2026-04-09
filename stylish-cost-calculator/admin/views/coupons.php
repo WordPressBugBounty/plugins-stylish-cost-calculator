@@ -7,6 +7,43 @@ class Stylish_Cost_Calculator_Coupon {
 
 	public static function init() {
 	}
+
+	private function is_coupon_feature_unlocked() {
+		return (int) get_option( 'df_scc_licensed', 0 ) === 1;
+	}
+
+	private function render_premium_lock() {
+		?>
+		<style>
+			.scc-coupon-generator-premium-btn.scc-premium-badge::after {
+				color: #000 !important;
+				-webkit-text-fill-color: #000 !important;
+				opacity: 1;
+			}
+		</style>
+		<div class="container-fluid mt-4">
+			<div class="row">
+				<div class="col-12">
+					<div class="bg-white rounded shadow-sm p-4 p-md-5" style="max-width: 760px; margin-left: 20px;">
+						<div class="d-flex align-items-center gap-2 mb-3">
+							<h2 class="mb-0" style="font-size: 28px; font-weight: 800;">Coupon Codes</h2>
+							<span class="badge bg-warning text-dark text-uppercase" style="letter-spacing: 0.08em;">Premium</span>
+						</div>
+						<p class="mb-4 text-muted" style="max-width: 560px;">
+							Coupon management is available in the premium version. Upgrade to unlock coupon creation, editing, and removal.
+						</p>
+						<div class="use-premium-tooltip" style="display:inline-block; cursor:not-allowed;">
+							<button type="button" class="btn btn-lg btn-primary scc-premium-badge scc-coupon-generator-premium-btn" disabled style="pointer-events:none;">
+								Manage Coupons
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<?php
+	}
+
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'admin_menu' ), 90 );
 
@@ -16,6 +53,11 @@ class Stylish_Cost_Calculator_Coupon {
 	}
 
 	function coupon_page() {
+		if ( ! $this->is_coupon_feature_unlocked() ) {
+			$this->render_premium_lock();
+			return;
+		}
+
 		$i = new couponController();
 
 		wp_enqueue_script( 'jquery-ui-datepicker' );
@@ -72,6 +114,7 @@ class Stylish_Cost_Calculator_Coupon {
 				margin-left: 10px;
 				margin-right: 10px;
 			}
+
 		</style>
 		<?php
 		global $wp_version;
@@ -286,8 +329,10 @@ $stylish_cost_calculator_Coupon = new Stylish_Cost_Calculator_Coupon();
 ?>
 <script>
 	window.addEventListener('DOMContentLoaded', (event) => {
-		jQuery('#coupon_end_date').datepicker();
-		jQuery('#coupon_start_date').datepicker();
+		if ( typeof jQuery !== 'undefined' && jQuery.fn && typeof jQuery.fn.datepicker === 'function' ) {
+			jQuery('#coupon_end_date').datepicker();
+			jQuery('#coupon_start_date').datepicker();
+		}
 		jQuery('.use-tooltip').each(function(index,node) {
 			new bootstrap.Tooltip(node, {delay: { show: 600, hide: 300 }, trigger: 'hover focus', html: true})
 		})

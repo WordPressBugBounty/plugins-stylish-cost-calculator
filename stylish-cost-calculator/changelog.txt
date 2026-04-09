@@ -1,3 +1,21 @@
+## 8.2.7 - 2026-04-08
+
+**Frontend Changes:**
+- Fixed: Mandatory Date Picker fields now update their required-field message correctly after a date is selected or cleared.
+
+**Dashboard Changes:**
+- Improved: Global Settings screens now have cleaner alignment, an updated Currency settings experience, and clearer premium upgrade messaging.
+
+**Editing Page Changes:**
+- Improved: Calculator preview sizing, icon alignment, section controls, delete icons, and advanced option layouts have been refined.
+- Fixed: Slider Starting Value and Slider Steps settings now save and display correctly.
+- Fixed: Dropdown, checkbox, Date Picker, and Text/HTML controls now behave more reliably when added or edited.
+- Removed: Unavailable icon picker controls from dropdown and Date Picker editor settings.
+
+**Backend Changes:**
+- Improved: Calculator data loading now caches form relationships and clears that cache when forms, sections, subsections, elements, items, or conditions change.
+- Fixed: AI Wizard response parsing now handles invalid or unexpected AI messages more safely.
+
 ## 8.2.5 - 2026-03-19
 
 **Dashboard Changes:**

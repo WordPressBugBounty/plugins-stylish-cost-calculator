@@ -65,6 +65,10 @@ class elementitemController {
 		$result = $this->db->query( $query );
 		$id     = $this->db->insert_id;
 		if ( $result ) {
+            if ( ! class_exists( 'formController' ) ) {
+                require_once __DIR__ . '/formController.php';
+            }
+            formController::flush_by_element( (int) $element_id );
 			return $id;
 		} else {
 			return $this->db->last_error;
@@ -87,7 +91,7 @@ class elementitemController {
 	 * todo: this is use lo load second selend in conditions of element
 	 */
 	function readOfElement( int $id_element ) {
-		return $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->db->prefix}df_scc_elementitems WHERE element_id =%s ;", $id_element ) );
+		return $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->db->prefix}df_scc_elementitems WHERE element_id =%d ;", $id_element ) );
 	}
 
 	/**
@@ -138,6 +142,10 @@ class elementitemController {
 		);
 		$response = $this->db->query( $query );
 		if ( $response ) {
+            if ( ! class_exists( 'formController' ) ) {
+                require_once __DIR__ . '/formController.php';
+            }
+            formController::flush_by_elementitem( (int) $id );
 			return true;
 		} else {
 			return false;
@@ -148,6 +156,11 @@ class elementitemController {
 	 * @param integer $id id of the elementitem
 	 */
 	function delete( int $id ) {
+        if ( ! class_exists( 'formController' ) ) {
+            require_once __DIR__ . '/formController.php';
+        }
+        formController::flush_by_elementitem( $id );
+
 		$query    = $this->db->prepare( "DELETE FROM {$this->db->prefix}df_scc_elementitems WHERE id = %d", $id );
 		$response = $this->db->query( $query );
 		if ( $response ) {

@@ -13,6 +13,62 @@ var scc_rate_label_convertion = null
 var mandatoryElements = []
 var globalMathArray = [];
 var variableMathElement = [];
+var sccPreviewScaleFrame = null;
+
+function sccSyncEditingPreviewLayout() {
+	if (typeof (isInsideEditingPage) === 'undefined' || !isInsideEditingPage()) {
+		return;
+	}
+
+	if (sccPreviewScaleFrame) {
+		window.cancelAnimationFrame(sccPreviewScaleFrame);
+	}
+
+	sccPreviewScaleFrame = window.requestAnimationFrame(function () {
+		var previewContainer = document.querySelector('#scc-preview-container');
+		var previewStage = previewContainer ? previewContainer.querySelector('.scc-preview-stage') : null;
+		var previewInner = previewContainer ? previewContainer.querySelector('.scc-preview-stage__inner') : null;
+		var calcWrapper = previewContainer ? previewContainer.querySelector('.calc-wrapper') : null;
+
+		if (!previewContainer || !previewStage || !previewInner || !calcWrapper) {
+			return;
+		}
+
+		calcWrapper.style.transform = '';
+		calcWrapper.style.transformOrigin = '';
+		calcWrapper.style.width = '';
+		calcWrapper.style.maxWidth = '';
+		calcWrapper.style.marginLeft = '';
+		calcWrapper.style.marginRight = '';
+		previewStage.style.minHeight = '';
+
+		var availableWidth = Math.max(previewStage.clientWidth - 24, 0);
+		var naturalWidth = Math.max(
+			calcWrapper.scrollWidth,
+			Math.ceil(calcWrapper.getBoundingClientRect().width)
+		);
+		var naturalHeight = Math.max(
+			calcWrapper.scrollHeight,
+			Math.ceil(calcWrapper.getBoundingClientRect().height)
+		);
+
+		if (!availableWidth || !naturalWidth) {
+			return;
+		}
+
+		var scale = Math.min(1, availableWidth / naturalWidth);
+
+		if (scale < 0.98) {
+			calcWrapper.style.width = naturalWidth + 'px';
+			calcWrapper.style.maxWidth = 'none';
+			calcWrapper.style.transform = 'scale(' + scale + ')';
+			calcWrapper.style.transformOrigin = 'top center';
+			calcWrapper.style.marginLeft = 'auto';
+			calcWrapper.style.marginRight = 'auto';
+			previewStage.style.minHeight = Math.ceil(naturalHeight * scale) + 'px';
+		}
+	});
+}
  
 
 async function initializeScc() {
@@ -932,7 +988,12 @@ window.addEventListener('DOMContentLoaded', (event) => {
 			sccLoadGFonts()
 			initiateSetupWizard()
 			sccBackendStore.config = sccData[calcId].config 
+			sccSyncEditingPreviewLayout()
+			window.setTimeout(sccSyncEditingPreviewLayout, 150)
+			window.setTimeout(sccSyncEditingPreviewLayout, 500)
 		})
+
+		window.addEventListener('resize', sccSyncEditingPreviewLayout)
 	} else {
 		initializeScc()
 		sccUslStats()
@@ -1567,7 +1628,36 @@ function triggerSubmit(type, dom, element, item, calcId) {
 				elementsComment[calcId].splice(index, 1)
 			}
 			break
-		case 11:
+		case 10: {
+			// Single date picker.
+			const dateControl = dom.closest( '.scc-form-field-item-control' );
+			const dateRangePricingStructure = dateControl?.dataset?.dateRangePricingStructure || 'unit_price_only';
+			const subsectionId = dateControl?.dataset?.subsectionId || 0;
+			const singleDate = dom.value || '';
+			const existingSingleDate = elementDate[ calcId ].find( ( e ) => e[ 0 ] == element );
+
+			if ( singleDate ) {
+				const singleDateEntry = [ element, singleDate, 0, 1, dateRangePricingStructure, subsectionId ];
+				if ( existingSingleDate ) {
+					existingSingleDate[ 1 ] = singleDate;
+					existingSingleDate[ 2 ] = 0;
+					existingSingleDate[ 3 ] = 1;
+					existingSingleDate[ 4 ] = dateRangePricingStructure;
+					existingSingleDate[ 5 ] = subsectionId;
+				} else {
+					elementDate[ calcId ].push( singleDateEntry );
+				}
+			} else if ( existingSingleDate ) {
+				var index = elementDate[ calcId ].indexOf( existingSingleDate );
+				if ( index >= 0 ) {
+					elementDate[ calcId ].splice( index, 1 );
+				}
+			}
+
+			sccUpdateDateMandatoryState( dom );
+			break;
+		}
+		case 11: {
 			//Element date range
 			const container = dom.closest( '.scc-form-field-item-control' );
 			const startDate = container.querySelector( '.scc-start-date' );
@@ -1644,10 +1734,14 @@ function triggerSubmit(type, dom, element, item, calcId) {
 			//if (!date) elementDate[calcId].splice(ss, 1);
 			if ( ! date ) {
 				var index = elementDate[ calcId ].indexOf( ss );
-				elementDate[ calcId ].splice( index, 1 );
+				if ( index >= 0 ) {
+					elementDate[ calcId ].splice( index, 1 );
+				}
 			}
 
-			break;	
+			sccUpdateDateMandatoryState( dom );
+			break;
+		}
 	}
 	checkConditions(calcId)
 	/**
@@ -2324,6 +2418,24 @@ function verifiedMandatoryItems(calcId) {
 	} else {
 		return true
 	}
+}
+
+function sccUpdateDateMandatoryState( element ) {
+	const control = element?.closest( '.scc-form-field-item-control' );
+	const field = element?.closest( '.scc-form-field-item' );
+	const alertDanger = field?.querySelector( '.scc-mandatory-msg' );
+
+	if ( ! control || ! alertDanger ) {
+		return;
+	}
+
+	const startDate = control.querySelector( '.scc-start-date' );
+	const endDate = control.querySelector( '.scc-end-date' );
+	const isRange = Boolean( startDate && endDate );
+	const hasValue = isRange ? ( Boolean( startDate.value ) && Boolean( endDate.value ) ) : Boolean( element.value );
+
+	alertDanger.classList.toggle( 'scc-hidden', hasValue );
+	alertDanger.classList.toggle( 'scc-d-flex', ! hasValue );
 }
 
 // convert a date string to a standard format yyyy-mm-dd
@@ -3092,6 +3204,7 @@ function sccFlatpickrInit( formId ) {
 				}
 
 				triggerSubmit( elementType, e, elementId, 0, formId );
+				sccUpdateDateMandatoryState( e );
 			},
 		} );
 

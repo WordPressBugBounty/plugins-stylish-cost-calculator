@@ -3,6 +3,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 $isSCCFreeVersion = defined( 'STYLISH_COST_CALCULATOR_VERSION' );
+$couponFeatureUnlocked = (int) get_option( 'df_scc_licensed', 0 ) === 1;
 $scc_icons        = require SCC_DIR . '/assets/scc_icons/icon_rsrc.php';
 $scc_screen       = get_current_screen();
 $current_user         = wp_get_current_user();
@@ -446,7 +447,7 @@ if ( '' === $scc_profile_initials ) {
 	
 	.scc-primary-nav-links .scc-nav-link {
 		position: relative;
-		color: var(--scc-text-muted);
+		color: #FFFFFF;
 		text-decoration: none;
 		display: flex;
 		align-items: center;
@@ -455,7 +456,7 @@ if ( '' === $scc_profile_initials ) {
 		font-weight: 500;
 		font-size: 14px;
 		gap: 8px;
-		transition: color 0.2s ease;
+		transition: color 0.2s ease, background-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 	}
 
 	.scc-primary-nav-links .scc-nav-link::after {
@@ -476,7 +477,10 @@ if ( '' === $scc_profile_initials ) {
 	
 	.scc-primary-nav-links .scc-nav-link:hover,
 	.scc-primary-nav-links .scc-nav-link.active {
-		color: var(--scc-text-light);
+		color: #FFFFFF;
+		background-color: rgba(255, 255, 255, 0.03);
+		opacity: 0.96;
+		transform: translateY(-0.5px);
 	}
 
 	.scc-primary-nav-links .scc-nav-link:hover::after,
@@ -486,7 +490,7 @@ if ( '' === $scc_profile_initials ) {
 	}
 
 	.scc-primary-nav-links .scc-nav-link.scc-nav-link-disabled {
-		color: #64748B;
+		color: #FFFFFF;
 		opacity: 0.7;
 		cursor: not-allowed;
 	}
@@ -497,7 +501,8 @@ if ( '' === $scc_profile_initials ) {
 
 	.scc-primary-nav-links .scc-nav-link.scc-nav-link-disabled:hover,
 	.scc-primary-nav-links .scc-nav-link.scc-nav-link-disabled:focus {
-		color: #CBD5E1;
+		color: #FFFFFF;
+		opacity: 0.7;
 	}
 	
 	.scc-primary-nav-links .scc-icn-wrapper svg {
@@ -527,14 +532,16 @@ if ( '' === $scc_profile_initials ) {
 		margin-left: 5px;
 		line-height: 1;
 		text-transform: uppercase;
-		transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+		transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
 	}
 	.scc-new-btn-badge:hover {
-		background: rgba(49, 74, 243, 0.24);
-		background: color-mix(in srgb, var(--scc-color-primary, #314AF3) 24%, transparent);
-		border-color: rgba(122, 131, 245, 0.72);
-		border-color: color-mix(in srgb, var(--scc-color-primary, #314AF3) 60%, white 12%);
+		background: rgba(49, 74, 243, 0.18);
+		background: color-mix(in srgb, var(--scc-color-primary, #314AF3) 18%, transparent);
+		border-color: rgba(122, 131, 245, 0.5);
+		border-color: color-mix(in srgb, var(--scc-color-primary, #314AF3) 48%, white 18%);
 		color: #FFF !important;
+		opacity: 0.96;
+		transform: translateY(-0.5px);
 	}
 	.scc-new-btn-badge svg {
 		width: 14px;
@@ -732,16 +739,52 @@ if ( '' === $scc_profile_initials ) {
 	jQuery(document).ready(function () {
 		jQuery('#scc-editing-area-smiling-loading').remove()
 		
+		// Keep the WordPress menu open on SCC admin pages.
+		sccForceWordPressMenuOpen();
+
 		// Set initial icon based on menu state with a small delay to ensure DOM is ready
 		setTimeout(function() {
 			sccUpdateMenuToggleIcon();
 		}, 100);
+
+		if ( window.jQuery ) {
+			jQuery( document ).on( 'wp-collapse-menu', function() {
+				sccForceWordPressMenuOpen();
+				sccUpdateMenuToggleIcon();
+			} );
+		}
+
+		if ( typeof MutationObserver !== 'undefined' && document.body ) {
+			const observer = new MutationObserver( function( mutations ) {
+				for ( const mutation of mutations ) {
+					if ( mutation.type === 'attributes' && mutation.attributeName === 'class' ) {
+						sccForceWordPressMenuOpen();
+						sccUpdateMenuToggleIcon();
+						break;
+					}
+				}
+			} );
+			observer.observe( document.body, { attributes: true, attributeFilter: [ 'class' ] } );
+		}
 	})
+
+	function sccForceWordPressMenuOpen() {
+		const body = document.body;
+
+		if ( ! body ) {
+			return;
+		}
+
+		if ( body.classList.contains( 'folded' ) || body.classList.contains( 'auto-fold' ) ) {
+			body.classList.remove( 'folded' );
+			body.classList.remove( 'auto-fold' );
+		}
+	}
 	
 	// Update the menu toggle icon based on current state
 	function sccUpdateMenuToggleIcon() {
 		const body = document.body;
-		const isCurrentlyFolded = body.classList.contains( 'folded' );
+		const isCurrentlyFolded = body.classList.contains( 'folded' ) || body.classList.contains( 'auto-fold' );
 		const iconWrapper = document.getElementById('scc-menu-toggle-icon');
 		
 		if (iconWrapper) {
@@ -762,17 +805,9 @@ if ( '' === $scc_profile_initials ) {
 	// Toggle WordPress admin menu
 	function sccToggleWordPressMenu(event) {
 		event.preventDefault();
-		const body = document.body;
-		const isCurrentlyFolded = body.classList.contains('folded');
-		
-		if (isCurrentlyFolded) {
-			body.classList.remove('folded');
-			jQuery(document).trigger('wp-collapse-menu', { 'fold': 'open' });
-		} else {
-			body.classList.add('folded');
-			jQuery(document).trigger('wp-collapse-menu', { 'fold': 'fold' });
-		}
-		
+
+		sccForceWordPressMenuOpen();
+
 		// Update icon after toggle
 		setTimeout(function() {
 			sccUpdateMenuToggleIcon();
@@ -1020,9 +1055,15 @@ if ( '' === $scc_profile_initials ) {
 						<?php echo scc_get_kses_extended_ruleset( $scc_icons['file-text'] ); ?>
 					</span> Wordings</a>
 					<hr>
-					<a class="scc-coupon-codes-dropdown" href="<?php echo esc_url( admin_url( 'admin.php?page=scc-coupons-management' ) ); ?>"><span class="scc-icn-wrapper">
-						<?php echo scc_get_kses_extended_ruleset( $scc_icons['percent'] ); ?>
-					</span> Coupon Codes</a>
+					<?php if ( $couponFeatureUnlocked ) { ?>
+						<a class="scc-coupon-codes-dropdown <?php echo ( isset( $_REQUEST['page'] ) && $_REQUEST['page'] === 'scc-coupons-management' ) ? 'active' : ''; ?>" href="<?php echo esc_url( admin_url( 'admin.php?page=scc-coupons-management' ) ); ?>"><span class="scc-icn-wrapper">
+							<?php echo scc_get_kses_extended_ruleset( $scc_icons['percent'] ); ?>
+						</span> Coupon Codes</a>
+					<?php } else { ?>
+						<a href="javascript:void()" class="scc-coupon-codes-dropdown scc-nav-link scc-nav-link-disabled use-premium-tooltip scc-premium-badge <?php echo ( isset( $_REQUEST['page'] ) && $_REQUEST['page'] === 'scc-coupons-management' ) ? 'active' : ''; ?>" onclick="event.preventDefault();" aria-disabled="true"><span class="scc-icn-wrapper">
+							<?php echo scc_get_kses_extended_ruleset( $scc_icons['percent'] ); ?>
+						</span> Coupon Codes</a>
+					<?php } ?>
 					<hr>
 					<a class="scc-global-settings-dropdown" href="<?php echo esc_url( admin_url( 'admin.php?page=scc-global-settings' ) ); ?>"><span class="scc-icn-wrapper">
 						<?php echo scc_get_kses_extended_ruleset( $scc_icons['settings'] ); ?>

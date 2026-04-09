@@ -9,7 +9,7 @@ class urlStatsController {
     protected $db;
     protected $urls;
     protected $calcId;
-    public function __construct( int $calcId ) {
+    public function __construct( int $calcId, string $url = '' ) {
         global $wpdb;
         $this->db     = $wpdb;
         $this->calcId = $calcId;

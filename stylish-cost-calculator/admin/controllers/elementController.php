@@ -90,6 +90,10 @@ class elementController {
 		$result = $this->db->query( $query );
 		$id     = $this->db->insert_id;
 		if ( $result ) {
+            if ( ! class_exists( 'formController' ) ) {
+                require_once __DIR__ . '/formController.php';
+            }
+            formController::flush_by_subsection( (int) $subsection_id );
 			return $id;
 		} else {
 			return $this->db->last_error;
@@ -186,6 +190,10 @@ class elementController {
 
 	    $response = $this->db->query( $query );
 		if ( $response ) {
+            if ( ! class_exists( 'formController' ) ) {
+                require_once __DIR__ . '/formController.php';
+            }
+            formController::flush_by_element( (int) $id );
 			return true;
 		} else {
 			return false;
@@ -197,6 +205,11 @@ class elementController {
 	 */
 
 	function delete( int $id ) {
+        if ( ! class_exists( 'formController' ) ) {
+            require_once __DIR__ . '/formController.php';
+        }
+        formController::flush_by_element( $id );
+
 		$query    = $this->db->prepare( "DELETE FROM {$this->db->prefix}df_scc_elements WHERE id = %d", $id );
 		$response = $this->db->query( $query );
 		if ( $response ) {

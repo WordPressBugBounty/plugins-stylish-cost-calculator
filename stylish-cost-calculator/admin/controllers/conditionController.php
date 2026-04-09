@@ -56,6 +56,12 @@ class conditionController {
 		$id     = $this->db->insert_id;
 		remove_filter( 'query', 'scc_replace_string_null' );
 		if ( $result ) {
+            if ( $element_id !== '##NULL' ) {
+                if ( ! class_exists( 'formController' ) ) {
+                    require_once __DIR__ . '/formController.php';
+                }
+                formController::flush_by_element( (int) $element_id );
+            }
 			return $id;
 		} else {
 			$this->db->last_error;
@@ -129,6 +135,11 @@ class conditionController {
 	 * @return bool true or false
 	 */
 	function delete( int $id ) {
+        if ( ! class_exists( 'formController' ) ) {
+            require_once __DIR__ . '/formController.php';
+        }
+        formController::flush_by_condition( $id );
+
 		$query    = $this->db->prepare( "DELETE FROM {$this->db->prefix}df_scc_conditions WHERE id = %d", $id );
 		$response = $this->db->query( $query );
 		if ( $response ) {

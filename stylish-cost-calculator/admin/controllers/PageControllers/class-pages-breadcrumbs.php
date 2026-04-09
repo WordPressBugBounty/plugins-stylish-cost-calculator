@@ -14,6 +14,7 @@ class PagesBreadcrumbs {
         $this->scc_icons = require SCC_DIR . '/assets/scc_icons/icon_rsrc.php';
 
         if ( is_admin() ) {
+            add_filter( 'admin_body_class', [ $this, 'scc_force_admin_menu_open_body_class' ], 20 );
             wp_register_script( 'scc-bootstrap-min2', SCC_URL . 'lib/bootstrap/bootstrap.bundle.min.js', [ 'jquery' ], '5.1.3', true );
             wp_register_style( 'scc-bootstrap-min2', SCC_URL . 'lib/bootstrap/bootstrap.min.css', '5.1.3' );
             wp_register_script( 'scc-marked', SCC_URL . 'lib/marked/marked.min.js', [], STYLISH_COST_CALCULATOR_VERSION, true );
@@ -70,5 +71,12 @@ class PagesBreadcrumbs {
             wp_register_script( 'scc-ai-utils', SCC_URL . 'assets/js/scc-ai-utils.js', [], STYLISH_COST_CALCULATOR_VERSION, true );
             wp_enqueue_script( 'scc-ai-utils' );
         }
+    }
+
+    public function scc_force_admin_menu_open_body_class( $classes ) {
+        $classes = preg_replace( '/\b(folded|auto-fold)\b/', '', $classes );
+        $classes = preg_replace( '/\s+/', ' ', $classes );
+
+        return trim( $classes ) . ' scc-force-admin-menu-open';
     }
 }
