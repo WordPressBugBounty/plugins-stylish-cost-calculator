@@ -1,3 +1,17 @@
+## 8.2.9 - 2026-04-17
+
+**Frontend Changes:**
+- Improved: Dropdown options with images and descriptions now render with more consistent spacing and alignment.
+
+**Editing Page Changes:**
+- Improved: The calculator preview panel now stretches more reliably to use the available editor space.
+- Fixed: The editing page now handles missing calculator config, webhook settings, and custom JavaScript settings more safely to prevent editor errors.
+
+**Backend Changes:**
+- Fixed: Forms now fall back more safely when Google Fonts data is missing, reducing PHP warnings and broken font loading.
+- Fixed: Post-update tasks now handle more plugin update response shapes reliably, helping upgrade routines complete correctly.
+- Fixed: Form controller loading now avoids class redeclaration errors.
+
 ## 8.2.7 - 2026-04-08
 
 **Frontend Changes:**

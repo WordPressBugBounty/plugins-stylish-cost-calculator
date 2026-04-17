@@ -3,7 +3,7 @@
  * Plugin Name: Stylish Cost Calculator
  * Plugin URI:  https://stylishcostcalculator.com
  * Description: A Stylish Cost Calculator / Price Estimate Form for your site.
- * Version:     8.2.7
+ * Version:     8.2.9
  * Author:      Designful
  * Author URI:  https://stylishcostcalculator.com
  * License:     GPL2
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'STYLISH_COST_CALCULATOR_VERSION', '8.2.7' );
+define( 'STYLISH_COST_CALCULATOR_VERSION', '8.2.9' );
 define( 'SCC_URL', plugin_dir_url( __FILE__ ) );
 define( 'SCC_DIR', __DIR__ );
 define( 'SCC_LIB_DIR', __DIR__ . '/lib' );
@@ -734,8 +734,9 @@ class df_scc_plugin {
             return "<h4 style='color:red'>Invalid calculator with ID " . intval( $atts['idvalue'] ) . "</h4>";
         }
         $allfonts2                  = json_decode( $scc_googlefonts_var->gf_get_local_fonts() );
-        $allfonts2i                 = $allfonts2->items;
-        $fontUsed2                  = ! empty( $form->titleFontType ) && isset( $allfonts2i[ $form->titleFontType ] ) ? $allfonts2i[ $form->titleFontType ] : null;
+        $allfonts2i                 = isset( $allfonts2->items ) && is_array( $allfonts2->items ) ? $allfonts2->items : [];
+        $defaultFont                = isset( $allfonts2i['432'] ) ? $allfonts2i['432'] : null;
+        $fontUsed2                  = ( ( ! empty( $form->titleFontType ) || '0' === $form->titleFontType ) && isset( $allfonts2i[ $form->titleFontType ] ) ) ? $allfonts2i[ $form->titleFontType ] : $defaultFont;
         $fontUsed2Variant           = ( $form->titleFontWeight != '' ) ? $form->titleFontWeight : 'regular';
         $google_font_links          = [];
         /**
@@ -744,7 +745,7 @@ class df_scc_plugin {
         $fontFamilyService2 = 'inherit';
         $fontFamilyTitle2   = 'inherit';
 
-        if ( $form->inheritFontType == 'null' || $form->inheritFontType == 'false' ) {
+        if ( ( $form->inheritFontType == 'null' || $form->inheritFontType == 'false' ) && is_object( $fontUsed2 ) ) {
             $fonts[0]['kind']     = $fontUsed2->kind;
             $fonts[0]['family']   = $fontUsed2->family;
             $fonts[0]['variants'] = [ $fontUsed2Variant ];
@@ -756,11 +757,11 @@ class df_scc_plugin {
         /**
          *Service font
          */
-        $allfonts3i       = $allfonts2->items;
-        $fontUsed3        = ! empty( $form->fontType ) && isset( $allfonts3i[ $form->fontType ] ) ? $allfonts3i[ $form->fontType ] : null;
+        $allfonts3i       = $allfonts2i;
+        $fontUsed3        = ( ( ! empty( $form->fontType ) || '0' === $form->fontType ) && isset( $allfonts3i[ $form->fontType ] ) ) ? $allfonts3i[ $form->fontType ] : $defaultFont;
         $fontUsed3Variant = ( $form->fontWeight != '' ) ? $form->fontWeight : 'regular';
 
-        if ( $form->inheritFontType == 'null' || $form->inheritFontType == 'false' ) {
+        if ( ( $form->inheritFontType == 'null' || $form->inheritFontType == 'false' ) && is_object( $fontUsed3 ) ) {
             $fonts2[0]['kind']     = $fontUsed3->kind;
             $fonts2[0]['family']   = $fontUsed3->family;
             $fonts2[0]['variants'] = [ $fontUsed3Variant ];
@@ -979,18 +980,28 @@ class df_scc_plugin {
     public function post_upgrade_tasks( $upgrader_object, $options ) {
         $current_plugin_path_name = plugin_basename( __FILE__ );
 
-        if ( $options['action'] == 'update' && $options['type'] == 'plugin' ) {
-            foreach ( $options['plugins'] as $each_plugin ) {
-                if ( $each_plugin == $current_plugin_path_name ) {
-                    // ensure cron schedulers
-                    if ( ! class_exists( 'SCC_Notifications_Cron' ) ) {
-                        require plugin_dir_path( __FILE__ ) . '/cron/notifications.php';
-                    }
-                    $cache_plugin_exclusion = new \DF_SCC\Utils\CachePluginExclusionHook();
-                    $cache_plugin_exclusion->exclude_sg_optimizer();
-                    $this->scc_alter_tables();
-                    SCC_Notifications_Cron::schedule_cron_event();
+        if ( ! isset( $options['action'], $options['type'] ) || $options['action'] !== 'update' || $options['type'] !== 'plugin' ) {
+            return;
+        }
+
+        $updated_plugins = [];
+
+        if ( ! empty( $options['plugins'] ) && is_array( $options['plugins'] ) ) {
+            $updated_plugins = $options['plugins'];
+        } elseif ( ! empty( $options['plugin'] ) && is_string( $options['plugin'] ) ) {
+            $updated_plugins = [ $options['plugin'] ];
+        }
+
+        foreach ( $updated_plugins as $each_plugin ) {
+            if ( $each_plugin == $current_plugin_path_name ) {
+                // ensure cron schedulers
+                if ( ! class_exists( 'SCC_Notifications_Cron' ) ) {
+                    require plugin_dir_path( __FILE__ ) . '/cron/notifications.php';
                 }
+                $cache_plugin_exclusion = new \DF_SCC\Utils\CachePluginExclusionHook();
+                $cache_plugin_exclusion->exclude_sg_optimizer();
+                $this->scc_alter_tables();
+                SCC_Notifications_Cron::schedule_cron_event();
             }
         }
     }

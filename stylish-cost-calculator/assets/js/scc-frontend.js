@@ -1164,6 +1164,16 @@ function dfsccLoaded() {
 			let elementId = jQuery(el).data("elementid");
 			let plugins = [];
 			let shouldEnableSearchInput = (el[0].options.length - 1) > 7;
+
+			function renderDropdownOptionContent(optionData) {
+				var contentResult = optionData.text.split('scc-dropdown-opt-content');
+				var optionTitle = contentResult[0] || '';
+				var optionDescription = contentResult[1] || '';
+				var optionImage = optionData.src ? `<img loading="lazy" class="me-2 ${optionData.class}" src="${optionData.src}">` : '';
+
+				return `<div class="scc-option-row">${optionImage}<div class="scc-option-content"><div class="scc-dropdown-opt-title">${optionTitle}</div><div class="scc-dropdown-opt-description">${optionDescription}</div></div></div>`;
+			}
+
 			if ( shouldEnableSearchInput ) {
 				plugins.push('dropdown_input');
 			}
@@ -1181,23 +1191,16 @@ function dfsccLoaded() {
 				},
 				render: {
 					option: function (data, escape) {
-						var contentResult = data.text.split('scc-dropdown-opt-content');
 						const isChooseAnOption = data.$option.classList.contains('scc-pick-an-option');
 						if (isChooseAnOption) {
 							return `<div class="firstchild1">${sccGetTranslationByKey(formId, data.text.trim())}</div>`;
 						}
 						else {
-							if (data.src) {
-								return `<div> <img loading="lazy" class="me-2 ${data.class}" src="${data.src}"><div class="scc-option-content"><div class="scc-dropdown-opt-title">${contentResult[0]}</div><div class="scc-dropdown-opt-description">${contentResult[1]}</div></div></div>`;
-							}
-							else {
-								return `<div class="scc-option-content"><div class="scc-dropdown-opt-title">${contentResult[0]}</div><div class="scc-dropdown-opt-description">${contentResult[1]}</div></div>`;
-							}
+							return renderDropdownOptionContent(data);
 						}
 
 					},
 					item: function (item, escape) {
-						var contentResult = item.text.split('scc-dropdown-opt-content');
 						const isChooseAnOption = item.$option.classList.contains('scc-pick-an-option')
 						if (isChooseAnOption) {
 							return `<div class="scc-pick-an-option-bkp firstchild2">
@@ -1205,12 +1208,7 @@ function dfsccLoaded() {
 									</div>`;
 						}
 						else {
-							if (item.src) {
-								return `<div><img loading="lazy" class="me-2 ${item.class}" src="${item.src}"><div class="scc-option-content"><div class="scc-dropdown-opt-title">${contentResult[0]}</div><div class="scc-dropdown-opt-description">${contentResult[1]}</div></div></div>`;
-							}
-							else {
-								return `<div class="scc-option-content"><div class="scc-dropdown-opt-title">${contentResult[0]}</div><div class="scc-dropdown-opt-description">${contentResult[1]}</div></div>`;
-							}
+							return renderDropdownOptionContent(item);
 						}
 
 					}

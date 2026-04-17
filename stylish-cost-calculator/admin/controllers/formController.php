@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * !more that one file uses this queries
  */
 
+if ( ! class_exists( 'formController', false ) ) {
 class formController {
 
 	protected $db;
@@ -495,4 +496,5 @@ class formController {
 			return json_encode( array( 'msj' => 'An error occured, please contact support team' ) );
 		}
 	}
+}
 }

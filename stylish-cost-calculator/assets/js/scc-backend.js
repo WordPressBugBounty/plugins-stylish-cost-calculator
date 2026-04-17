@@ -2016,71 +2016,85 @@ const sccBackendUtils = {
 				calc_id: calcId,
 			},
 			success( { data, success } ) {  
-				if ( success ) {
-					sccBackendStore.config = data;
-					sccBackendStore.config.sccAvailableElements = sccBackendStore.config.sections
-						.map( ( e, i ) =>
-							sccBackendStore.config.sections[ i ].subsection.map( ( e ) => {  
-								e.element.forEach( ( eq ) => {
-									eq.sectionName = sccBackendStore.config.sections[ i ].name;
-									eq.parentSectionId = sccBackendStore.config.sections[ i ].id;
-									if (
-										sccBackendStore.config.sections.findIndex(
-											( ez ) => ez.sectionId == eq.sectionId,
-										) < 0
-									) {
-										sccBackendStore.config.sections.push( {
-											sectionName: eq.sectionName,
-											sectionId: eq.parentSectionId,
-										} );
-									}
-								} );
-								return e.element;
-							} ),
-						)
-						.flat()
-						.flat()
-						.filter( ( e ) => ( ! [ 'math', 'custom-math' ].includes( e.type ) ) );
-					const checkboxesAvailable = sccBackendStore.config.sccAvailableElements.filter(
-						( e ) => e.type == 'checkbox',
-					);
-					
-				    checkboxesAvailable.forEach( ( checkboxItem, index ) => {
-						/* Including the checkbox item from the available elements search,
-							* as the ID can match against non-checkbox items
-							* due to the elements are stored in a separate tables and the ID is sequential
-							*/
-						const targetIndex = sccBackendStore.config.sccAvailableElements.findIndex(
-							( e ) => ( e.id == checkboxItem.id ) && ( e.type === 'checkbox' ),
-						);
-						const element = sccBackendStore.config.sccAvailableElements[ targetIndex ];
-						element.elementitems.forEach( ( item ) => {
-							item.parentSectionId = element.parentSectionId;
-							item.subSectionIndex = element.subSectionIndex;
-							item.sectionName = element.sectionName;
-							item.type = 'checkbox-child';
-						} );
-						sccBackendStore.config.sccAvailableElements = [
-							...sccBackendStore.config.sccAvailableElements.slice( 0, targetIndex ),
-							...element.elementitems,
-							...sccBackendStore.config.sccAvailableElements.slice( targetIndex + 1 ),
-						];
+				if ( ! success || ! data || ! Array.isArray( data.sections ) ) {
+					console.error( 'SCC: Failed to refresh backend calculator config.', {
+						calcId,
+						success,
+						data,
 					} );
-					 
-					sccBackendUtils.updateFeaturesAndElementsUsage( 'init', 'check' );
+					return;
 				}
+
+				sccBackendStore.config = data;
+				sccBackendStore.config.sccAvailableElements = sccBackendStore.config.sections
+					.map( ( e, i ) =>
+						sccBackendStore.config.sections[ i ].subsection.map( ( e ) => {  
+							e.element.forEach( ( eq ) => {
+								eq.sectionName = sccBackendStore.config.sections[ i ].name;
+								eq.parentSectionId = sccBackendStore.config.sections[ i ].id;
+								if (
+									sccBackendStore.config.sections.findIndex(
+										( ez ) => ez.sectionId == eq.sectionId,
+									) < 0
+								) {
+									sccBackendStore.config.sections.push( {
+										sectionName: eq.sectionName,
+										sectionId: eq.parentSectionId,
+									} );
+								}
+							} );
+							return e.element;
+						} ),
+					)
+					.flat()
+					.flat()
+					.filter( ( e ) => ( ! [ 'math', 'custom-math' ].includes( e.type ) ) );
+				const checkboxesAvailable = sccBackendStore.config.sccAvailableElements.filter(
+					( e ) => e.type == 'checkbox',
+				);
 				
-				const calcId = getCalcId();
+			    checkboxesAvailable.forEach( ( checkboxItem, index ) => {
+					/* Including the checkbox item from the available elements search,
+						* as the ID can match against non-checkbox items
+						* due to the elements are stored in a separate tables and the ID is sequential
+						*/
+					const targetIndex = sccBackendStore.config.sccAvailableElements.findIndex(
+						( e ) => ( e.id == checkboxItem.id ) && ( e.type === 'checkbox' ),
+					);
+					const element = sccBackendStore.config.sccAvailableElements[ targetIndex ];
+					element.elementitems.forEach( ( item ) => {
+						item.parentSectionId = element.parentSectionId;
+						item.subSectionIndex = element.subSectionIndex;
+						item.sectionName = element.sectionName;
+						item.type = 'checkbox-child';
+					} );
+					sccBackendStore.config.sccAvailableElements = [
+						...sccBackendStore.config.sccAvailableElements.slice( 0, targetIndex ),
+						...element.elementitems,
+						...sccBackendStore.config.sccAvailableElements.slice( targetIndex + 1 ),
+					];
+				} );
+				 
+				sccBackendUtils.updateFeaturesAndElementsUsage( 'init', 'check' );
+
 				if ( typeof ( sccData ) === 'undefined' ) {
 					window.sccData = [];
-					sccData[ calcId ] = {};
-					sccData[ calcId ].config = sccBackendStore.config;
-				} else {
-					sccData[ calcId ].config = sccBackendStore.config;
 				}
+				if ( typeof ( sccData[ calcId ] ) === 'undefined' ) {
+					sccData[ calcId ] = {};
+				}
+				sccData[ calcId ].config = sccBackendStore.config;
 				if ( callbackFn ) {
 					callbackFn();
 				}
+			},
+			error( jqXHR, textStatus, errorThrown ) {
+				console.error( 'SCC: AJAX request failed while refreshing backend calculator config.', {
+					calcId,
+					textStatus,
+					errorThrown,
+					responseText: jqXHR?.responseText,
+				} );
 			},
 		} );
 	},
@@ -4304,7 +4318,10 @@ function doPaypalSetupModal(calcId) {
 }
 // in progress code not being used
 function registerWebhookActions(calcId) {
-	let { webhookConfig } = sccData[calcId].config;
+	let webhookConfig = sccData?.[calcId]?.config?.webhookConfig;
+	if ( ! Array.isArray( webhookConfig ) || ! webhookConfig.length ) {
+		return;
+	}
 	webhookConfig.map(e => Object.keys(e)[0]).forEach(webhookCtx => {
 		let { enabled, webhook } = webhookConfig.filter(ee => (Object.keys(ee)[0] == webhookCtx))[0][webhookCtx];
 		let webhookCtxNode = jQuery(`#${webhookCtx}`);
@@ -6090,7 +6107,10 @@ function changeValue6( element ) {
 }
 
 function registerCustomJsSetupActions( calcId ) {
-	const { customJsConfig } = sccBackendStore.config;
+	const customJsConfig = sccBackendStore?.config?.customJsConfig ?? sccData?.[ calcId ]?.config?.customJsConfig;
+	if ( ! Array.isArray( customJsConfig ) || ! customJsConfig.length ) {
+		return;
+	}
 	customJsConfig
 		.map( ( e ) => Object.keys( e )[ 0 ] )
 		.forEach( ( ctx ) => {

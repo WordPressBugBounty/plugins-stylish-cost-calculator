@@ -15474,7 +15474,7 @@ select.scc-woo-commerce-product-selector{
 }
 
 #calc-editor-root:not(.preview-docked-bottom) {
-  align-items: flex-start;
+  align-items: stretch;
   overflow: visible;
 }
 
@@ -15490,6 +15490,7 @@ select.scc-woo-commerce-product-selector{
   width: 50%;
   max-width: 50%;
   min-width: 0;
+  align-self: stretch;
 }
 
 #calc-editor-root.preview-docked-bottom .scc-left-pane,
