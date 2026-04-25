@@ -1165,11 +1165,13 @@ function dfsccLoaded() {
 			let plugins = [];
 			let shouldEnableSearchInput = (el[0].options.length - 1) > 7;
 
-			function renderDropdownOptionContent(optionData) {
+			function renderDropdownOptionContent(optionData, escapeHtml) {
 				var contentResult = optionData.text.split('scc-dropdown-opt-content');
-				var optionTitle = contentResult[0] || '';
-				var optionDescription = contentResult[1] || '';
-				var optionImage = optionData.src ? `<img loading="lazy" class="me-2 ${optionData.class}" src="${optionData.src}">` : '';
+				var optionTitle = escapeHtml( contentResult[0] || '' );
+				var optionDescription = escapeHtml( contentResult[1] || '' );
+				var optionClass = optionData.class ? escapeHtml( optionData.class ) : '';
+				var optionSrc = optionData.src ? escapeHtml( optionData.src ) : '';
+				var optionImage = optionSrc ? `<img loading="lazy" class="me-2 ${optionClass}" src="${optionSrc}">` : '';
 
 				return `<div class="scc-option-row">${optionImage}<div class="scc-option-content"><div class="scc-dropdown-opt-title">${optionTitle}</div><div class="scc-dropdown-opt-description">${optionDescription}</div></div></div>`;
 			}
@@ -1190,26 +1192,26 @@ function dfsccLoaded() {
 					}
 				},
 				render: {
-					option: function (data, escape) {
-						const isChooseAnOption = data.$option.classList.contains('scc-pick-an-option');
-						if (isChooseAnOption) {
-							return `<div class="firstchild1">${sccGetTranslationByKey(formId, data.text.trim())}</div>`;
-						}
-						else {
-							return renderDropdownOptionContent(data);
-						}
+						option: function (data, escape) {
+							const isChooseAnOption = data.$option.classList.contains('scc-pick-an-option');
+							if (isChooseAnOption) {
+								return `<div class="firstchild1">${escape( sccGetTranslationByKey(formId, data.text.trim()) )}</div>`;
+							}
+							else {
+								return renderDropdownOptionContent(data, escape);
+							}
 
 					},
-					item: function (item, escape) {
-						const isChooseAnOption = item.$option.classList.contains('scc-pick-an-option')
-						if (isChooseAnOption) {
-							return `<div class="scc-pick-an-option-bkp firstchild2">
-										<div class="scc-pick-an-option-text-bkp firstchild2">${sccGetTranslationByKey(formId, item.text.trim())}</div>
+						item: function (item, escape) {
+							const isChooseAnOption = item.$option.classList.contains('scc-pick-an-option')
+							if (isChooseAnOption) {
+								return `<div class="scc-pick-an-option-bkp firstchild2">
+										<div class="scc-pick-an-option-text-bkp firstchild2">${escape( sccGetTranslationByKey(formId, item.text.trim()) )}</div>
 									</div>`;
-						}
-						else {
-							return renderDropdownOptionContent(item);
-						}
+							}
+							else {
+								return renderDropdownOptionContent(item, escape);
+							}
 
 					}
 				},

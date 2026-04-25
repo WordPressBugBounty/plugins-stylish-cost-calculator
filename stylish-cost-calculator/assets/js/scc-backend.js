@@ -3887,6 +3887,20 @@ const elementTooltips = {
 						<a href="${ sccHelpdeskLinks[ 'element-slider-all-types' ] }" target="_blank"><div class="btn btn-primary btn-lg">Learn more</div></a>
 					</div>`
 	},
+	'slider-pricing-structure-tt': {
+		msg: `<div class="scc-slider-pricing-tooltip text-start">
+			<h4><b>Slider Pricing Structure</b></h4>
+			<h5>1. Unit Price + Quantity Multiplier</h5>
+			<p><b>Description:</b> Adjust the total price based on the unit price and the quantity selected. Each unit's price is multiplied by the quantity.</p>
+			<h5>2. Quantity Multiplier Only</h5>
+			<p><b>Description:</b> Adjust the total price based solely on the quantity selected without a predefined unit price.</p>
+			<h5>3. Bulk Pricing V1 (Tiered Discounts)</h5>
+			<p><b>Description:</b> Apply a single unit price based on the quantity tier. Example: 12 units = 12 * $9 if units 11-20 are priced at $9 each.</p>
+			<h5>4. Sliding Scale (Flat Rate per Range)</h5>
+			<p><b>Description:</b> Charge a flat fee based on a specified quantity range. Example: 15 units = $200 if 11-20 units are priced at $200 flat.</p>
+			<a href="${ sccHelpdeskLinks[ 'element-slider-all-types' ] }" target="_blank"><div class="btn btn-primary btn-lg">Learn More</div></a>
+		</div>`
+	},
 	"enable-price-hint-bubble-tt": {
 		msg: `<h5 class='text-start'><b>Price Hint Bubble</b></h4>
 		<p class='text-start mt-2'>Will show a temporary pop-up bubble with the cost that was added to the total when the user selects any item in this element.</p>
@@ -4079,6 +4093,10 @@ const elementTooltips = {
 				  </div>`,
 		coverImage:
 			'images/tooltip-images/for-elements/infographic-checkboxes-2.jpg'
+		},
+	   'quantity-input-style-tt': {
+		msg: `<h5 class='text-start'>Input Box Style</h5>
+				  <p class='text-start mt-2'>Choose how the quantity input is displayed in the calculator form.</p>`,
 		},
 }
 

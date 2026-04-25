@@ -978,9 +978,17 @@ fieldset[disabled] .btn-link:focus {
   width: 90%;
   padding-left: 22px;
 }
-.preview-docked-bottom #allinputstoadd,
+.preview-docked-bottom #allinputstoadd {
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .preview-docked-bottom .addedFieldsStyle {
-  max-width: unset;
+  width: 100%;
+  max-width: 900px;
+  margin-left: 0;
+  margin-right: 0;
 }
 .inputoption {
   padding: 10px !important;
@@ -10193,6 +10201,47 @@ div#dfscc_tab_translations_ {
   display: inline;
 }
 
+.slider-setup-body .form-select.scc-element-style-select {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.scc-field-label-with-tooltip {
+  align-items: center;
+  display: inline-flex;
+  gap: 3px;
+}
+
+.slider-setup-body .scc-slider-pricing-structure {
+  width: min(100%, 430px);
+  max-width: 100%;
+}
+
+.scc-slider-pricing-tooltip h4 {
+  font-size: 20px;
+  line-height: 1.25;
+  margin: 0 0 14px;
+}
+
+.scc-slider-pricing-tooltip h5 {
+  font-size: 15px;
+  line-height: 1.3;
+  margin: 14px 0 6px;
+}
+
+.scc-slider-pricing-tooltip p {
+  font-size: 13px;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.scc-slider-pricing-tooltip .btn {
+  font-size: 14px;
+  margin-top: 16px;
+  padding: 8px 14px;
+}
+
 .cmath-setup-body .form-select {
   min-width: 100%;
   display: inline;
@@ -12403,6 +12452,35 @@ div#floating-wizard-placeholder {
   background-size: 18px !important;
   background-origin: content-box !important;
 }
+
+.advanced-option-wrapper .scc-datepicker-options-panel {
+  width: 100%;
+  margin: 0 0 16px;
+  padding: 18px 18px 2px;
+  background-color: rgba(49, 74, 243, 0.04);
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.advanced-option-wrapper .scc-datepicker-options-panel .row {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.advanced-option-wrapper .scc-datepicker-options-panel .input-field {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.advanced-option-wrapper .scc-datepicker-options-panel input {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 45px;
+  text-align: left;
+  border-radius: 0.25rem !important;
+  box-sizing: border-box;
+}
 .flatpickr-day.selected {
   background: #314af3 !important; 
   border-color: #314af3 !important;
@@ -12658,16 +12736,19 @@ select.scc-woo-commerce-product-selector{
 }
 
 .scc-days-wrapper {
-  width: 55%;
+  width: 100%;
   padding: 10px;
   background-color: #ffffff;
   margin-bottom: 1em;
   border: 2px dashed #dddefe;
   border-radius: 5px;
+  box-sizing: border-box;
   .days-select {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 8px;
+    flex-wrap: wrap;
   }
   .day {
     display: inline-flex;
@@ -15074,6 +15155,11 @@ select.scc-woo-commerce-product-selector{
   padding-right: 15px;
 }
 
+.scc-section-content-wrapper {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .scc-section-container {
   counter-increment: scc-section;
   overflow: visible;
@@ -15466,11 +15552,33 @@ select.scc-woo-commerce-product-selector{
   box-shadow: 0 3px 0 0 #8ec5ff;
 }
 
+.preview-docked-bottom .scc-new-section-btn-row {
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.preview-docked-bottom .scc-new-section-btn-container {
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+}
+
+.advanced-option-wrapper {
+  width: 97%;
+  box-sizing: border-box;
+}
+
 .advanced-option-wrapper > .text-scc-col.d-flex,
 .advanced-option-wrapper > .scc-responsive-options-block,
-.advanced-option-wrapper > .scc_checkbox_columns_option {
-  width: 95%;
-  max-width: 675px;
+.advanced-option-wrapper > .scc_checkbox_columns_option,
+.advanced-option-wrapper > .scc-slider-value-options,
+.advanced-option-wrapper > .scc-quantity-value-options {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
 }
 
 #calc-editor-root:not(.preview-docked-bottom) {
@@ -15493,11 +15601,18 @@ select.scc-woo-commerce-product-selector{
   align-self: stretch;
 }
 
-#calc-editor-root.preview-docked-bottom .scc-left-pane,
 #calc-editor-root.preview-docked-bottom .scc-right-pane {
   width: 100%;
   min-width: 0;
   max-width: none;
+}
+
+#calc-editor-root.preview-docked-bottom .scc-left-pane {
+  width: 100%;
+  min-width: 0;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #calc-editor-wrapper.preview-docked-bottom {
@@ -15610,8 +15725,26 @@ select.scc-woo-commerce-product-selector{
   }
 }
 
-.advanced-option-wrapper > p.scc-advanced-option-cont {
+.advanced-option-wrapper > p.scc-advanced-option-cont,
+.advanced-option-wrapper > .scc-slider-value-options,
+.advanced-option-wrapper > .scc-quantity-value-options {
   margin: 0 0 12px;
+}
+
+.advanced-option-wrapper > .scc-slider-value-options,
+.advanced-option-wrapper > .scc-quantity-value-options {
+  display: flex;
+  gap: 8px;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.advanced-option-wrapper > .scc-slider-value-options > .input-field,
+.advanced-option-wrapper > .scc-quantity-value-options > .input-field {
+  flex: 1 1 0;
+  width: auto;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .advanced-option-wrapper > .text-scc-col.d-flex {
@@ -15641,10 +15774,9 @@ select.scc-woo-commerce-product-selector{
 
 .advanced-option-wrapper .scc-responsive-options-panel,
 .advanced-option-wrapper .scc-checkbox-columns-panel {
-  width: calc(100% - 20px);
+  width: 100%;
   max-width: none;
   margin: 0;
-  margin-right: 20px;
   padding: 18px 18px 14px;
   border-radius: 5px !important;
   background-color: rgba(49, 74, 243, 0.08);
@@ -15669,7 +15801,7 @@ select.scc-woo-commerce-product-selector{
   width: 100%;
   max-width: 100%;
   min-height: 45px;
-  border-radius: var(--scc-btn-border-radius) !important;
+  border-radius: 0.25rem !important;
 }
 
 .advanced-option-wrapper .scc-responsive-options-panel input[disabled],

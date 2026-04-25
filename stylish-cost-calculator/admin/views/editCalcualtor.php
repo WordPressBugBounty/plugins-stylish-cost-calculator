@@ -287,7 +287,7 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 							</button>
 							<div id="sccCollapse<?php echo intval( $section->id ); ?>" class="accordion-collapse collapse <?php echo $is_section_open ? 'show' : ''; ?>" aria-labelledby="sccHeading">
 								<div class="scc-content">
-									<div class="scc-transition advanced-option-wrapper">
+									<div class="scc-transition scc-section-content-wrapper">
 										<div class="fieldDatatoAdd">
 						<?php
                         foreach ( $section->subsection as $sub ) {
@@ -2826,11 +2826,6 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 					break;
 			}
 			elementSetupContainer.find('.price-slider-item-header .col:last .form-label').text(sliderPriceTitle)
-			let tooltipTarget = elementSetupContainer.find('.material-icons-outlined.v-align-middle')
-			tooltipTarget.attr('data-element-tooltip-type', 'slider-type-' + selected)
-			let tooltip = bootstrap.Tooltip.getInstance(tooltipTarget[0])
-			tooltip && tooltip.dispose()
-			applyElementTooltip(tooltipTarget[0])
 			if (["quantity_mod", "default"].some(e => e == selected)) {
 				selected == "quantity_mod" ?
 					elementSetupContainer.find('.price-slider-item:first .col:last input').prop('disabled', true) :
@@ -3345,6 +3340,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	function showAdvanceoptions(element) {
 		var advance = jQuery(element).next(".scc-content")
 		advance.toggle();
+		jQuery(element).find(".material-icons:first").text(advance.is(":visible") ? "keyboard_arrow_down" : "keyboard_arrow_right")
 		disabledInput(advance)
 	}
 	function disabledInput(toogle){
@@ -3353,7 +3349,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		let oo = toogle.find('[name="scc_show_inputbox_slider"]').closest('div')
 		input.attr('disabled',true)
 		input.removeAttr('checked')
-		oo.css('width','fit-content')
+		oo.css('width','97%')
 		/*new bootstrap.Tooltip(oo, {
 			delay: { show: 600, hide: 300 },
 			trigger: 'hover focus',
@@ -3907,7 +3903,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 			</button>
 			<div id="sccCollapse${idsection}" class="accordion-collapse collapse show" aria-labelledby="sccHeading">
 				<div class="scc-content">
-					<div class="scc-transition advanced-option-wrapper">
+					<div class="scc-transition scc-section-content-wrapper">
 						<div class="fieldDatatoAdd">
 ${insertSubSection(idsubsection)}
 							<div class="boardOption1">
@@ -4198,7 +4194,7 @@ ${insertSubSection(idsubsection)}
 		element += '        <i class="material-icons">keyboard_arrow_right</i><span>Advanced Options</span>'
 		element += '    </div>'
 		element += '    <div class="scc-content" style="display: none;">'
-		element += '        <div class="scc-transition">'
+		element += '        <div class="scc-transition advanced-option-wrapper">'
 		element += '            <p>'
 		element += '                <label class="scc-accordion_switch_button">'
 		element += '                    <input onchange="changeMandatoryElement(this)" class="scc_mandatory_dropdown" name="scc_mandatory_dropdown" type="checkbox">'
@@ -4206,22 +4202,20 @@ ${insertSubSection(idsubsection)}
 		element += '                </label>'
 		element += '                <span><b>Mandatory</b></span>'
 		element += '            </p>'
-		element += '            <span style="text-align: left;display: block;font-size:16px;margin-bottom:10px;"><b>Responsive Options</b></span>'
-		element += '            <div class="scc-accordion-tooltip" style="width: 95%; text-align:left;">'
-		element += '                <div class="text-scc-col d-flex tooltipadmin-right" title="Please enter a number between 1 and 12. 1 being the smallest and 12 being the largest, for your title. If you have a large title, we recommend between 6 and 12.">'
-		element += '                    <div class="col-md-3" style="padding:1px;">'
-		element += '                        <label>Title column (desktop)</label>'
-		element += '                    </div>'
-		element += '                    <div class="col-md-3" style="padding:1px;">'
-		element += '                        <input onchange="changeColumnDesktop(this)" onkeyup="changeColumnDesktop(this)" class="scc_title_column_dskp" min="1" max="12" name="scc_title_column_dskp" type="number" value="">'
-		element += '                    </div>'
-		element += '                </div>'
-		element += '                <div class="text-scc-col d-flex">'
-		element += '                    <div class="col-md-3" style="padding:1px;">'
-		element += '                        <label>Title column (mobile)</label>'
-		element += '                    </div>'
-		element += '                    <div class="col-md-3" style="padding:1px;">'
-		element += '                        <input onchange="changeColumnMobile(this)" onkeyup="changeColumnMobile(this)" class="scc_title_column_mobl" min="1" max="12" name="scc_title_column_mobl" type="number" value="">'
+		element += '            <div class="scc-accordion-tooltip px-0 scc-responsive-options-block" style="width: 100%; text-align:left;">'
+		element += '                <span style="text-align: left;display: block;font-size:16px;margin-bottom:10px;">Responsive Options <i data-element-tooltip-type="responsive-options-tt" class="material-icons-outlined more-settings-info" style="margin-right:5px">help_outline</i></span>'
+		element += '                <div class="row tooltip-settings-wrapper scc-responsive-options-panel p-3 rounded">'
+		element += '                    <div class="col-md-12 p-0">'
+		element += '                        <div class="row gx-2">'
+		element += '                            <div class="col-md-6 input-field use-premium-tooltip">'
+		element += '                                <input disabled onchange="changeColumnDesktop(this)" onkeyup="changeColumnDesktop(this)" class="scc_title_column_dskp" min="1" max="12" name="scc_title_column_dskp" type="number" value="4">'
+		element += '                                <label class="active form-label fw-bold" title="Please enter a number between 1 and 12. 1 being the smallest and 12 being the largest, for your title. If you have a large title, we recommend between 6 and 12.">Title column (desktop)</label>'
+		element += '                            </div>'
+		element += '                            <div class="col-md-6 input-field use-premium-tooltip">'
+		element += '                                <input disabled onchange="changeColumnMobile(this)" onkeyup="changeColumnMobile(this)" class="scc_title_column_mobl" min="1" max="12" name="scc_title_column_mobl" type="number" value="12">'
+		element += '                                <label class="active form-label fw-bold" title="Please enter a number between 1 and 12. 1 being the smallest and 12 being the largest, for your title. If you have a large title, we recommend between 6 and 12.">Title column (mobile)</label>'
+		element += '                            </div>'
+		element += '                        </div>'
 		element += '                    </div>'
 		element += '                </div>'
 		element += '            </div>'

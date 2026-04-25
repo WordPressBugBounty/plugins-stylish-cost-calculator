@@ -838,7 +838,7 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 								<option value="null" class="scc-tom-select-placeholder">Choose an option...</option>
 								<?php for ( $i = 0; $i < count( $el->elementitems ); $i++ ) { ?>
 									<option 
-										data-title="<?php echo wp_kses( $el->elementitems[ $i ]->name, SCC_ALLOWTAGS ); ?>"
+										data-title="<?php echo esc_attr( wp_strip_all_tags( wp_unslash( $el->elementitems[ $i ]->name ) ) ); ?>"
 										<?php
 					                    if ( intval( $el->elementitems[ $i ]->opt_default ) == 1 ) {
 					                        echo 'selected';
@@ -876,7 +876,7 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 						        for ( $i = 0; $i < count( $el->elementitems ); $i++ ) {
 						            ?>
 									<option 
-										data-title="<?php echo  wp_kses( $el->elementitems[ $i ]->name, SCC_ALLOWTAGS ); ?>"
+										data-title="<?php echo esc_attr( wp_strip_all_tags( wp_unslash( $el->elementitems[ $i ]->name ) ) ); ?>"
 										<?php
 						                if ( intval( $el->elementitems[ $i ]->opt_default ) == 1 ) {
 						                    echo 'selected';

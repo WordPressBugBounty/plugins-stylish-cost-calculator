@@ -172,16 +172,14 @@ class Stylish_Cost_Calculator_Edit_Page {
 
                     if ( in_array( $el->type, [ 'quantity box' ] ) ) {
                         ?>
-						<div class="scc-accordion-tooltip px-0" style="width: 100%; text-align:left;">
-							<div class="row gx-2">
-								<div class="col-md-6 input-field">
-									<input onchange="changeValue3(this)" onkeyup="changeValue3(this)" id="<?php echo esc_attr( 'scc_title_column_dskp-' . $el->id ); ?>" class="scc_title_column_dskp" name="scc_title_column_dskp" type="number" value="<?php echo intval( $el->value3 ); ?>">
-									<label <?php echo "class='active'"; ?> for="<?php echo esc_attr( 'scc_title_column_dskp-' . $el->id ); ?>">Max Value</label>
-								</div>
-								<div class="col-md-6 input-field">
-									<input onchange="changeValue4(this)" onkeyup="changeValue4(this)" id="<?php echo esc_attr( 'scc_title_column_mobl-' . $el->id ); ?>" class="scc_title_column_mobl" name="scc_title_column_mobl" type="number" value="<?php echo intval( $el->value4 ); ?>">
-									<label <?php echo "class='active'"; ?> for="<?php echo esc_attr( 'scc_title_column_mobl-' . $el->id ); ?>">Min Value</label>
-								</div>
+						<div class="row gx-2 mt-2 scc-advanced-option-cont scc-quantity-value-options">
+							<div class="col-6 col-md-6 input-field">
+								<input onchange="changeValue3(this)" onkeyup="changeValue3(this)" id="<?php echo esc_attr( 'scc_title_column_dskp-' . $el->id ); ?>" class="scc_title_column_dskp" name="scc_title_column_dskp" type="number" value="<?php echo intval( $el->value3 ); ?>">
+								<label class="active form-label fw-bold" for="<?php echo esc_attr( 'scc_title_column_dskp-' . $el->id ); ?>">Max Value</label>
+							</div>
+							<div class="col-6 col-md-6 input-field">
+								<input onchange="changeValue4(this)" onkeyup="changeValue4(this)" id="<?php echo esc_attr( 'scc_title_column_mobl-' . $el->id ); ?>" class="scc_title_column_mobl" name="scc_title_column_mobl" type="number" value="<?php echo intval( $el->value4 ); ?>">
+								<label class="active form-label fw-bold" for="<?php echo esc_attr( 'scc_title_column_mobl-' . $el->id ); ?>">Min Value</label>
 							</div>
 						</div>
 						<?php
@@ -270,16 +268,16 @@ class Stylish_Cost_Calculator_Edit_Page {
 					</i>
 				    </span>
 				</p>
-				<p class="row gx-2 mt-2 scc-advanced-option-cont">
-					<div class="col-md-6 input-field">
+				<div class="row gx-2 mt-2 scc-advanced-option-cont scc-slider-value-options">
+					<div class="col-6 col-md-6 input-field">
 						<input id="<?php echo esc_attr( 'slider-starting-value-' . $el->id ); ?>" type="number" onchange="changeValue3(this, true);" onkeyup="changeValue3(this)" value="<?php echo esc_attr( $el->value3 ); ?>" style="margin-bottom: 0px;">
 						<label for="<?php echo esc_attr( 'slider-starting-value-' . $el->id ); ?>" class="active form-label fw-bold">Starting value</label>
 					</div>
-					<div class="col-md-6 input-field">
+					<div class="col-6 col-md-6 input-field">
 						<input id="<?php echo esc_attr( 'slider-steps-value-' . $el->id ); ?>" type="number" onchange="changeValue2(this)" onkeyup="changeValue2(this)" value="<?php echo esc_attr( $el->value2 ); ?>" style="margin-bottom: 0px;">
 						<label for="<?php echo esc_attr( 'slider-steps-value-' . $el->id ); ?>" class="active form-label fw-bold">Slider steps</label>
 					</div>
-				</p>
+				</div>
 				<p class="d-none slider-start-value-warning" style="color: red;">The starting value cannot be smaller than the base from value.</p>
 			   <?php } ?>
 				<?php if ( in_array( $el->type, [ 'math', 'Dropdown Menu' ] ) ) { ?>
@@ -389,37 +387,29 @@ class Stylish_Cost_Calculator_Edit_Page {
 					</div>
 				</div>
 				<hr>
-			<div class="scc-accordion-tooltip" style="text-align:left; width:100%">
-				<div class="row gx-2 scc-edit-input-option-wrapper">
-					<div class="col-md-4" style="margin-bottom: 1rem">
-						<label class="use-tooltip fw-bold" title="Select the minimum date in which it is allowed to choose dates"
-						style="font-size:14px; transform:scale(0.8)">Min date </label>
+			<div class="scc-datepicker-options-panel">
+				<div class="row gx-2">
+					<div class="col-md-4 input-field">
+						<label class="active form-label fw-bold use-tooltip" title="Select the minimum date in which it is allowed to choose dates">Min date</label>
 						<input placeholder="yyyy-mm-dd" type="text" data-date-structure data-picker-field="min-date" class="input_pad inputoption_2 scc-datepicker-editor" 
-						style="text-align:center;height:35px; min-width:158px;" placeholder=""
 						value="<?php echo esc_attr( $scc_date_config['min_date'] ); ?>" <?php echo esc_attr( $scc_date_config['min_date'] === 'today' ? 'data-today-enabled=true' : '' ); ?>>
 					</div>
-					<div class="col-md-4" style="margin-bottom: 1rem">
-						<label class="use-tooltip fw-bold" title="Select the maximum date in which it is allowed to choose dates"
-						style="font-size:14px; transform:scale(0.8)">Max date </label>
+					<div class="col-md-4 input-field">
+						<label class="active form-label fw-bold use-tooltip" title="Select the maximum date in which it is allowed to choose dates">Max date</label>
 						<input placeholder="yyyy-mm-dd" type="text" data-date-structure data-picker-field="max-date" class="input_pad inputoption_2 scc-datepicker-editor" 
-						style="text-align:center;height:35px; min-width:158px;" placeholder=""
 						value="<?php echo esc_attr( $scc_date_config['max_date'] ); ?>" <?php echo esc_attr( $scc_date_config['max_date'] === 'today' ? 'data-today-enabled=true' : '' ); ?>>
 					</div>
-					<div class="col-md-4" style="margin-bottom: 1rem">
-					<label class="use-tooltip fw-bold" title="Choose the default date for the date picker"
-						style="font-size:14px; transform:scale(0.8)">Default date </label>
+					<div class="col-md-4 input-field">
+					<label class="active form-label fw-bold use-tooltip" title="Choose the default date for the date picker">Default date</label>
 						<input placeholder="yyyy-mm-dd" type="text" data-picker-field="default-date" class="input_pad inputoption_2 scc-datepicker-editor" 
-						style="text-align:center;height:35px; min-width:158px;" placeholder=""
 						value="<?php echo esc_attr( $el->value2 ); ?>" <?php echo esc_attr( $el->value2 === 'today' ? 'data-today-enabled=true' : '' ); ?>>
 					</div>
 					
 				</div>
-				<div class="row gx-2 scc-edit-input-option-wrapper">
-					<div class="col-md-12" style="margin-bottom: 1rem">
-						<label class=" use-tooltip fw-bold" title="Manually choose the dates you want to disable so users can't select them"
-						style="font-size:14px; transform:scale(0.8)">Disabled dates </label>
+				<div class="row gx-2">
+					<div class="col-md-12 input-field">
+						<label class="active form-label fw-bold use-tooltip" title="Manually choose the dates you want to disable so users can't select them">Disabled dates</label>
 						<input placeholder="yyyy-mm-dd" type="text" data-picker-field="disabled-date" class="input_pad inputoption_2 scc-datepicker-editor" 
-						style="text-align:center;height:35px; min-width:158px;" placeholder=""
 						value="<?php echo esc_attr( $scc_date_config['disabled_date'] ); ?>">
 					</div>
 				</div>
@@ -459,8 +449,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 					<?php
                 }
         ?>
-				<?php if ( $el->type !== 'texthtml'  ) { ?>
-				<div class="scc-accordion-tooltip px-0 scc-responsive-options-block" style="width: 100%; text-align:left;">
+					<div class="scc-accordion-tooltip px-0 scc-responsive-options-block" style="width: 100%; text-align:left;">
 					<span style="text-align: left;display: block;font-size:16px;margin-bottom:10px;">Responsive Options 
 					<i
 						data-element-tooltip-type="responsive-options-tt"
@@ -483,9 +472,8 @@ class Stylish_Cost_Calculator_Edit_Page {
 							</div>
 						</div>
 					</div>
-				</div>
-				<?php } ?>
-				<?php if ( in_array( $el->type, [ 'checkbox' ] ) ) { ?>
+					</div>
+					<?php if ( in_array( $el->type, [ 'checkbox' ] ) ) { ?>
 				<div class="scc-accordion-tooltip px-0 scc_checkbox_columns_option" style="width: 100%; text-align:left; <?php echo ( $el->value1 == 6 || $el->value1 == 9 || $el->value1 == 8 ) ? 'display:none;' : ''; ?>">
 					<span style="text-align: left;display: block;font-weight:bold">Checkbox Columns</span>
 					<div class="scc-checkbox-columns-panel">
@@ -1240,7 +1228,7 @@ class Stylish_Cost_Calculator_Edit_Page {
     display: flex;">Input Box Style 
 					<i class="material-icons-outlined with-tooltip" style="margin-left:3px;" data-element-tooltip-type="checkbox-styles-tt" title="" data-bs-original-title="">help_outline</i>
 				</label>
-					<select onchange="changeValue1(this)" class="fieldFormat" style="width:100%;max-width:100%;height:35px;border-color:#f8f9ff;">
+					<select onchange="changeValue1(this)" class="form-select fieldFormat scc-element-style-select">
 					<option value="6" 
 					<?php
                     if ( $el->value1 == '6' ) {
@@ -2219,11 +2207,13 @@ class Stylish_Cost_Calculator_Edit_Page {
 													</div>
 													<div class="row g-3 edit-field scc-quantity-input">
 														<div class="col col-md-4">
-															<label class="form-label fw-bold">Input Box Style</label>
-															 <select onchange="changeValue1(this)" type="select-one" name="quantity-input--style-selection" style="width:100%;max-width:100%;float:left;height:35px;">'
+															<label class="form-label fw-bold scc-field-label-with-tooltip">Input Box Style
+																<i class="material-icons-outlined with-tooltip" data-element-tooltip-type="quantity-input-style-tt" title="" data-bs-original-title="">help_outline</i>
+															</label>
+															 <select onchange="changeValue1(this)" type="select-one" name="quantity-input--style-selection" class="form-select scc-element-style-select">
 															<option value="default" selected="">Default</option>
-															<option value="compact">Compact</option>'
-															</select>'
+															<option value="compact">Compact</option>
+															</select>
 														</div>
 													
 													<div class="row g-3 edit-field scc-quantity-input" style="margin-top: 3%;">
@@ -2525,8 +2515,9 @@ class Stylish_Cost_Calculator_Edit_Page {
             'showInputBoxSlider' => 00,
         ];
         $el                 = (object) wp_parse_args( $el, $defaults );
-        $slider_price_title = '';
-        switch ( $el->value1 ) {
+        $slider_pricing_mode = in_array( $el->value1, [ 'default', 'bulk', 'sliding', 'quantity_mod' ], true ) ? $el->value1 : 'default';
+        $slider_price_title  = '';
+        switch ( $slider_pricing_mode ) {
             case 'default':
                 $slider_price_title = 'Price Per Unit';
                 break;
@@ -2563,14 +2554,15 @@ class Stylish_Cost_Calculator_Edit_Page {
 														<input data-element-title type="text" class="form-control" onkeyup="clickedTitleElement(this)" value="<?php echo stripslashes( htmlentities( $el->titleElement ) ); ?>">
 													</div>
 													<div class="col-12 mb-3 edit-field">
-														<label class="form-label fw-bold">Pricing Structure</label>
-														<i class="material-icons-outlined v-align-middle" data-element-tooltip-type="slider-type-<?php echo esc_attr( $el->value1 ); ?>">help_outline</i>
-														<div class="col-md-4 pricing-structure">
-															<select data-pricing-structure class="form-select w-100 pricing-structure-dd" onchange="changeValue1(this)">
-																<option value="default" <?php selected( $el->value1, 'default' ); ?>>Unit Price + Quantity Multiplier</option>
-																<option value="quantity_mod" <?php selected( $el->value1, 'quantity_mod' ); ?>>Quantity Multiplier Only</option>
-																<option value="bulk" <?php selected( $el->value1, 'bulk' ); ?>>Bulk Pricing (Quantity-Based Pricing)</option>
-																<option value="sliding" <?php selected( $el->value1, 'sliding' ); ?>>Sliding Scale (Quantity-Based Pricing)</option>
+														<label class="form-label fw-bold scc-field-label-with-tooltip">Pricing Structure
+															<i class="material-icons-outlined with-tooltip scc-pricing-structure-tooltip" data-element-tooltip-type="slider-pricing-structure-tt" title="" data-bs-original-title="">help_outline</i>
+														</label>
+														<div class="pricing-structure scc-slider-pricing-structure">
+															<select data-pricing-structure class="form-select pricing-structure-dd scc-element-style-select" onchange="changeValue1(this)">
+																<option value="default" <?php selected( $slider_pricing_mode, 'default' ); ?>>Unit Price + Quantity Multiplier</option>
+																<option value="quantity_mod" <?php selected( $slider_pricing_mode, 'quantity_mod' ); ?>>Quantity Multiplier Only</option>
+																<option value="bulk" <?php selected( $slider_pricing_mode, 'bulk' ); ?>>Bulk Pricing (Quantity-Based Pricing)</option>
+																<option value="sliding" <?php selected( $slider_pricing_mode, 'sliding' ); ?>>Sliding Scale (Quantity-Based Pricing)</option>
 															</select>
 														</div>
 													</div>

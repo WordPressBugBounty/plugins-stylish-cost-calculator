@@ -1,3 +1,18 @@
+## 8.3.1 - 2026-04-24
+
+**Frontend Changes:**
+- Fixed: Calculator form output and frontend value handling now include additional security hardening.
+
+**Editing Page Changes:**
+- Improved: Advanced option panels now have smoother toggle behavior, cleaner spacing, and more consistent alignment.
+- Added: A tooltip for slider pricing structure settings to make slider setup clearer.
+- Fixed: Slider and dropdown advanced options now display and behave more reliably.
+- Fixed: Date Picker, Text/HTML, quantity input, and single button settings now have cleaner, more consistent editor controls.
+- Fixed: The calculator preview now docks to the bottom more reliably and uses the available editor space.
+
+**Backend Changes:**
+- Fixed: Security issues to better protect plugin data and rendered output.
+
 ## 8.2.9 - 2026-04-17
 
 **Frontend Changes:**

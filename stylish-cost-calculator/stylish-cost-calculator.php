@@ -3,7 +3,7 @@
  * Plugin Name: Stylish Cost Calculator
  * Plugin URI:  https://stylishcostcalculator.com
  * Description: A Stylish Cost Calculator / Price Estimate Form for your site.
- * Version:     8.2.9
+ * Version:     8.3.1
  * Author:      Designful
  * Author URI:  https://stylishcostcalculator.com
  * License:     GPL2
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'STYLISH_COST_CALCULATOR_VERSION', '8.2.9' );
+define( 'STYLISH_COST_CALCULATOR_VERSION', '8.3.1' );
 define( 'SCC_URL', plugin_dir_url( __FILE__ ) );
 define( 'SCC_DIR', __DIR__ );
 define( 'SCC_LIB_DIR', __DIR__ . '/lib' );
@@ -802,33 +802,40 @@ class df_scc_plugin {
             ],
             $attributes
         );
+        $html       = '';
         // $prefixText and $mathParams holds the array data to a variable
-        $prefixText = $attributes['prefix-text'];
-        $mathParams = $attributes['apply-math'] ? json_encode( explode( ':', $attributes['apply-math'] ) ) : '["add","0"]';
+        $prefixText = sanitize_text_field( $attributes['prefix-text'] );
+        $mathParams = $attributes['apply-math'] ? wp_json_encode( array_map( 'sanitize_text_field', explode( ':', $attributes['apply-math'] ) ) ) : '["add","0"]';
         // if combine attribute is there, idvalue does not work
         if ( $attributes['idvalue'] && ! ( $attributes['combine'] ) ) {
             $calculatorId = absint( $attributes['idvalue'] );
-            $html         = "<span class=\"scc-multiple-total-wrapper calcid-$calculatorId\" data-math={$mathParams}>
-    <span>$prefixText</span>
-    <span class=\"multi-total-currency-prefix\"></span>
-    <span class=\"scc-total\">0</span>
-    <span class=\"multi-total-currency-suffix\"></span>
-    </span>";
+            $html         = sprintf(
+                '<span class="scc-multiple-total-wrapper calcid-%1$d" data-math="%2$s"><span>%3$s</span><span class="multi-total-currency-prefix"></span><span class="scc-total">0</span><span class="multi-total-currency-suffix"></span></span>',
+                $calculatorId,
+                esc_attr( $mathParams ),
+                esc_html( $prefixText )
+            );
         }
         // if there is combine attribute, this html is printed
         if ( $attributes['combine'] ) {
-            $ourFormula     = $attributes['combine'];
+            $ourFormula     = sanitize_text_field( $attributes['combine'] );
             $currencySymbol = isset( $attributes['currency-symbol'] ) ? absint( $attributes['currency-symbol'] ) : 1;
-            $calcValues     = explode( ',', $ourFormula );
+            $calcValues     = array_filter(
+                array_map(
+                    'absint',
+                    explode( ',', $ourFormula )
+                )
+            );
 
             if ( ! empty( $calcValues ) && count( $calcValues ) > 1 ) {
-                $calcValues = json_encode( $calcValues );
-                $html       = "<span class=\"scc-multiple-total-wrapper scc-combination\" data-combination={$calcValues} data-curr-sym={$currencySymbol} data-math={$mathParams}>
-      <span>$prefixText</span>
-      <span class=\"multi-total-currency-prefix\"></span>
-      <span class=\"scc-total\"></span>
-      <span class=\"multi-total-currency-suffix\"></span>
-      </span>";
+                $calcValues = wp_json_encode( array_values( $calcValues ) );
+                $html       = sprintf(
+                    '<span class="scc-multiple-total-wrapper scc-combination" data-combination="%1$s" data-curr-sym="%2$d" data-math="%3$s"><span>%4$s</span><span class="multi-total-currency-prefix"></span><span class="scc-total"></span><span class="multi-total-currency-suffix"></span></span>',
+                    esc_attr( $calcValues ),
+                    $currencySymbol,
+                    esc_attr( $mathParams ),
+                    esc_html( $prefixText )
+                );
             }
         }
 
