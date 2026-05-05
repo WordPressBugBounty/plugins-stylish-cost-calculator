@@ -4,13 +4,124 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 $isSCCFreeVersion = defined( 'STYLISH_COST_CALCULATOR_VERSION' );
 require_once SCC_DIR . '/lib/wp-google-fonts/google-fonts.php';
+require_once __DIR__ . '/settingsModalSchemaHelpers.php';
 
-if ( ! $f1->translation ) {
-    $translateArray = '[{"key":"Total","lang":"en","translation":""},{"key":"Description","lang":"en","translation":""},{"key":"Unit Price","lang":"en","translation":""},{"key":"Quantity","lang":"en","translation":""},{"key":"Price","lang":"en","translation":""},{"key":"SEND","lang":"en","translation":""},{"key":"Total Price","lang":"en","translation":""},{"key":"Summary","lang":"en","translation":""},{"key":"Email Quote","lang":"en","translation":""},{"key":"Email Quote Form","lang":"en","translation":""},{"key":"Prove that you are not a robot","lang":"en","translation":""},{"key":"Please wait...","lang":"en","translation":""},{"key":"Submit","lang":"en","translation":""},{"key":"Cancel","lang":"en","translation":""},{"key":"Email Confirmation","lang":"en","translation":""},{"key":"Thank you! We sent your quote to","lang":"en","translation":""},{"key":"Remember to check your spam folder.","lang":"en","translation":""},{"key":"Detailed List","lang":"en","translation":""},{"key":"Choose an option...","lang":"en","translation":""},{"key":"Search an option...","lang":"en","translation":""},{"key":"Your Name","lang":"en","translation":""},{"key":"Your Email","lang":"en","translation":""},{"key":"Your Phone","lang":"en","translation":""},{"key":"Your Phone (Optional)","lang":"en","translation":""},{"key":"Coupon Code","lang":"en","translation":""},{"key":"Please choose an option","lang":"en","translation":""},{"key":"Enter your coupon code","lang":"en","translation":""},{"key":"This code is not valid","lang":"en","translation":""},{"key":"Discount percentage","lang":"en","translation":""},{"key":"Your discount has been applied correctly","lang":"en","translation":""},{"key":"Your discount has not been applied because the total price has to be between","lang":"en","translation":""},{"key":"The total price must be a minimum of","lang":"en","translation":""},{"key":"TAX","lang":"en","translation":""},{"key":"Invoice ID","lang":"en","translation":""}]';
-} else {
-    $translateArray = $f1->translation;
+$translation_groups = [
+    'Pricing Labels'           => [
+        'Total',
+        'Total Price',
+        'Unit Price',
+        'Quantity',
+        'Price',
+        'Summary',
+        'TAX',
+        'Invoice ID',
+        'Discount percentage',
+        'Coupon Discount',
+        'Applied discount',
+        'Subtotal',
+        'SubTotal',
+    ],
+    'Form & Buttons'           => [
+        'SEND',
+        'Submit',
+        'Cancel',
+        'Close',
+        'Clear',
+        'Email Quote',
+        'Email Quote Form',
+        'Choose an option...',
+        'Search an option...',
+        'Search for an option...',
+    ],
+    'Validation Messages'      => [
+        'Prove that you are not a robot',
+        'Please wait...',
+        'Please choose an option',
+        'Enter your coupon code',
+        'This code is not valid',
+        'Your discount has not been applied because the total price has to be between',
+        'The total price must be a minimum of',
+        'The price must be at least',
+        'The start date must be less than the end date',
+    ],
+    'Detailed List & PDF'      => [
+        'Detailed List',
+        'Description',
+        'From',
+        'To',
+    ],
+    'Contact Form Fields'      => [
+        'Your Name',
+        'Your Email',
+        'Your Phone',
+        'Your Phone (Optional)',
+        'Coupon Code',
+    ],
+    'Thank You / Confirmation' => [
+        'Email Confirmation',
+        'Thank you! We sent your quote to',
+        'Remember to check your spam folder.',
+        'Your discount has been applied correctly',
+    ],
+];
+
+$default_translation_keys = [];
+foreach ( $translation_groups as $group_keys ) {
+    $default_translation_keys = array_merge( $default_translation_keys, $group_keys );
 }
-$translateArray = json_decode( stripslashes( $translateArray ) );
+$default_translation_keys = array_values( array_unique( $default_translation_keys ) );
+
+$stored_translate_array = ! empty( $f1->translation ) ? json_decode( stripslashes( $f1->translation ) ) : [];
+$stored_translate_array = is_array( $stored_translate_array ) || is_object( $stored_translate_array ) ? (array) $stored_translate_array : [];
+$stored_translations    = [];
+$custom_translations    = [];
+
+foreach ( $stored_translate_array as $translation_item ) {
+    $translation_item = (object) $translation_item;
+    $key              = isset( $translation_item->key ) ? (string) $translation_item->key : '';
+
+    if ( '' === $key ) {
+        continue;
+    }
+
+    $translation_item->lang        = isset( $translation_item->lang ) ? $translation_item->lang : 'en';
+    $translation_item->translation = isset( $translation_item->translation ) ? $translation_item->translation : '';
+
+    if ( in_array( $key, $default_translation_keys, true ) ) {
+        $stored_translations[ $key ] = $translation_item;
+    } else {
+        $custom_translations[] = $translation_item;
+    }
+}
+
+$translateArray = [];
+foreach ( $default_translation_keys as $translation_key ) {
+    if ( isset( $stored_translations[ $translation_key ] ) ) {
+        $translateArray[] = $stored_translations[ $translation_key ];
+        continue;
+    }
+
+    $translateArray[] = (object) [
+        'key'         => $translation_key,
+        'lang'        => 'en',
+        'translation' => '',
+    ];
+}
+$translateArray = array_merge( $translateArray, $custom_translations );
+
+$translation_rows_by_key = [];
+foreach ( $translateArray as $translation_item ) {
+    $translation_rows_by_key[ $translation_item->key ] = $translation_item;
+}
+
+$scc_translation_default_value = function ( $key ) {
+    return $key;
+};
+
+$scc_translation_display_label = function ( $key ) {
+    return $key;
+};
 $gdpr_mode = (bool) intval( get_option( 'df_scc_gdpr_mode', 0 ) );
 ?>
 <div id="calc-editor-wrapper" class="row" style="max-width: 100%;">
@@ -231,7 +342,9 @@ for ( $n = 1; $n <= 100; $n++ ) {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-	  <div id="dfscc_tab_calculator_">
+	  <div id="scc-settings-react-root"></div>
+	  <?php ob_start(); ?>
+	  <div id="dfscc_tab_calculator_" style="display:none;">
 	<!--Settings Nav Bar-->
 	<div class="scc-calculator-settings-filters d-none">
 		<a href="#Tax-VAT-Settings"><button class="btn-calc-settings-bar">Tax / VAT Settings</button></a>
@@ -2060,6 +2173,11 @@ if ( $isSCCFreeVersion ) {
 	</div><!-- End Blue Section - User Action Button Events -->
 </div>
 </div>
+<?php
+$scc_settings_modal_markup = ob_get_clean();
+$scc_settings_modal_schema = scc_generate_modal_settings_schema( $scc_settings_modal_markup );
+?>
+<script id="scc-settings-modal-schema" type="application/json"><?php echo wp_json_encode( $scc_settings_modal_schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ); ?></script>
       <div class="modal-footer">
         <div role="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</div>
         <button type="button" class="btn btn-primary settings-modal-save-btn" onclick="saveDataFields()">
@@ -2079,35 +2197,124 @@ if ( $isSCCFreeVersion ) {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-	<div id="dfscc_tab_translations_" class="my-4 py-2 px-4 col-xs-12 col-sm-10 col-md-8 col-lg-5 mx-auto" style="margin-left:35px;box-shadow: 1px 4px 10px #ddd;">
-
-		<div class="row m-0">
-			<div style="font-size:140%;" class="sccsubtitle scc_email_quote_label"><span style="font-weight:800;">LANGUAGE TRANSLATION</span> &amp; WORD CHANGES</div><br>
+	  <div id="dfscc_tab_translations_" class="scc-wordings-panel" data-total-default-translations="<?php echo esc_attr( count( $default_translation_keys ) ); ?>">
+		<div class="scc-wordings-heading">
+			<h2>Language Translation &amp; Word Changes</h2>
+			<p>Customize the text displayed on your calculator frontend.</p>
 		</div>
 
-		<!-- Start Local Translate style="display:none;" id="myDIV4"-->
-		<div class="row">
-			<div class="col-xs-4 col-md-4 col-sm-4 col-lg-5"><b>Frontend Word</b> </div>
-			<div class="col-xs-4 col-md-4 col-sm-4 col-lg-5"><b>New Word / Translation</b> </div>
-			<div class="col-md-1 "></div>
+		<div class="scc-wordings-toolbar">
+			<label class="scc-wordings-search">
+				<span class="scc-icn-wrapper scc-wordings-search-icon" aria-hidden="true"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['search'] ); ?></span>
+				<input type="search" id="scc-translation-search" placeholder="Search translations..." aria-label="Search translations">
+			</label>
+			<span class="scc-wordings-count" id="scc-translation-count"></span>
+			<button type="button" class="button scc-wordings-reset-all" onclick="resetAllTranslations()">Reset All</button>
+			<button type="button" class="button button-primary scc-wordings-save" onclick="saveDataFields()">
+				<span class="material-icons-outlined">save</span>
+				Save Changes
+			</button>
 		</div>
-		<?php
-    //var_dump($translateArray[1]->translation);
-    foreach ( $translateArray as $value ) {
-        ?>
-			<div class="row translation-row">
-				<div class="col-xs-4 col-xs-4 col-md-4 col-sm-4 col-lg-5"><input type="text" value="<?php echo esc_attr( $value->key ); ?>" disabled=""></div>
-				<div class="col-xs-4 col-xs-4 col-md-4 col-sm-4 col-lg-5"><input type="text" value="<?php echo esc_attr( $value->translation ); ?>"></div>
-				<div class="col-md-1"><a href="javascript:void(0)" class="translate-del-btn material-icons" onclick="remove_rowTran(this)">close</a></div>
-			</div>
-		<?php } ?>
 
-		<!-- End Local Translate -->
-		<div class="col-lg-12 col-md-12 col-xs-12 scc-add-new-translate-button">
-			<a href="javascript:void(0)" onclick="addNewTran(this)" class="crossnadd" style="font-size: 13px;">+ Add New Translate</a>
+		<div class="scc-wordings-groups">
+			<?php
+            foreach ( $translation_groups as $group_label => $group_keys ) {
+                $group_customized_count = 0;
+                foreach ( $group_keys as $group_key ) {
+                    $group_value = $translation_rows_by_key[ $group_key ]->translation ?? '';
+                    if ( '' !== trim( (string) $group_value ) && trim( (string) $group_value ) !== $scc_translation_default_value( $group_key ) ) {
+                        $group_customized_count++;
+                    }
+                }
+                ?>
+				<details class="scc-wordings-group" <?php echo 'Pricing Labels' === $group_label ? 'open' : ''; ?>>
+					<summary>
+						<span class="scc-wordings-group-title"><?php echo esc_html( $group_label ); ?></span>
+						<span class="scc-wordings-badge" data-group-count="<?php echo esc_attr( $group_customized_count ); ?>"></span>
+						<span class="material-icons-outlined scc-wordings-chevron">expand_more</span>
+					</summary>
+					<div class="scc-wordings-group-body">
+						<div class="scc-wordings-grid-head">
+							<span>Frontend Word (Default)</span>
+							<span>Custom Translation</span>
+						</div>
+						<?php
+                        foreach ( $group_keys as $group_key ) {
+                            $translation_item = $translation_rows_by_key[ $group_key ] ?? (object) [
+                                'key'         => $group_key,
+                                'translation' => '',
+                            ];
+                            $default_value    = $scc_translation_default_value( $group_key );
+                            $display_label    = $scc_translation_display_label( $group_key );
+                            ?>
+							<div class="scc-wordings-row translation-row" data-default-row="1" data-search-text="<?php echo esc_attr( strtolower( $display_label . ' ' . $default_value . ' ' . $translation_item->translation ) ); ?>">
+								<div class="scc-wordings-default">
+									<input class="scc-translation-key-input" type="text" value="<?php echo esc_attr( $display_label ); ?>" disabled data-key="<?php echo esc_attr( $group_key ); ?>" data-default-value="<?php echo esc_attr( $default_value ); ?>">
+								</div>
+								<span class="material-icons-outlined scc-wordings-arrow">arrow_forward</span>
+								<div class="scc-wordings-custom">
+									<input class="scc-translation-value-input" type="text" value="<?php echo esc_attr( $translation_item->translation ); ?>" placeholder="<?php echo esc_attr( $default_value ); ?>" data-default-value="<?php echo esc_attr( $default_value ); ?>">
+									<span class="scc-translation-custom-badge">Custom</span>
+								</div>
+								<button type="button" class="scc-field-reset" aria-label="Reset to default" title="Reset to default" onclick="resetTranslationField(this)">
+									<span class="material-icons-outlined">settings_backup_restore</span>
+								</button>
+							</div>
+						<?php } ?>
+					</div>
+				</details>
+			<?php } ?>
+
+			<?php
+            $customized_custom_count = 0;
+            foreach ( $custom_translations as $custom_translation ) {
+                if ( '' !== trim( (string) $custom_translation->translation ) && trim( (string) $custom_translation->translation ) !== trim( (string) $custom_translation->key ) ) {
+                    $customized_custom_count++;
+                }
+            }
+            ?>
+			<details class="scc-wordings-group" <?php echo ! empty( $custom_translations ) ? 'open' : ''; ?>>
+				<summary>
+					<span class="scc-wordings-group-title">Custom Translations</span>
+					<span class="scc-wordings-badge" data-group-count="<?php echo esc_attr( $customized_custom_count ); ?>"></span>
+					<span class="material-icons-outlined scc-wordings-chevron">expand_more</span>
+				</summary>
+				<div class="scc-wordings-group-body scc-custom-translations-body">
+					<div class="scc-wordings-grid-head">
+						<span>Frontend Word (Default)</span>
+						<span>Custom Translation</span>
+					</div>
+					<div class="scc-custom-translations-list">
+						<?php foreach ( $custom_translations as $custom_translation ) { ?>
+							<div class="scc-wordings-row translation-row" data-default-row="0" data-search-text="<?php echo esc_attr( strtolower( $custom_translation->key . ' ' . $custom_translation->translation ) ); ?>">
+								<div class="scc-wordings-default">
+									<input class="scc-translation-key-input" type="text" value="<?php echo esc_attr( $custom_translation->key ); ?>" placeholder="Original Word" data-key="<?php echo esc_attr( $custom_translation->key ); ?>" data-default-value="<?php echo esc_attr( $custom_translation->key ); ?>">
+								</div>
+								<span class="material-icons-outlined scc-wordings-arrow">arrow_forward</span>
+								<div class="scc-wordings-custom">
+									<input class="scc-translation-value-input" type="text" value="<?php echo esc_attr( $custom_translation->translation ); ?>" placeholder="<?php echo esc_attr( $custom_translation->key ); ?>" data-default-value="<?php echo esc_attr( $custom_translation->key ); ?>">
+									<span class="scc-translation-custom-badge">Custom</span>
+								</div>
+								<button type="button" class="scc-field-reset" aria-label="Reset to default" title="Reset to default" onclick="resetTranslationField(this)">
+									<span class="material-icons-outlined">settings_backup_restore</span>
+								</button>
+								<button type="button" class="scc-field-delete" aria-label="Delete custom translation" onclick="remove_rowTran(this)">
+									<span class="material-icons-outlined">delete</span>
+								</button>
+							</div>
+						<?php } ?>
+					</div>
+					<div class="scc-add-new-translate-button">
+						<button type="button" onclick="addNewTran(this)" class="button">
+							<span class="material-icons-outlined">add</span>
+							Add New Translate
+						</button>
+					</div>
+				</div>
+			</details>
 		</div>
-	</div>
-	</div>
+</div>
+	  </div>
 <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary settings-modal-save-btn" onclick="saveDataFields()">
@@ -2118,7 +2325,8 @@ if ( $isSCCFreeVersion ) {
       </div>
     </div>
   </div>
-</div><!-- END OF MODAL -->
+</div>
+<!-- END OF MODAL -->
 </div>
 <div id="Webhook1" style="display:none">
 	<h4 style="font-weight: bolder;">Quote Fillup Webhook</h4>
@@ -2270,28 +2478,29 @@ if ( $isSCCFreeVersion ) {
 
 	function getTranslationData() {
 		var arrayTr = []
-		var con = jQuery("#dfscc_tab_translations_").find(".row").slice(2).each(function(e) {
-			var c = {}
-			var a
-			var b
-			var s = jQuery(this).find("input").each(function(e) {
-				var empt
-				if (e == 0) {
-					var i = jQuery(this).val()
-					a = i
-				}
-				if (e == 1) {
-					var i2 = jQuery(this).val()
-					b = i2
-				}
-			})
-			if (a != "") {
-				c["key"] = a
-				c["lang"] = "en"
-				c["translation"] = b
-				arrayTr.push(c)
+		jQuery("#dfscc_tab_translations_ .translation-row").each(function() {
+			var row = jQuery(this)
+			var keyInput = row.find(".scc-translation-key-input").first()
+			var translationInput = row.find(".scc-translation-value-input").first()
+			var key = keyInput.attr("data-key") || keyInput.val()
+			var translation = translationInput.val()
+			var defaultValue = translationInput.attr("data-default-value") || keyInput.attr("data-default-value") || key
+
+			key = key ? key.trim() : ""
+			translation = translation ? translation.trim() : ""
+			defaultValue = defaultValue ? defaultValue.trim() : ""
+
+			if (translation !== "" && translation === defaultValue) {
+				translation = ""
 			}
-			//validate if first is not empty to add
+
+			if (key !== "") {
+				arrayTr.push({
+					key: key,
+					lang: "en",
+					translation: translation,
+				})
+			}
 		})
 		return JSON.stringify(arrayTr)
 	}
@@ -2300,24 +2509,130 @@ if ( $isSCCFreeVersion ) {
 	/**
 	 * *Removes one row from dom
 	 */
-	function remove_rowTran(element) {
-		jQuery(element).parent().parent().remove()
+	 function remove_rowTran(element) {
+		jQuery(element).closest(".translation-row").remove()
+		refreshTranslationsUi()
 	}
 
 	/**
 	 * *add row to dom
 	 */
-	function addNewTran(element) {
-		jQuery("#dfscc_tab_translations_ div:last").before(render_row())
+	 function addNewTran(element) {
+		jQuery("#dfscc_tab_translations_ .scc-custom-translations-list").append(renderTranslationRow())
+		var customGroup = jQuery(element).closest(".scc-wordings-group")
+		customGroup.attr("open", true)
+		customGroup.find(".scc-translation-key-input").last().trigger("focus")
+		refreshTranslationsUi()
 
-		function render_row() {
-			var el = '<div class="row translation-row">'
-			el += '    <div class="col-xs-4 col-md-4 col-sm-4 col-lg-5"><input type="text" value=""></div>'
-			el += '    <div class="col-xs-4 col-md-4 col-sm-4 col-lg-5"><input type="text" value=""></div>'
-			el += '    <div class="col-md-1"><a href="javascript:void(0)" class="translate-del-btn material-icons" onclick="remove_rowTran(this)">cancel</a></div>'
+		function renderTranslationRow() {
+			var el = '<div class="scc-wordings-row translation-row" data-default-row="0" data-search-text="">'
+			el += '    <div class="scc-wordings-default"><input class="scc-translation-key-input" type="text" value="" placeholder="Original Word" data-key="" data-default-value=""></div>'
+			el += '    <span class="material-icons-outlined scc-wordings-arrow">arrow_forward</span>'
+			el += '    <div class="scc-wordings-custom"><input class="scc-translation-value-input" type="text" value="" placeholder="New Word" data-default-value=""><span class="scc-translation-custom-badge">Custom</span></div>'
+			el += '    <button type="button" class="scc-field-reset" aria-label="Reset to default" title="Reset to default" onclick="resetTranslationField(this)"><span class="material-icons-outlined">settings_backup_restore</span></button>'
+			el += '    <button type="button" class="scc-field-delete" aria-label="Delete custom translation" onclick="remove_rowTran(this)"><span class="material-icons-outlined">delete</span></button>'
 			el += '</div>'
 			return el
 		}
+	}
+
+	function resetTranslationField(element) {
+		var row = jQuery(element).closest(".translation-row")
+		row.find(".scc-translation-value-input").val("").trigger("input").trigger("focus")
+	}
+
+	function resetAllTranslations() {
+		var resetAction = function() {
+			jQuery("#dfscc_tab_translations_ .scc-translation-value-input").val("").trigger("input")
+			jQuery("#dfscc_tab_translations_ .translation-row[data-default-row='0']").remove()
+			refreshTranslationsUi()
+		}
+
+		if (typeof Swal !== "undefined") {
+			Swal.fire({
+				title: "Are you absolutely sure?",
+				text: "This action cannot be undone. This will permanently delete all your custom translations and restore the default English wording.",
+				icon: "warning",
+				showCancelButton: true,
+				confirmButtonText: "Yes, reset everything",
+				cancelButtonText: "Cancel",
+				confirmButtonColor: "#c93030",
+				reverseButtons: true,
+			}).then(function(result) {
+				if (result.isConfirmed) {
+					resetAction()
+				}
+			})
+			return
+		}
+
+		if (window.confirm("This will permanently delete all your custom translations and restore the default English wording. Continue?")) {
+			resetAction()
+		}
+	}
+
+	function refreshTranslationsUi() {
+		var totalCustomized = 0
+		var totalDefaultRows = jQuery("#dfscc_tab_translations_ .translation-row[data-default-row='1']").length
+		var searchTerm = (jQuery("#scc-translation-search").val() || "").toLowerCase().trim()
+
+		jQuery("#dfscc_tab_translations_ .translation-row").each(function() {
+			var row = jQuery(this)
+			var keyInput = row.find(".scc-translation-key-input").first()
+			var valueInput = row.find(".scc-translation-value-input").first()
+			var key = keyInput.attr("data-key") || keyInput.val() || ""
+			var defaultValue = keyInput.attr("data-default-value") || key
+			var value = valueInput.val() || ""
+			var trimmedValue = value.trim()
+
+			if (row.attr("data-default-row") === "0") {
+				keyInput.attr("data-key", key)
+				keyInput.attr("data-default-value", key)
+				valueInput.attr("placeholder", key || "New Word")
+				valueInput.attr("data-default-value", key)
+				defaultValue = key
+			}
+
+			if (trimmedValue !== "" && trimmedValue === String(defaultValue).trim()) {
+				valueInput.val("")
+				value = ""
+				trimmedValue = ""
+			}
+
+			var isCustomized = trimmedValue !== "" && trimmedValue !== String(defaultValue).trim()
+
+			row.toggleClass("is-customized", isCustomized)
+			row.toggleClass("is-using-default", ! isCustomized)
+			row.find(".scc-field-reset").toggle(isCustomized)
+			row.find(".scc-translation-custom-badge").toggle(isCustomized)
+
+			var searchableText = (key + " " + defaultValue + " " + value).toLowerCase()
+			row.attr("data-search-text", searchableText)
+			row.toggle(searchTerm === "" || searchableText.indexOf(searchTerm) !== -1)
+
+			if (isCustomized) {
+				totalCustomized++
+			}
+		})
+
+		jQuery("#dfscc_tab_translations_ .scc-wordings-group").each(function() {
+			var group = jQuery(this)
+			var visibleRows = group.find(".translation-row").filter(function() {
+				return jQuery(this).css("display") !== "none"
+			}).length
+			var customizedRows = group.find(".translation-row.is-customized").length
+			var badge = group.find(".scc-wordings-badge").first()
+
+			badge.text(customizedRows > 0 ? customizedRows + " customized" : "")
+			badge.toggle(customizedRows > 0)
+			group.toggle(searchTerm === "" || visibleRows > 0)
+
+			if (searchTerm !== "" && visibleRows > 0) {
+				group.attr("open", true)
+			}
+		})
+
+		jQuery("#scc-translation-count").text(totalCustomized + " of " + totalDefaultRows + " customized")
 	}
 
 	// save fromname
@@ -2334,50 +2649,87 @@ if ( $isSCCFreeVersion ) {
 			activeModal = document.querySelector('#settingsModal1');
 		}
 
+		const settingsState = window.sccSettingsModalState;
+		const hasSettingsControl = ( identifier ) => Boolean( settingsState && settingsState.hasControl( identifier ) );
+		const getSettingsValue = ( identifier, selector, fallback = '' ) => {
+			if ( hasSettingsControl( identifier ) ) {
+				const value = settingsState.getValue( identifier, fallback );
+				return value === undefined || value === null ? fallback : value;
+			}
+
+			const selectedValue = jQuery( selector ).val();
+			return selectedValue === undefined || selectedValue === null ? fallback : selectedValue;
+		};
+		const getSettingsChecked = ( identifier, selector, fallback = false ) => {
+			if ( hasSettingsControl( identifier ) ) {
+				return settingsState.isChecked( identifier, fallback );
+			}
+
+			if ( ! selector ) {
+				return fallback;
+			}
+
+			const element = jQuery( selector );
+			return element.length ? element.is(":checked") : fallback;
+		};
+
 		// FONT SETTINGS
 		// title font settings
-		var inheritFontType = jQuery( "#inherit-fontfamily").is( ":checked")
-		var titleFontSize = jQuery( "#titlepricefontsize").val( )
-		var titleFontType = jQuery( "#titlescc_fonttype").val( )
-		var titleFontWeight = jQuery( "#titlescc_fonttype_variant").val( )
-		var titleColorPicker = jQuery( "#titlecolorPicker").val( )
+		var inheritFontType = getSettingsChecked( 'inherit-fontfamily', '#inherit-fontfamily' )
+		var titleFontSize = getSettingsValue( 'titlepricefontsize', '#titlepricefontsize' )
+		var titleFontType = getSettingsValue( 'titlescc_fonttype', '#titlescc_fonttype' )
+		var titleFontWeight = getSettingsValue( 'titlescc_fonttype_variant', '#titlescc_fonttype_variant' )
+		var titleColorPicker = getSettingsValue( 'titlecolorPicker', '#titlecolorPicker' )
 		// service Font Settings
-		var ServicefontSize = jQuery( "#servicepricefontsize").val( )
-		var fontType = jQuery( "#scc_fonttype").val( )
-		var fontWeight = jQuery( "#scc_fonttype_variant").val( )
-		var ServiceColorPicker = jQuery( "#colorPicker").val( )
+		var ServicefontSize = getSettingsValue( 'servicepricefontsize', '#servicepricefontsize' )
+		var fontType = getSettingsValue( 'scc_fonttype', '#scc_fonttype' )
+		var fontWeight = getSettingsValue( 'scc_fonttype_variant', '#scc_fonttype_variant' )
+		var ServiceColorPicker = getSettingsValue( 'colorPicker', '#colorPicker' )
 		// object settings
-		var objectSize = jQuery( "#objectservicepricefontsize").val( )
-		var objectColorPicker = jQuery( "#objectcolorPicker").val( )
-		var ctaBtnColorPicker = jQuery( "#ctaBtnColorPicker").val( )
-		var cta_btn_text_color = jQuery( "#cta_btn_text_color").val( )
+		var objectSize = getSettingsValue( 'objectservicepricefontsize', '#objectservicepricefontsize' )
+		var objectColorPicker = getSettingsValue( 'objectcolorPicker', '#objectcolorPicker' )
+		var ctaBtnColorPicker = getSettingsValue( 'ctaBtnColorPicker', '#ctaBtnColorPicker' )
+		var cta_btn_text_color = getSettingsValue( 'cta_btn_text_color', '#cta_btn_text_color' )
 		// CALCULATOR SETTINGS
-		var elementSkin = jQuery('select[name="form_field_style"]').val()
-		var addContainer = jQuery('input[name="toggle_boxshadow_style2"]').is(":checked")
+		var elementSkin = getSettingsValue( 'form_field_style', 'select[name="form_field_style"]' )
+		var addContainer = getSettingsChecked( 'toggle_boxshadow_style2', 'input[name="toggle_boxshadow_style2"]' )
 		// woocommerce
 		// user action buttons
-		var buttonStyle = jQuery('select[name="scc_user_action_btn_style"]').val()
-		var turnviewdetails = !jQuery('input[name="scc_detailed_list"]').is(":checked")
+		var buttonStyle = getSettingsValue( 'scc_user_action_btn_style', 'select[name="scc_user_action_btn_style"]' )
+		var turnviewdetails = !getSettingsChecked( 'scc_detailed_list', 'input[name="scc_detailed_list"]' )
 
 		
 		// total price settings
-		var barstyle = jQuery('select[name="scc_total_price_style_view"]').val()
-		var turnofffloating = jQuery('input[name="turn_on_total_price_float"]').is(":checked")
+		var barstyle = getSettingsValue( 'scc_total_price_style_view', 'select[name="scc_total_price_style_view"]' )
+		var turnofffloating = getSettingsChecked( 'turn_on_total_price_float', 'input[name="turn_on_total_price_float"]' )
 		// detailed list settings
-		var removeTitle = !jQuery('input[name="scc_remove_detailed_list_title"]').is(":checked")
-		var turnoffUnit = !jQuery('input[name="scc_no_unit_col"]').is(":checked")
-		var turnoffQty = !jQuery('input[name="scc_no_qty_col"]').is(":checked")
+		var removeTitle = !getSettingsChecked( 'scc_remove_detailed_list_title', 'input[name="scc_remove_detailed_list_title"]' )
+		var turnoffUnit = !getSettingsChecked( 'scc_no_unit_col', 'input[name="scc_no_unit_col"]' )
+		var turnoffQty = !getSettingsChecked( 'scc_no_qty_col', 'input[name="scc_no_qty_col"]' )
 
-		var turnoffSave = !jQuery('input[name="scc_save_icon"]').is(":checked")
-		var turnoffTax = !jQuery('input[name="turn_off_tax"]').is(":checked")
+		var turnoffSave = !getSettingsChecked( 'scc_save_icon', 'input[name="scc_save_icon"]' )
+		var turnoffTax = !getSettingsChecked( 'turn_off_tax', 'input[name="turn_off_tax"]' )
 		// currency & tax
-		var symbol = jQuery('select[name="scc_currency_style"]').val()
-		var removeCurrency = !jQuery('input[name="scc_remove_currency_label"]').is(":checked")
+		var symbol = getSettingsValue( 'scc_currency_style', 'select[name="scc_currency_style"]' )
+		var removeCurrency = !getSettingsChecked( 'scc_remove_currency_label', 'input[name="scc_remove_currency_label"]' )
 		// webhook
-		var userCompletes = jQuery('input[name="scc_set_webhook_quote"]').is(":checked")
-		var userClicksf = jQuery('input[name="scc_set_webhook_detail_view"]').is(":checked")
-		var calcWrapperMaxWidth = jQuery('input[name="scc_wrapper_max_width"]').val()
-		var turnoffQty = !jQuery('input[name="scc_no_qty_col"]').is(":checked")
+		var userCompletes = getSettingsChecked( 'scc_set_webhook_quote', 'input[name="scc_set_webhook_quote"]' )
+		var userClicksf = getSettingsChecked( 'scc_set_webhook_detail_view', 'input[name="scc_set_webhook_detail_view"]' )
+		var webhookSettings = typeof window.sccGetWebhookSettingsConfig === 'function' ? window.sccGetWebhookSettingsConfig() : []
+		var customJsSettings = [
+			{
+				scc_set_customJs_quote: {
+					enabled: getSettingsChecked( 'scc_set_customJs_quote', 'input[name="scc_set_customJs_quote"]' )
+				}
+			},
+			{
+				scc_set_customJs_detail_view: {
+					enabled: getSettingsChecked( 'scc_set_customJs_detail_view', 'input[name="scc_set_customJs_detail_view"]' )
+				}
+			}
+		]
+		var calcWrapperMaxWidth = getSettingsValue( 'scc_wrapper_max_width', 'input[name="scc_wrapper_max_width"]' )
+		var turnoffQty = !getSettingsChecked( 'scc_no_qty_col', 'input[name="scc_no_qty_col"]' )
 
 
 		var json = {
@@ -2397,6 +2749,8 @@ if ( $isSCCFreeVersion ) {
 			removeCurrency,
 			userCompletes,
 			userClicksf,
+			webhookSettings,
+			customJsSettings,
 			calcWrapperMaxWidth,
 			inheritFontType,
 		    titleFontSize,
@@ -2449,13 +2803,7 @@ if ( $isSCCFreeVersion ) {
 		})
 		
 		function disableInputT(){
-			jQuery('#dfscc_tab_translations_ .row > div > input').each(function(i,e){
-				if(Number.isInteger(i/2)){
-					jQuery(this).attr('disabled','true')
-				}
-			})
-			
-			
+			jQuery('#dfscc_tab_translations_ .scc-translation-key-input').attr('disabled', 'true')
 		}
 	}
 
@@ -2496,6 +2844,9 @@ if ( $isSCCFreeVersion ) {
 			btns.forEach(e => e.find('.material-icons-outlined').text('expand_more'))
 		}
 		
+		jQuery(document).on("input", "#dfscc_tab_translations_ .scc-translation-key-input, #dfscc_tab_translations_ .scc-translation-value-input, #scc-translation-search", refreshTranslationsUi);
+		refreshTranslationsUi();
+
 		jQuery('.color-picker').wpColorPicker();
 		 
 	});

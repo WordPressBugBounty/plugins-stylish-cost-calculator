@@ -4392,23 +4392,55 @@ function handleWebHookSetup($this) {
 	}, 300);
 	jQuery('#webhook-setup-placeholder').modal('hide');
 }
-function saveWebhookSettings() {
-	const urlParams = new URLSearchParams(window.location.search);
-	const calcId = urlParams.get('id_form');
-	let newWebhookConfig = [
+
+function sccGetSettingsCheckedValue(identifier, selector, fallback = false) {
+	const settingsState = window.sccSettingsModalState;
+	if (settingsState && settingsState.hasControl(identifier)) {
+		return settingsState.isChecked(identifier, fallback);
+	}
+
+	const element = jQuery(selector);
+	return element.length ? Boolean(element.prop('checked')) : fallback;
+}
+
+function sccGetSettingsValue(identifier, fallback = '') {
+	const settingsState = window.sccSettingsModalState;
+	if (settingsState && settingsState.hasControl(identifier)) {
+		const value = settingsState.getValue(identifier, fallback);
+		return value === undefined || value === null ? fallback : value;
+	}
+
+	return fallback;
+}
+
+function sccGetWebhookSettingsConfig() {
+	return [
 		{
 			'scc_set_webhook_quote': {
-				enabled: jQuery('#scc_set_webhook_quote').prop('checked'),
-				webhook: jQuery('[data-event-type="quote-fillup"]').data('webhook')
+				enabled: sccGetSettingsCheckedValue('scc_set_webhook_quote', '#scc_set_webhook_quote'),
+				webhook: sccGetSettingsValue(
+					'webhook_quote-fillup',
+					jQuery('.webhook-setup[data-event-type="quote-fillup"]').data('webhook') || ''
+				)
 			}
 		},
 		{
 			'scc_set_webhook_detail_view': {
-				enabled: jQuery('#scc_set_webhook_detail_view').prop('checked'),
-				webhook: jQuery('[data-event-type="detail-btn"]').data('webhook')
+				enabled: sccGetSettingsCheckedValue('scc_set_webhook_detail_view', '#scc_set_webhook_detail_view'),
+				webhook: sccGetSettingsValue(
+					'webhook_detail-btn',
+					jQuery('.webhook-setup[data-event-type="detail-btn"]').data('webhook') || ''
+				)
 			}
 		}
 	];
+}
+window.sccGetWebhookSettingsConfig = sccGetWebhookSettingsConfig;
+
+function saveWebhookSettings() {
+	const urlParams = new URLSearchParams(window.location.search);
+	const calcId = urlParams.get('id_form');
+	let newWebhookConfig = sccGetWebhookSettingsConfig();
 	jQuery.ajax({
 		url: ajaxurl + '?action=sccSaveWebhookConfig' + '&id=' + calcId,
 		contentType: 'json',

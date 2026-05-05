@@ -4,6 +4,7 @@
   --scc-color-secondary: #FFAB03;
   --scc-color-green: #34a853;
   --scc-btn-border-radius: 8px;
+  --scc-settings-control-border-radius: 8px;
   --scc-btn-secondary-color: #f8f9ff;
   --scc-divider-border-color: #dbdffd;
   --scc-div-light-color: #f8f9ff;
@@ -9771,7 +9772,10 @@ button.btn.btn-cond-saved {
   text-decoration: none;
 }
 
-#allinputstoadd input:not([type='checkbox']), optgroup, select, textarea {
+#allinputstoadd input:not([type='checkbox']),
+#allinputstoadd optgroup,
+#allinputstoadd select,
+#allinputstoadd textarea {
   font-size: 14px;
   cursor: text;
   color: #2b2b2b;
@@ -9977,8 +9981,390 @@ select.scc_woo_commerce_product_id {
 }
 
 div#dfscc_tab_translations_ {
-  background: white;
+  background: #f6f7f9;
   border-radius: 8px;
+}
+
+.scc-wordings-panel {
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 20px 20px 28px;
+  color: #071827;
+}
+
+.scc-wordings-heading {
+  padding: 0 0 22px;
+  margin-bottom: 0;
+}
+
+.scc-wordings-heading h2 {
+  margin: 0 0 6px;
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.scc-wordings-heading p {
+  margin: 0;
+  color: #3d4b5f;
+  font-size: 14px;
+}
+
+.scc-wordings-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 16px;
+  margin-bottom: 24px;
+  background: #fff;
+  border: 1px solid #c7ccd2;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.12);
+}
+
+.scc-wordings-search {
+  position: relative;
+  flex: 1 1 260px;
+  margin: 0;
+}
+
+.scc-wordings-search-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  color: #8190a3;
+  pointer-events: none;
+}
+
+.scc-wordings-search-icon svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+}
+
+#dfscc_tab_translations_ .scc-wordings-toolbar .scc-wordings-search input[type='search'] {
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px 8px 44px;
+  border: 1px solid #98a2af;
+  border-radius: var(--scc-settings-control-border-radius);
+  background: #fff;
+  color: #142236;
+  font-size: 14px;
+  box-shadow: none;
+  padding-left: 44px !important;
+}
+
+#settingsModal2 .modal-dialog .modal-content .modal-body #dfscc_tab_translations_.scc-wordings-panel .scc-wordings-toolbar label.scc-wordings-search input#scc-translation-search[type='search'] {
+  border-radius: var(--scc-settings-control-border-radius) !important;
+}
+
+.scc-wordings-count {
+  min-width: 150px;
+  color: #27364a;
+  text-align: right;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.scc-wordings-reset-all,
+.scc-wordings-save {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px !important;
+  padding: 6px 12px !important;
+  border-width: 1px !important;
+  border-style: solid !important;
+  border-radius: var(--scc-settings-control-border-radius) !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+  box-shadow: none !important;
+}
+
+.scc-wordings-reset-all {
+  color: #d32222 !important;
+  border-color: #ff2f2f !important;
+  background: #fff !important;
+}
+
+.scc-wordings-save,
+.scc-wordings-save:hover,
+.scc-wordings-save:focus,
+.scc-wordings-save:active {
+  color: #fff !important;
+  border-color: var(--scc-color-primary) !important;
+  background: var(--scc-color-primary) !important;
+}
+
+.scc-wordings-save .material-icons-outlined {
+  font-size: 16px;
+}
+
+#settingsModal2 .modal-dialog .modal-content .modal-body #dfscc_tab_translations_.scc-wordings-panel .scc-wordings-toolbar button.scc-wordings-reset-all.button,
+#settingsModal2 .modal-dialog .modal-content .modal-body #dfscc_tab_translations_.scc-wordings-panel .scc-wordings-toolbar button.scc-wordings-save.button {
+  border-radius: var(--scc-settings-control-border-radius) !important;
+}
+
+#settingsModal2 .modal-dialog .modal-content .modal-footer .btn,
+#settingsModal2 .modal-dialog .modal-content .modal-footer button.settings-modal-save-btn.btn {
+  border-radius: var(--scc-settings-control-border-radius) !important;
+}
+
+.scc-wordings-groups {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #c7ccd2;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.1);
+}
+
+.scc-wordings-group {
+  border-bottom: 1px solid #d2d6dc;
+}
+
+.scc-wordings-group:last-child {
+  border-bottom: 0;
+}
+
+.scc-wordings-group summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 0 24px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.scc-wordings-group summary::-webkit-details-marker {
+  display: none;
+}
+
+.scc-wordings-badge {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #e8f2ff;
+  color: #0b66b2;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.scc-wordings-chevron {
+  margin-left: auto;
+  color: #647184;
+  font-size: 18px;
+  transition: transform 0.15s ease;
+}
+
+.scc-wordings-group[open] .scc-wordings-chevron {
+  transform: rotate(180deg);
+}
+
+.scc-wordings-group-body {
+  padding: 0 24px 26px;
+}
+
+.scc-wordings-grid-head,
+.scc-wordings-row {
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) 24px minmax(180px, 1fr) 34px;
+  align-items: center;
+  gap: 10px;
+}
+
+.scc-wordings-grid-head {
+  grid-template-columns: minmax(160px, 1fr) 24px minmax(180px, 1fr) 74px;
+  margin-bottom: 10px;
+  color: #35445a;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.scc-wordings-grid-head span:nth-child(2) {
+  grid-column: 3;
+}
+
+.scc-wordings-row {
+  min-height: 64px;
+  padding: 10px 12px;
+  border-radius: 8px;
+}
+
+.scc-wordings-row + .scc-wordings-row {
+  margin-top: 12px;
+}
+
+.scc-wordings-row.is-customized {
+  background: #f0f7ff;
+  outline: 1px solid #b8dcff;
+}
+
+.scc-wordings-row.is-using-default {
+  background: #fff;
+}
+
+.scc-wordings-default input,
+.scc-wordings-custom input {
+  width: 100%;
+  min-height: 38px;
+  padding: 7px 12px;
+  border: 1px solid #9aa4b1;
+  border-radius: 8px;
+  background: #fff;
+  color: #24364b;
+  font-size: 14px;
+  box-shadow: none;
+}
+
+.scc-wordings-default input:disabled {
+  background: #f8fafc;
+  border-color: #d8dde4;
+  color: #304258;
+  opacity: 1;
+}
+
+.scc-wordings-custom {
+  position: relative;
+}
+
+.scc-wordings-custom input {
+  padding-right: 72px;
+}
+
+.scc-wordings-custom input::placeholder {
+  color: #6f7c8e;
+}
+
+.scc-wordings-row.is-using-default .scc-wordings-custom input {
+  color: #6f7c8e;
+}
+
+.scc-wordings-row.is-customized .scc-wordings-custom input {
+  border-color: #1e73be;
+  box-shadow: 0 0 0 2px rgba(30, 115, 190, 0.15);
+}
+
+.scc-translation-custom-badge {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -8px;
+  right: 12px;
+  min-height: 20px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #1e73be;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.scc-wordings-row.is-customized .scc-translation-custom-badge {
+  display: inline-flex;
+}
+
+.scc-wordings-arrow {
+  color: #8793a3;
+  font-size: 18px;
+  text-align: center;
+}
+
+.scc-field-reset,
+.scc-field-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #6b7788;
+  cursor: pointer;
+}
+
+.scc-field-reset:hover,
+.scc-field-delete:hover {
+  background: #e8eef5;
+  color: #1e73be;
+}
+
+.scc-field-delete:hover {
+  color: #b42318;
+}
+
+.scc-field-reset .material-icons-outlined,
+.scc-field-delete .material-icons-outlined {
+  font-size: 18px;
+}
+
+.scc-custom-translations-body .scc-wordings-row {
+  grid-template-columns: minmax(160px, 1fr) 24px minmax(180px, 1fr) 34px 34px;
+}
+
+.scc-add-new-translate-button {
+  margin-top: 10px;
+}
+
+.scc-add-new-translate-button .button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 52px;
+  border: 1px dashed #b8bec7 !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  color: #0b66b2 !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 782px) {
+  .scc-wordings-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .scc-wordings-count {
+    min-width: auto;
+    width: 100%;
+    text-align: left;
+  }
+
+  .scc-wordings-grid-head {
+    display: none;
+  }
+
+  .scc-wordings-row,
+  .scc-custom-translations-body .scc-wordings-row {
+    grid-template-columns: 1fr 30px;
+  }
+
+  .scc-wordings-default,
+  .scc-wordings-custom {
+    grid-column: 1 / -1;
+  }
+
+  .scc-wordings-arrow {
+    display: none;
+  }
 }
 
 .more-settings-section select {
@@ -10437,8 +10823,15 @@ div#dfscc_tab_translations_ {
   transform: translateY(12px);
 }
 
-.form-control,
-.form-select,
+/* #settings-tabs-wrapper wraps the preview too; keep backend form styles scoped lower. */
+#scc-global-settings .form-control,
+#scc-global-settings .form-select,
+.scc-left-pane .form-control,
+.scc-left-pane .form-select,
+.scc-support-wrap .form-control,
+.scc-support-wrap .form-select,
+.scc-dashboard-modal .form-control,
+.scc-dashboard-modal .form-select,
 #scc-global-settings input[type="text"],
 #scc-global-settings input[type="password"],
 #scc-global-settings input[type="color"],
@@ -10470,23 +10863,7 @@ div#dfscc_tab_translations_ {
 .scc-left-pane input[type="url"],
 .scc-left-pane input[type="week"],
 .scc-left-pane select,
-.scc-left-pane textarea
-#settings-tabs-wrapper input[type="text"],
-#settings-tabs-wrapper input[type="password"],
-#settings-tabs-wrapper input[type="color"],
-#settings-tabs-wrapper input[type="date"],
-#settings-tabs-wrapper input[type="datetime"],
-#settings-tabs-wrapper input[type="datetime-local"],
-#settings-tabs-wrapper input[type="email"],
-#settings-tabs-wrapper input[type="month"],
-#settings-tabs-wrapper input[type="number"],
-#settings-tabs-wrapper input[type="search"],
-#settings-tabs-wrapper input[type="tel"],
-#settings-tabs-wrapper input[type="time"],
-#settings-tabs-wrapper input[type="url"],
-#settings-tabs-wrapper input[type="week"],
-#settings-tabs-wrapper select,
-#settings-tabs-wrapper textarea,
+.scc-left-pane textarea,
 .scc-support-wrap input[type="text"] {
   width: 100% !important;
   padding: 0.375rem 0.75rem !important;
@@ -10519,16 +10896,27 @@ div#dfscc_tab_translations_ {
   color: #2b2b2b !important;
 }
 
-#settings-tabs-wrapper textarea,
 .scc-left-pane textarea,
 #scc-global-settings textarea,
-textarea.form-control {
+.scc-left-pane textarea.form-control,
+#scc-global-settings textarea.form-control,
+.scc-support-wrap textarea.form-control,
+.scc-dashboard-modal textarea.form-control {
   height: auto;
 }
 
-.form-control:focus,
-.form-control.input:focus,
-.form-select:focus,
+#scc-global-settings .form-control:focus,
+#scc-global-settings .form-control.input:focus,
+#scc-global-settings .form-select:focus,
+.scc-left-pane .form-control:focus,
+.scc-left-pane .form-control.input:focus,
+.scc-left-pane .form-select:focus,
+.scc-support-wrap .form-control:focus,
+.scc-support-wrap .form-control.input:focus,
+.scc-support-wrap .form-select:focus,
+.scc-dashboard-modal .form-control:focus,
+.scc-dashboard-modal .form-control.input:focus,
+.scc-dashboard-modal .form-select:focus,
 #scc-global-settings input[type="text"]:focus,
 #scc-global-settings input[type="password"]:focus,
 #scc-global-settings input[type="color"]:focus,
@@ -10561,22 +10949,6 @@ textarea.form-control {
 .scc-left-pane input[type="week"]:focus,
 .scc-left-pane select:focus,
 .scc-left-pane textarea:focus,
-#settings-tabs-wrapper input[type="text"]:focus,
-#settings-tabs-wrapper input[type="password"]:focus,
-#settings-tabs-wrapper input[type="color"]:focus,
-#settings-tabs-wrapper input[type="date"]:focus,
-#settings-tabs-wrapper input[type="datetime"]:focus,
-#settings-tabs-wrapper input[type="datetime-local"]:focus,
-#settings-tabs-wrapper input[type="email"]:focus,
-#settings-tabs-wrapper input[type="month"]:focus,
-#settings-tabs-wrapper input[type="number"]:focus,
-#settings-tabs-wrapper input[type="search"]:focus,
-#settings-tabs-wrapper input[type="tel"]:focus,
-#settings-tabs-wrapper input[type="time"]:focus,
-#settings-tabs-wrapper input[type="url"]:focus,
-#settings-tabs-wrapper input[type="week"]:focus,
-#settings-tabs-wrapper select:focus,
-#settings-tabs-wrapper textarea:focus,
 .scc-support-wrap input[type="text"]:focus {
   border: 1px solid var(--scc-input-field-border-color-focus) !important;
   box-shadow: 0 0 0 0.5px var(--scc-input-field-border-color-focus) !important;
@@ -10811,7 +11183,12 @@ textarea.form-control {
 }
 
 /* Hide the items when the select box is closed: */
-.ts-wrapper.single .ts-control:after, .ts-wrapper.single.dropdown-active .ts-control:after{
+.scc-left-pane .ts-wrapper.single .ts-control:after,
+.scc-left-pane .ts-wrapper.single.dropdown-active .ts-control:after,
+.scc-dashboard-modal .ts-wrapper.single .ts-control:after,
+.scc-dashboard-modal .ts-wrapper.single.dropdown-active .ts-control:after,
+#template-loader .ts-wrapper.single .ts-control:after,
+#template-loader .ts-wrapper.single.dropdown-active .ts-control:after {
   border-color: transparent;
 }
 .select-hide {
@@ -11326,10 +11703,13 @@ svg.scc-tooltip-icon {
   border-left: none !important;
 }
 
-.ts-wrapper:has(#scc-ts-label-search) .ts-control input {
+.scc-left-pane .ts-wrapper:has(#scc-ts-label-search) .ts-control input,
+.scc-dashboard-modal .ts-wrapper:has(#scc-ts-label-search) .ts-control input,
+#template-loader .ts-wrapper:has(#scc-ts-label-search) .ts-control input {
   transition: all 0.3s;
 }
-.ts-wrapper.section-total-choice{
+.scc-left-pane .ts-wrapper.section-total-choice,
+.scc-dashboard-modal .ts-wrapper.section-total-choice {
   margin-top:5px;
 }
 
@@ -11419,9 +11799,10 @@ svg.scc-tooltip-icon {
   border-radius: 0.25rem !important;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
 }
-.ts-wrapper.first-conditional-step.single .ts-control input,
-.ts-wrapper.second-conditional-step.single .ts-control input, 
-.ts-wrapper.scc-unit-price-counter-ts.single .ts-control input{
+.scc-left-pane .ts-wrapper.first-conditional-step.single .ts-control input,
+.scc-left-pane .ts-wrapper.second-conditional-step.single .ts-control input,
+.scc-left-pane .ts-wrapper.scc-unit-price-counter-ts.single .ts-control input,
+.scc-dashboard-modal .ts-wrapper.scc-unit-price-counter-ts.single .ts-control input{
 cursor: pointer !important;
 }
 .scc-left-pane .conditional-selection-steps .item_conditionals .ts-dropdown-content, 
@@ -11457,7 +11838,7 @@ cursor: pointer !important;
 .scc-or-label-cond{
   margin: 10px 0px 10px -10px;
 }
-.ts-wrapper.first-conditional-step{
+.scc-left-pane .ts-wrapper.first-conditional-step{
   min-width:165px !important;
 }
 .item_conditionals .ts-dropdown-content::-webkit-scrollbar-track,
@@ -11538,16 +11919,21 @@ cursor: pointer !important;
 #template-loader .scc-ts-search .ts-control input{
   font-size:1rem;
 }
-.ts-wrapper:has(#scc-ts-label-search) .ts-control input.scc-padding-input-ts{
+.scc-left-pane .ts-wrapper:has(#scc-ts-label-search) .ts-control input.scc-padding-input-ts,
+.scc-dashboard-modal .ts-wrapper:has(#scc-ts-label-search) .ts-control input.scc-padding-input-ts,
+#template-loader .ts-wrapper:has(#scc-ts-label-search) .ts-control input.scc-padding-input-ts{
   padding-left: 17px !important;
 }
-.ts-wrapper .ts-control input{
+.scc-left-pane .ts-wrapper .ts-control input,
+.scc-dashboard-modal .ts-wrapper .ts-control input,
+#template-loader .ts-wrapper .ts-control input {
   padding: 0px !important;
   border: none !important;
   height: auto !important;
 }
-.ts-wrapper .ts-control input:focus,
-#settings-tabs-wrapper .ts-wrapper .ts-control input:focus{
+.scc-left-pane .ts-wrapper .ts-control input:focus,
+.scc-dashboard-modal .ts-wrapper .ts-control input:focus,
+#template-loader .ts-wrapper .ts-control input:focus {
   border: none !important;
   box-shadow: none !important;
 }
@@ -11735,7 +12121,10 @@ padding: 3%;
   animation: scc-blink-animated 2s linear infinite;
 }
 
-#settings-tabs-wrapper .scc-col-md-6 {
+.scc-left-pane .scc-col-md-6,
+.scc-dashboard-modal .scc-col-md-6,
+#scc-global-settings .scc-col-md-6,
+.scc-support-wrap .scc-col-md-6 {
   width: 50% !important;
 }
 /********************************************
@@ -12031,7 +12420,58 @@ padding: 3%;
 
 .scc-dashboard-modal{
   opacity: 1;
-  border-radius: var(--scc-btn-border-radius);
+  border-radius: var(--scc-settings-control-border-radius);
+}
+
+.scc-dashboard-modal.modal .modal-dialog .modal-content {
+  border-radius: var(--scc-settings-control-border-radius) !important;
+}
+
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-footer .btn,
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-footer button.btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  margin: 0 !important;
+  padding: 6px 12px !important;
+  line-height: 1.5 !important;
+}
+
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-body input:not([type='checkbox']):not([type='radio']):not([type='color']),
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-body select,
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-body textarea,
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-body .form-control,
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-body .form-select,
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-body .ts-control,
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-body .btn,
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-body button.btn,
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-body button.button:not(.wp-color-result):not(.wp-picker-clear):not(.wp-picker-default),
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-body input.button:not(.wp-picker-clear):not(.wp-picker-default),
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-body input[type='button']:not(.wp-picker-clear):not(.wp-picker-default),
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-body input[type='submit']:not(.wp-picker-clear):not(.wp-picker-default),
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-footer .btn,
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-footer button.btn,
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-footer button.button,
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-footer input.button,
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-footer input[type='button'],
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-footer input[type='submit'],
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-footer [role='button'].btn {
+  border-radius: var(--scc-settings-control-border-radius) !important;
+}
+
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-footer .settings-modal-save-btn.btn,
+.scc-dashboard-modal.modal .modal-dialog .modal-content .modal-footer button.settings-modal-save-btn.btn.btn-primary {
+  color: #fff !important;
+  border-color: var(--scc-color-primary) !important;
+  background-color: var(--scc-color-primary) !important;
 }
 
 /* Adjust modal content margins when WordPress admin menu is expanded */
@@ -12689,13 +13129,12 @@ a.introjs-hint{
 }
 
 .scc-add-new-translate-button{
-  margin-top:20px;
-  text-align:center;
-  padding-top:10px;
-  padding-bottom:30px;
+  margin-top: 10px;
+  text-align: center;
+  padding: 0;
   min-width: 200px;
-  background: antiquewhite;
-  height: 20px;
+  background: transparent;
+  height: auto;
 }
 .scc-d-inline-block{
   display: inline-block !important;

@@ -1,3 +1,21 @@
+## 8.3.3 - 2026-05-05
+
+**Frontend Changes:**
+- Fixed: Slider elements now initialize more reliably and calculate values correctly when defaults, ranges, or dependencies are present.
+- Fixed: Custom translation text now applies more consistently on calculator forms, including the Applied Discount label.
+
+**Dashboard Changes:**
+- Improved: The Language Translation & Word Changes screen now has grouped labels, search, reset controls, and clearer custom translation states.
+
+**Editing Page Changes:**
+- Added: A redesigned calculator settings modal for clearer navigation and more consistent controls.
+- Improved: Premium-only settings and help tooltips are now easier to identify in the settings modal.
+- Fixed: Dashboard styles no longer interfere with the calculator preview layout.
+
+**Backend Changes:**
+- Fixed: Settings modal data is encoded more safely before being loaded in the editor.
+- Fixed: Webhook and custom JavaScript settings are saved more reliably from the updated settings experience.
+
 ## 8.3.1 - 2026-04-24
 
 **Frontend Changes:**

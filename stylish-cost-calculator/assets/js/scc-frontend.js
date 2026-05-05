@@ -562,8 +562,9 @@ function sccProcessRecaptcha(calcId, recaptchaSiteKey, element) {
 }
 
 function sccGetTranslationByKey(calcId, key) {
-	let translation = sccData[calcId].config.translation.filter((e, i) => e.key == key)[0]?.translation;
-	if (translation) {
+	let translationItem = sccData[calcId].config.translation.filter((e, i) => e.key == key)[0];
+	let translation = translationItem?.translation;
+	if (translation && String(translation).trim() !== '' && String(translation).trim() !== String(translationItem.key).trim()) {
 		return translation;
 	}
 	return key;
@@ -1121,6 +1122,83 @@ function dfSccInputBoxAddCommas(inputField) {
 	}
 }
 
+function sccNormalizeSliderValue(sliderValue) {
+	if (Array.isArray(sliderValue)) {
+		sliderValue = sliderValue[0];
+	}
+
+	return parseFloat(sliderValue);
+}
+
+function sccGetSliderCurrentValue(sliderNode) {
+	var sliderValue = sliderNode.getAttribute('data-start-value');
+
+	if (sliderNode.noUiSlider) {
+		sliderValue = sliderNode.noUiSlider.get();
+	} else {
+		var sliderHandleNode = sliderNode.querySelector('.df-scc-slider-handle');
+		var handleValue = sliderHandleNode ? sliderHandleNode.getAttribute('aria-valuetext') : null;
+		if (handleValue !== null) {
+			sliderValue = handleValue;
+		}
+	}
+
+	sliderValue = sccNormalizeSliderValue(sliderValue);
+
+	var minValue = parseFloat(sliderNode.getAttribute('data-slider-min'));
+	var maxValue = parseFloat(sliderNode.getAttribute('data-slider-max'));
+
+	if (Number.isNaN(sliderValue)) {
+		sliderValue = Number.isNaN(minValue) ? 0 : minValue;
+	}
+
+	if (!Number.isNaN(minValue) && sliderValue < minValue) {
+		sliderValue = minValue;
+	}
+
+	if (!Number.isNaN(maxValue) && sliderValue > maxValue) {
+		sliderValue = maxValue;
+	}
+
+	return sliderValue;
+}
+
+function sccGetSliderRangePrice(rangeMatrix, sliderValue) {
+	for (var k = 0; k < rangeMatrix.length; k += 3) {
+		if (parseFloat(sliderValue) <= parseFloat(rangeMatrix[k + 1])) {
+			return parseFloat(rangeMatrix[k + 2]);
+		}
+	}
+
+	return 0;
+}
+
+function sccGetSliderEntryFromNode(sliderNode) {
+	if (!sliderNode) {
+		return null;
+	}
+
+	var sliderId = sliderNode.getAttribute('data-slider-id');
+	if (!sliderId) {
+		return null;
+	}
+
+	var idComposed = sliderId ? sliderId.split('-') : [];
+	var id = idComposed[idComposed.length - 1];
+	var qnt = sccGetSliderCurrentValue(sliderNode);
+	var rangeData = sliderNode.getAttribute('data_range');
+	if (!rangeData) {
+		return null;
+	}
+
+	var rangeMatrix = rangeData.split(',');
+	var price = sccGetSliderRangePrice(rangeMatrix, qnt);
+	var calculationType = sliderNode.getAttribute('data-calculation-type');
+	var subcId = sliderNode.getAttribute('data-subid');
+
+	return [id, qnt, price, calculationType, subcId];
+}
+
 //default value in form
 function dfsccLoaded() {
 	jQuery('[id^=ssc-elmt-]').each(function () {
@@ -1235,8 +1313,18 @@ function dfsccLoaded() {
 					let startValue = parseInt(sliderNode.getAttribute('data-start-value'));
 					let minValue = parseInt(sliderNode.getAttribute('data-slider-min'));
 					let maxValue = parseInt(sliderNode.getAttribute('data-slider-max'));
+					if (minValue > startValue) {
+						startValue = minValue;
+					}
+					if (maxValue < startValue) {
+						startValue = maxValue;
+					}
 					let slideStep = parseInt(sliderNode.getAttribute('data-slider-step'));
-					let rangeMatrix = sliderNode.getAttribute('data_range').split(',');
+					let rangeData = sliderNode.getAttribute('data_range');
+					if (!rangeData) {
+						return;
+					}
+					let rangeMatrix = rangeData.split(',');
 					let sliderCalculationType = sliderNode.getAttribute('data-calculation-type');
 					let isPriceHintEnabled = sliderNode.getAttribute('data-show-pricehint') == 'true' && sliderCalculationType !== 'quantity_mod';
 					let elementId = sliderNode.getAttribute('data-elementid');
@@ -1314,6 +1402,7 @@ function dfsccLoaded() {
 						}
 					});
 					let postChangeAction = (sliderValue) => {
+						sliderValue = sccNormalizeSliderValue(sliderValue);
 						var ww = jQuery("#itemcreateds_0_0_" + elementId);
 						let showOnDetailedList = sliderNode.getAttribute('data-show-on-detailed-list') == 'true';
 
@@ -1666,7 +1755,7 @@ function triggerSubmit(type, dom, element, item, calcId) {
 			const endDateTime = container.querySelector( '.scc-end-date  + .time-input' );
 			const flatPickerConfig = startDate._flatpickr.config;
 			const { dateRangePricingStructure, subsectionId } = container.dataset;
-			// const subsectionId = sliderNode.getAttribute( 'data-subId' );
+			// const subsectionId = sliderNode.getAttribute( 'data-subid' );
 
 			var formatDate = sccData[ calcId ]?.config?.pdf?.dateFormat ?? 'yyyy-mm-dd';
 			var price = container.querySelector( '.scc-date-cost-per-date' ).value;
@@ -1801,8 +1890,8 @@ function triggerSubmit(type, dom, element, item, calcId) {
 		var slider = e.classList.contains('scc_sliderr__')
 		if (slider) {
 			var i = e.getAttribute("id").split("-")
-			var index = Sliders[calcId].find(s => s[0] == i[i.length - 1])
-			if (index) {
+			var index = Sliders[calcId].findIndex(s => s[0] == i[i.length - 1])
+			if (index >= 0) {
 				Sliders[calcId].splice(index, 1)
 			}
 		}
@@ -1865,35 +1954,8 @@ function triggerSubmit(type, dom, element, item, calcId) {
 			var index = Sliders[calcId].find(s => s[0] == i[i.length - 1])
 			if (!index) {
 				let sliderNode = e.querySelector('.slider-styled');
-				let sliderHandleNode = sliderNode.querySelector('.df-scc-slider-handle');
-				let qtn = sliderHandleNode ? parseInt(sliderHandleNode.getAttribute('aria-valuetext')) : sliderNode.getAttribute('data-start-value');
-				let scale = sliderNode.getAttribute('data-calculation-type') == "sliding" ? "true" : "false";
-				let range = sliderNode.getAttribute('data_range').split(",");
-				let subId = sliderNode.getAttribute('data-subId');
-				//groups each 3 elements 0 range min 1 range max 2 price
-				let grouped = []
-				for (let i = 0; i < range.length; i += 3) {
-					grouped.push(range.slice(i, i + 3))
-				}
-				//get price acording to range 
-				function getPriceRange(group, qnt2) {
-					let o = null
-					group.forEach(g => {
-						if (parseInt(qnt2) >= parseInt(g[0]) && parseInt(qnt2) <= parseInt(g[1])) {
-							o = g[2]
-						}
-					});
-					return o
-				}
-				//sends again to total script 
-				let o = []
-				id = i[i.length - 1]
-				qnt = qtn
-				price = getPriceRange(grouped, qtn)
-				isScale = scale
-				subcId = subId
-				o = [id, qnt, price, isScale, subcId]
-				if (qnt != 0) {
+				let o = sccGetSliderEntryFromNode(sliderNode);
+				if (o && o[1] != 0) {
 					Sliders[calcId].push(o)
 				}
 			}
@@ -2237,7 +2299,7 @@ function triggerSubmit(type, dom, element, item, calcId) {
 			couponData = {
 				type: "coupon",
 				attr: {
-					title: sccGetTranslationByKey('Applied discount'),
+					title: sccGetTranslationByKey(calcId, 'Applied discount'),
 					discount_price: `-${discountAmountText}`
 				}
 			}
@@ -3026,6 +3088,10 @@ function getTranslation_(calculatorID) {
 	let container = jQuery("#scc_form_" + calculatorID)
 	var dict = {}
 	for (let i = 0; i < translation.length; i++) {
+		if (!translation[i].translation || String(translation[i].translation).trim() === '' || String(translation[i].translation).trim() === String(translation[i].key).trim()) {
+			continue;
+		}
+
 		var o = {
 			en: translation[i].translation
 		}

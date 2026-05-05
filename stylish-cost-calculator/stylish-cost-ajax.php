@@ -2259,6 +2259,74 @@ class ajaxRequest {
         $f['removeCurrency']     = sanitize_text_field( $_POST['data']['removeCurrency'] );
         $f['userCompletes']      = sanitize_text_field( $_POST['data']['userCompletes'] );
         $f['userClicksf']        = sanitize_text_field( $_POST['data']['userClicksf'] );
+        $webhook_settings_data   = isset( $_POST['data']['webhookSettings'] ) ? wp_unslash( $_POST['data']['webhookSettings'] ) : [];
+
+        if ( is_string( $webhook_settings_data ) ) {
+            $decoded_webhook_settings = json_decode( $webhook_settings_data, true );
+            $webhook_settings_data    = is_array( $decoded_webhook_settings ) ? $decoded_webhook_settings : [];
+        } elseif ( ! is_array( $webhook_settings_data ) ) {
+            $webhook_settings_data = [];
+        }
+        $webhook_settings        = [];
+
+        foreach ( $webhook_settings_data as $webhook_setting ) {
+            foreach ( [ 'scc_set_webhook_quote', 'scc_set_webhook_detail_view' ] as $webhook_key ) {
+                if ( ! isset( $webhook_setting[ $webhook_key ] ) || ! is_array( $webhook_setting[ $webhook_key ] ) ) {
+                    continue;
+                }
+
+                $webhook_settings[] = [
+                    $webhook_key => [
+                        'enabled' => filter_var( $webhook_setting[ $webhook_key ]['enabled'] ?? false, FILTER_VALIDATE_BOOLEAN ),
+                        'webhook' => esc_url_raw( $webhook_setting[ $webhook_key ]['webhook'] ?? '' ),
+                    ],
+                ];
+            }
+        }
+        $f['webhookSettings']    = wp_json_encode( $webhook_settings );
+
+        if ( isset( $_POST['data']['customJsSettings'] ) ) {
+            $custom_js_settings_data = wp_unslash( $_POST['data']['customJsSettings'] );
+
+            if ( is_string( $custom_js_settings_data ) ) {
+                $decoded_custom_js_settings = json_decode( $custom_js_settings_data, true );
+                $custom_js_settings_data    = is_array( $decoded_custom_js_settings ) ? $decoded_custom_js_settings : [];
+            } elseif ( ! is_array( $custom_js_settings_data ) ) {
+                $custom_js_settings_data = [];
+            }
+
+            $existing_custom_js_config = json_decode( get_option( 'scc_cstmjs_calc_' . $f['id'], '[]' ), true );
+            $existing_custom_js_config = is_array( $existing_custom_js_config ) ? $existing_custom_js_config : [];
+            $custom_js_settings        = [];
+
+            foreach ( [ 'scc_set_customJs_quote', 'scc_set_customJs_detail_view' ] as $custom_js_key ) {
+                $enabled   = false;
+                $custom_js = '';
+
+                foreach ( $custom_js_settings_data as $custom_js_setting ) {
+                    if ( isset( $custom_js_setting[ $custom_js_key ] ) && is_array( $custom_js_setting[ $custom_js_key ] ) ) {
+                        $enabled = filter_var( $custom_js_setting[ $custom_js_key ]['enabled'] ?? false, FILTER_VALIDATE_BOOLEAN );
+                        break;
+                    }
+                }
+
+                foreach ( $existing_custom_js_config as $existing_custom_js_setting ) {
+                    if ( isset( $existing_custom_js_setting[ $custom_js_key ] ) && is_array( $existing_custom_js_setting[ $custom_js_key ] ) ) {
+                        $custom_js = (string) ( $existing_custom_js_setting[ $custom_js_key ]['customJs'] ?? '' );
+                        break;
+                    }
+                }
+
+                $custom_js_settings[] = [
+                    $custom_js_key => [
+                        'enabled'  => $enabled,
+                        'customJs' => $custom_js,
+                    ],
+                ];
+            }
+
+            update_option( 'scc_cstmjs_calc_' . $f['id'], wp_json_encode( $custom_js_settings ) );
+        }
         $f['inheritFontType']    = sanitize_text_field( $_POST['data']['inheritFontType'] );
         $f['titleFontSize']      = sanitize_text_field( $_POST['data']['titleFontSize'] );
         $f['titleFontType']      = sanitize_text_field( $_POST['data']['titleFontType'] );

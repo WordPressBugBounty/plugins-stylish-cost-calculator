@@ -36,6 +36,7 @@ class PageEditTabs extends PagesBreadcrumbs {
 		wp_enqueue_script( 'scc-frontend' );
 		wp_enqueue_script( 'wp-util' );
 		wp_enqueue_script( 'scc-translate-js' );
+		wp_enqueue_script( 'scc-settings-modal-react' );
 
 		$lang = isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ? substr( $_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2 ) : 'en';
 		
