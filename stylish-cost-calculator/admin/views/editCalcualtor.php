@@ -147,7 +147,7 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 </script>
 
 
-<div class="scc-editor-shell>
+<div class="scc-editor-shell">
 	<?php
 	require_once SCC_DIR . '/admin/controllers/notificationsController.php';
 	ob_start();
