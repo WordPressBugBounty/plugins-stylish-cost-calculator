@@ -3306,10 +3306,17 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 */
 	function addOptiontoSelect(element) {
 		//showLoadingChanges()
-		
-		var container = jQuery(element).parent().find(".selectoption_2")
-		var id_element = jQuery(element).closest('.elements_added').find(".input_id_element").val();
-		var count = jQuery(container).find(".selopt3, .dd-item-field-container, .scc-item-field-container").length + 1
+
+		var elementContent = jQuery(element).closest(".dropdown-content");
+		var container = elementContent.find(".selectoption_2").first();
+		var elementWrapper = jQuery(element).closest('.elements_added');
+		var id_element = elementWrapper.children(".input_id_element").val() || elementWrapper.find(".input_id_element").first().val();
+
+		if (!container.length || !id_element) {
+			return;
+		}
+
+		var count = container.children(".selopt3, .dd-item-field-container, .scc-item-field-container").length + 1
 		jQuery.ajax({
 			url: ajaxurl,
 			cache: false,
@@ -3434,14 +3441,22 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * *Shows/hides add elements buttons 
 	 */
 	function togglebuttonsadd(element) {
-		let groupButtons = element.closest('div').nextElementSibling;
+		let addElementActions = element.closest('.scc-add-element-actions-row');
+		let groupButtons = addElementActions ? addElementActions.querySelector('.df_scc_groupbuttonsadd') : element.closest('div').nextElementSibling;
 		let subsection = element.closest('.boardOption')
-		let sliderElement = subsection.querySelector('[data-element-setup-type="slider"]');
-		let sliderButton = groupButtons.firstElementChild;
-		let sliderTooltip = sliderButton.querySelector('.scc-slider-tooltip-panel');
+		let sliderElement = subsection ? subsection.querySelector('[data-element-setup-type="slider"]') : null;
+		let sliderButton = groupButtons ? groupButtons.firstElementChild : null;
+		let sliderTooltip = sliderButton ? sliderButton.querySelector('.scc-slider-tooltip-panel') : null;
+
+		if (!groupButtons || !sliderButton) {
+			return;
+		}
+
 		//if slider element is present, disable add button
 		if(sliderElement){
-			sliderTooltip.style.display = 'block';
+			if( sliderTooltip ){
+				sliderTooltip.style.display = 'block';
+			}
 			sliderButton.style.opacity = 0.5;
 			sliderButton.setAttribute('data-setting-tooltip-type', 'add-container-tt');
 			sliderButton.setAttribute('data-bs-original-title', '');

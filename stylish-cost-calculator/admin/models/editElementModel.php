@@ -3300,10 +3300,7 @@ class Stylish_Cost_Calculator_Edit_Page {
         ];
         $elit     = (object) wp_parse_args( $elit, $defaults );
 
-        if ( $this->is_from_ajax ) {
-            $elit = (object) $elit;
-            ob_start();
-        }
+        ob_start();
         ?>
 		<div class="dd-item-field-container scc-item-field-container <?php echo $this->is_from_ajax ? 'green_shutter' : 'gray_shutter'; ?>" data-element-item-id="<?php echo intval( $elit->id ); ?>">
 			<div style="padding:7px;" class="scc-row d-flex justify-content-between" role="button" onclick="javascript:if (event.target !== event.currentTarget) return; collapseElementBoxTitle(this.querySelector('.element-box-title-desc'))">

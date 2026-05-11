@@ -1,3 +1,9 @@
+## 8.3.7 - 2026-05-11
+
+**Editing Page Changes:**
+- Fixed: Dropdown options can now be added and managed more reliably from the calculator editing page.
+- Fixed: Add-element controls now handle subsection layouts more safely when slider elements are present.
+
 ## 8.3.5 - 2026-05-11
 
 **Editing Page Changes:**
