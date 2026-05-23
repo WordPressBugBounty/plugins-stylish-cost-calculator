@@ -2178,6 +2178,7 @@ $scc_settings_modal_markup = ob_get_clean();
 $scc_settings_modal_schema = scc_generate_modal_settings_schema( $scc_settings_modal_markup );
 ?>
 <script id="scc-settings-modal-schema" type="application/json"><?php echo wp_json_encode( $scc_settings_modal_schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ); ?></script>
+      </div><!-- /.modal-body -->
       <div class="modal-footer">
         <div role="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</div>
         <button type="button" class="btn btn-primary settings-modal-save-btn" onclick="saveDataFields()">
@@ -2327,7 +2328,6 @@ $scc_settings_modal_schema = scc_generate_modal_settings_schema( $scc_settings_m
   </div>
 </div>
 <!-- END OF MODAL -->
-</div>
 <div id="Webhook1" style="display:none">
 	<h4 style="font-weight: bolder;">Quote Fillup Webhook</h4>
 	<div class="form-group">
@@ -2372,6 +2372,57 @@ $scc_settings_modal_schema = scc_generate_modal_settings_schema( $scc_settings_m
   </div>
 </div>
 <script>
+	<?php
+	$scc_existing_webhook_settings = json_decode( isset( $f1->webhookSettings ) ? $f1->webhookSettings : '[]', true );
+	if ( ! is_array( $scc_existing_webhook_settings ) ) {
+		$scc_existing_webhook_settings = [];
+	}
+
+	$scc_existing_custom_js_settings = json_decode( get_option( 'scc_cstmjs_calc_' . intval( $f1->id ), '[]' ), true );
+	if ( ! is_array( $scc_existing_custom_js_settings ) ) {
+		$scc_existing_custom_js_settings = [];
+	}
+
+	$scc_existing_form_settings = [
+		'elementSkin'        => isset( $f1->elementSkin ) ? $f1->elementSkin : 'style_1',
+		'addContainer'       => isset( $f1->addContainer ) ? $f1->addContainer : 'false',
+		'buttonStyle'        => isset( $f1->buttonStyle ) ? $f1->buttonStyle : '1',
+		'turnoffborder'      => isset( $f1->turnoffborder ) ? $f1->turnoffborder : 'false',
+		'turnoffemailquote'  => isset( $f1->turnoffemailquote ) ? $f1->turnoffemailquote : 'false',
+		'turnviewdetails'    => isset( $f1->turnviewdetails ) ? $f1->turnviewdetails : 'false',
+		'turnoffcoupon'      => isset( $f1->turnoffcoupon ) ? $f1->turnoffcoupon : 'false',
+		'barstyle'           => isset( $f1->barstyle ) ? $f1->barstyle : 'scc_tp_style4',
+		'turnofffloating'    => isset( $f1->turnofffloating ) ? $f1->turnofffloating : 'false',
+		'removeTotal'        => isset( $f1->removeTotal ) ? $f1->removeTotal : 'false',
+		'removeTitle'        => isset( $f1->removeTitle ) ? $f1->removeTitle : 'false',
+		'turnoffUnit'        => isset( $f1->turnoffUnit ) ? $f1->turnoffUnit : 'false',
+		'turnoffQty'         => isset( $f1->turnoffQty ) ? $f1->turnoffQty : 'false',
+		'turnoffSave'        => isset( $f1->turnoffSave ) ? $f1->turnoffSave : 'false',
+		'turnoffTax'         => isset( $f1->turnoffTax ) ? $f1->turnoffTax : 'false',
+		'symbol'             => isset( $f1->symbol ) ? $f1->symbol : '0',
+		'removeCurrency'     => isset( $f1->removeCurrency ) ? $f1->removeCurrency : 'false',
+		'userCompletes'      => isset( $f1->userCompletes ) ? $f1->userCompletes : 'false',
+		'userClicksf'        => isset( $f1->userClicksf ) ? $f1->userClicksf : 'false',
+		'webhookSettings'    => $scc_existing_webhook_settings,
+		'customJsSettings'   => $scc_existing_custom_js_settings,
+		'calcWrapperMaxWidth' => isset( $f1->wrapper_max_width ) ? $f1->wrapper_max_width : 800,
+		'inheritFontType'    => isset( $f1->inheritFontType ) ? $f1->inheritFontType : 'true',
+		'titleFontSize'      => isset( $f1->titleFontSize ) ? $f1->titleFontSize : '30px',
+		'titleFontType'      => isset( $f1->titleFontType ) ? $f1->titleFontType : '',
+		'titleFontWeight'    => isset( $f1->titleFontWeight ) ? $f1->titleFontWeight : '',
+		'titleColorPicker'   => isset( $f1->titleColorPicker ) ? $f1->titleColorPicker : '#000000',
+		'ServicefontSize'    => isset( $f1->ServicefontSize ) ? $f1->ServicefontSize : '18px',
+		'fontType'           => isset( $f1->fontType ) ? $f1->fontType : '',
+		'fontWeight'         => isset( $f1->fontWeight ) ? $f1->fontWeight : '',
+		'ServiceColorPicker' => isset( $f1->ServiceColorPicker ) ? $f1->ServiceColorPicker : '#000000',
+		'objectSize'         => isset( $f1->objectSize ) ? $f1->objectSize : '',
+		'objectColorPicker'  => isset( $f1->objectColorPicker ) ? $f1->objectColorPicker : '#000000',
+		'ctaBtnColorPicker'  => isset( $f1->ctaBtnColorPicker ) ? $f1->ctaBtnColorPicker : '',
+		'cta_btn_text_color' => isset( $f1->cta_btn_text_color ) ? $f1->cta_btn_text_color : '',
+	];
+	?>
+	const sccExistingFormSettings = <?php echo wp_json_encode( $scc_existing_form_settings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ); ?>;
+
 	/**
 	 * *Show tooltip on hover eye
 	 */
@@ -2650,7 +2701,19 @@ $scc_settings_modal_schema = scc_generate_modal_settings_schema( $scc_settings_m
 		}
 
 		const settingsState = window.sccSettingsModalState;
+		const getExistingSetting = ( key, fallback = '' ) => {
+			if ( Object.prototype.hasOwnProperty.call( sccExistingFormSettings, key ) && sccExistingFormSettings[ key ] !== null ) {
+				return sccExistingFormSettings[ key ];
+			}
+
+			return fallback;
+		};
+		const getExistingSettingFlag = ( key, fallback = false ) => {
+			const value = getExistingSetting( key, fallback );
+			return value === true || value === 'true' || value === 1 || value === '1';
+		};
 		const hasSettingsControl = ( identifier ) => Boolean( settingsState && settingsState.hasControl( identifier ) );
+		const hasDomControl = ( selector ) => Boolean( selector && jQuery( selector ).length );
 		const getSettingsValue = ( identifier, selector, fallback = '' ) => {
 			if ( hasSettingsControl( identifier ) ) {
 				const value = settingsState.getValue( identifier, fallback );
@@ -2675,61 +2738,66 @@ $scc_settings_modal_schema = scc_generate_modal_settings_schema( $scc_settings_m
 
 		// FONT SETTINGS
 		// title font settings
-		var inheritFontType = getSettingsChecked( 'inherit-fontfamily', '#inherit-fontfamily' )
-		var titleFontSize = getSettingsValue( 'titlepricefontsize', '#titlepricefontsize' )
-		var titleFontType = getSettingsValue( 'titlescc_fonttype', '#titlescc_fonttype' )
-		var titleFontWeight = getSettingsValue( 'titlescc_fonttype_variant', '#titlescc_fonttype_variant' )
-		var titleColorPicker = getSettingsValue( 'titlecolorPicker', '#titlecolorPicker' )
+		var inheritFontType = getSettingsChecked( 'inherit-fontfamily', '#inherit-fontfamily', getExistingSettingFlag( 'inheritFontType', true ) )
+		var titleFontSize = getSettingsValue( 'titlepricefontsize', '#titlepricefontsize', getExistingSetting( 'titleFontSize', '30px' ) )
+		var titleFontType = getSettingsValue( 'titlescc_fonttype', '#titlescc_fonttype', getExistingSetting( 'titleFontType' ) )
+		var titleFontWeight = getSettingsValue( 'titlescc_fonttype_variant', '#titlescc_fonttype_variant', getExistingSetting( 'titleFontWeight' ) )
+		var titleColorPicker = getSettingsValue( 'titlecolorPicker', '#titlecolorPicker', getExistingSetting( 'titleColorPicker', '#000000' ) )
 		// service Font Settings
-		var ServicefontSize = getSettingsValue( 'servicepricefontsize', '#servicepricefontsize' )
-		var fontType = getSettingsValue( 'scc_fonttype', '#scc_fonttype' )
-		var fontWeight = getSettingsValue( 'scc_fonttype_variant', '#scc_fonttype_variant' )
-		var ServiceColorPicker = getSettingsValue( 'colorPicker', '#colorPicker' )
+		var ServicefontSize = getSettingsValue( 'servicepricefontsize', '#servicepricefontsize', getExistingSetting( 'ServicefontSize', '18px' ) )
+		var fontType = getSettingsValue( 'scc_fonttype', '#scc_fonttype', getExistingSetting( 'fontType' ) )
+		var fontWeight = getSettingsValue( 'scc_fonttype_variant', '#scc_fonttype_variant', getExistingSetting( 'fontWeight' ) )
+		var ServiceColorPicker = getSettingsValue( 'colorPicker', '#colorPicker', getExistingSetting( 'ServiceColorPicker', '#000000' ) )
 		// object settings
-		var objectSize = getSettingsValue( 'objectservicepricefontsize', '#objectservicepricefontsize' )
-		var objectColorPicker = getSettingsValue( 'objectcolorPicker', '#objectcolorPicker' )
-		var ctaBtnColorPicker = getSettingsValue( 'ctaBtnColorPicker', '#ctaBtnColorPicker' )
-		var cta_btn_text_color = getSettingsValue( 'cta_btn_text_color', '#cta_btn_text_color' )
+		var objectSize = getSettingsValue( 'objectservicepricefontsize', '#objectservicepricefontsize', getExistingSetting( 'objectSize' ) )
+		var objectColorPicker = getSettingsValue( 'objectcolorPicker', '#objectcolorPicker', getExistingSetting( 'objectColorPicker', '#000000' ) )
+		var ctaBtnColorPicker = getSettingsValue( 'ctaBtnColorPicker', '#ctaBtnColorPicker', getExistingSetting( 'ctaBtnColorPicker' ) )
+		var cta_btn_text_color = getSettingsValue( 'cta_btn_text_color', '#cta_btn_text_color', getExistingSetting( 'cta_btn_text_color' ) )
 		// CALCULATOR SETTINGS
-		var elementSkin = getSettingsValue( 'form_field_style', 'select[name="form_field_style"]' )
-		var addContainer = getSettingsChecked( 'toggle_boxshadow_style2', 'input[name="toggle_boxshadow_style2"]' )
+		var elementSkin = getSettingsValue( 'form_field_style', 'select[name="form_field_style"]', getExistingSetting( 'elementSkin', 'style_1' ) )
+		var addContainer = getSettingsChecked( 'toggle_boxshadow_style2', 'input[name="toggle_boxshadow_style2"]', getExistingSettingFlag( 'addContainer' ) )
 		// woocommerce
 		// user action buttons
-		var buttonStyle = getSettingsValue( 'scc_user_action_btn_style', 'select[name="scc_user_action_btn_style"]' )
-		var turnviewdetails = !getSettingsChecked( 'scc_detailed_list', 'input[name="scc_detailed_list"]' )
+		var buttonStyle = getSettingsValue( 'scc_user_action_btn_style', 'select[name="scc_user_action_btn_style"]', getExistingSetting( 'buttonStyle', '1' ) )
+		var turnoffemailquote = !getSettingsChecked( 'scc_send_quote', 'input[name="scc_send_quote"]', ! getExistingSettingFlag( 'turnoffemailquote' ) )
+		var turnviewdetails = !getSettingsChecked( 'scc_detailed_list', 'input[name="scc_detailed_list"]', ! getExistingSettingFlag( 'turnviewdetails' ) )
+		var turnoffcoupon = !getSettingsChecked( 'turn_off_coupon', 'input[name="turn_off_coupon"]', ! getExistingSettingFlag( 'turnoffcoupon' ) )
 
 		
 		// total price settings
-		var barstyle = getSettingsValue( 'scc_total_price_style_view', 'select[name="scc_total_price_style_view"]' )
-		var turnofffloating = getSettingsChecked( 'turn_on_total_price_float', 'input[name="turn_on_total_price_float"]' )
+		var barstyle = getSettingsValue( 'scc_total_price_style_view', 'select[name="scc_total_price_style_view"]', getExistingSetting( 'barstyle', 'scc_tp_style4' ) )
+		var turnoffborder = !getSettingsChecked( 'paybuttonhovereffect', 'input[name="paybuttonhovereffect"]', ! getExistingSettingFlag( 'turnoffborder' ) )
+		var turnofffloating = getSettingsChecked( 'turn_on_total_price_float', 'input[name="turn_on_total_price_float"]', getExistingSettingFlag( 'turnofffloating' ) )
+		var removeTotal = getSettingsChecked( 'scc_remove_total_price_frntd', 'input[name="scc_remove_total_price_frntd"]', getExistingSettingFlag( 'removeTotal' ) )
 		// detailed list settings
-		var removeTitle = !getSettingsChecked( 'scc_remove_detailed_list_title', 'input[name="scc_remove_detailed_list_title"]' )
-		var turnoffUnit = !getSettingsChecked( 'scc_no_unit_col', 'input[name="scc_no_unit_col"]' )
-		var turnoffQty = !getSettingsChecked( 'scc_no_qty_col', 'input[name="scc_no_qty_col"]' )
+		var removeTitle = !getSettingsChecked( 'scc_remove_detailed_list_title', 'input[name="scc_remove_detailed_list_title"]', ! getExistingSettingFlag( 'removeTitle' ) )
+		var turnoffUnit = !getSettingsChecked( 'scc_no_unit_col', 'input[name="scc_no_unit_col"]', ! getExistingSettingFlag( 'turnoffUnit' ) )
+		var turnoffQty = !getSettingsChecked( 'scc_no_qty_col', 'input[name="scc_no_qty_col"]', ! getExistingSettingFlag( 'turnoffQty' ) )
 
-		var turnoffSave = !getSettingsChecked( 'scc_save_icon', 'input[name="scc_save_icon"]' )
-		var turnoffTax = !getSettingsChecked( 'turn_off_tax', 'input[name="turn_off_tax"]' )
+		var turnoffSave = !getSettingsChecked( 'scc_save_icon', 'input[name="scc_save_icon"]', ! getExistingSettingFlag( 'turnoffSave' ) )
+		var turnoffTax = !getSettingsChecked( 'turn_off_tax', 'input[name="turn_off_tax"]', ! getExistingSettingFlag( 'turnoffTax' ) )
 		// currency & tax
-		var symbol = getSettingsValue( 'scc_currency_style', 'select[name="scc_currency_style"]' )
-		var removeCurrency = !getSettingsChecked( 'scc_remove_currency_label', 'input[name="scc_remove_currency_label"]' )
+		var symbol = getSettingsValue( 'scc_currency_style', 'select[name="scc_currency_style"]', getExistingSetting( 'symbol', '0' ) )
+		var removeCurrency = !getSettingsChecked( 'scc_remove_currency_label', 'input[name="scc_remove_currency_label"]', ! getExistingSettingFlag( 'removeCurrency' ) )
 		// webhook
-		var userCompletes = getSettingsChecked( 'scc_set_webhook_quote', 'input[name="scc_set_webhook_quote"]' )
-		var userClicksf = getSettingsChecked( 'scc_set_webhook_detail_view', 'input[name="scc_set_webhook_detail_view"]' )
-		var webhookSettings = typeof window.sccGetWebhookSettingsConfig === 'function' ? window.sccGetWebhookSettingsConfig() : []
-		var customJsSettings = [
-			{
-				scc_set_customJs_quote: {
-					enabled: getSettingsChecked( 'scc_set_customJs_quote', 'input[name="scc_set_customJs_quote"]' )
+		var userCompletes = getSettingsChecked( 'scc_set_webhook_quote', 'input[name="scc_set_webhook_quote"]', getExistingSettingFlag( 'userCompletes' ) )
+		var userClicksf = getSettingsChecked( 'scc_set_webhook_detail_view', 'input[name="scc_set_webhook_detail_view"]', getExistingSettingFlag( 'userClicksf' ) )
+		var hasWebhookControls = hasSettingsControl( 'scc_set_webhook_quote' ) || hasDomControl( 'input[name="scc_set_webhook_quote"]' )
+		var webhookSettings = hasWebhookControls && typeof window.sccGetWebhookSettingsConfig === 'function' ? window.sccGetWebhookSettingsConfig() : getExistingSetting( 'webhookSettings', [] )
+		var hasCustomJsControls = hasSettingsControl( 'scc_set_customJs_quote' ) || hasDomControl( 'input[name="scc_set_customJs_quote"]' )
+		var customJsSettings = hasCustomJsControls ? [
+				{
+					scc_set_customJs_quote: {
+						enabled: getSettingsChecked( 'scc_set_customJs_quote', 'input[name="scc_set_customJs_quote"]' )
+					}
+				},
+				{
+					scc_set_customJs_detail_view: {
+						enabled: getSettingsChecked( 'scc_set_customJs_detail_view', 'input[name="scc_set_customJs_detail_view"]' )
+					}
 				}
-			},
-			{
-				scc_set_customJs_detail_view: {
-					enabled: getSettingsChecked( 'scc_set_customJs_detail_view', 'input[name="scc_set_customJs_detail_view"]' )
-				}
-			}
-		]
-		var calcWrapperMaxWidth = getSettingsValue( 'scc_wrapper_max_width', 'input[name="scc_wrapper_max_width"]' )
-		var turnoffQty = !getSettingsChecked( 'scc_no_qty_col', 'input[name="scc_no_qty_col"]' )
+			] : getExistingSetting( 'customJsSettings', [] )
+		var calcWrapperMaxWidth = getSettingsValue( 'scc_wrapper_max_width', 'input[name="scc_wrapper_max_width"]', getExistingSetting( 'calcWrapperMaxWidth', 800 ) )
 
 
 		var json = {
@@ -2737,9 +2805,13 @@ $scc_settings_modal_schema = scc_generate_modal_settings_schema( $scc_settings_m
 			elementSkin,
 			addContainer,
 			buttonStyle,
+			turnoffborder,
+			turnoffemailquote,
 			turnviewdetails,
+			turnoffcoupon,
 			barstyle,
 			turnofffloating,
+			removeTotal,
 			removeTitle,
 			turnoffUnit,
 			turnoffQty,
@@ -2753,18 +2825,18 @@ $scc_settings_modal_schema = scc_generate_modal_settings_schema( $scc_settings_m
 			customJsSettings,
 			calcWrapperMaxWidth,
 			inheritFontType,
-		    titleFontSize,
-		    titleFontType,
-		    titleFontWeight,
-		    titleColorPicker,
-		    ServicefontSize,
-		    fontType,
-		    fontWeight,
-		    ServiceColorPicker,
-		    objectSize,
-		    objectColorPicker,
-		    ctaBtnColorPicker,
-		    cta_btn_text_color
+			titleFontSize,
+			titleFontType,
+			titleFontWeight,
+			titleColorPicker,
+			ServicefontSize,
+			fontType,
+			fontWeight,
+			ServiceColorPicker,
+			objectSize,
+			objectColorPicker,
+			ctaBtnColorPicker,
+			cta_btn_text_color
 		}
 		// Change form table settings names
 

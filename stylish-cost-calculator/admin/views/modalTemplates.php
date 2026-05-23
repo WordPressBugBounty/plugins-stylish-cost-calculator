@@ -239,7 +239,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="scc-col-md-10 scc-col-xs-12 main-title" style="padding-top:20px;font-size:22px; color:black;">{{ data.pdf.pdf_title }}</div>
 				</div>
 				<div id="scc-summary-view-header" class=" sscfull-width position-relative table__fricctableprice">
-					<div class="scc-col-md-6 scc-col-xs-5 Desc-Quantity-Price-Title-SCC" style="text-align:left"><span class="Title-Descriptions-Summary-Window trn Description" style="text-align: right;" data-trn-key="Description">{{ data.pdf.description }}</span></div>
+					<div class="scc-col-md-6 scc-col-xs-5 Desc-Quantity-Price-Title-SCC" style="text-align:left;padding:0px"><span class="Title-Descriptions-Summary-Window trn Description" style="text-align: right;" data-trn-key="Description">{{ data.pdf.description }}</span></div>
 					<div class="scc-col-md-2 scc-col-xs-2 Desc-Quantity-Price-Title-SCC" style="text-align:right"><span class="Title-Descriptions-Summary-Window trn Quantity" data-trn-key="Quantity">{{ data.pdf.quantity }}</span></div>
 					<div class="scc-col-md-2 scc-col-xs-2 Desc-Quantity-Price-Title-SCC" style="text-align:right"><span class="Title-Descriptions-Summary-Window trn Unit Price" data-trn-key="Unit Price">{{ data.pdf.unit }}</span></div>
 					<div class="scc-col-md-2 scc-col-xs-3 Desc-Quantity-Price-Title-SCC" style="text-align:right"><span class="Title-Descriptions-Summary-Window trn Price" data-trn-key="Price">{{ data.pdf.price }}</span></div>
@@ -291,13 +291,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<# } #>
 					<# if (row?.type == "comment") { #>
 					  <div class="comments-printing-improvement"
-						style="display: flex;justify-content: left;padding-bottom:10px;padding-top:10px">
-						<div class="scc-col-md-9 scc-col-xs-9 sscfull-height  " style="padding:0"><span class="users-price-summary-scc ">
+						style="display: flex;flex-direction:column; justify-content: left;padding-bottom:10px;padding-top:10px">
+						<div class="scc-col-md-12 scc-col-xs-12 sscfull-height  " style="padding:0;margin-bottom: 10px;"><span class="users-price-summary-scc ">
 								<div class="row-fluid Product-Titles-Summary-Window">
 									<div class="span2">{{ row.attr.title }}</div>
 								</div>
 							</span></div>
-						<div class="scc-col-md-6 scc-col-xs-6 sscfull-height" style="text-align:left"><span
+						<div class="scc-col-md-12 scc-col-xs-12 sscfull-height" style="text-align:left; padding: 20px 20px; background-color:{{ data.objectColor }}10;border-radius:8px;"><span
 								class="users-price-summary-scc ">{{ row.attr.comment }}</span></div>
 					  </div>
 						  <# } #>

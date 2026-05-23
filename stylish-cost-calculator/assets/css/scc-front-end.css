@@ -29,7 +29,6 @@ div#scc_email_temfootdiscr {
 
 .comments-printing-improvement {
   word-wrap: break-word !important;
-  background-color: #f9f9f9;
 }
 .scc-title-s:nth-child(n+3) {
   margin-top: 30px;
@@ -3396,6 +3395,8 @@ input.df-scc-euiFieldText:focus-visible {
   align-items: baseline;
   display: flex;
   margin-top: 7px;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .df-scc-row.scc-btn-hndle {
@@ -3560,14 +3561,19 @@ input.df-scc-euiFieldText:focus-visible {
 
 .product-desc-summary-scc {
   text-align: left;
-  /*padding: 10px;*/
-  font-size: 13px;
-  color: #aaa;
+  font-size: 14px !important;
+  font-weight: 400;
+  line-height: 1.5;
+  color: grey;
 }
 
 .Title-Descriptions-Summary-Window {
   font-size: 18px;
   color: black;
+}
+
+#scc-summary-view-header .Title-Descriptions-Summary-Window {
+  font-weight: 700;
 }
 
 .span2 {
@@ -3581,7 +3587,7 @@ input.df-scc-euiFieldText:focus-visible {
 }
 
 .Total_Price {
-  font-size: 20px;
+  font-size: 24px;
 }
 
 .Section-Title-Summary-Window {
@@ -3625,8 +3631,10 @@ input.df-scc-euiFieldText:focus-visible {
   }
 
   .product-desc-summary-scc {
-    font-size: 11px;
-    font-weight: 300;
+    font-size: 14px !important;
+    font-weight: 400;
+    line-height: 1.5;
+    color: grey;
   }
 
   .performance-facts__title {
@@ -3634,7 +3642,7 @@ input.df-scc-euiFieldText:focus-visible {
   }
 
   .Total_Price {
-    font-size: 18px;
+    font-size: 22px;
   }
 }
 
@@ -3670,12 +3678,14 @@ input.df-scc-euiFieldText:focus-visible {
   }
 
   .product-desc-summary-scc {
-    font-size: 11px;
-    font-weight: 300;
+    font-size: 14px !important;
+    font-weight: 400;
+    line-height: 1.5;
+    color: grey;
   }
 
   .Total_Price {
-    font-size: 14px;
+    font-size: 18px;
   }
 }
 
@@ -3740,8 +3750,10 @@ input.df-scc-euiFieldText:focus-visible {
   }
 
   .product-desc-summary-scc {
-    font-size: 0.9rem;
-    font-weight: 300;
+    font-size: 14px !important;
+    font-weight: 400;
+    line-height: 1.5;
+    color: grey;
   }
 
   .Total_Price {
@@ -3783,8 +3795,10 @@ input.df-scc-euiFieldText:focus-visible {
   }
 
   .product-desc-summary-scc {
-    font-size: 0.9rem !important;
-    font-weight: 300;
+    font-size: 14px !important;
+    font-weight: 400;
+    line-height: 1.5;
+    color: grey;
   }
 }
 
@@ -5007,10 +5021,9 @@ input.df-scc-euiFieldText:focus-visible {
 
 @media only screen and (max-width: 565px) {
   #scc-summary-view-header {
-    justify-content: right;
+    justify-content: space-between;
     align-items: center;
-    background-color: #F1F1F1 !important;
-    padding: 7px 0px 7px 0px;
+    border-bottom: 2px solid #e8e8e8;
     min-height: 80px;
     display: inline-flex;
     width: 100%;
@@ -5019,10 +5032,9 @@ input.df-scc-euiFieldText:focus-visible {
 
 @media only screen and (min-width: 565px) {
   #scc-summary-view-header {
-    justify-content: right;
+    justify-content: space-between;
     align-items: center;
-    background-color: #F1F1F1 !important;
-    padding: 7px 0px 7px 0px;
+    border-bottom: 2px solid #e8e8e8;
     min-height: 40px;
     display: inline-flex;
     width: 100%;
@@ -6008,8 +6020,7 @@ input.df-scc-euiFieldText:focus-visible {
     -webkit-print-color-adjust: exact;
     justify-content: right;
     align-items: center;
-    background-color: #F1F1F1 !important;
-    padding: 7px 0px 7px 0px;
+    border-bottom: 2px solid #e8e8e8;
     min-height: 40px;
     display: inline-flex;
     width: 100%

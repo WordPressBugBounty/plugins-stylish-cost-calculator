@@ -1,3 +1,15 @@
+## 8.3.9 - 2026-05-22
+
+**Frontend Changes:**
+- Improved: Detailed list styling is cleaner and easier to read, including comments, descriptions, section rows, and totals across screen sizes.
+
+**Editing Page Changes:**
+- Improved: Calculator settings now preserve existing options more reliably when saving from the settings modal.
+- Fixed: The Wordings modal now opens correctly from the calculator editing page.
+
+**Backend Changes:**
+- Improved: Calculator settings are sanitized and saved more reliably, including webhooks, custom JavaScript toggles, translations, and display options.
+
 ## 8.3.7 - 2026-05-11
 
 **Editing Page Changes:**

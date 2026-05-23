@@ -2239,54 +2239,73 @@ class ajaxRequest {
     public function scc_saveFormNameSettings() {
         check_ajax_referer( 'edit-calculator-page', 'nonce' );
         require_once __DIR__ . '/admin/controllers/formController.php';
-        $formC                   = new formController();
-        $f['id']                 = intval( $_POST['id_form'] );
-        $f['formname']           = sanitize_text_field( $_POST['data']['formname'] );
-        $f['elementSkin']        = sanitize_text_field( $_POST['data']['elementSkin'] );
-        $f['addContainer']       = sanitize_text_field( $_POST['data']['addContainer'] );
-        $f['buttonStyle']        = sanitize_text_field( $_POST['data']['buttonStyle'] );
-        $f['turnoffemailquote']  = sanitize_text_field( $_POST['data']['turnoffemailquote'] );
-        $f['turnviewdetails']    = sanitize_text_field( $_POST['data']['turnviewdetails'] );
-        $f['turnoffcoupon']      = sanitize_text_field( $_POST['data']['turnoffcoupon'] );
-        $f['barstyle']           = sanitize_text_field( $_POST['data']['barstyle'] );
-        $f['turnofffloating']    = sanitize_text_field( $_POST['data']['turnofffloating'] );
-        $f['removeTitle']        = sanitize_text_field( $_POST['data']['removeTitle'] );
-        $f['turnoffUnit']        = sanitize_text_field( $_POST['data']['turnoffUnit'] );
-        $f['turnoffQty']         = sanitize_text_field( $_POST['data']['turnoffQty'] );
-        $f['turnoffSave']        = sanitize_text_field( $_POST['data']['turnoffSave'] );
-        $f['turnoffTax']         = sanitize_text_field( $_POST['data']['turnoffTax'] );
-        $f['symbol']             = sanitize_text_field( $_POST['data']['symbol'] );
-        $f['removeCurrency']     = sanitize_text_field( $_POST['data']['removeCurrency'] );
-        $f['userCompletes']      = sanitize_text_field( $_POST['data']['userCompletes'] );
-        $f['userClicksf']        = sanitize_text_field( $_POST['data']['userClicksf'] );
-        $webhook_settings_data   = isset( $_POST['data']['webhookSettings'] ) ? wp_unslash( $_POST['data']['webhookSettings'] ) : [];
+        $formC   = new formController();
+        $data    = isset( $_POST['data'] ) && is_array( $_POST['data'] ) ? wp_unslash( $_POST['data'] ) : [];
+        $f['id'] = intval( $_POST['id_form'] );
 
-        if ( is_string( $webhook_settings_data ) ) {
-            $decoded_webhook_settings = json_decode( $webhook_settings_data, true );
-            $webhook_settings_data    = is_array( $decoded_webhook_settings ) ? $decoded_webhook_settings : [];
-        } elseif ( ! is_array( $webhook_settings_data ) ) {
-            $webhook_settings_data = [];
-        }
-        $webhook_settings        = [];
-
-        foreach ( $webhook_settings_data as $webhook_setting ) {
-            foreach ( [ 'scc_set_webhook_quote', 'scc_set_webhook_detail_view' ] as $webhook_key ) {
-                if ( ! isset( $webhook_setting[ $webhook_key ] ) || ! is_array( $webhook_setting[ $webhook_key ] ) ) {
-                    continue;
-                }
-
-                $webhook_settings[] = [
-                    $webhook_key => [
-                        'enabled' => filter_var( $webhook_setting[ $webhook_key ]['enabled'] ?? false, FILTER_VALIDATE_BOOLEAN ),
-                        'webhook' => esc_url_raw( $webhook_setting[ $webhook_key ]['webhook'] ?? '' ),
-                    ],
-                ];
+        $set_text_field = function ( $key, $target_key = null ) use ( &$f, $data ) {
+            if ( array_key_exists( $key, $data ) ) {
+                $f[ $target_key ? $target_key : $key ] = sanitize_text_field( $data[ $key ] );
             }
-        }
-        $f['webhookSettings']    = wp_json_encode( $webhook_settings );
+        };
 
-        if ( isset( $_POST['data']['customJsSettings'] ) ) {
-            $custom_js_settings_data = wp_unslash( $_POST['data']['customJsSettings'] );
+        foreach (
+            [
+                'formname',
+                'elementSkin',
+                'addContainer',
+                'buttonStyle',
+                'turnoffborder',
+                'turnoffemailquote',
+                'turnviewdetails',
+                'turnoffcoupon',
+                'barstyle',
+                'turnofffloating',
+                'removeTotal',
+                'removeTitle',
+                'turnoffUnit',
+                'turnoffQty',
+                'turnoffSave',
+                'turnoffTax',
+                'symbol',
+                'removeCurrency',
+                'userCompletes',
+                'userClicksf',
+            ] as $form_setting_key
+        ) {
+            $set_text_field( $form_setting_key );
+        }
+
+        $webhook_settings_data = isset( $data['webhookSettings'] ) ? $data['webhookSettings'] : null;
+
+        if ( null !== $webhook_settings_data ) {
+            if ( is_string( $webhook_settings_data ) ) {
+                $decoded_webhook_settings = json_decode( $webhook_settings_data, true );
+                $webhook_settings_data    = is_array( $decoded_webhook_settings ) ? $decoded_webhook_settings : [];
+            } elseif ( ! is_array( $webhook_settings_data ) ) {
+                $webhook_settings_data = [];
+            }
+            $webhook_settings = [];
+
+            foreach ( $webhook_settings_data as $webhook_setting ) {
+                foreach ( [ 'scc_set_webhook_quote', 'scc_set_webhook_detail_view' ] as $webhook_key ) {
+                    if ( ! isset( $webhook_setting[ $webhook_key ] ) || ! is_array( $webhook_setting[ $webhook_key ] ) ) {
+                        continue;
+                    }
+
+                    $webhook_settings[] = [
+                        $webhook_key => [
+                            'enabled' => filter_var( $webhook_setting[ $webhook_key ]['enabled'] ?? false, FILTER_VALIDATE_BOOLEAN ),
+                            'webhook' => esc_url_raw( $webhook_setting[ $webhook_key ]['webhook'] ?? '' ),
+                        ],
+                    ];
+                }
+            }
+            $f['webhookSettings'] = wp_json_encode( $webhook_settings );
+        }
+
+        if ( isset( $data['customJsSettings'] ) ) {
+            $custom_js_settings_data = $data['customJsSettings'];
 
             if ( is_string( $custom_js_settings_data ) ) {
                 $decoded_custom_js_settings = json_decode( $custom_js_settings_data, true );
@@ -2327,23 +2346,34 @@ class ajaxRequest {
 
             update_option( 'scc_cstmjs_calc_' . $f['id'], wp_json_encode( $custom_js_settings ) );
         }
-        $f['inheritFontType']    = sanitize_text_field( $_POST['data']['inheritFontType'] );
-        $f['titleFontSize']      = sanitize_text_field( $_POST['data']['titleFontSize'] );
-        $f['titleFontType']      = sanitize_text_field( $_POST['data']['titleFontType'] );
-        $f['titleFontWeight']    = sanitize_text_field( $_POST['data']['titleFontWeight'] );
-        $f['titleColorPicker']   = sanitize_text_field( $_POST['data']['titleColorPicker'] );
-        $f['ServicefontSize']    = sanitize_text_field( $_POST['data']['ServicefontSize'] );
-        $f['fontType']           = sanitize_text_field( $_POST['data']['fontType'] );
-        $f['fontWeight']         = sanitize_text_field( $_POST['data']['fontWeight'] );
-        $f['ServiceColorPicker'] = sanitize_text_field( $_POST['data']['ServiceColorPicker'] );
-        $f['objectSize']         = sanitize_text_field( $_POST['data']['objectSize'] );
-        $f['objectColorPicker']  = sanitize_text_field( $_POST['data']['objectColorPicker'] );
-        $f['ctaBtnColorPicker']  = sanitize_text_field( $_POST['data']['ctaBtnColorPicker'] );
-        $f['cta_btn_text_color']  = sanitize_text_field( $_POST['data']['cta_btn_text_color'] );
 
-        $f['translation']       = sanitize_text_field( $_POST['translations'] );
-        $f['wrapper_max_width'] = absint( $_POST['data']['calcWrapperMaxWidth'] );
-        $request                = $formC->update( $f );
+        foreach (
+            [
+                'inheritFontType',
+                'titleFontSize',
+                'titleFontType',
+                'titleFontWeight',
+                'titleColorPicker',
+                'ServicefontSize',
+                'fontType',
+                'fontWeight',
+                'ServiceColorPicker',
+                'objectSize',
+                'objectColorPicker',
+                'ctaBtnColorPicker',
+                'cta_btn_text_color',
+            ] as $form_setting_key
+        ) {
+            $set_text_field( $form_setting_key );
+        }
+
+        if ( isset( $_POST['translations'] ) ) {
+            $f['translation'] = sanitize_text_field( wp_unslash( $_POST['translations'] ) );
+        }
+        if ( isset( $data['calcWrapperMaxWidth'] ) ) {
+            $f['wrapper_max_width'] = absint( $data['calcWrapperMaxWidth'] );
+        }
+        $request = $formC->update( $f );
         echo ( $request ) ? json_encode( [ 'passed' => true ] ) : json_encode(
             [
                 'msj'    => 'There was an error',
