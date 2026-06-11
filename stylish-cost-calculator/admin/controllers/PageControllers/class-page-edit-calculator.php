@@ -3,8 +3,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Stripe\Terminal\Location;
-
 require_once dirname( __FILE__ ) . '/class-pages-breadcrumbs.php';
 /**
  * *This loads one calculator, settings, translation and preview
@@ -14,8 +12,16 @@ require_once dirname( __FILE__ ) . '/class-pages-breadcrumbs.php';
 class PageEditTabs extends PagesBreadcrumbs {
 
 	public function __construct() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have permission to edit calculators.', 'scc' ) );
+		}
+
 		require dirname( __DIR__, 1 ) . '/formController.php';
 		$formC = new formController();
+		$form_id = 0;
+		if ( isset( $_GET['id_form'] ) && ! is_array( $_GET['id_form'] ) ) {
+			$form_id = absint( wp_unslash( $_GET['id_form'] ) );
+		}
 
 		wp_enqueue_style( 'wp-color-picker' );
 		wp_enqueue_script( 'wp-color-picker' );
@@ -64,21 +70,21 @@ class PageEditTabs extends PagesBreadcrumbs {
 		wp_register_style( 'scc-modal', SCC_URL . 'assets/css/modals/_modal.css', [], scc_get_file_version( SCC_DIR . '/assets/css/modals/_toast.css' ) );
 		wp_enqueue_style( 'scc-modal' );
 		
-        $currencies_array = 'window["scc_currencies"] = ' . json_encode(
-			require_once( SCC_DIR . '/lib/currency_data.php' )
-		);
+		$scc_json_encode_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+		$scc_currencies        = require SCC_DIR . '/lib/currency_data.php';
+		$currencies_array      = 'window["scc_currencies"] = ' . wp_json_encode( $scc_currencies, $scc_json_encode_flags );
 		wp_add_inline_script( 'scc-frontend', $currencies_array );
 
 		add_thickbox();
 		
-		$f1          = $formC->readWithRelations( $_GET['id_form'] );
+		$f1          = $form_id > 0 ? $formC->readWithRelations( $form_id ) : null;
 		$isActivated = get_option( 'df_scc_licensed', 0 ) ? true : false;
 
 		parent::__construct();
 		wp_enqueue_media();
 
 		if ( ! $f1 ) {
-			return $this->show_eror();
+			return $this->show_eror( $form_id );
 		}
 
 		$this->updateCalculatorUsageStat();
@@ -95,7 +101,7 @@ class PageEditTabs extends PagesBreadcrumbs {
 		require dirname( __DIR__, 2 ) . '/views/adminFooter.php';
 	}
 
-	function show_eror() {
+	function show_eror( $form_id = 0 ) {
 		?>
 		<script>
 			jQuery(document).ready(function() {
@@ -104,7 +110,7 @@ class PageEditTabs extends PagesBreadcrumbs {
 					allowOutsideClick: false,
 					title: 'Oops...',
 					confirmButtonText: '<i class="fa fa-thumbs-up"></i> Great!',
-					text: "Calculator with ID <?php echo intval( $_GET['id_form'] ); ?> doesn't exist, or has been deleted. Please recheck your shortcode ",
+					text: "Calculator with ID <?php echo intval( $form_id ); ?> doesn't exist, or has been deleted. Please recheck your shortcode ",
 				}).then((result) => {
 					if (result.isConfirmed) {
 						location.href = '<?php echo admin_url( 'admin.php?page=scc-list-all-calculator-forms' ); ?>'

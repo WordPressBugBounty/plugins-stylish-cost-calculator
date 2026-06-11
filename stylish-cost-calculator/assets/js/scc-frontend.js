@@ -657,23 +657,7 @@ function addItemsToPayPalForm(items, tax, comments, calculator_id, isTaxInclusio
 
 
 function sccProcessCheckout(calcId) {
-	$fragment_refresh = {
-		url: wp.ajax.settings.url,
-		type: 'POST',
-		data: {
-			action: 'scc_stripe_action',
-			data: Base64.encode(JSON.stringify(sccData[calcId].stripeCart)),
-			currency: sccData[calcId].config.currencyCode
-		},
-		success: function (session) {
-			if (!session.error) {
-				return stripe.redirectToCheckout({ sessionId: session.id });
-			} else {
-			}
-		}
-	};
-	var validationCheckResult = sccMandatoryValidationCheck(null, null, calcId);
-	if (validationCheckResult) jQuery.ajax($fragment_refresh);
+	return false;
 }
 
 function preCheckout(calcId, callback) {
@@ -2404,7 +2388,6 @@ function triggerSubmit(type, dom, element, item, calcId) {
 	}
 	if (checkboxToItemsMapping.length) {
 	}
-	sccData[calcId].stripeCart = buildStripeData(rawItems)
 	sccData[calcId].pdf = buildDetailViewData(sortedItems, sccData[calcId].config.formname, totalTotal[calcId], calcId, tax_vat, taxParcent, subTotalBeforeTax, couponData, total_converted)
 }
 
@@ -2593,15 +2576,6 @@ function buildWebhookData(rawItemsData) {
 			}
 		}
 	});
-}
-function buildStripeData(cartItems) {
-	return cartItems.map(e => {
-		return {
-			name: e.name,
-			valuePerUnit: e?.calculatedValue ? e.calculatedValue : e.price,
-			units: e.qtn ? e.qtn : 1
-		}
-	})
 }
 function buildDetailViewData(rawData, formname, total, calcId, taxAmount = 0, taxParcent = 0, subTotalBeforeTax = 0, coupon, total_converted = null) {
 	let { pdf: pdfConfig } = sccData[calcId].config

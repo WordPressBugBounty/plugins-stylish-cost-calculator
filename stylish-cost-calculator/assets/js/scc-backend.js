@@ -2102,17 +2102,27 @@ const sccBackendUtils = {
 		if ( sourceElement ) {
 			sccBackendUtils.disableSaveBtnAjax( true, sourceElement );
 		}
-		const data = await fetch( wp.ajax.settings.url + '?action=scc_update_value_6_by_id' + '&elementId=' + elementId + '&nonce=' + window.pageEditCalculator.nonce, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify( config ),
-		} );
-		if ( sourceElement ) {
-			sccBackendUtils.disableSaveBtnAjax( false, sourceElement );
+		try {
+			const data = await fetch( wp.ajax.settings.url + '?action=scc_update_value_6_by_id' + '&elementId=' + elementId + '&nonce=' + window.pageEditCalculator.nonce, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify( config ),
+			} );
+			if ( ! data.ok ) {
+				throw new Error( 'Network response was not ok' );
+			}
+			sccBackendUtils.updateRefreshButtonStatus();
+			return data;
+		} catch ( error ) {
+			showSweet( false, 'There was an error, please try again' );
+			throw error;
+		} finally {
+			if ( sourceElement ) {
+				sccBackendUtils.disableSaveBtnAjax( false, sourceElement );
+			}
 		}
-		sccBackendUtils.updateRefreshButtonStatus();
 	},
 	async checkBannerNotice() {
 		const checkForZeroValuedInputs = () => {
@@ -2683,6 +2693,14 @@ const sccBackendUtils = {
 		sccBackendUtils.updateRefreshButtonStatus( false );
 		reloadform();
 	},
+	queueCalculatorDataSchemaRefresh() {
+		clearTimeout( sccBackendUtils.calculatorDataSchemaRefreshTimer );
+		sccBackendUtils.calculatorDataSchemaRefreshTimer = setTimeout( () => {
+			if ( typeof sccAiUtils !== 'undefined' && typeof sccAiUtils.updateCalculatorDataSchema === 'function' ) {
+				sccAiUtils.updateCalculatorDataSchema();
+			}
+		}, 1500 );
+	},
 	handleSavingAlert( event, showAlerts = false, useJsonMsg = false ) {
 		const eventStatus = event?.passed;
 		const eventMsg = event?.msj;
@@ -2707,7 +2725,9 @@ const sccBackendUtils = {
 		document.querySelectorAll( '.scc-link-line' ).forEach( ( line ) => {
 			line.classList.add( 'scc-hidden' );
 		} );
-		sccAiUtils.updateCalculatorDataSchema();
+		if ( eventStatus !== false ) {
+			sccBackendUtils.queueCalculatorDataSchemaRefresh();
+		}
 	},
 
   };
@@ -4452,97 +4472,6 @@ function saveWebhookSettings() {
 		}
 	});
 }
-function stripeOptionsModal($this) {
-	return
-}
-function setupStripeKey($this) {
-	const urlParams = new URLSearchParams(window.location.search);
-	const calcId = urlParams.get('id_form');
-	var modalObject = jQuery($this).closest('.df-scc-euiModal');
-	var privKey = jQuery('[name="stripe-api-priv-key"]').val();
-	var pubKey = jQuery('[name="stripe-api-pub-key"]').val();
-	if (privKey.length == 0) {
-		jQuery('[name="stripe-api-priv-key"]').closest('.df-scc-euiFormControlLayout').next('.text-danger').show().hide(3000);
-	}
-	if (pubKey.length == 0) {
-		jQuery('[name="stripe-api-pub-key"]').closest('.df-scc-euiFormControlLayout').next('.text-danger').show().hide(3000);
-	}
-	if (privKey.length == 0 || pubKey.length == 0) {
-		return;
-	}
-	var keyInputVal = {
-		privKey: privKey,
-		pubKey: pubKey,
-		enabled: true
-	};
-	jQuery.ajax({
-		url: ajaxurl,
-		type: 'POST',
-		context: modalObject,
-		calcId,
-		data: {
-			action: 'scc_set_stripe_key',
-			data: keyInputVal
-		},
-		beforeSend: function (xhr) {
-			this.find('.df-scc-euiButtonContent.df-scc-euiButton__content').html('<i class="fa fa-circle-o-notch fa-spin"></i><span class="trn df-scc-euiButton__text">Saving...</span>')
-		},
-		success: function (data) {
-			this.find('.df-scc-euiModalFooter').hide();
-			this.find('.df-scc-euiText.df-scc-euiText--medium').html("<p>The Stripe API key has been saved. You can change the Stripe API key from the 'Global Settings' menu</p>")
-			jQuery('#stripe_checkbox').prop('checked', true);
-			var sourceBtn = jQuery('.editing-action-cards.action-payment [data-btn-type="stripe"]');
-			var hasStripeKeys = null;
-			if (sourceBtn && privKey.length && pubKey.length) {
-				jQuery(sourceBtn)
-					.addClass('active')
-					.attr('onclick', 'toggleStripe(this)')
-					.attr('data-pub-key', pubKey)
-					.attr('data-priv-key', privKey);
-				hasStripeKeys = true;
-			}
-			hasStripeKeys && loadPreviewForm(this.calcId);
-			// close the success notice
-			setTimeout(() => {
-				this.find('.df-scc-euiButtonIcon.df-scc-euiButtonIcon--text.df-scc-euiModal__closeIcon').click();
-			}, 5000);
-		},
-		error: function (error) {
-			this.find('.text-danger').show();
-			setTimeout(() => {
-				this.find('.text-danger').hide();
-			}, 3000);
-		}
-	});
-}
-function toggleStripe($this) {
-	const urlParams = new URLSearchParams(window.location.search);
-	const calcId = urlParams.get('id_form')
-	$this = jQuery($this);
-	let privKey = $this.data('privKey');
-	let pubKey = $this.data('pubKey');
-	let newStatus = !$this.hasClass('active');
-	let keyInputVal = {
-		privKey: privKey,
-		pubKey: pubKey,
-		enabled: newStatus,
-		calcId
-	};
-	jQuery.ajax({
-		url: ajaxurl,
-		type: 'POST',
-		context: $this,
-		calcId,
-		data: {
-			action: 'scc_set_stripe_key',
-			data: keyInputVal
-		},
-		success: function (data) {
-			showSweet(true, "The changes have been saved.");
-			newStatus ? this.addClass('active') : this.removeClass('active');
-		}
-	})
-}
 function setForceQuoteFormStatus($this, event) {
 }
 function toggleFormBuilderOnDetails(element) {
@@ -4593,24 +4522,6 @@ function sccSaveRecaptchaKeys() {
 		}
 	};
 	jQuery.ajax($fragment_refresh);
-}
-function updateStripeKey() {
-	var keyInputVal = {
-		privKey: jQuery('[name="stripe-api-priv-key"]').val(),
-		pubKey: jQuery('[name="stripe-api-pub-key"]').val(),
-		enabled: jQuery('[name="is-stripe-enabled"]').prop('checked')
-	};
-	jQuery.ajax({
-		url: ajaxurl,
-		type: 'POST',
-		data: {
-			action: 'scc_set_stripe_key',
-			data: keyInputVal
-		},
-		success: function (data) {
-			showSweet(true, 'Saved Successfully!')
-		}
-	});
 }
 function changeShowSectionTotalOnPdf(element) {
 	var id = jQuery(element).parentsUntil(".addedFieldsStyle").parent().find(".id_section_class").val();
@@ -5441,15 +5352,27 @@ function sccGetIconList( container, type = '' ) {
 		beforeSend() {
 			loadingMsg.style.display = 'inline-flex';
 		},
-		success( data ) { 
+		success( data ) {
 			loadingMsg.style.display = 'none';
 			iconFilter.forEach( ( filter ) => {
 				filter.removeAttribute( 'disabled' );
 				filter.style.opacity = '1';
 			} );
+			if ( ! data || data.success === false || ! data.data || ! Array.isArray( data.data.icons ) ) {
+				showSweet( false, data?.data || 'Unable to load icon list.' );
+				return;
+			}
 			iconList = data.data;
 			const iconListHTML = createIconList( iconList, type );
 			iconPickerList.innerHTML += iconListHTML;
+		},
+		error() {
+			loadingMsg.style.display = 'none';
+			iconFilter.forEach( ( filter ) => {
+				filter.removeAttribute( 'disabled' );
+				filter.style.opacity = '1';
+			} );
+			showSweet( false, 'Unable to load icon list.' );
 		},
 	} );
 }
@@ -5898,12 +5821,12 @@ function waitForProperty( obj, prop, callbackFn, tries = 0 ) {
 }
 
 
-//Loading Symbol during adding an element
-function showLoadingChanges() {
+// Legacy loader copy kept under a distinct name so it does not override showLoadingChanges().
+function sccShowLoadingChangesLegacy() {
 	let timerInterval
 	Swal.fire({
 		showConfirmButton: false,
-		timer: 75000,
+		timer: 7500,
 		backdrop: true,
 		customClass: {
 			loader: 'custom-loader scc-smiling-loader',
@@ -5986,7 +5909,15 @@ function sccStripHtmlTags( input ) {
  * !this value6 is used for datepicker array (min, max, disabled dates and disabled weekends)
  * !this value6 is used for distance element config array (default distance...)
  */
-let timeElementValue6 = null;
+const sccBackendDebounceTimers = {};
+function sccDebounceBackendSave( debounceKey, callback, wait ) {
+	clearTimeout( sccBackendDebounceTimers[ debounceKey ] );
+	sccBackendDebounceTimers[ debounceKey ] = setTimeout( () => {
+		delete sccBackendDebounceTimers[ debounceKey ];
+		callback();
+	}, wait );
+}
+
 function changeValue6( element ) {
 	const id_element = jQuery( element ).closest( '.elements_added' ).find( '.input_id_element' ).val();
 	let value = jQuery( element ).val();
@@ -6128,13 +6059,8 @@ function changeValue6( element ) {
 		};
 	}
 
-	jQuery( element ).focusout( function() {
-		timeElementValue6 = 0;
-	} );
-
 	sccBackendUtils.disableSaveBtnAjax( true, element );
-	clearTimeout( timeElementValue6 );
-	timeElementValue6 = setTimeout( () => {
+	sccDebounceBackendSave( `element:${ id_element }:value6`, () => {
 		jQuery.ajax( {
 			url: ajaxurl,
 			cache: false,
@@ -6150,6 +6076,7 @@ function changeValue6( element ) {
 				sccBackendUtils.handleSavingAlert( datajson );
 			},
 			error() {
+				showSweet( false, 'There was an error, please try again' );
 				sccBackendUtils.disableSaveBtnAjax( false, element );
 			},
 		} );

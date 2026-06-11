@@ -13,8 +13,60 @@ class Stylish_Cost_Calculator_Edit_Page {
         $this->calc_id                = $calc_id;
         $this->is_from_ajax           = $is_from_ajax;
         $this->df_scc_form_currency   = get_option( 'df_scc_currency', 'USD' );
-        $this->is_woocommerce_enabled = false;
+        $this->is_woocommerce_enabled = (bool) $is_woocommerce_enabled;
+        if ( $this->is_woocommerce_enabled ) {
+            $this->woo_commerce_products = [];
+        }
 		$this->scc_icons = require SCC_DIR . '/assets/scc_icons/icon_rsrc.php';
+    }
+
+    private function format_woocommerce_product_label( $product ) {
+        if ( ! $product || ! is_object( $product ) || ! method_exists( $product, 'get_name' ) ) {
+            return '';
+        }
+
+        $label = $product->get_name();
+
+        if ( method_exists( $product, 'is_type' ) && $product->is_type( 'variation' ) ) {
+            $parent = function_exists( 'wc_get_product' ) ? wc_get_product( $product->get_parent_id() ) : null;
+            if ( $parent ) {
+                $label = $parent->get_name();
+            }
+
+            if ( function_exists( 'wc_get_formatted_variation' ) ) {
+                $variation_label = wp_strip_all_tags( wc_get_formatted_variation( $product, true, false, true ) );
+                if ( '' !== $variation_label ) {
+                    $label .= ': ' . $variation_label;
+                }
+            }
+        }
+
+        if ( method_exists( $product, 'get_price' ) && '' !== $product->get_price() ) {
+            $label .= ' | Price: ' . get_woocommerce_currency_symbol() . $product->get_price();
+        }
+
+        return $label;
+    }
+
+    public function render_woocommerce_product_options( $selected_product_id = 0 ) {
+        $selected_product_id = absint( $selected_product_id );
+
+        if ( $selected_product_id <= 0 || ! function_exists( 'wc_get_product' ) ) {
+            return '';
+        }
+
+        $product = wc_get_product( $selected_product_id );
+        $label   = $this->format_woocommerce_product_label( $product );
+
+        if ( '' === $label ) {
+            return '';
+        }
+
+        return sprintf(
+            '<option value="%1$d" selected data-scc-selected-product="1">%2$s</option>',
+            $selected_product_id,
+            esc_html( $label )
+        );
     }
 
     public function renderAdvancedOptions( $el ) { 
@@ -440,12 +492,12 @@ class Stylish_Cost_Calculator_Edit_Page {
 
                 if ( $el->type != 'checkbox'  ) {
                     ?>
-					<div class="text-scc-col d-flex" style="font-size:13px;">
-						<div class="col-md-12 input-field use-premium-tooltip">
-							<input onchange="changeTooltipText(this)" onkeyup="changeTooltipText(this)" id="<?php echo esc_attr( 'scc_tooltip_input-' . $el->id ); ?>" class="scc_title_column_mobl" name="scc_title_column_mobl" type="text" value="<?php echo ( isset( $el->tooltiptext ) ) ? esc_attr( $el->tooltiptext ) : ''; ?>" disabled>
-							<label class="form-label fw-bold use-tooltip <?php echo ( isset( $el->tooltiptext ) && strlen( $el->tooltiptext ) > 0 ) ? 'active' : ''; ?> " for="<?php echo esc_attr( 'scc_tooltip_input-' . $el->id ); ?>" title="On the frontend, display a tooltip icon and information next to element titles. Explain what this item is about while keeping the calculator form organized.">Tooltip</label>
+						<div class="text-scc-col d-flex scc-tooltip-option-field" style="font-size:13px;">
+							<div class="col-md-12 input-field use-premium-tooltip">
+								<input onchange="changeTooltipText(this)" onkeyup="changeTooltipText(this)" id="<?php echo esc_attr( 'scc_tooltip_input-' . $el->id ); ?>" class="scc_title_column_mobl scc-tooltip-input" name="scc_title_column_mobl" type="text" value="<?php echo ( isset( $el->tooltiptext ) ) ? esc_attr( $el->tooltiptext ) : ''; ?>" disabled>
+								<label class="active form-label fw-bold use-tooltip" for="<?php echo esc_attr( 'scc_tooltip_input-' . $el->id ); ?>" title="On the frontend, display a tooltip icon and information next to element titles. Explain what this item is about while keeping the calculator form organized.">Tooltip</label>
+							</div>
 						</div>
-					</div>
 					<?php
                 }
         ?>
@@ -1612,7 +1664,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 					<div class="col-md-12 p-0">
 						<div class="row">
 							<div class="col-md-8">
-								<input type="text" onkeyup="changeNameElementItem(this, true)" class="form-control scc-input" value="<?php echo stripslashes( wp_kses( $elit->name, SCC_ALLOWTAGS ) ); ?>" placeholder="Product or service name">
+								<input type="text" onkeyup="changeNameElementItem(this, true)" class="form-control scc-input" value="<?php echo esc_attr( wp_kses( wp_unslash( $elit->name ), SCC_ALLOWTAGS ) ); ?>" placeholder="Product or service name">
 							</div>
 							<div class="col-md-4 d-inline-flex scc-input-icon">
 								<span class="input-group-text" style="height: 45px;border-radius: 6px 0px 0px 6px"><?php echo df_scc_get_currency_symbol_by_currency_code( $this->df_scc_form_currency ); ?></span>
@@ -1621,7 +1673,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 						</div>
 						<div class="row">
 							<div class="col-md-12 col-xs-6 pb-2">
-								<input type="text" onkeyup="changeDescriptionElementItem(this, true)" class="input_pad scc_inputoption_desc" placeholder="Description" value="<?php echo stripslashes( wp_kses( $elit->description, SCC_ALLOWTAGS ) ); ?>">
+								<input type="text" onkeyup="changeDescriptionElementItem(this, true)" class="input_pad scc_inputoption_desc" placeholder="Description" value="<?php echo esc_attr( wp_kses( wp_unslash( $elit->description ), SCC_ALLOWTAGS ) ); ?>">
 							</div>
 						</div>
 					</div>
@@ -2188,7 +2240,13 @@ class Stylish_Cost_Calculator_Edit_Page {
             ],
             'conditions'                    => [ 1 => [] ],
         ];
-        $el       = (object) meks_wp_parse_args( $el, $defaults );
+        $el                 = (object) meks_wp_parse_args( $el, $defaults );
+        $quantity_box_price = '';
+        if ( isset( $el->value2 ) && $el->value2 !== '' ) {
+            $quantity_box_price = $el->value2;
+        } elseif ( isset( $el->price ) ) {
+            $quantity_box_price = $el->price;
+        }
         ob_start();
         ?>
 		<div class="scc-element-content" data-element-setup-type="<?php echo esc_attr( $el->type ); ?>" value="selectoption" style="
@@ -2223,7 +2281,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 														</div> -->
 														<div class="col-md-4 d-flex scc-input-icon scc-input">
 															<span class="input-group-text"><?php echo df_scc_get_currency_symbol_by_currency_code( $this->df_scc_form_currency ); ?></span>
-															<input type="number" onchange="changeValue2(this)" onkeyup="changeValue2(this)" class="ssc-margin-0 input_pad inputoption_2" style="width:100%;text-align:center;height:35px;" placeholder="Price" value="<?php echo isset($el->price)?floatval( $el->price ): ''; ?>">
+															<input type="number" onchange="changeValue2(this)" onkeyup="changeValue2(this)" class="ssc-margin-0 input_pad inputoption_2" style="width:100%;text-align:center;height:35px;" placeholder="Price" value="<?php echo esc_attr( $quantity_box_price ); ?>">
 														</div>
 													</div>
 													</div>
@@ -3328,7 +3386,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 					<div class="col-md-10">
 						<div class="row">
 							<div class="col-md-8">
-								<input type="text" class="form-control scc-input" onkeyup="changeNameElementItem(this, true)" value="<?php echo stripslashes( wp_kses( $elit->name, SCC_ALLOWTAGS ) ); ?>">
+								<input type="text" class="form-control scc-input" onkeyup="changeNameElementItem(this, true)" value="<?php echo esc_attr( wp_kses( wp_unslash( $elit->name ), SCC_ALLOWTAGS ) ); ?>">
 							</div>
 							<div class="col-md-4 d-inline-flex scc-input-icon">
 								<span class="input-group-text" style="height: 45px;border-radius: 6px 0px 0px 6px"><?php echo df_scc_get_currency_symbol_by_currency_code( $this->df_scc_form_currency ); ?></span>
@@ -3337,40 +3395,19 @@ class Stylish_Cost_Calculator_Edit_Page {
 						</div>
 						<div class="row">
 							<div class="col-md-12 col-xs-6 pb-2">
-								<input type="text" onkeyup="changeDescriptionElementItem(this, true)" class="input_pad scc_inputoption_desc" placeholder="Description" value="<?php echo stripslashes( wp_kses( $elit->description, SCC_ALLOWTAGS ) ); ?>">
+								<input type="text" onkeyup="changeDescriptionElementItem(this, true)" class="input_pad scc_inputoption_desc" placeholder="Description" value="<?php echo esc_attr( wp_kses( wp_unslash( $elit->description ), SCC_ALLOWTAGS ) ); ?>">
 							</div>
 						</div>
 					</div>
 				</div>
-				<?php if ( ! empty( $this->woo_commerce_products ) ) { ?>
+				<?php if ( isset( $this->woo_commerce_products ) ) { ?>
 					<div class="col-12 mb-3 edit-field" data-edit-field-type="wc_choices" style="width: 100%;padding-left:12px;">
 						<label class="form-label fw-bold">
 							<img class="scc-woo-logo" src="<?php echo esc_url_raw( SCC_ASSETS_URL . '/images/logo-woocommerce.svg' ); ?>" title="Pick an item from your WooCommerce products to link to.">
 						</label>
-						<select class="form-select w-100" data-target="elements_added" onchange="attachProductId(this, <?php echo intval( $elit->id ); ?>)">
+						<select class="form-select w-100 scc_woo_commerce_product_id" data-target="elements_added" onchange="attachProductId(this, <?php echo intval( $elit->id ); ?>)">
 							<option style="font-size: 10px" value=0>Select a product..</option>
-							<?php
-                            foreach ( $this->woo_commerce_products as $product ) {
-                                if ( $product->is_type( 'variable' ) ) {
-                                    $available_variations = $product->get_available_variations();
-
-                                    foreach ( $available_variations as $product_variable ) {
-                                        $attributes = [];
-
-                                        foreach ( $product_variable['attributes'] as $key => $value ) {
-                                            $attributes[] = $product->get_name() . ': ' . $value;
-                                        }
-                                        ?>
-										<option value=<?php echo esc_html( $product_variable['variation_id'] ); ?> <?php echo selected( $product->get_id() == intval( $elit->woocomerce_product_id ) ); ?>><?php echo esc_html( implode( ' | ', $attributes ) ) . ' | Price: ' . get_woocommerce_currency_symbol() . '' . esc_html( $product_variable['display_regular_price'] ); ?></option>
-										<?php
-                                    }
-                                } else {
-                                    ?>
-									<option value=<?php echo esc_html( $product->get_id() ); ?> <?php echo selected( $product->get_id() == intval( $elit->woocomerce_product_id ) ); ?>><?php echo esc_html( $product->get_name() ) . ' | Price: ' . get_woocommerce_currency_symbol() . '' . esc_html( $product->get_price() ); ?></option>
-									<?php
-                                }
-                            }
-                            ?>
+							<?php echo $this->render_woocommerce_product_options( $elit->woocomerce_product_id ); ?>
 						</select>
 					</div>
 				<?php } ?>

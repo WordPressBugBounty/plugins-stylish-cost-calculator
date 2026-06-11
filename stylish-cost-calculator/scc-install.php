@@ -10,5 +10,6 @@ if ( is_admin() ) {
 	if ( '0.0' == STYLISH_COST_CALCULATOR_VERSION ) {
 		//we my do some reset job here, like delete the table
 	}
+	delete_option( 'df_scc_stripe_keys' );
 	update_option( 'df_stylish_cost_calculator_premium_version', STYLISH_COST_CALCULATOR_VERSION );
 }

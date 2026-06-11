@@ -3,7 +3,7 @@
  * Plugin Name: Stylish Cost Calculator
  * Plugin URI:  https://stylishcostcalculator.com
  * Description: A Stylish Cost Calculator / Price Estimate Form for your site.
- * Version:     8.3.9
+ * Version:     8.3.10
  * Author:      Designful
  * Author URI:  https://stylishcostcalculator.com
  * License:     GPL2
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'STYLISH_COST_CALCULATOR_VERSION', '8.3.9' );
+define( 'STYLISH_COST_CALCULATOR_VERSION', '8.3.10' );
 define( 'SCC_URL', plugin_dir_url( __FILE__ ) );
 define( 'SCC_DIR', __DIR__ );
 define( 'SCC_LIB_DIR', __DIR__ . '/lib' );
@@ -95,9 +95,9 @@ class df_scc_plugin {
         $cache_plugin_exclusion = new \DF_SCC\Utils\CachePluginExclusionHook();
         //?Handles ajax requests
         add_action( 'init', [ $this, 'df_scc_load_ajax' ] );
-        //?creates tables if doesnt exists
+        //?creates/upgrades tables, but only when the stored schema version is behind
         if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] !== 'activate' ) {
-            $this->checkTablesExists();
+            $this->maybe_check_tables();
         }
         //?hides funky messages of WordPress
         add_action( 'admin_print_scripts', [ $this, 'scc_admin_hide_notices' ] );
@@ -166,6 +166,24 @@ class df_scc_plugin {
         return isset( self::$shared_data[$key] ) ? self::$shared_data[$key] : $default;
     }
 
+    /**
+     * Runs the table create/upgrade checks at most once per plugin version.
+     *
+     * checkTablesExists() issues a SHOW TABLES plus ~a dozen DESC/ALTER probes.
+     * Previously it ran on every request carrying an `action` param — including
+     * public admin-ajax.php hits such as the frontend URL-stats ping. Gating on
+     * a stored schema version keeps the one-time migration safety net while
+     * removing that per-request query load. The option read is essentially free
+     * (options are autoloaded once at bootstrap). The migration still also runs
+     * on activation (do_install_scc) and on plugin update (post_upgrade_tasks).
+     */
+    private function maybe_check_tables() {
+        if ( get_option( 'scc_db_schema_version' ) === STYLISH_COST_CALCULATOR_VERSION ) {
+            return;
+        }
+        $this->checkTablesExists();
+        update_option( 'scc_db_schema_version', STYLISH_COST_CALCULATOR_VERSION );
+    }
     public function checkTablesExists() {
         global $wpdb;
         $res = $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}df_scc_forms'" );
@@ -244,6 +262,7 @@ class df_scc_plugin {
         //create the table used by the component if it does not exist
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         global $wpdb;
+        delete_option( 'df_scc_stripe_keys' );
         $wpdb->query(
             "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}df_scc_elementitems` (
     `id` bigint(20) UNSIGNED NOT NULL,
@@ -664,71 +683,13 @@ class df_scc_plugin {
             )
         );
 
-        if ( ! function_exists( 'get' ) ) {
-            function get( $id ) {
-                global $wpdb;
-                $scc_form = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}df_scc_forms WHERE id =%d ;", $id ) );
-
-                if ( $scc_form ) {
-                    $scc_form->turnoffemailquote = true;
-                    $scc_form->turnoffcoupon     = true;
-                    $form_id                     = $scc_form->id;
-                    $sections                    = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}df_scc_sections WHERE form_id =%d ORDER By `order`;", $form_id ) );
-                    $scc_form->sections          = $sections;
-
-                    foreach ( $sections as $section ) {
-                        $section_id          = $section->id;
-                        $subsection          = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}df_scc_subsections WHERE section_id =%d ;", $section_id ) );
-                        $section->subsection = $subsection;
-
-                        foreach ( $section->subsection as $sub ) {
-                            $sub_id       = $sub->id;
-                            $elements     = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}df_scc_elements WHERE subsection_id =%d ORDER By orden +0; ", $sub_id ) );
-                            $sub->element = $elements;
-
-                            foreach ( $sub->element as $el2 ) {
-                                $elem_id         = $el2->id;
-                                $condition       = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}df_scc_conditions WHERE element_id =%d ;", $elem_id ) );
-                                $el2->conditions = $condition;
-
-                                foreach ( $el2->conditions as $c ) {
-                                    if ( $c->elementitem_id ) {
-                                        $element             = $wpdb->get_row( $wpdb->prepare( "SELECT `name` FROM {$wpdb->prefix}df_scc_elementitems WHERE id =%d ;", $c->elementitem_id ) );
-                                        $c->elementitem_name = $element;
-                                    }
-
-                                    if ( $c->condition_element_id ) {
-                                        $element              = $wpdb->get_row( $wpdb->prepare( "SELECT `titleElement`,`type` FROM {$wpdb->prefix}df_scc_elements WHERE id =%d ;", $c->condition_element_id ) );
-                                        $c->element_condition = $element;
-                                    }
-                                }
-                            }
-
-                            foreach ( $sub->element as $el ) {
-                                $elem_id  = $el->id;
-                                $elements = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}df_scc_elementitems WHERE element_id =%d ;", $elem_id ) );
-                                // change 'price' property of element to zero if it is an empty string value, so it doesn't return javascript NaN value
-                                $elements         = array_map(
-                                    function ( $e ) {
-                                        if ( $e->price == '' ) {
-                                            $e->price = 0;
-                                        }
-
-                                        return $e;
-                                    },
-                                    $elements
-                                );
-                                $el->elementitems = $elements;
-                            }
-                        }
-                    }
-
-                    return $scc_form;
-                }
-            }
-        }
         require SCC_DIR . '/lib/wp-google-fonts/google-fonts.php';
-        $form = get( $idvalue );
+        // Load the calculator through the cached relations loader instead of the
+        // old inline, uncached, globally-named get() helper. The structure is
+        // identical; the difference is it is cached per form and shared across
+        // page views (invalidated on edits via formController::flush_relations_cache).
+        require_once SCC_DIR . '/admin/controllers/formController.php';
+        $form = ( new formController() )->getFrontendForm( intval( $idvalue ) );
 
         if ( ! $form ) {
             return "<h4 style='color:red'>Invalid calculator with ID " . intval( $atts['idvalue'] ) . "</h4>";
@@ -950,9 +911,9 @@ class df_scc_plugin {
         // ADD PAGE
         add_submenu_page( 'scc-tabs', 'Add New', 'Add New', 'manage_options', 'scc-tabs', 'ssc_test_data' );
         // EDIT PAGE
-        $editing_page_hook = add_submenu_page( '', 'Edit Calculator Form', 'Edit Calculator Form', 'read', 'scc_edit_items', 'ssc_test_data' );
+        $editing_page_hook = add_submenu_page( '', 'Edit Calculator Form', 'Edit Calculator Form', 'manage_options', 'scc_edit_items', 'ssc_test_data' );
         // List PAGE
-        add_submenu_page( 'scc-tabs', 'All Calculator Forms', 'All Calculator Forms ', 'read', 'scc-list-all-calculator-forms', 'ssc_test_data' );
+        add_submenu_page( 'scc-tabs', 'All Calculator Forms', 'All Calculator Forms ', 'manage_options', 'scc-list-all-calculator-forms', 'ssc_test_data' );
 
         // MEMBERS
         add_submenu_page( 'scc-tabs', 'Members', 'Members Portal', 'manage_options', 'scc-license-help', 'ssc_test_data', null );
@@ -1008,6 +969,7 @@ class df_scc_plugin {
                 $cache_plugin_exclusion = new \DF_SCC\Utils\CachePluginExclusionHook();
                 $cache_plugin_exclusion->exclude_sg_optimizer();
                 $this->scc_alter_tables();
+                update_option( 'scc_db_schema_version', STYLISH_COST_CALCULATOR_VERSION );
                 SCC_Notifications_Cron::schedule_cron_event();
             }
         }

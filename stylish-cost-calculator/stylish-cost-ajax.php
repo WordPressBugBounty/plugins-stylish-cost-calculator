@@ -86,6 +86,7 @@ class ajaxRequest {
             add_action( 'wp_ajax_scc_skip_welcome_modal', [ $this, 'skip_welcome_modal' ] );
 
             add_action( 'wp_ajax_scc_update_calculator_data_schema', [ $this, 'scc_update_calculator_data_schema' ] );
+            add_action( 'wp_ajax_scc_get_woocommerce_products', [ $this, 'scc_get_woocommerce_products' ] );
 
             add_action( 'wp_ajax_scc_get_icon_list', [ $this, 'scc_get_icon_list' ] );
             add_action( 'wp_ajax_scc_get_edit_page_calc_config', [ $this, 'get_edit_page_calc_config' ] );
@@ -261,9 +262,7 @@ class ajaxRequest {
                 $c['isWoocommerceCheckoutEnabled'] = sanitize_text_field( $paraa['woocommerce_checked'] );
             }
 
-            if ( isset( $paraa['isStripeEnabled'] ) ) {
-                $c['isStripeEnabled'] = sanitize_text_field( $paraa['isStripeEnabled'] );
-            }
+            $c['isStripeEnabled'] = 'false';
 
             if ( isset( $paraa['isPayBtnHoverEffectEnabled'] ) ) {
                 $c['turnoffborder'] = sanitize_text_field( $paraa['isPayBtnHoverEffectEnabled'] );
@@ -1475,13 +1474,12 @@ class ajaxRequest {
         $el['orden']         = intval( $_GET['order'] );
         $el['type']          = 'file upload';
         $el['subsection_id'] = intval( $_GET['id_sub'] );
+        $el['value1']        = 'default';
+        $el['value2']        = 'Please choose a file';
+        $el['value3']        = 'png,pdf,jpeg,jpg';
         $html                = $edit_page_func->renderAdvancedOptions( (object) $el );
         $element_id          = $elementC->create( $el );
-        $eli['value1']       = '1';
-        $eli['value2']       = 'Please choose a file';
-        $eli['value3']       = 'png,pdf,jpeg,jpg';
-        $eli['element_id']   = intval( $element_id );
-        $body_html           = $edit_page_func->renderFileUploadSetupBody2( (object) array_merge( $eli, $el, [ 'elementItem_id' => $elementItem_id ] ), [ 1 => [] ] ) . $edit_page_func->renderElementLoader();
+        $body_html           = $edit_page_func->renderFileUploadSetupBody2( (object) array_merge( $el, [ 'element_id' => intval( $element_id ) ] ), [ 1 => [] ] ) . $edit_page_func->renderElementLoader();
         echo ( $element_id ) ? json_encode(
             [
                 'msj'        => 'The element was created',
@@ -1554,13 +1552,12 @@ class ajaxRequest {
         $el['type']          = 'comment box';
         $el['titleElement']  = 'New Comment Box';
         $el['subsection_id'] = intval( $_GET['id_sub'] );
+        $el['value1']        = 'default';
+        $el['value2']        = '10';
+        $el['value3']        = '2';
         $html                = $edit_page_func->renderAdvancedOptions( (object) $el );
         $element_id          = $elementC->create( $el );
-        $eli['value1']       = '1';
-        $eli['value2']       = '10';
-        $eli['value3']       = '2';
-        $eli['element_id']   = intval( $element_id );
-        $body_html           = $edit_page_func->renderCommentBoxSetupBody2( (object) array_merge( $eli, $el, [ 'elementItem_id' => $elementItem_id ] ), [ 1 => [] ] ) . $edit_page_func->renderElementLoader();
+        $body_html           = $edit_page_func->renderCommentBoxSetupBody2( (object) array_merge( $el, [ 'element_id' => intval( $element_id ) ] ), [ 1 => [] ] ) . $edit_page_func->renderElementLoader();
         $element_id ? wp_send_json(
             [
                 'msj'        => 'The element was created',
@@ -1590,14 +1587,11 @@ class ajaxRequest {
         $el['titleElement']  = 'New Quantity Input Box';
         $el['value1']        = 'default';
         $el['value2']        = '0';
+        $el['value3']        = '2';
         $el['subsection_id'] = intval( $_GET['id_sub'] );
         $html                = $edit_page_func->renderAdvancedOptions( (object) $el );
         $element_id          = $elementC->create( $el );
-        $eli['value1']       = '1';
-        $eli['value2']       = '10';
-        $eli['value3']       = '2';
-        $eli['element_id']   = intval( $element_id );
-        $body_html           = $edit_page_func->renderQuantityBoxSetupBody2( (object) array_merge( $eli, $el, [ 'elementItem_id' => $elementItem_id ] ), [ 1 => [] ] ) . $edit_page_func->renderElementLoader();
+        $body_html           = $edit_page_func->renderQuantityBoxSetupBody2( (object) array_merge( $el, [ 'element_id' => intval( $element_id ) ] ), [ 1 => [] ] ) . $edit_page_func->renderElementLoader();
         echo ( $element_id ) ? json_encode(
             [
                 'msj'        => 'The element was created',
@@ -2088,8 +2082,9 @@ class ajaxRequest {
             $eli['value1'] = esc_url_raw( $_GET['image'] );
         }
 
-        if ( isset( $_GET['default'] ) ) {
-            $eli['opt_default'] = sanitize_text_field( $_GET['default'] );
+        $opt_default = isset( $_GET['default'] ) ? sanitize_text_field( wp_unslash( $_GET['default'] ) ) : null;
+        if ( null !== $opt_default ) {
+            $eli['opt_default'] = $opt_default;
         }
 
         if ( isset( $_GET['woocomerce_product_id'] ) ) {
@@ -2097,7 +2092,7 @@ class ajaxRequest {
         }
         $request = $elementitemC->update( $eli );
         //set to 0 opt_default to rest of elementitem of the same element
-        if ( isset( $_GET['id_element'] ) && $_GET['default'] == 1 ) {
+        if ( isset( $_GET['id_element'] ) && '1' === (string) $opt_default ) {
             $eli2 = $elementitemC->readOfElement( intval( $_GET['id_element'] ) );
 
             foreach ( $eli2 as $e ) {
@@ -3459,28 +3454,117 @@ class ajaxRequest {
         }
     }
 
+    private function scc_format_woocommerce_product_option( $product ) {
+        if ( ! $product || ! is_object( $product ) || ! method_exists( $product, 'get_id' ) ) {
+            return null;
+        }
+
+        if ( method_exists( $product, 'is_type' ) && $product->is_type( 'variable' ) ) {
+            return null;
+        }
+
+        $label = $product->get_name();
+
+        if ( method_exists( $product, 'is_type' ) && $product->is_type( 'variation' ) ) {
+            $parent = function_exists( 'wc_get_product' ) ? wc_get_product( $product->get_parent_id() ) : null;
+            if ( $parent ) {
+                $label = $parent->get_name();
+            }
+
+            if ( function_exists( 'wc_get_formatted_variation' ) ) {
+                $variation_label = wp_strip_all_tags( wc_get_formatted_variation( $product, true, false, true ) );
+                if ( '' !== $variation_label ) {
+                    $label .= ': ' . $variation_label;
+                }
+            }
+        }
+
+        $price = method_exists( $product, 'get_price' ) ? $product->get_price() : '';
+        if ( '' !== $price ) {
+            $label .= ' | Price: ' . get_woocommerce_currency_symbol() . $price;
+        }
+
+        return [
+            'id'    => (int) $product->get_id(),
+            'label' => html_entity_decode( wp_strip_all_tags( $label ), ENT_QUOTES, get_bloginfo( 'charset' ) ),
+        ];
+    }
+
+    public function scc_get_woocommerce_products() {
+        check_ajax_referer( 'edit-calculator-page', 'nonce' );
+
+        if ( ! function_exists( 'wc_get_product' ) || ! post_type_exists( 'product' ) ) {
+            wp_send_json_error( 'WooCommerce is not available.' );
+        }
+
+        $limit = isset( $_REQUEST['limit'] ) ? absint( $_REQUEST['limit'] ) : 100;
+        $limit = max( 1, min( 200, $limit ) );
+        $search = isset( $_REQUEST['search'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['search'] ) ) : '';
+
+        $query_args = [
+            'post_type'              => [ 'product', 'product_variation' ],
+            'post_status'            => [ 'publish', 'private' ],
+            'posts_per_page'         => $limit,
+            'fields'                 => 'ids',
+            'orderby'                => 'title',
+            'order'                  => 'ASC',
+            'no_found_rows'          => true,
+            'update_post_meta_cache' => false,
+            'update_post_term_cache' => false,
+        ];
+
+        if ( '' !== $search ) {
+            $query_args['s'] = $search;
+        }
+
+        $product_ids = get_posts( $query_args );
+        $products    = [];
+
+        foreach ( $product_ids as $product_id ) {
+            $product = wc_get_product( $product_id );
+            $option  = $this->scc_format_woocommerce_product_option( $product );
+
+            if ( $option ) {
+                $products[] = $option;
+            }
+        }
+
+        wp_send_json_success(
+            [
+                'products' => $products,
+                'limit'    => $limit,
+                'has_more' => count( $product_ids ) === $limit,
+            ]
+        );
+    }
+
     //load the icon list from the json files
     public function scc_get_icon_list() {
         try {
             check_ajax_referer( 'edit-calculator-page', 'nonce' );
 
-            if ( isset( $_REQUEST['type'] ) && $_REQUEST['type'] == 'fa' ) {
-                $icons = file_get_contents( SCC_URL . 'assets/scc_icons/font-awesome-solid.json' );
-                $icons = json_decode( $icons, true );
-                wp_send_json_success( $icons );
+            $type       = isset( $_REQUEST['type'] ) ? sanitize_key( wp_unslash( $_REQUEST['type'] ) ) : 'fa';
+            $icon_files = [
+                'fa'       => SCC_DIR . '/assets/scc_icons/font-awesome-solid.json',
+                'material' => SCC_DIR . '/assets/scc_icons/material-icons-outlined.json',
+                ''         => SCC_DIR . '/assets/scc_icons/font-awesome-solid.json',
+            ];
+
+            if ( ! isset( $icon_files[ $type ] ) ) {
+                wp_send_json_error( 'Invalid icon type.' );
             }
 
-            if ( isset( $_REQUEST['type'] ) && $_REQUEST['type'] == 'material' ) {
-                $icons = file_get_contents( SCC_URL . 'assets/scc_icons/material-icons-outlined.json' );
-                $icons = json_decode( $icons, true );
-                wp_send_json_success( $icons );
+            $icon_file = $icon_files[ $type ];
+            if ( ! is_readable( $icon_file ) ) {
+                wp_send_json_error( 'Icon list is unavailable.' );
             }
-            // by default load font-awesome icons
-            if ( isset( $_REQUEST['type'] ) && empty( $_REQUEST['type'] ) ) {
-                $icons = file_get_contents( SCC_URL . 'assets/scc_icons/font-awesome-solid.json' );
-                $icons = json_decode( $icons, true );
-                wp_send_json_success( $icons );
+
+            $icons = json_decode( file_get_contents( $icon_file ), true );
+            if ( ! is_array( $icons ) ) {
+                wp_send_json_error( 'Icon list is invalid.' );
             }
+
+            wp_send_json_success( $icons );
         } catch ( Exception $e ) {
             wp_send_json( [ 'status' => 'failed', 'message' => 'Error: ' . $e->getMessage() ] );
         }

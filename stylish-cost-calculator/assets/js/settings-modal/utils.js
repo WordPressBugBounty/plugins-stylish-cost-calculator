@@ -40,6 +40,10 @@ export function getDisplayLabel( value ) {
 		return GROUP_LABELS[ label ];
 	}
 
+	if ( GROUP_LABELS[ label.toUpperCase() ] ) {
+		return GROUP_LABELS[ label.toUpperCase() ];
+	}
+
 	if ( label !== label.toUpperCase() ) {
 		return label;
 	}

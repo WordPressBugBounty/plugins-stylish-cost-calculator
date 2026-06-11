@@ -16251,6 +16251,13 @@ select.scc-woo-commerce-product-selector{
   -webkit-text-fill-color: #111827;
 }
 
+.advanced-option-wrapper > .scc-tooltip-option-field.d-flex .input-field input[disabled] {
+  color: #6b7280;
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+  -webkit-text-fill-color: #6b7280;
+}
+
 .advanced-option-wrapper .scc-checkbox-columns-panel .scc-edit-input-option-wrapper {
   width: 100%;
   max-width: none;

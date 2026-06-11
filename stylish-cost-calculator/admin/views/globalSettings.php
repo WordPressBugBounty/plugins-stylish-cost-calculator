@@ -6,8 +6,6 @@ class Stylish_Cost_Calculator_Settings {
 
     protected $page;
     protected $isSCCFreeVersion;
-    protected $privKeyPlaceHolder;
-    protected $pubKeyPlaceHolder;
     private $scc_icons;
     public function __construct() {
         wp_localize_script(
@@ -21,15 +19,6 @@ class Stylish_Cost_Calculator_Settings {
         wp_enqueue_style( 'scc-material', 'https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined' );
         $this->isSCCFreeVersion     = defined( 'STYLISH_COST_CALCULATOR_VERSION' );
         $this->scc_icons            = require SCC_DIR . '/assets/scc_icons/icon_rsrc.php';
-        $stripe_opts                = wp_parse_args(
-            get_option( 'df_scc_stripe_keys' ),
-            [
-                'privKey' => null,
-                'pubKey'  => null,
-            ]
-        );
-        $this->privKeyPlaceHolder = $stripe_opts['privKey'] ? substr( $stripe_opts['privKey'], 0, - ( strlen( $stripe_opts['privKey'] ) * .7 ) ) . '*****' . substr( $stripe_opts['privKey'], - ( strlen( $stripe_opts['privKey'] ) * .2 ) ) : 'Please enter Stripe API Private Key';
-        $this->pubKeyPlaceHolder  = $stripe_opts['pubKey'] ? substr( $stripe_opts['pubKey'], 0, - ( strlen( $stripe_opts['pubKey'] ) * .7 ) ) . '*****' . substr( $stripe_opts['pubKey'], - ( strlen( $stripe_opts['pubKey'] ) * .2 ) ) : 'Please enter Stripe API Public Key';
         $this->pageTwo();
         $this->pageScript();
     }
@@ -49,17 +38,6 @@ class Stylish_Cost_Calculator_Settings {
             Auto detect: will use the users current location to automatically detect their currency.',
             'action_btn'    => 'Save',
             'action_cb'     => 'saveCurencySettings(this)',
-        ];
-        $stripeFields                = [
-            'name'          => 'Stripe Settings',
-            'helpdesk_link' => "<a class='material-icons-outlined text-decoration-none' target='_blank' href=\"". esc_url(SCC_HELPDESK_LINKS['feature-payment-option-stripe']) ."\">" . '<span class="scc-icn-wrapper" style="margin-left:5px;">' . scc_get_kses_extended_ruleset( $this->scc_icons['help-circle'] ) . '</span> </a>',
-            'fields'        => [
-                'stripe_secret_key',
-                'stripe_public_key',
-            ],
-            'icon'			       => 'payment',
-            'action_btn'    => 'Save',
-            'action_cb'     => 'updateStripeKey(this)',
         ];
         $pdfFooterField              = [
             'name'       => 'Footer: Detailed List & PDF',
@@ -164,7 +142,6 @@ class Stylish_Cost_Calculator_Settings {
                         $detailListBannerLogo,
                         $pdfFooterField,
                         $pdf_settings_fields,
-                        $stripeFields,
                         $recaptcha_settings_fields,
                         $integration_settings_fields,
                         $google_maps_settings_fields,
@@ -1375,28 +1352,6 @@ class Stylish_Cost_Calculator_Settings {
 		<div class="mb-3">
 			<label for="backup_scc_file" class="form-label">Please select a backup file for restoration</label>
 			<input class="form-control" type="file" id="backup_scc_file" onclick="sscUploadSccBackup()" accept=".json">
-		</div>
-		<?php
-    }
-
-    /** stripe settings fields */
-    private function field_stripe_secret_key() {
-        ?>
-		<div class="mb-3 row">
-			<label class="col-sm-5 col-form-label">Stripe Secret Key: </label>
-			<div class=" col-sm-7">
-				<input type="text" class="form-control" name="stripe-api-priv-key" placeholder="<?php echo esc_attr( $this->pubKeyPlaceHolder ); ?>">
-			</div>
-		</div>
-		<?php
-    }
-    private function field_stripe_public_key() {
-        ?>
-		<div class="mb-3 row">
-			<label class="col-sm-5 col-form-label">Stripe Public Key: </label>
-			<div class=" col-sm-7">
-				<input type="text" class="form-control" name="stripe-api-pub-key" placeholder="<?php echo esc_attr( $this->privKeyPlaceHolder ); ?>">
-			</div>
 		</div>
 		<?php
     }

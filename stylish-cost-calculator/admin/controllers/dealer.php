@@ -21,8 +21,12 @@ class dealer {
 			case 'add_new_form2':
 				require dirname( __FILE__ ) . '/PageControllers/class-page-new-calcualtor.php';
 				break;
-			case 'scc_edit_items' && isset( $_GET['id_form'] ):
-				require dirname( __FILE__ ) . '/PageControllers/class-page-edit-calculator.php';
+			case 'scc_edit_items':
+				if ( isset( $_GET['id_form'] ) ) {
+					require dirname( __FILE__ ) . '/PageControllers/class-page-edit-calculator.php';
+				} else {
+					require dirname( __FILE__ ) . '/PageControllers/class-page-new-calcualtor.php';
+				}
 				break;
 			case 'scc-list-all-calculator-forms':
 				require dirname( __FILE__ ) . '/PageControllers/class-page-all-forms.php';

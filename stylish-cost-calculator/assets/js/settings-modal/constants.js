@@ -8,5 +8,6 @@ export const GROUP_LABELS = {
 	'CURRENCY & TAX SETTINGS': 'Currency & Tax',
 	'EMAIL SETTINGS': 'Email Settings',
 	'WEBHOOK EVENTS TRIGGER': 'Webhook Events',
-	'SMS SETTINGS': 'SMS Settings',
+	'SMS SETTINGS': 'Text Message (SMS)',
+	'TEXT MESSAGE (SMS) SETTINGS': 'Text Message (SMS)',
 };

@@ -14,8 +14,8 @@ if ( ! class_exists( 'formController', false ) ) {
 class formController {
 
 	protected $db;
-    private const RELATIONS_CACHE_GROUP = 'scc_forms';
-    private const RELATIONS_CACHE_TTL   = 15 * MINUTE_IN_SECONDS;
+    const RELATIONS_CACHE_GROUP = 'scc_forms';
+    const RELATIONS_CACHE_TTL   = 15 * MINUTE_IN_SECONDS;
 
 	private function normalize_json_text_field( $value ) {
 		if ( is_array( $value ) || is_object( $value ) ) {
@@ -43,6 +43,14 @@ class formController {
         return 'scc_form_rel_' . $form_id;
     }
 
+    private static function get_frontend_cache_key( int $form_id ) {
+        return 'frontend_form:' . $form_id;
+    }
+
+    private static function get_frontend_transient_key( int $form_id ) {
+        return 'scc_form_front_' . $form_id;
+    }
+
     private static function get_cached_relations( int $form_id ) {
         $cache_key = self::get_relations_cache_key( $form_id );
         $cached    = wp_cache_get( $cache_key, self::RELATIONS_CACHE_GROUP );
@@ -54,7 +62,11 @@ class formController {
         $cached = get_transient( self::get_relations_transient_key( $form_id ) );
 
         if ( false !== $cached ) {
-            delete_transient( self::get_relations_transient_key( $form_id ) );
+            // Re-prime the per-request object cache but keep the transient in place
+            // so it keeps serving subsequent requests for its full TTL. On installs
+            // without a persistent object cache, deleting it here made the cache
+            // single-use. The transient is invalidated on writes via the
+            // flush_relations_cache() / flush_by_* helpers.
             wp_cache_set( $cache_key, $cached, self::RELATIONS_CACHE_GROUP, self::RELATIONS_CACHE_TTL );
             return $cached;
         }
@@ -67,9 +79,224 @@ class formController {
         set_transient( self::get_relations_transient_key( $form_id ), $data, self::RELATIONS_CACHE_TTL );
     }
 
+    /**
+     * Cached loader for the public calculator shortcode.
+     *
+     * Returns the exact structure the frontend has always rendered (the forced
+     * turnoff flags and empty-price-to-zero coercion that the old inline get()
+     * helper produced). The expensive sectioned walk is cached under its own
+     * keys and invalidated through flush_relations_cache(), so it is shared
+     * across page views instead of running the N+1 query path on every render.
+     * A deep copy is returned because the renderer mutates the object (e.g.
+     * $item->opt_default, $form->formFieldsArray) and those per-render mutations
+     * must not leak into the shared cache.
+     *
+     * @param integer $id calculator id
+     * @return object|null form with relations, or null when the form is missing
+     */
+    public function getFrontendForm( int $id ) {
+        $object_key = self::get_frontend_cache_key( $id );
+        $cached     = wp_cache_get( $object_key, self::RELATIONS_CACHE_GROUP );
+
+        if ( false === $cached ) {
+            $cached = get_transient( self::get_frontend_transient_key( $id ) );
+
+            if ( false !== $cached ) {
+                wp_cache_set( $object_key, $cached, self::RELATIONS_CACHE_GROUP, self::RELATIONS_CACHE_TTL );
+            }
+        }
+
+        if ( false === $cached ) {
+            $cached = $this->build_frontend_form( $id );
+
+            if ( null === $cached ) {
+                return null;
+            }
+
+            wp_cache_set( $object_key, $cached, self::RELATIONS_CACHE_GROUP, self::RELATIONS_CACHE_TTL );
+            set_transient( self::get_frontend_transient_key( $id ), $cached, self::RELATIONS_CACHE_TTL );
+        }
+
+        // Hand back an isolated copy so per-render mutations never touch the cache.
+        return json_decode( wp_json_encode( $cached ) );
+    }
+
+    private function normalize_id_list( array $ids ) {
+        $normalized = [];
+
+        foreach ( $ids as $id ) {
+            $id = absint( $id );
+            if ( $id > 0 ) {
+                $normalized[ $id ] = $id;
+            }
+        }
+
+        return array_values( $normalized );
+    }
+
+    private function get_results_by_ids( string $query, array $ids ) {
+        $ids = $this->normalize_id_list( $ids );
+
+        if ( empty( $ids ) ) {
+            return [];
+        }
+
+        $placeholders = implode( ', ', array_fill( 0, count( $ids ), '%d' ) );
+        $query        = str_replace( '%IDS%', $placeholders, $query );
+
+        return $this->db->get_results( $this->db->prepare( $query, ...$ids ) );
+    }
+
+    private function build_condition_elementitem_map( array $elementitem_ids, bool $for_frontend = false ) {
+        $elementitems = $this->get_results_by_ids( "SELECT `id`,`name`,`uniqueId` FROM {$this->db->prefix}df_scc_elementitems WHERE id IN (%IDS%);", $elementitem_ids );
+        $map          = [];
+
+        foreach ( $elementitems as $elementitem ) {
+            $map[ $elementitem->id ] = $for_frontend
+                ? (object) [ 'name' => $elementitem->name ]
+                : (object) [ 'name' => $elementitem->name, 'uniqueId' => $elementitem->uniqueId ];
+        }
+
+        return $map;
+    }
+
+    private function build_condition_element_map( array $element_ids, bool $for_frontend = false ) {
+        $elements = $this->get_results_by_ids( "SELECT `id`,`titleElement`,`type`,`uniqueId` FROM {$this->db->prefix}df_scc_elements WHERE id IN (%IDS%);", $element_ids );
+        $map      = [];
+
+        foreach ( $elements as $element ) {
+            $map[ $element->id ] = $for_frontend
+                ? (object) [ 'titleElement' => $element->titleElement, 'type' => $element->type ]
+                : (object) [ 'titleElement' => $element->titleElement, 'type' => $element->type, 'uniqueId' => $element->uniqueId ];
+        }
+
+        return $map;
+    }
+
+    /**
+     * Builds a calculator with sections, subsections, elements, conditions, and
+     * element items using batched relation queries instead of nested N+1 loops.
+     */
+    private function build_form_with_relations( int $id, bool $for_frontend = false ) {
+        $scc_form = $this->db->get_row( $this->db->prepare( "SELECT * FROM {$this->db->prefix}df_scc_forms WHERE id =%d ;", $id ) );
+
+        if ( ! $scc_form ) {
+            return null;
+        }
+
+        if ( $for_frontend ) {
+            $scc_form->turnoffemailquote = true;
+            $scc_form->turnoffcoupon     = true;
+        }
+
+        $sections           = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->db->prefix}df_scc_sections WHERE form_id =%d ORDER By `order`;", $scc_form->id ) );
+        $scc_form->sections = $sections;
+
+        if ( empty( $sections ) ) {
+            return $scc_form;
+        }
+
+        $section_ids    = [];
+        $sections_by_id = [];
+
+        foreach ( $sections as $section ) {
+            $section->subsection          = [];
+            $section_ids[]                = $section->id;
+            $sections_by_id[ $section->id ] = $section;
+        }
+
+        $subsections       = $this->get_results_by_ids( "SELECT * FROM {$this->db->prefix}df_scc_subsections WHERE section_id IN (%IDS%) ORDER BY id;", $section_ids );
+        $subsection_ids    = [];
+        $subsections_by_id = [];
+
+        foreach ( $subsections as $subsection ) {
+            $subsection->element = [];
+            $subsection_ids[]    = $subsection->id;
+            $subsections_by_id[ $subsection->id ] = $subsection;
+
+            if ( isset( $sections_by_id[ $subsection->section_id ] ) ) {
+                $sections_by_id[ $subsection->section_id ]->subsection[] = $subsection;
+            }
+        }
+
+        $elements       = $this->get_results_by_ids( "SELECT * FROM {$this->db->prefix}df_scc_elements WHERE subsection_id IN (%IDS%) ORDER By subsection_id, orden +0;", $subsection_ids );
+        $element_ids    = [];
+        $elements_by_id = [];
+
+        foreach ( $elements as $element ) {
+            $element->conditions   = [];
+            $element->elementitems = [];
+            $element_ids[]         = $element->id;
+            $elements_by_id[ $element->id ] = $element;
+
+            if ( isset( $subsections_by_id[ $element->subsection_id ] ) ) {
+                $subsections_by_id[ $element->subsection_id ]->element[] = $element;
+            }
+        }
+
+        $conditions            = $this->get_results_by_ids( "SELECT * FROM {$this->db->prefix}df_scc_conditions WHERE element_id IN (%IDS%) ORDER BY id;", $element_ids );
+        $condition_item_ids    = [];
+        $condition_element_ids = [];
+
+        foreach ( $conditions as $condition ) {
+            if ( isset( $elements_by_id[ $condition->element_id ] ) ) {
+                $elements_by_id[ $condition->element_id ]->conditions[] = $condition;
+            }
+
+            if ( ! empty( $condition->elementitem_id ) ) {
+                $condition_item_ids[] = $condition->elementitem_id;
+            }
+
+            if ( ! empty( $condition->condition_element_id ) ) {
+                $condition_element_ids[] = $condition->condition_element_id;
+            }
+        }
+
+        $condition_item_map    = $this->build_condition_elementitem_map( $condition_item_ids, $for_frontend );
+        $condition_element_map = $this->build_condition_element_map( $condition_element_ids, $for_frontend );
+
+        foreach ( $conditions as $condition ) {
+            if ( ! empty( $condition->elementitem_id ) && isset( $condition_item_map[ $condition->elementitem_id ] ) ) {
+                $condition->elementitem_name = $condition_item_map[ $condition->elementitem_id ];
+            }
+
+            if ( ! empty( $condition->condition_element_id ) && isset( $condition_element_map[ $condition->condition_element_id ] ) ) {
+                $condition->element_condition = $condition_element_map[ $condition->condition_element_id ];
+            }
+        }
+
+        $elementitems = $this->get_results_by_ids( "SELECT * FROM {$this->db->prefix}df_scc_elementitems WHERE element_id IN (%IDS%) ORDER BY id;", $element_ids );
+
+        foreach ( $elementitems as $elementitem ) {
+            if ( $for_frontend && $elementitem->price == '' ) {
+                $elementitem->price = 0;
+            }
+
+            if ( isset( $elements_by_id[ $elementitem->element_id ] ) ) {
+                $elements_by_id[ $elementitem->element_id ]->elementitems[] = $elementitem;
+            }
+        }
+
+        return $scc_form;
+    }
+
+    /**
+     * Builds the frontend shortcode payload. Kept equivalent to the loader the
+     * shortcode used inline so the rendered markup is unchanged.
+     */
+    private function build_frontend_form( int $id ) {
+        return $this->build_form_with_relations( $id, true );
+    }
+
     public static function flush_relations_cache( int $form_id ) {
         wp_cache_delete( self::get_relations_cache_key( $form_id ), self::RELATIONS_CACHE_GROUP );
         delete_transient( self::get_relations_transient_key( $form_id ) );
+        // Keep the frontend shortcode payload in lock-step with the relations
+        // cache. Every edit path (section/element/condition CRUD and form-level
+        // update/delete) funnels through here, so the cached calculator render
+        // never goes stale after an edit.
+        wp_cache_delete( self::get_frontend_cache_key( $form_id ), self::RELATIONS_CACHE_GROUP );
+        delete_transient( self::get_frontend_transient_key( $form_id ) );
     }
 
     public static function flush_by_section( int $section_id ) {
@@ -277,41 +504,8 @@ class formController {
            return $cached;
         }
 
-		$scc_form = $this->db->get_row( $this->db->prepare( "SELECT * FROM {$this->db->prefix}df_scc_forms WHERE id =%d ;", $id ) );
+		$scc_form = $this->build_form_with_relations( $id );
 		if ( $scc_form ) {
-			$form_id            = $scc_form->id;
-			$sections           = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->db->prefix}df_scc_sections WHERE form_id =%d ORDER By `order`;", $form_id ) );
-			$scc_form->sections = $sections;
-			foreach ( $sections as $section ) {
-				$section_id          = $section->id;
-				$subsection          = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->db->prefix}df_scc_subsections WHERE section_id =%d ;", $section_id ) );
-				$section->subsection = $subsection;
-				foreach ( $section->subsection as $sub ) {
-					$sub_id       = $sub->id;
-					$elements     = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->db->prefix}df_scc_elements WHERE subsection_id =%d ORDER By orden +0; ", $sub_id ) );
-					$sub->element = $elements;
-					foreach ( $sub->element as $el2 ) {
-						$elem_id         = $el2->id;
-						$condition       = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->db->prefix}df_scc_conditions WHERE element_id =%d ;", $elem_id ) );
-						$el2->conditions = $condition;
-						foreach ( $el2->conditions as $c ) {
-							if ( $c->elementitem_id ) {
-								$element             = $this->db->get_row( $this->db->prepare( "SELECT `name`,`uniqueId` FROM {$this->db->prefix}df_scc_elementitems WHERE id =%d ;", $c->elementitem_id ) );
-								$c->elementitem_name = $element;
-							}
-							if ( $c->condition_element_id ) {
-								$element              = $this->db->get_row( $this->db->prepare( "SELECT `titleElement`,`type`,`uniqueId` FROM {$this->db->prefix}df_scc_elements WHERE id =%d ;", $c->condition_element_id ) );
-								$c->element_condition = $element;
-							}
-						}
-					}
-					foreach ( $sub->element as $el ) {
-						$elem_id          = $el->id;
-						$elements         = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->db->prefix}df_scc_elementitems WHERE element_id =%d ;", $elem_id ) );
-						$el->elementitems = $elements;
-					}
-				}
-			}
 
 			self::set_cached_relations( $id, $scc_form );
 

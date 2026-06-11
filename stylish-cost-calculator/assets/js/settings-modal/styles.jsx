@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars -- Required by esbuild's JSX factory.
 import { createElement } from './elements';
 import { SETTINGS_ROOT_ID } from './constants';
 
@@ -5,24 +6,25 @@ function SettingsStyles() {
 	return (
 		<style>{`
 			#${ SETTINGS_ROOT_ID }{height:68vh;min-height:68vh}
-			.scc-settings-shell{display:grid;grid-template-columns:260px minmax(0,1fr);gap:22px;height:68vh;min-height:68vh;background:#fbfcff;overflow:hidden}
-			.scc-settings-sidebar{height:100%;min-height:0;padding:16px 14px 16px 8px;overflow-y:auto;overflow-x:hidden;border-right:1px solid #e6ebf4}
+			.scc-settings-shell{display:grid;grid-template-columns:260px minmax(0,1fr);gap:22px;height:68vh;min-height:68vh;overflow:hidden}
+			.scc-settings-sidebar{height:100%;min-height:0;padding:10px 12px 10px 8px;overflow-y:auto;overflow-x:hidden;border-right:1px solid #e6ebf4}
 			.scc-settings-nav,.scc-settings-group,.scc-settings-subnav,.scc-settings-content-stack{display:flex;flex-direction:column}
-			.scc-settings-nav,.scc-settings-content-stack{gap:18px}
-			.scc-settings-group{gap:10px}
-			.scc-settings-group-button{display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px 14px;border:1.5px solid transparent;border-radius:12px;background:#fff;color:#667085;text-align:left;transition:all .18s ease}
+			.scc-settings-nav{gap:8px}
+			.scc-settings-content-stack{gap:18px}
+			.scc-settings-group{gap:8px}
+			.scc-settings-group-button{display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 12px;border:1.5px solid transparent;border-radius:12px;background:#fff;color:#667085;text-align:left;transition:all .18s ease}
 			.scc-settings-group-button:hover{background:#f7f9ff;color:#3555f5}
 			.scc-settings-group-button.is-active{border-color:#3b57ff;background:#eef2ff;color:#2f4ff2;box-shadow:0 10px 25px rgba(47,79,242,.08)}
-			.scc-settings-group-label{display:flex;align-items:center;gap:12px;min-width:0;font-size:1rem;font-weight:700}
-			.scc-beta-icon{display:inline-block;width:24px;height:24px;flex-shrink:0;color:currentColor}
-			.scc-settings-group-chevron{display:inline-block;width:18px;height:18px;flex-shrink:0;transition:transform .18s ease;color:currentColor}
+			.scc-settings-group-label{display:flex;align-items:center;gap:10px;min-width:0;font-size:1rem;font-weight:700;line-height:1.35}
+			.scc-beta-icon{display:inline-block;width:18px;height:18px;flex-shrink:0;color:currentColor}
+			.scc-settings-group-chevron{display:inline-block;width:16px;height:16px;flex-shrink:0;transition:transform .18s ease;color:currentColor}
 			.scc-settings-group-chevron.is-open{transform:rotate(180deg)}
 			.scc-settings-subnav{gap:8px;padding:0 6px 0 16px}
 			.scc-settings-subnav-button{padding:0;border:0;background:transparent;color:#6d7890;font-size:.98rem;line-height:1.45;text-align:left}
 			.scc-settings-subnav-button:hover,.scc-settings-subnav-button.is-active{color:#3152f2}
 			.scc-settings-content{height:100%;min-height:0;padding:8px 8px 0 0;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth}
-			.scc-settings-section-card{background:#fff;border:1px solid #dfe5f0;border-radius:18px;box-shadow:0 18px 45px rgba(15,23,42,.05);overflow:visible;scroll-margin-top:12px;transition:border-color .18s ease,box-shadow .18s ease}
-			.scc-settings-section-card.is-active{border-color:#3b57ff;box-shadow:0 0 0 1px rgba(59,87,255,.08),0 18px 45px rgba(15,23,42,.05)}
+			.scc-settings-section-card{background:#fff;border:1px solid #dfe5f0;border-radius:18px;overflow:visible;scroll-margin-top:12px;transition:border-color .18s ease}
+			.scc-settings-section-card.is-active{border-color:#3b57ff}
 			.scc-settings-section-header{padding:24px 26px 12px}
 			.scc-settings-section-eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:12px;padding:6px 10px;border-radius:999px;background:#eef2ff;color:#3152f2;font-size:.8rem;font-weight:700}
 			.scc-settings-section-title{margin:0;color:#252b35;font-size:1.45rem;font-weight:700}

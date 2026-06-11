@@ -496,18 +496,44 @@ class QuoteListTable extends \WP_List_Table {
 		if ( array_key_exists( 'notes_count', $columns ) ) {
 			$data_args['notes_count'] = true;
 		}
-		$data = $wpdb->get_results( $wpdb->prepare( 
-			"SELECT * FROM {$wpdb->prefix}df_scc_quote_submissions WHERE {$wpdb->prefix}df_scc_quote_submissions.calc_id=%d LIMIT %d OFFSET %d;", 
-			$data_args['form_id'], 
-			$data_args['page-max'], 
-			$data_args['offset']
-		) );
-		$total_items = $wpdb->get_results( $wpdb->prepare( 
-			"SELECT COUNT(*) total FROM {$wpdb->prefix}df_scc_quote_submissions WHERE {$wpdb->prefix}df_scc_quote_submissions.calc_id=%d;", 
-			$data_args['form_id']
-		) );
+		// Build the WHERE clause from the collected filter args so the starred /
+		// unread / status tabs actually affect results. The column names and sort
+		// direction are whitelisted before interpolation; all values are bound.
+		$where  = "{$wpdb->prefix}df_scc_quote_submissions.calc_id = %d";
+		$params = array( $data_args['form_id'] );
+		if ( isset( $data_args['starred'] ) ) {
+			$where   .= ' AND starred = %d';
+			$params[] = 1;
+		}
+		if ( isset( $data_args['viewed'] ) ) {
+			// "unread" maps to the `opened` column; there is no `viewed` column.
+			$where   .= ' AND opened = %d';
+			$params[] = 0;
+		}
+		if ( isset( $data_args['status'] ) ) {
+			$where   .= ' AND status = %s';
+			$params[] = $data_args['status'];
+		}
+		$orderby_whitelist = array(
+			'id'           => 'id',
+			'status'       => 'status',
+			'starred'      => 'starred',
+			'date_created' => 'created_at',
+			'created_at'   => 'created_at',
+			'updated_at'   => 'updated_at',
+		);
+		$orderby_col = ( isset( $data_args['orderby'] ) && isset( $orderby_whitelist[ $data_args['orderby'] ] ) ) ? $orderby_whitelist[ $data_args['orderby'] ] : 'id';
+		$order_dir   = ( isset( $data_args['order'] ) && strtoupper( $data_args['order'] ) === 'ASC' ) ? 'ASC' : 'DESC';
 
-		$total_items = empty( $total_items ) ? 0 : $total_items[0]->total;
+		$data_params = array_merge( $params, array( $data_args['page-max'], $data_args['offset'] ) );
+		$data        = $wpdb->get_results( $wpdb->prepare(
+			"SELECT * FROM {$wpdb->prefix}df_scc_quote_submissions WHERE {$where} ORDER BY `{$orderby_col}` {$order_dir} LIMIT %d OFFSET %d;",
+			$data_params
+		) );
+		$total_items = (int) $wpdb->get_var( $wpdb->prepare(
+			"SELECT COUNT(*) FROM {$wpdb->prefix}df_scc_quote_submissions WHERE {$where};",
+			$params
+		) );
 		// add data
 		$this->items       = $data;
 		$this->total_items = $total_items;

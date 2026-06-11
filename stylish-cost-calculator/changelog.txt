@@ -1,3 +1,24 @@
+## 8.3.10 - 2026-06-11
+
+**Frontend Changes:**
+- Improved: Frontend calculator form loading now uses cached form data more efficiently.
+- Fixed: Free-version Stripe checkout runtime code has been removed while keeping an admin-only premium preview of the Stripe button.
+
+**Dashboard Changes:**
+- Fixed: Calculator list menu UI controls now display and behave more consistently.
+
+**Editing Page Changes:**
+- Improved: Calculator editor loading is more reliable, including safer calculator ID validation, explicit edit-page routing, and more resilient editor initialization.
+- Improved: Calculator settings and tooltip controls now have cleaner wrappers, disabled states, and layout behavior.
+- Fixed: Editor save handling now recovers more reliably after AJAX failures and avoids conflicts in debounced saves.
+- Fixed: New element defaults, item field attributes, and editor JSON output are handled more safely.
+- Fixed: WooCommerce product loading in the editor is now lazy-loaded and hardened to prevent editor loading issues.
+
+**Backend Changes:**
+- Security: Removed legacy Stripe secret-key handling from the free plugin, including settings fields, AJAX save/toggle actions, migration import, frontend config output, and checkout calls.
+- Security: Stored legacy Stripe keys are now deleted during install/update routines so free-version installs do not retain exposed Stripe credentials.
+- Security: The hidden calculator editor page and controller now use administrator-only access checks.
+
 ## 8.3.9 - 2026-05-22
 
 **Frontend Changes:**

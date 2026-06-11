@@ -26,7 +26,7 @@ $df_scc_user_name = ! empty( $current_user->display_name ) ? $current_user->disp
 >
 			<div class="d-flex mb-3 scc-payment-methods">
 				<button class="btn btn-cards me-3 <?php echo $isPayPalEnabled ? 'active' : ''; ?>" onclick="doPaypalSetupModal(<?php echo intval( $f1->id ); ?>)" data-setting-tooltip-type="payment-option-paypal-tt" data-bs-original-title="" title=""><span class="material-icons">done</span>Paypal</button>
-				<button class="btn btn-cards me-3 <?php echo $isStripeEnabled ? 'active' : ''; ?>" onclick="<?php echo $isStripeSetupDone ? 'toggleStripe(this)' : 'stripeOptionsModal(this)'; ?>" data-setting-tooltip-type="payment-option-stripe-tt"  data-bs-original-title="" title=""  <?php echo $isStripeSetupDone ? esc_attr( $stripeDataAttr ) : ''; ?>><span class="material-icons">done</span><span>Stripe</span></button>
+				<button class="btn btn-cards me-3 disabled use-premium-tooltip" type="button" aria-disabled="true" title="<?php echo esc_attr__( 'Stripe checkout is available in Stylish Cost Calculator Premium.', 'scc' ); ?>"><span class="material-icons">done</span><span>Stripe</span></button>
 				<button class="btn btn-cards me-3 
 								 <?php
                         if ( ! $isSCCFreeVersion ) {

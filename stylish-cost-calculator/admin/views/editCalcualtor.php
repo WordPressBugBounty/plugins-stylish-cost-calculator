@@ -5,22 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 $defaultFields                = json_decode( '[{"name":{"name":"Your Name","description":"Type in your name","type":"text","isMandatory":null,"trnKey":"Your Name","deletable":false}},{"email":{"name":"Your Email","description":"Type in your email","type":"email","isMandatory":true,"trnKey":"Your Email","deletable":false}},{"phone":{"name":"Your Phone","description":"phone","type":"phone","isMandatory":null,"trnKey":"Your Phone (Optional)","deletable":false}}]', true );
 $formFieldsArray              = empty( $f1->formFieldsArray ) ? $defaultFields : json_decode( $f1->formFieldsArray, 1 );
 $paypalConfig                 = json_decode( $f1->paypalConfigArray, true );
-$stripeConfig                 = ( get_option( 'df_scc_stripe_keys' ) == '' ) ? [
-    'pubKey'  => null,
-    'privKey' => null,
-] : get_option( 'df_scc_stripe_keys' );
-$stripeConfig['enabled']      = $f1->isStripeEnabled && ( $f1->isStripeEnabled !== 'false' ) ? true : false;
 $stripeData                   = '';
-$isStripeSetupDone            = $stripeConfig['pubKey'] && $stripeConfig['privKey'];
+$isStripeSetupDone            = false;
 $isPayPalEnabled              = $paypalConfig && $paypalConfig['paypal_checked'] == 'true' ? true : false;
-$isStripeEnabled              = $stripeConfig && $stripeConfig['enabled'] == 'true' ? true : false;
+$isStripeEnabled              = false;
 $isWoocommerceCheckoutEnabled = $f1->isWoocommerceCheckoutEnabled == 'true' ? true : false;
 $isForceQuoteFormEnabled      = $f1->preCheckoutQuoteForm == 'true' ? true : false;
 $ShowFormBuilderOnDetails     = ( $f1->ShowFormBuilderOnDetails == 'false' || ! $f1->ShowFormBuilderOnDetails ) ? false : true;
 
-if ( $isStripeSetupDone ) {
-    $stripeDataAttr = 'data-pub-key=' . $stripeConfig['pubKey'] . ' ' . 'data-priv-key=' . $stripeConfig['privKey'];
-}
 $df_scc_form_currency = get_option( 'df_scc_currency', 'USD' );
 $isWoocommerceActive  = false;
 
@@ -29,50 +21,154 @@ if ( is_plugin_active( 'woocommerce/woocommerce.php' ) ) {
 }
 $isWoocommerceCheckoutEnabled = $f1->isWoocommerceCheckoutEnabled == 'true' ? true : false;
 
-if ( $isWoocommerceActive && get_option( 'df_scc_licensed' ) == 1 && $isWoocommerceCheckoutEnabled ) {
-    $woo_commerce_products = [];
-    $args                  = [
-        'post_type'      => 'product',
-        'posts_per_page' => -1,
-    ];
-    $loop                  = new WP_Query( $args );
-
-    while ( $loop->have_posts() ) {
-        $loop->the_post();
-        global $product;
-        array_push( $woo_commerce_products, $product );
-    }
-    wp_reset_query();
-}
-// preparing an array for use in dropdown choices in the elements added via ajax
+// WooCommerce product choices are loaded lazily from AJAX when a product picker is used.
 $woocommerce_products_array = [];
 $icon_trash                 = $scc_icons['trash-2'] ?? $scc_icons['trash'] ?? '';
-
-if ( $isWoocommerceCheckoutEnabled && $isWoocommerceActive ) {
-    foreach ( $woo_commerce_products as $product ) {
-        if ( $product->is_type( 'variable' ) ) {
-            $available_variations = $product->get_available_variations();
-
-            foreach ( $available_variations as $product_variable ) {
-                $attributes = [];
-
-                foreach ( $product_variable['attributes'] as $key => $value ) {
-                    $attributes[] = $product->get_name() . ': ' . $value;
-                }
-                array_push( $woocommerce_products_array, [ esc_html( $product_variable['variation_id'] ) => esc_html( implode( ' | ', $attributes ) ) . ' | Price: ' . get_woocommerce_currency_symbol() . '' . esc_html( $product_variable['display_regular_price'] ) ] );
-            }
-        } else {
-            array_push( $woocommerce_products_array, [ esc_html( $product->get_id() ) => esc_html( $product->get_name() ) . ' | Price: ' . get_woocommerce_currency_symbol() . '' . esc_html( $product->get_price() ) ] );
-        }
-    }
-}
 wp_localize_script( 'scc-backend', 'pageEditCalculator', [ 'nonce' => wp_create_nonce( 'edit-calculator-page' ) ] );
-$edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
+$edit_page_func = new Stylish_Cost_Calculator_Edit_Page( false, false, $isWoocommerceCheckoutEnabled && $isWoocommerceActive );
+$scc_json_encode_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 ?>
 
-<script id="scc-data-schema" type="text/json"><?php echo json_encode( $f1->sections ); ?></script>
+<script id="scc-data-schema" type="text/json"><?php echo wp_json_encode( $f1->sections, $scc_json_encode_flags ); ?></script>
 <script>
-	window["woocommerceProducts"] = <?php echo json_encode( $woocommerce_products_array ); ?>;
+	window["woocommerceProducts"] = <?php echo wp_json_encode( $woocommerce_products_array, $scc_json_encode_flags ); ?>;
+	window["woocommerceProductsLoaded"] = false;
+	window["woocommerceProductsLoading"] = false;
+	function sccEscapeHtml(value) {
+		const safeValue = (value === null || typeof value === 'undefined') ? '' : value;
+		return String(safeValue).replace(/[&<>"']/g, function(char) {
+			return {
+				'&': '&amp;',
+				'<': '&lt;',
+				'>': '&gt;',
+				'"': '&quot;',
+				"'": '&#039;'
+			}[char];
+		});
+	}
+	function sccNormalizeWooProductOption(option) {
+		if (option && typeof option === 'object' && option.id) {
+			return {
+				id: option.id,
+				label: option.label || option.name || option.id
+			};
+		}
+		if (option && typeof option === 'object') {
+			const keys = Object.keys(option);
+			if (keys.length) {
+				return {
+					id: keys[0],
+					label: option[keys[0]]
+				};
+			}
+		}
+		return null;
+	}
+	function sccGetWooCommerceProductOptionsMarkup(selectedValue = '') {
+		return (window.woocommerceProducts || []).map(function(option) {
+			const normalized = sccNormalizeWooProductOption(option);
+			if (!normalized) {
+				return '';
+			}
+			const selected = String(normalized.id) === String(selectedValue) ? ' selected' : '';
+			return `<option value="${sccEscapeHtml(normalized.id)}"${selected}>${sccEscapeHtml(normalized.label)}</option>`;
+		}).join('\n');
+	}
+	function sccPopulateWooCommerceProductSelect(select) {
+		if (!select) {
+			return;
+		}
+		const selectedValue = select.value || select.getAttribute('data-selected-value') || '';
+		select.querySelectorAll('option[data-scc-lazy-product="1"]').forEach(function(option) {
+			option.remove();
+		});
+		const existingValues = new Set(Array.from(select.options).map(function(option) {
+			return String(option.value);
+		}));
+		const optionsMarkup = (window.woocommerceProducts || []).map(function(option) {
+			const normalized = sccNormalizeWooProductOption(option);
+			if (!normalized || existingValues.has(String(normalized.id))) {
+				return '';
+			}
+			const selected = String(normalized.id) === String(selectedValue) ? ' selected' : '';
+			return `<option data-scc-lazy-product="1" value="${sccEscapeHtml(normalized.id)}"${selected}>${sccEscapeHtml(normalized.label)}</option>`;
+		}).join('\n');
+		select.insertAdjacentHTML('beforeend', optionsMarkup);
+		select.value = selectedValue;
+	}
+	function sccLoadWooCommerceProductOptions(select) {
+		if (window.woocommerceProductsLoaded) {
+			sccPopulateWooCommerceProductSelect(select);
+			return;
+		}
+		if (window.woocommerceProductsLoading) {
+			return;
+		}
+		window.woocommerceProductsLoading = true;
+		jQuery.ajax({
+			url: ajaxurl,
+			type: 'POST',
+			data: {
+				action: 'scc_get_woocommerce_products',
+				nonce: pageEditCalculator.nonce
+			},
+			success: function(response) {
+				if (response && response.success && response.data && Array.isArray(response.data.products)) {
+					window.woocommerceProducts = response.data.products;
+					window.woocommerceProductsLoaded = true;
+					document.querySelectorAll('.scc_woo_commerce_product_id, .scc-woo-commerce-product-selector').forEach(sccPopulateWooCommerceProductSelect);
+				}
+			},
+			complete: function() {
+				window.woocommerceProductsLoading = false;
+			}
+		});
+	}
+	function sccInitWooCommerceProductSelect(select) {
+		if (!select) {
+			return;
+		}
+		if (select.tomselect) {
+			return;
+		}
+		if (typeof TomSelect === 'undefined') {
+			sccLoadWooCommerceProductOptions(select);
+			return;
+		}
+		new TomSelect(select, {
+			valueField: 'id',
+			labelField: 'label',
+			searchField: 'label',
+			maxOptions: 100,
+			preload: 'focus',
+			loadThrottle: 300,
+			load: function(query, callback) {
+				jQuery.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: {
+						action: 'scc_get_woocommerce_products',
+						nonce: pageEditCalculator.nonce,
+						search: query || '',
+						limit: 100
+					},
+					success: function(response) {
+						if (response && response.success && response.data && Array.isArray(response.data.products)) {
+							callback(response.data.products);
+							return;
+						}
+						callback();
+					},
+					error: function() {
+						callback();
+					}
+				});
+			}
+		});
+	}
+	jQuery(document).on('focus click', '.scc_woo_commerce_product_id, .scc-woo-commerce-product-selector', function() {
+		sccInitWooCommerceProductSelect(this);
+	});
 	jQuery(document).ready(function() {
 		var isNewCalculator = "<?php echo ( isset( $_GET['new'] ) ) ? 1 : 0; ?>"
 		if (isNewCalculator == 1) {
@@ -80,7 +176,7 @@ $edit_page_func = new Stylish_Cost_Calculator_Edit_Page();
 		}
 	})
 	let datacal = JSON.parse(String.raw`${document.querySelector('#scc-data-schema').innerText}`)
-	cal = getElmtsNCndns(datacal)
+	let cal = getElmtsNCndns(datacal)
 	//extracts data from json
 	function getElmtsNCndns(data) {
 		let o = []
@@ -1061,6 +1157,20 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 </div>
 <div class="modal df-scc-modal fade in" id="webhook-setup-placeholder" style="padding-right: 0px;" role="dialog" data-backdrop="0"></div>
 <script type="text/javascript">
+	var sccEditorDebounceTimers = {};
+
+	function sccDebounceEditorSave(debounceKey, callback, wait) {
+		clearTimeout(sccEditorDebounceTimers[debounceKey])
+		sccEditorDebounceTimers[debounceKey] = setTimeout(function() {
+			delete sccEditorDebounceTimers[debounceKey]
+			callback()
+		}, wait)
+	}
+
+	function sccEditorAjaxFailure() {
+		showSweet(false, "There was an error, please try again")
+	}
+
 	/** preview */
 	/**
 	 * *Loads the preview with page load
@@ -1366,6 +1476,9 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 					sccBackendUtils.handleTooltipAjaxAddedElements( clonedElement[ 0 ] );
 					sccFlatpickrInitBackend();
 				}
+			},
+			error: function() {
+				sccEditorAjaxFailure();
 			}
 		})
 		//reder duplicated element in dom
@@ -1438,9 +1551,14 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 					sccBackendUtils.disableSaveBtnAjax(true, element);
 				},
 				success: function(data) {
-					sccBackendUtils.disableSaveBtnAjax(false, element);
 					var datajson = JSON.parse(data)
 					sccBackendUtils.handleSavingAlert(data, true);
+				},
+				error: function() {
+					sccEditorAjaxFailure();
+				},
+				complete: function() {
+					sccBackendUtils.disableSaveBtnAjax(false, element);
 				}
 			})
 		}
@@ -1644,19 +1762,13 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * *On keyup changes title section in db and updates title text in section
 	 * @param Section_id,text
 	 */
-	var timeChangeTitleSection = null
-
 	function changeTitleSection(element) {
 		var idSection = jQuery(element).parents(".addedFieldsStyle").find(".id_section_class").val()
 		var text = jQuery(element).parents(".title_section_no_edit_container").find(".title_section_no_edit")
 		var value = jQuery(element).val()
 		text.text(value)
-		jQuery(element).focusout(function() {
-			timeChangeTitleSection = 0
-		})
 		sccBackendUtils.disableSaveBtnAjax(true);
-		clearTimeout(timeChangeTitleSection)
-		timeChangeTitleSection = setTimeout(() => {
+		sccDebounceEditorSave('section:' + idSection + ':title', function() {
 			jQuery.ajax({
 				url: ajaxurl,
 				cache: false,
@@ -1667,9 +1779,14 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 					nonce: pageEditCalculator.nonce
 				},
 				success: function(data) {
-					sccBackendUtils.disableSaveBtnAjax(false);
 					var datajson = JSON.parse(data)
 					sccBackendUtils.handleSavingAlert(datajson, true);
+				},
+				error: function() {
+					sccEditorAjaxFailure();
+				},
+				complete: function() {
+					sccBackendUtils.disableSaveBtnAjax(false);
 				}
 			})
 		}, 2000);
@@ -1677,19 +1794,13 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	/**
 	 * *On keyup changes description section in db and updates description text in section
 	 */
-	var timechangeDescriptionSection = null
-
 	function changeDescriptionSection(element) {
 		var idSection = jQuery(element).parents(".addedFieldsStyle").find(".id_section_class").val()
 		var text = jQuery(element).parents(".description_section_no_edit_container").find(".description_section_no_edit")
 		var value = jQuery(element).val()
 		text.text(value)
-		jQuery(element).focusout(function() {
-			timechangeDescriptionSection = 0
-		})
 		sccBackendUtils.disableSaveBtnAjax(true);
-		clearTimeout(timechangeDescriptionSection)
-		timechangeDescriptionSection = setTimeout(() => {
+		sccDebounceEditorSave('section:' + idSection + ':description', function() {
 			jQuery.ajax({
 				url: ajaxurl,
 				cache: false,
@@ -1700,9 +1811,14 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 					nonce: pageEditCalculator.nonce
 				},
 				success: function(data) {
-					sccBackendUtils.disableSaveBtnAjax(false);
 					var datajson = JSON.parse(data)
 					sccBackendUtils.handleSavingAlert(datajson, true);
+				},
+				error: function() {
+					sccEditorAjaxFailure();
+				},
+				complete: function() {
+					sccBackendUtils.disableSaveBtnAjax(false);
 				}
 			})
 		}, 2000);
@@ -1802,16 +1918,10 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * *Onkeyup changes column DesktopColum of element 
 	 * @param element_id
 	 */
-	var timeColumnDesktop = null
-
 	function changeColumnDesktop(element) {
 		var element_id = jQuery(element).parentsUntil(".elements_added").parent().find(".input_id_element").val()
 		var value = jQuery(element).val()
-		jQuery(element).focusout(function() {
-			timeColumnDesktop = 0
-		})
-		clearTimeout(timeColumnDesktop)
-		timeColumnDesktop = setTimeout(() => {
+		sccDebounceEditorSave('element:' + element_id + ':desktop', function() {
 			jQuery.ajax({
 				url: ajaxurl,
 				cache: false,
@@ -1833,16 +1943,10 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * *Onkeyup changes mobileColumn of element
 	 * @param element_id
 	 */
-	var timeColumnMobile = null
-
 	function changeColumnMobile(element) {
 		var element_id = jQuery(element).parentsUntil(".elements_added").parent().find(".input_id_element").val()
 		var value = jQuery(element).val()
-		jQuery(element).focusout(function() {
-			timeColumnMobile = 0
-		})
-		clearTimeout(timeColumnMobile)
-		timeColumnMobile = setTimeout(() => {
+		sccDebounceEditorSave('element:' + element_id + ':mobile', function() {
 			jQuery.ajax({
 				url: ajaxurl,
 				cache: false,
@@ -1886,9 +1990,14 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 					sccBackendUtils.disableSaveBtnAjax(true, element);
 				},
 				success: function(data) {
-					sccBackendUtils.disableSaveBtnAjax(false, element);
 					var datajson = JSON.parse(data)
 					sccBackendUtils.handleSavingAlert(datajson, false);
+				},
+				error: function() {
+					sccEditorAjaxFailure();
+				},
+				complete: function() {
+					sccBackendUtils.disableSaveBtnAjax(false, element);
 				}
 			})
 		}
@@ -2074,7 +2183,6 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				nonce: pageEditCalculator.nonce
 			},
 			success: function(data) {
-				sccBackendUtils.disableSaveBtnAjax(false, element);
 				var datajson = JSON.parse(data)
 				if (datajson.passed == true) {
 					var item = newPriceRangeItem(previousTo, datajson.id_elementitem)
@@ -2084,6 +2192,12 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 					}, 1000);
 				}
 				sccBackendUtils.handleSavingAlert(datajson, true);
+			},
+			error: function() {
+				sccEditorAjaxFailure();
+			},
+			complete: function() {
+				sccBackendUtils.disableSaveBtnAjax(false, element);
 			}
 		})
 
@@ -2154,12 +2268,17 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				sccBackendUtils.disableSaveBtnAjax(true, element);
 			},
 			success: function(data) {
-				sccBackendUtils.disableSaveBtnAjax(false, element);
 				var response = JSON.parse(data);
 				if (response.passed == true) {
 					elementItem.remove()
 				}
 				sccBackendUtils.handleSavingAlert(response, true, true);
+			},
+			error: function() {
+				sccEditorAjaxFailure();
+			},
+			complete: function() {
+				sccBackendUtils.disableSaveBtnAjax(false, element);
 			}
 		})
 	}
@@ -2168,17 +2287,11 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * !this value1 is use multiple tipe for more that one element
 	 * @param element_id
 	 */
-	var timeElementitemValue1 = null
-
 	function changeElementItemValue1(element) {
 		var elementSetupContainer = jQuery(element).closest('.elements_added')
 		var id_elementItem = jQuery(element).closest('.price-slider-item').find('input.id_element_slider_item').val()
 		var value = jQuery(element).val()
-		jQuery(element).focusout(function() {
-			timeElementitemValue1 = 0
-		})
-		clearTimeout(timeElementitemValue1)
-		timeElementitemValue1 = setTimeout(() => {
+		sccDebounceEditorSave('element-item:' + id_elementItem + ':value1', function() {
 			jQuery.ajax({
 				url: ajaxurl,
 				cache: false,
@@ -2205,16 +2318,10 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * !this value2 is use multiple times for more than one element
 	 * @param element_id
 	 */
-	var timeElementitemValue2 = null
-
 	function changeElementItemValue2(element) {
 		var id_elementItem = jQuery(element).closest('.price-slider-item').find('input.id_element_slider_item').val()
 		var value = jQuery(element).val()
-		jQuery(element).focusout(function() {
-			timeElementitemValue2 = 0
-		})
-		clearTimeout(timeElementitemValue2)
-		timeElementitemValue2 = setTimeout(() => {
+		sccDebounceEditorSave('element-item:' + id_elementItem + ':value2', function() {
 			jQuery.ajax({
 				url: ajaxurl,
 				cache: false,
@@ -2235,16 +2342,10 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * *Updates column value3 of element in db
 	 * !this value2 is use multiple times for more than one element
 	 */
-	var timeElementitemValue3 = null
-
 	function changeElementItemValue3(element) {
 		var id_elementItem = jQuery(element).closest('.price-slider-item').find('input.id_element_slider_item').val()
 		var value = jQuery(element).val()
-		jQuery(element).focusout(function() {
-			timeElementitemValue3 = 0
-		})
-		clearTimeout(timeElementitemValue3)
-		timeElementitemValue3 = setTimeout(() => {
+		sccDebounceEditorSave('element-item:' + id_elementItem + ':value3', function() {
 			jQuery.ajax({
 				url: ajaxurl,
 				cache: false,
@@ -2421,8 +2522,6 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * *Updates the column value4 of element in db 
 	 * !this value4 is use multiple times for more than one element
 	 */
-	var timeElementValue4 = null
-
 	function changeValue4(element) {
 		var id_element = jQuery(element).closest('.elements_added').find(".input_id_element").val()
 		var value = jQuery(element).val()
@@ -2432,12 +2531,8 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 			value = jQuery(element).prop('checked')
 			time = 0
 		}
-		jQuery(element).focusout(function() {
-			timeElementValue4 = 0
-		})
 		sccBackendUtils.disableSaveBtnAjax(true, element);
-		clearTimeout(timeElementValue4)
-		timeElementValue4 = setTimeout(() => {
+		sccDebounceEditorSave('element:' + id_element + ':value4', function() {
 			jQuery.ajax({
 				url: ajaxurl,
 				cache: false,
@@ -2448,9 +2543,14 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 					nonce: pageEditCalculator.nonce
 				},
 				success: function(data) {
-					sccBackendUtils.disableSaveBtnAjax(false, element);
 					var datajson = JSON.parse(data)
 					sccBackendUtils.handleSavingAlert(datajson, true);
+				},
+				error: function() {
+					sccEditorAjaxFailure();
+				},
+				complete: function() {
+					sccBackendUtils.disableSaveBtnAjax(false, element);
 				}
 			})
 		}, time);
@@ -2460,18 +2560,12 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * !this value3 is use multiple times for more than one element
 	 * @param element_id
 	 */
-	var timeElementValue3
-
 	function changeValue3(element) {
 		var el_container = jQuery(element).closest('.elements_added')
-		id_element = el_container.find(".input_id_element").val()
+		var id_element = el_container.find(".input_id_element").val()
 		var value = jQuery(element).val()
-		jQuery(element).focusout(function() {
-			timeElementValue3 = 0
-		})
 		sccBackendUtils.disableSaveBtnAjax(true, element);
-		clearTimeout(timeElementValue3)
-		timeElementValue3 = setTimeout(() => {
+		sccDebounceEditorSave('element:' + id_element + ':value3', function() {
 			jQuery.ajax({
 				url: ajaxurl,
 				cache: false,
@@ -2482,9 +2576,14 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 					nonce: pageEditCalculator.nonce
 				},
 				success: function(data) {
-					sccBackendUtils.disableSaveBtnAjax(false, element);
 					var datajson = JSON.parse(data)
 					sccBackendUtils.handleSavingAlert(datajson, false);
+				},
+				error: function() {
+					sccEditorAjaxFailure();
+				},
+				complete: function() {
+					sccBackendUtils.disableSaveBtnAjax(false, element);
 				}
 			})
 		}, 2000);
@@ -2494,18 +2593,12 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * !this value2 is use multiple times for more than one element
 	 * @param element_id
 	 */
-	var timeElementValue2 = null
-
 	function changeValue2(element) {
 		var id_element = jQuery(element).closest('.elements_added').find(".input_id_element").css("background-color", "red").val()
 		var value = jQuery(element).val()
-		jQuery(element).focusout(function() {
-			timeElementValue2 = 0
-		})
 		var tt = jQuery(element).attr('data-type')
 		sccBackendUtils.disableSaveBtnAjax(true, element);
-		clearTimeout(timeElementValue2)
-		timeElementValue2 = setTimeout(() => {
+		sccDebounceEditorSave('element:' + id_element + ':value2', function() {
 			jQuery.ajax({
 				url: ajaxurl,
 				cache: false,
@@ -2517,10 +2610,15 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 					tt
 				},
 				success: function(data) {
-					sccBackendUtils.disableSaveBtnAjax(false, element);
 					var datajson = JSON.parse(data)
 
 					sccBackendUtils.handleSavingAlert(datajson, false);
+				},
+				error: function() {
+					sccEditorAjaxFailure();
+				},
+				complete: function() {
+					sccBackendUtils.disableSaveBtnAjax(false, element);
 				}
 			})
 		}, 2000);
@@ -2651,7 +2749,6 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				is_image_checkbox: (type == 8)
 			},
 			success: function(data) {
-				sccBackendUtils.disableSaveBtnAjax(false, element);
 				var response = JSON.parse(data);
 				if (response.passed == true) {
 					// var newElementitem = newElementItemCheckbox(response.id_element, count, type);
@@ -2659,6 +2756,12 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 					toolPrem()
 				}
 				sccBackendUtils.handleSavingAlert(response, true, true);
+			},
+			error: function() {
+				sccEditorAjaxFailure();
+			},
+			complete: function() {
+				sccBackendUtils.disableSaveBtnAjax(false, element);
 			}
 		})
 	}
@@ -2741,7 +2844,6 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				if ( type == 'element' ) {
 					datajson = JSON.parse( data );
 				}
-				sccBackendUtils.disableSaveBtnAjax( false, formField );
 
 				// handle frontend changes after response
 				const imageIcon = formField.closest( '.scc-icon-picker' ).querySelector( '.scc-image-icon' );
@@ -2753,6 +2855,9 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				sccBackendUtils.handleSavingAlert( datajson );
 			},
 			error( err ) {
+				sccEditorAjaxFailure();
+			},
+			complete() {
 				sccBackendUtils.disableSaveBtnAjax( false, formField );
 			},
 		} );
@@ -2872,9 +2977,14 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				sccBackendUtils.disableSaveBtnAjax(true, element);
 			},
 			success: function(data) {
-				sccBackendUtils.disableSaveBtnAjax(false, element);
 				var datajson = JSON.parse(data)
 				sccBackendUtils.handleSavingAlert(datajson, false);
+			},
+			error: function() {
+				sccEditorAjaxFailure();
+			},
+			complete: function() {
+				sccBackendUtils.disableSaveBtnAjax(false, element);
 			}
 		})
 	}
@@ -2931,8 +3041,6 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * todo: Not all elements have title
 	 * @param element_id
 	 */
-	var timeTitledropdown = null
-
 	function clickedTitleElement(element) {
 		var elementSetupContainer = jQuery(element).closest('.elements_added')
 		var id_element = elementSetupContainer.find(".input_id_element").val()
@@ -2940,13 +3048,10 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		var text = jQuery(element).val()
 		var truncatedText = truncateElementTitle(text, 30)
 		jQuery(title_element_dom).text(truncatedText)
-		jQuery(element).focusout(function() {
-			timeTitledropdown = 0
-		});
 		sccBackendUtils.disableSaveBtnAjax(true, element);
-		clearTimeout(timeTitledropdown)
-		timeTitledropdown = setTimeout(() => {
+		sccDebounceEditorSave('element:' + id_element + ':title', function() {
 			if (text == "") {
+				sccBackendUtils.disableSaveBtnAjax(false, element);
 				showSweet(false, "the title is empty")
 				return
 			}
@@ -2960,9 +3065,14 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 					nonce: pageEditCalculator.nonce
 				},
 				success: function(data) {
-					sccBackendUtils.disableSaveBtnAjax(false, element);
 					var datajson = JSON.parse(data)
 					sccBackendUtils.handleSavingAlert(datajson, false);
+				},
+				error: function() {
+					sccEditorAjaxFailure();
+				},
+				complete: function() {
+					sccBackendUtils.disableSaveBtnAjax(false, element);
 				}
 			})
 		}, 2000);
@@ -2971,24 +3081,18 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * *Updates name elementItem of DropdownElement 
 	 * @param elementItem_id
 	 */
-	var titmeNameElementItem = null
-
 	function changeNameElementItem(element, idFromDataAttribute = false) {
 		var itemContainer = jQuery(element).closest(".scc-item-field-container, .dd-item-field-container");
 		var id_elemntItem = jQuery(element).closest(".selopt3").find(".swichoptionitem_id").val()
 		if (itemContainer.length) {
 			id_elemntItem = itemContainer.data('elementItemId')
 		}
-		jQuery(element).focusout(function() {
-			titmeNameElementItem = 0
-		});
 		var name = jQuery(element).val();
 		if (itemContainer.length) {
 			jQuery(".display_title_" + itemContainer.data('elementItemId')).text(name);
 		}
 		sccBackendUtils.disableSaveBtnAjax(true, element);
-		clearTimeout(titmeNameElementItem)
-		titmeNameElementItem = setTimeout(() => {
+		sccDebounceEditorSave('element-item:' + id_elemntItem + ':name', function() {
 			// showLoadingChanges()
 			jQuery.ajax({
 				url: ajaxurl,
@@ -3000,8 +3104,13 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 					nonce: pageEditCalculator.nonce
 				},
 				success: function(data) {
-					sccBackendUtils.disableSaveBtnAjax(false, element);
 					sccBackendUtils.handleSavingAlert(data, false);
+				},
+				error: function() {
+					sccEditorAjaxFailure();
+				},
+				complete: function() {
+					sccBackendUtils.disableSaveBtnAjax(false, element);
 				}
 			})
 		}, 2000);
@@ -3010,8 +3119,6 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * *Updates description elementItem of Dropdown 
 	 * @param elementItem_id
 	 */
-	var timeDescriptionElementItem = null
-
 	function changeDescriptionElementItem(element, idFromDataAttribute = false) {
 		var itemContainer = jQuery(element).closest(".scc-item-field-container, .dd-item-field-container");
 		var id_elemntItem = jQuery(element).closest(".selopt3").find(".swichoptionitem_id").val()
@@ -3019,12 +3126,8 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 			id_elemntItem = itemContainer.data('elementItemId')
 		}
 		var description = jQuery(element).val();
-		jQuery(element).focusout(function() {
-			timeDescriptionElementItem = 0
-		})
 		sccBackendUtils.disableSaveBtnAjax(true, element);
-		clearTimeout(timeDescriptionElementItem)
-		timeDescriptionElementItem = setTimeout(() => {
+		sccDebounceEditorSave('element-item:' + id_elemntItem + ':description', function() {
 			jQuery.ajax({
 				url: ajaxurl,
 				cache: false,
@@ -3035,8 +3138,13 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 					nonce: pageEditCalculator.nonce
 				},
 				success: function(data) {
-					sccBackendUtils.disableSaveBtnAjax(false, element);
 					sccBackendUtils.handleSavingAlert(data, false);
+				},
+				error: function() {
+					sccEditorAjaxFailure();
+				},
+				complete: function() {
+					sccBackendUtils.disableSaveBtnAjax(false, element);
 				}
 			})
 		}, 2000);
@@ -3045,8 +3153,6 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * *Updates price elementItem of DropdownElement
 	 * @param elementItem_id
 	 */
-	var timePriceElementItem = null
-
 	function changePriceElementItem(element, idFromDataAttribute = false) {
 		var itemContainer = jQuery(element).closest(".scc-item-field-container, .dd-item-field-container");
 		var id_elemntItem = jQuery(element).closest(".selopt3").find(".swichoptionitem_id").val()
@@ -3054,12 +3160,8 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 			id_elemntItem = itemContainer.data('elementItemId')
 		}
 		var price = jQuery(element).val()
-		jQuery(element).focusout(function() {
-			timePriceElementItem = 0
-		})
 		sccBackendUtils.disableSaveBtnAjax(true, element);
-		clearTimeout(timePriceElementItem)
-		timePriceElementItem = setTimeout(() => {
+		sccDebounceEditorSave('element-item:' + id_elemntItem + ':price', function() {
 			jQuery.ajax({
 				url: ajaxurl,
 				cache: false,
@@ -3070,8 +3172,13 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 					nonce: pageEditCalculator.nonce
 				},
 				success: function(data) {
-					sccBackendUtils.disableSaveBtnAjax(false, element);
 					sccBackendUtils.handleSavingAlert(data, false);
+				},
+				error: function() {
+					sccEditorAjaxFailure();
+				},
+				complete: function() {
+					sccBackendUtils.disableSaveBtnAjax(false, element);
 				}
 			})
 		}, 2000);
@@ -3132,10 +3239,12 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				sccBackendUtils.disableSaveBtnAjax(true, element);
 			},
 			success: function(data) {
-				sccBackendUtils.disableSaveBtnAjax(false, element);
 				sccBackendUtils.handleSavingAlert(data, false);
 			},
 			error: function() {
+				sccEditorAjaxFailure();
+			},
+			complete: function() {
 				sccBackendUtils.disableSaveBtnAjax(false, element);
 			}
 		})
@@ -3186,9 +3295,13 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				sccBackendUtils.disableSaveBtnAjax(true);
 			},
 			success: function(data) {
-				sccBackendUtils.disableSaveBtnAjax(false);
-
 				sccBackendUtils.handleSavingAlert(data, true);
+			},
+			error: function() {
+				sccEditorAjaxFailure();
+			},
+			complete: function() {
+				sccBackendUtils.disableSaveBtnAjax(false);
 			}
 		})
 	}
@@ -3331,13 +3444,18 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				sccBackendUtils.disableSaveBtnAjax(true, element);
 			},
 			success: function(data) {
-				sccBackendUtils.disableSaveBtnAjax(false, element);
 				var response = JSON.parse(data);
 				if (response.passed == true) {
 					container.append(response.html)
 					toolPrem()
 				}
 				sccBackendUtils.handleSavingAlert(response, true, true);
+			},
+			error: function() {
+				sccEditorAjaxFailure();
+			},
+			complete: function() {
+				sccBackendUtils.disableSaveBtnAjax(false, element);
 			}
 		})
 	}
@@ -3374,7 +3492,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		var conditional = element.next(".scc-content");
 		conditional.toggle();
 	}
-	var array = <?php echo isset( $f1->formstored ) ? json_encode( $f1->formstored ) : json_encode( [] ); ?>;
+	var array = <?php echo wp_json_encode( isset( $f1->formstored ) ? $f1->formstored : [], $scc_json_encode_flags ); ?>;
 	jQuery.each(array, (i, value) => {
 		var sec = populate_sections(value.name, value.desc);
 		// console.log(sec);
@@ -3428,12 +3546,17 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				sccBackendUtils.disableSaveBtnAjax(true, element);
 			},
 			success: function(data) {
-				sccBackendUtils.disableSaveBtnAjax(false, element);
 				var response = JSON.parse(data);
 				if (response.passed == true) {
 					elementitem.remove()
 				}
 				sccBackendUtils.handleSavingAlert(response, true, true);
+			},
+			error: function() {
+				sccEditorAjaxFailure();
+			},
+			complete: function() {
+				sccBackendUtils.disableSaveBtnAjax(false, element);
 			}
 		})
 	}
@@ -3972,9 +4095,9 @@ ${insertSubSection(idsubsection)}
 			<div class="col-md-9 dd-woocommerce" style="padding:0px;">
 				<div class="scc-col-xs-6 scc-col-md-2" style="padding:0px;background: #f8f9ff;height: 35px;"><img class="scc-woo-logo" src="<?php echo esc_url_raw( SCC_ASSETS_URL . '/images/logo-woocommerce.svg' ); ?>" title="Pick an item from your WooCommerce products to link to."></div>
 				<div class="woo-product-dd scc-col-xs-6 scc-col-md-6" style="padding:0px;">
-					<select class="scc_woo_commerce_product_id" data-target="elements_added" onchange="attachProductId(this, ${idElementitem})" style="float:left;height:35px;margin-bottom:20px;width: 100%;">
+					<select class="scc_woo_commerce_product_id" data-target="elements_added" onfocus="sccLoadWooCommerceProductOptions(this)" onchange="attachProductId(this, ${idElementitem})" style="float:left;height:35px;margin-bottom:20px;width: 100%;">
 						<option style="font-size: 10px" value="0">Select a product..</option>` +
-			`${woocommerceProducts.map(e => `<option value="${Object.keys(e)}">` + Object.values(e) + '</option>').join('\n')}` +
+			`${sccGetWooCommerceProductOptionsMarkup()}` +
 			`</select>
 				</div>
 			</div>

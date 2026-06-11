@@ -177,9 +177,6 @@ class migrateController {
 		if ( $options->scc_sendername ) {
 			update_option( 'df_scc_sendername', $options->scc_sendername );
 		}
-		if ( $options->scc_stripe_keys ) {
-			update_option( 'df_scc_stripe_keys', $options->scc_stripe_keys );
-		}
 		if ( $options->df_scc_captcha_enablement_status ) {
 			update_option( 'df_scc-captcha-enablement-status', $options->df_scc_captcha_enablement_status );
 		}

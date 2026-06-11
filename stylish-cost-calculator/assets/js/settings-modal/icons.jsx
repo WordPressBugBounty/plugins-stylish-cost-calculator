@@ -1,5 +1,7 @@
+// eslint-disable-next-line no-unused-vars -- Required by esbuild's JSX factory.
 import { createElement } from './elements';
 
+// eslint-disable-next-line no-unused-vars -- Referenced through JSX with esbuild's factory.
 function SettingsNavIcon( { children, viewBox = '0 0 20 20' } ) {
 	return (
 		<svg className="scc-beta-icon" viewBox={ viewBox } fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -25,8 +27,8 @@ function BetaIcon( { label } ) {
 	if ( normalizedLabel.includes( 'sms' ) || normalizedLabel.includes( 'text message' ) ) {
 		return (
 			<SettingsNavIcon>
-				<path d="M4 5.2H16V13.3H8.4L5.2 15.8V13.3H4V5.2Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
-				<path d="M7.2 9.2H12.8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+				<path d="M7.2 3.5H12.8C13.7 3.5 14.4 4.2 14.4 5.1V14.9C14.4 15.8 13.7 16.5 12.8 16.5H7.2C6.3 16.5 5.6 15.8 5.6 14.9V5.1C5.6 4.2 6.3 3.5 7.2 3.5Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+				<path d="M8.2 7H12M8.2 9.4H11.4M9.2 14H10.8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
 			</SettingsNavIcon>
 		);
 	}
@@ -74,8 +76,8 @@ function BetaIcon( { label } ) {
 		case 'SMS Settings':
 			return (
 				<SettingsNavIcon>
-					<path d="M4 5.2H16V13.3H8.4L5.2 15.8V13.3H4V5.2Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
-					<path d="M7.2 9.2H12.8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+					<path d="M7.2 3.5H12.8C13.7 3.5 14.4 4.2 14.4 5.1V14.9C14.4 15.8 13.7 16.5 12.8 16.5H7.2C6.3 16.5 5.6 15.8 5.6 14.9V5.1C5.6 4.2 6.3 3.5 7.2 3.5Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+					<path d="M8.2 7H12M8.2 9.4H11.4M9.2 14H10.8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
 				</SettingsNavIcon>
 			);
 		case 'Webhook Events':

@@ -184,14 +184,13 @@ class SccFrontendController {
         );
         // Above here can be moved to formController safely
 
-        $stripe_common_config            = ( get_option( 'df_scc_stripe_keys' ) == '' ) ? [
-            'pubKey'             => null,
-            'privKey'            => null,
+        $stripe_common_config            = [
+            'pubKey'             => '',
             'successRedirectURL' => null,
             'cancelRedirectURL'  => null,
             'includeTaxAmount'   => 0,
-        ] : get_option( 'df_scc_stripe_keys' );
-        $stripe_common_config['enabled'] = $form->isStripeEnabled && ( $form->isStripeEnabled !== 'false' ) ? true : false;
+            'enabled'            => false,
+        ];
         $webhookConfigArray              = $isSCCFreeVersion ? [] : json_decode( $form->webhookSettings, true );
 
         $customJsConfig = $isSCCFreeVersion ? [] : json_decode( get_option( 'scc_cstmjs_calc_' . $form->id, '[{}]' ), true );
@@ -397,7 +396,7 @@ class SccFrontendController {
                 'isWoocommerceBtnEnabled'  => $form->isWoocommerceCheckoutEnabled === 'true' && scc_has_woocommerce_products_configured( $form ),
                 'isDetailedListBtnEnabled' => $form->turnviewdetails !== 'true' && $form->blurTotalPrice !== 'true',
                 'isEmailQuoteBtnEnabled'   => $form->turnoffemailquote !== 'true' && $form->blurTotalPrice !== 'true',
-                'isStripeBtnEnabled'       => $stripe_common_config['enabled'] === true,
+                'isStripeBtnEnabled'       => false,
                 'isPaypalBtnEnabled'       => $paypalConfigArray['paypal_checked'] === 'true',
             ],
             'isTotalBarHidden'                  => $form->removeTotal === 'true',
@@ -442,13 +441,13 @@ class SccFrontendController {
             'minimumTotal'                       => $form->minimumTotal,
             'minimumTotalChoose'                 => $form->minimumTotalChoose,
             'sections'                           => $form->sections,
-            'enableStripe'                       => $stripe_common_config['enabled'] == 'true' ? true : false,
+            'enableStripe'                       => false,
             'enableWoocommerceCheckout'          => $form->isWoocommerceCheckoutEnabled == 'true' && scc_has_woocommerce_products_configured( $form ),
             'captcha'                            => $captcha_config,
             'disableServerValidation'            => get_option( 'df_scc_disable_server_validation' ),
             'tseparator'                         => get_option( 'df_scc_currency_style' ),
             'translation'                        => $transletables,
-            'stripePubKey'                       => $stripe_common_config['pubKey'],
+            'stripePubKey'                       => '',
             'stripeIncludeTax'                   => $stripe_common_config['includeTaxAmount'],
             'preCheckoutQuoteForm'               => $form->preCheckoutQuoteForm == 'true' ? true : false,
             'woocommerceCombinedCheckoutProdId'  => intval( $form->combine_checkout_woocommerce_product_id ),

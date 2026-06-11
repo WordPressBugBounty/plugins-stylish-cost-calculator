@@ -249,7 +249,7 @@ if ( '' === $scc_profile_initials ) {
         height: 100%;
         width: 0;
         position: fixed;
-        z-index: 10;
+        z-index: 1000;
         top: 0;
         left: 0;
         cursor: wait;
