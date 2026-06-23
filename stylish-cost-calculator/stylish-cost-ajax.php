@@ -201,6 +201,16 @@ class ajaxRequest {
                 $c['id'] = $json_data['scc_form']['id'];
             }
             $paraa                   = $json_data['scc_form_parameters']['parameters'];
+            $isSCCFreeVersion        = defined( 'STYLISH_COST_CALCULATOR_VERSION' );
+            $disabledPayPalConfig    = [
+                'paypal_email'               => null,
+                'paypal_shopping_cart_name'  => null,
+                'paypal_checked'             => false,
+                'paypalSuccessURL'           => null,
+                'paypalCancelURL'            => null,
+                'objectTaxInclusionInPayPal' => false,
+                'paypal_currency'            => null,
+            ];
             $c['formname']           = sanitize_text_field( $json_data['scc_form']['formname'] );
             $c['fontType']           = sanitize_text_field( $json_data['scc_form_parameters']['parameters']['fontType'] );
             $c['fontWeight']         = sanitize_text_field( $json_data['scc_form_parameters']['parameters']['fontTypeVariant'] );
@@ -258,7 +268,9 @@ class ajaxRequest {
                 $c['turnoffTax'] = 'true';
             }
 
-            if ( isset( $paraa['woocommerce_checked'] ) ) {
+            $c['isWoocommerceCheckoutEnabled'] = 'false';
+
+            if ( ! $isSCCFreeVersion && isset( $paraa['woocommerce_checked'] ) ) {
                 $c['isWoocommerceCheckoutEnabled'] = sanitize_text_field( $paraa['woocommerce_checked'] );
             }
 
@@ -278,16 +290,20 @@ class ajaxRequest {
                 && isset( $pp['paypalSuccessURL'] ) && isset( $pp['paypalCancelURL'] ) && isset( $pp['objectTaxInclusionInPayPal'] )
                 && isset( $pp['paypal_currency'] )
             ) {
-                $payPalJson             = [
-                    'paypal_email'               => sanitize_email( $json_data['scc_form_parameters']['parameters']['paypal_email'] ),
-                    'paypal_shopping_cart_name'  => sanitize_text_field( $json_data['scc_form_parameters']['parameters']['paypal_shopping_cart_name'] ),
-                    'paypal_checked'             => sanitize_text_field( $json_data['scc_form_parameters']['parameters']['paypal_checked'] ),
-                    'paypalSuccessURL'           => sanitize_text_field( $json_data['scc_form_parameters']['parameters']['paypalSuccessURL'] ),
-                    'paypalCancelURL'            => sanitize_text_field( $json_data['scc_form_parameters']['parameters']['paypalCancelURL'] ),
-                    'objectTaxInclusionInPayPal' => sanitize_text_field( $json_data['scc_form_parameters']['parameters']['objectTaxInclusionInPayPal'] ),
-                    'paypal_currency'            => sanitize_text_field( $json_data['scc_form_parameters']['parameters']['paypal_currency'] ),
-                ];
-                $c['paypalConfigArray'] = json_encode( $payPalJson );
+                $payPalJson = $isSCCFreeVersion
+                    ? $disabledPayPalConfig
+                    : [
+                        'paypal_email'               => sanitize_email( $json_data['scc_form_parameters']['parameters']['paypal_email'] ),
+                        'paypal_shopping_cart_name'  => sanitize_text_field( $json_data['scc_form_parameters']['parameters']['paypal_shopping_cart_name'] ),
+                        'paypal_checked'             => sanitize_text_field( $json_data['scc_form_parameters']['parameters']['paypal_checked'] ),
+                        'paypalSuccessURL'           => sanitize_text_field( $json_data['scc_form_parameters']['parameters']['paypalSuccessURL'] ),
+                        'paypalCancelURL'            => sanitize_text_field( $json_data['scc_form_parameters']['parameters']['paypalCancelURL'] ),
+                        'objectTaxInclusionInPayPal' => sanitize_text_field( $json_data['scc_form_parameters']['parameters']['objectTaxInclusionInPayPal'] ),
+                        'paypal_currency'            => sanitize_text_field( $json_data['scc_form_parameters']['parameters']['paypal_currency'] ),
+                    ];
+                $c['paypalConfigArray'] = wp_json_encode( $payPalJson );
+            } elseif ( $isSCCFreeVersion ) {
+                $c['paypalConfigArray'] = wp_json_encode( $disabledPayPalConfig );
             }
             //handles webhook migration TESTING
             if ( isset( $json_data['scc_form_parameters']['parameters']['webhookSettings'] ) ) {
@@ -1363,6 +1379,24 @@ class ajaxRequest {
             $elementitemC = new elementitemController();
             //?fixes possible conflic id due not autoincrement id
             unset( $json['id'] );
+            if ( defined( 'STYLISH_COST_CALCULATOR_VERSION' ) ) {
+                $json['isStripeEnabled']                         = 'false';
+                $json['isWoocommerceCheckoutEnabled']            = 'false';
+                $json['preCheckoutQuoteForm']                    = 'false';
+                $json['combine_checkout_items']                  = '0';
+                $json['combine_checkout_woocommerce_product_id'] = '0';
+                $json['paypalConfigArray']                       = wp_json_encode(
+                    [
+                        'paypal_email'               => null,
+                        'paypal_shopping_cart_name'  => null,
+                        'paypal_checked'             => false,
+                        'paypalSuccessURL'           => null,
+                        'paypalCancelURL'            => null,
+                        'objectTaxInclusionInPayPal' => false,
+                        'paypal_currency'            => null,
+                    ]
+                );
+            }
             $calculator_id = $formC->create( $json );
 
             foreach ( $json['sections'] as $section ) {

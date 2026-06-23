@@ -4,70 +4,74 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 $isSCCFreeVersion = defined( 'STYLISH_COST_CALCULATOR_VERSION' );
 global $current_user;
-$df_scc_user_name = ! empty( $current_user->display_name ) ? $current_user->display_name : $current_user->user_login;
+$df_scc_user_name                 = ! empty( $current_user->display_name ) ? $current_user->display_name : $current_user->user_login;
+$scc_email_quote_tooltip_image    = SCC_TOOLTIP_BASEURL . '/for-settings/infographic-feat-email-quotes.png';
+$scc_locked_control_classes       = $isSCCFreeVersion ? ' scc-premium-locked-control' : '';
+$scc_locked_tooltip_classes       = $isSCCFreeVersion ? ' scc-premium-locked-control scc-premium-badge use-premium-tooltip' : '';
+$scc_locked_badge_classes         = $isSCCFreeVersion ? ' scc-premium-locked-control scc-premium-badge' : '';
 ?>
 <!-- FOR LATER -->
- <!-- Payments modal -->
-<div class="scc-dashboard-modal modal fade" id="paymentSettingsModal" tabindex="-1" aria-labelledby="paymentSettingsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="wordingsModalLabel">Payment Settings</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body pb-4">
+	 <!-- Payments modal -->
+<div class="scc-dashboard-modal scc-settings-premium-modal modal fade" id="paymentSettingsModal" tabindex="-1" aria-labelledby="paymentSettingsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title scc-settings-modal-title" id="paymentSettingsModalLabel"><span class="scc-settings-modal-icon material-icons-outlined" aria-hidden="true">payments</span>Payment Settings</h5>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body pb-4">
 
-	  		<!-- Start Payment processing section -->
-		<div class="editing-action-cards action-payment scc-payment-settings mb-0 py-0">
-			<div class="card-action-btns mx-3 has-checkmark
-			<?php
+				<!-- Start Payment processing section -->
+			<div class="editing-action-cards action-payment scc-payment-settings mb-0 py-0">
+				<div class="card-action-btns has-checkmark">
+				<div class="scc-payment-methods" role="group" aria-label="<?php echo esc_attr__( 'Payment methods', 'scc' ); ?>">
+					<button class="btn btn-cards<?php echo $isSCCFreeVersion ? ' disabled scc-premium-locked-control scc-premium-badge' : ( $isPayPalEnabled ? ' active' : '' ); ?>" <?php echo $isSCCFreeVersion ? 'type="button" aria-disabled="true" tabindex="0"' : 'onclick="doPaypalSetupModal(' . intval( $f1->id ) . ')"'; ?> data-setting-tooltip-type="payment-option-paypal-tt" data-bs-original-title="" title=""><span class="material-icons">done</span><span>Paypal</span></button>
+					<button class="btn btn-cards disabled scc-premium-locked-control scc-premium-badge" type="button" aria-disabled="true" data-setting-tooltip-type="payment-option-stripe-tt" data-bs-original-title="" title="">
+						<span class="material-icons">done</span><span>Stripe</span>
+					</button>
+					<button class="btn btn-cards<?php echo esc_attr( $scc_locked_badge_classes ); ?>
+									 <?php
+	                        if ( ! $isSCCFreeVersion ) {
+	                            if ( ! $isWoocommerceActive ) {
+	                                echo 'disabled tooltipadmin-right';
+	                            }
+	                        } else {
+	                            echo 'disabled';
+	                        }
+
+	                        if ( $isWoocommerceCheckoutEnabled ) {
+	                            echo 'active';
+	                        }
+
 ?>
-			"
->
-			<div class="d-flex mb-3 scc-payment-methods">
-				<button class="btn btn-cards me-3 <?php echo $isPayPalEnabled ? 'active' : ''; ?>" onclick="doPaypalSetupModal(<?php echo intval( $f1->id ); ?>)" data-setting-tooltip-type="payment-option-paypal-tt" data-bs-original-title="" title=""><span class="material-icons">done</span>Paypal</button>
-				<button class="btn btn-cards me-3 disabled use-premium-tooltip" type="button" aria-disabled="true" title="<?php echo esc_attr__( 'Stripe checkout is available in Stylish Cost Calculator Premium.', 'scc' ); ?>"><span class="material-icons">done</span><span>Stripe</span></button>
-				<button class="btn btn-cards me-3 
-								 <?php
-                        if ( ! $isSCCFreeVersion ) {
-                            if ( ! $isWoocommerceActive ) {
-                                echo 'disabled tooltipadmin-right';
-                            }
-                        }
-
-                        if ( $isWoocommerceCheckoutEnabled ) {
-                            echo 'active';
-                        }
-
-?>
-												" 
+													"
 												<?php
             if ( ! $isSCCFreeVersion ) {
-                if ( ! $isWoocommerceActive ) {
-                    echo "data-tooltip='Please enable woocommerce'";
-                }
-            }
-?>
-												 data-setting-tooltip-type="payment-option-woocommerce-tt"  data-bs-original-title="" title=""><span class="material-icons">done</span>Woocommerce</button>
-			</div>
-	 
-												 <div class="scc-form-checkbox	scc-email-quote-before-checkout" style="margin: 10px 0 0 0" >
-				<label class="scc-accordion_switch_button" for="force-email-quote">
-					<input 
-					<?php
-                    if ( $isSCCFreeVersion ) {
-                        echo 'disabled';
+	                if ( ! $isWoocommerceActive ) {
+	                    echo "data-tooltip='Please enable woocommerce'";
+	                }
+	            }
+	?>
+													 <?php echo $isSCCFreeVersion ? 'aria-disabled="true" tabindex="0"' : ''; ?> data-setting-tooltip-type="payment-option-woocommerce-tt" data-bs-original-title="" title=""><span class="material-icons">done</span><span>Woocommerce</span></button>
+				</div>
+
+													 <div class="scc-form-checkbox scc-settings-toggle-row scc-email-quote-before-checkout<?php echo esc_attr( $scc_locked_badge_classes ); ?>" <?php echo $isSCCFreeVersion ? 'aria-disabled="true" tabindex="0"' : ''; ?> data-setting-tooltip-type="force-email-form-before-checkout-tt" data-bs-original-title="" title="">
+					<label class="scc-accordion_switch_button" for="force-email-quote">
+						<input
+						<?php
+	                    if ( $isSCCFreeVersion ) {
+	                        echo 'disabled';
                     }
-?>
-					 type="checkbox" id="force-email-quote" <?php echo $isForceQuoteFormEnabled ? 'checked' : ''; ?> onchange="setForceQuoteFormStatus(this, event)">
-					<span class="scc-accordion_toggle_button round"></span>
-				</label>
-				<span><label for="force-email-quote" class="lblExtraSettingsEditCalc" data-setting-tooltip-type="force-email-form-before-checkout-tt" data-bs-original-title="" title="">Force Email Form before Checkout
-						<i class="material-icons-outlined with-tooltip"  style="margin-right:5px">help_outline</i>
-					</label>						
-				</span>
-			</div>
-			</div>
+	?>
+						 type="checkbox" id="force-email-quote" <?php echo $isForceQuoteFormEnabled ? 'checked' : ''; ?> onchange="setForceQuoteFormStatus(this, event)">
+						<span class="scc-accordion_toggle_button round"></span>
+					</label>
+					<span class="scc-settings-toggle-copy"><label for="force-email-quote" class="lblExtraSettingsEditCalc">Force Email Form before Checkout
+							<i class="material-icons-outlined more-settings-info" aria-hidden="true">help_outline</i>
+						</label>
+					</span>
+				</div>
+				</div>
 
 		</div><!-- End Payment processing section -->
 
@@ -81,65 +85,61 @@ $df_scc_user_name = ! empty( $current_user->display_name ) ? $current_user->disp
 
 
 <!-- Form builder modal -->
-<div class="scc-dashboard-modal modal fade" id="formBuilderModal" tabindex="-1" aria-labelledby="formBuilderModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable ">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="wordingsModalLabel">Email Quote | Form Builder</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body pb-4">
+<div class="scc-dashboard-modal scc-settings-premium-modal modal fade" id="formBuilderModal" tabindex="-1" aria-labelledby="formBuilderModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title scc-settings-modal-title" id="formBuilderModalLabel"><span class="scc-settings-modal-icon material-icons-outlined" aria-hidden="true">forward_to_inbox</span>Email Quote | Form Builder</h5>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	      </div>
+	      <div class="modal-body pb-4">
 
-		<!-- QUOTE FORM SECTION -->
-		<div class="editing-action-cards action-quoteform scc-quote-form-settings mb-0 py-0">
-			<div class="card-action-btns mx-3 mb-3
-			<?php
-            if ( $isSCCFreeVersion ) {
-                echo 'disabled use-tooltip-child-nodes';
-            }
-?>
-			">
-				<div class="btns-container d-inline-block">
-				<?php foreach ( $formFieldsArray as $fieldIndex => $fieldValue ) { ?>
-					<?php
-        $fieldKey   = array_keys( $fieldValue )[0];
-				    $fieldProps = $fieldValue[ $fieldKey ];
-				    ?>
-					<button class="btn btn-cards disabled" data-btn-fieldtype="custom" data-field-key="<?php echo esc_attr( $fieldKey ); ?>">
-						<span><?php echo esc_attr( $fieldProps['name'] ); ?></span>
-						<i class="scc-icon-formbuilder material-icons" data-form-builder-action-type="edit">edit</i>
-					</button>
-				<?php } ?>
-				</div>
-				<button class="btn btn-cards btn-plus 
+			<!-- QUOTE FORM SECTION -->
+			<div class="editing-action-cards action-quoteform scc-quote-form-settings mb-0 py-0">
+				<div class="card-action-btns
 				<?php
-                if ( $isSCCFreeVersion ) {
-                    echo 'disabled';
-                }
-?>
-				" data-btn-fieldtype="more-fields" onclick="doFormFieldsSetup(this, event, <?php echo $isSCCFreeVersion ? 'false' : 'true'; ?>)">
-					<span class="material-icons">done</span>+
-				</button>
-				
-				<div class="scc-form-checkbox" style="margin: 10px 0 0 0">
-				<label class="scc-accordion_switch_button" for="toggle-build-quote">
-					<input type="checkbox" id="toggle-build-quote" 
-					<?php
-    echo $ShowFormBuilderOnDetails ? 'checked' : '';
+	            if ( $isSCCFreeVersion ) {
+	                echo 'disabled';
+	            }
+	?>
+				">
+					<div class="btns-container scc-email-quote-fields">
+					<?php foreach ( $formFieldsArray as $fieldIndex => $fieldValue ) { ?>
+						<?php
+	        $fieldKey   = array_keys( $fieldValue )[0];
+					    $fieldProps = $fieldValue[ $fieldKey ];
+					    ?>
+						<button class="btn btn-cards disabled<?php echo esc_attr( $scc_locked_tooltip_classes ); ?>" data-btn-fieldtype="custom" data-field-key="<?php echo esc_attr( $fieldKey ); ?>" <?php echo $isSCCFreeVersion ? 'data-tooltip-image="' . esc_url( $scc_email_quote_tooltip_image ) . '" aria-disabled="true" tabindex="0"' : ''; ?>>
+							<span><?php echo esc_html( $fieldProps['name'] ); ?></span>
+							<i class="scc-icon-formbuilder material-icons" data-form-builder-action-type="edit">edit</i>
+						</button>
+					<?php } ?>
+					</div>
+					<?php if ( ! $isSCCFreeVersion ) { ?>
+						<button class="btn btn-cards btn-plus" data-btn-fieldtype="more-fields" onclick="doFormFieldsSetup(this, event, true)">
+							<span class="material-icons">add</span><span class="sr-only">Add field</span>
+						</button>
+					<?php } ?>
+
+					<div class="scc-form-checkbox scc-settings-toggle-row<?php echo esc_attr( $scc_locked_badge_classes ); ?>" <?php echo $isSCCFreeVersion ? 'aria-disabled="true" tabindex="0"' : ''; ?> data-setting-tooltip-type="require-acceptance-tt" data-bs-original-title="" title="">
+					<label class="scc-accordion_switch_button" for="toggle-build-quote">
+						<input type="checkbox" id="toggle-build-quote"
+						<?php
+	    echo $ShowFormBuilderOnDetails ? 'checked' : '';
 
 if ( $isSCCFreeVersion ) {
     echo 'disabled';
 }
-?>
-					 onchange="toggleFormBuilderOnDetails(this)">
-					<span class="scc-accordion_toggle_button round"></span>
-				</label>
-				<span><label for="toggle-build-quote" class="lblExtraSettingsEditCalc" data-setting-tooltip-type="require-acceptance-tt" data-bs-original-title="" title="">Require acceptance (GDPR/Terms & Conditions)
-				<i class="material-icons-outlined with-tooltip"  style="margin-right:5px">help_outline</i></label>
-				</span>
+	?>
+						 onchange="toggleFormBuilderOnDetails(this)">
+						<span class="scc-accordion_toggle_button round"></span>
+					</label>
+					<span class="scc-settings-toggle-copy"><label for="toggle-build-quote" class="lblExtraSettingsEditCalc">Require acceptance (GDPR/Terms & Conditions)
+					<i class="material-icons-outlined more-settings-info" aria-hidden="true">help_outline</i></label>
+					</span>
+				</div>
+				</div>
 			</div>
-			</div>
-		</div>
 		<!-- END FORM SECTION -->
 
 

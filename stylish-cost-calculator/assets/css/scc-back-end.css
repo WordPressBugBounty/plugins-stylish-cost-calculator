@@ -8658,6 +8658,218 @@ input#scc_tax_amount {
   color: #fff !important;
 }
 
+.scc-settings-premium-modal .modal-dialog {
+  max-width: 640px;
+}
+
+.scc-settings-premium-modal .modal-content {
+  border: 0;
+  box-shadow: 0 20px 55px rgba(20, 24, 42, 0.22);
+}
+
+.scc-settings-premium-modal .modal-header {
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e8ebff;
+}
+
+.scc-settings-premium-modal .modal-body {
+  padding: 18px 24px 24px !important;
+}
+
+.scc-settings-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: #1f2430;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.scc-settings-modal-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: var(--scc-color-primary);
+  background: #eef1ff;
+  font-size: 20px;
+}
+
+.scc-settings-premium-modal .editing-action-cards {
+  padding: 0;
+}
+
+.scc-settings-premium-modal .card-action-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 !important;
+}
+
+.scc-settings-premium-modal .action-quoteform .card-action-btns {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 12px;
+}
+
+.scc-settings-premium-modal .action-quoteform .scc-settings-toggle-row {
+  grid-column: 1 / -1;
+}
+
+.scc-settings-premium-modal .scc-payment-methods {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.scc-settings-premium-modal .scc-email-quote-fields {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 8px;
+  grid-column: 1 / -1;
+}
+
+.scc-settings-premium-modal .btn.btn-cards {
+  position: relative;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 44px;
+  height: auto;
+  margin: 0 !important;
+  padding: 0 16px !important;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.scc-settings-premium-modal .scc-email-quote-fields .btn.btn-cards {
+  min-width: 148px;
+  color: #303747;
+  background: #eef1ff;
+}
+
+.scc-settings-premium-modal .scc-payment-methods .btn.btn-cards:not(.active) {
+  color: #3f4656;
+  background: #f1f3ff;
+}
+
+.scc-settings-premium-modal .scc-payment-methods .btn.btn-cards.active,
+.scc-settings-premium-modal .scc-payment-methods .btn.btn-cards.active:hover {
+  color: #155735 !important;
+  border-color: rgba(52, 168, 83, 0.35);
+  background: #eaf8ef !important;
+}
+
+.scc-settings-premium-modal .btn.btn-cards.btn-plus {
+  width: 44px;
+  min-width: 44px;
+  padding: 0 !important;
+  color: #fff;
+  background: var(--scc-color-primary);
+}
+
+.scc-settings-premium-modal .btn.btn-cards.btn-plus.disabled {
+  color: #3f4656;
+  background: #f1f3ff;
+}
+
+.scc-settings-premium-modal .btn.btn-cards.btn-plus.scc-premium-locked-control {
+  width: 56px;
+  min-width: 56px;
+}
+
+.scc-settings-premium-modal .scc-icon-formbuilder {
+  margin-left: 2px;
+  color: #6f7788;
+}
+
+.scc-settings-premium-modal .scc-settings-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 42px;
+  margin: 0 !important;
+  padding: 8px 10px;
+  border: 1px solid #edf0ff;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.scc-settings-premium-modal .scc-settings-toggle-row.scc-premium-badge {
+  padding-right: 44px;
+}
+
+.scc-settings-premium-modal .scc-settings-toggle-copy {
+  display: inline-flex;
+  min-width: 0;
+}
+
+.scc-settings-premium-modal .lblExtraSettingsEditCalc {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  color: #252b36;
+  line-height: 1.35;
+}
+
+.scc-settings-premium-modal .more-settings-info {
+  color: #697184;
+  font-size: 18px;
+}
+
+.scc-settings-premium-modal .scc-premium-locked-control,
+.scc-settings-premium-modal .scc-premium-locked-control.disabled {
+  cursor: not-allowed !important;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.scc-settings-premium-modal .scc-premium-locked-control.btn.btn-cards {
+  color: #4c5362;
+  border-color: #e4e7fb;
+  background: #f3f5ff !important;
+}
+
+.scc-settings-premium-modal .scc-premium-badge::after {
+  width: 30px;
+  height: 30px;
+  line-height: 20px;
+  padding-left: 12px;
+  font-size: 11px;
+}
+
+@media (max-width: 782px) {
+  .scc-settings-premium-modal .modal-dialog {
+    max-width: calc(100% - 24px);
+  }
+
+  .scc-settings-premium-modal .scc-payment-methods {
+    grid-template-columns: 1fr;
+  }
+
+  .scc-settings-premium-modal .action-quoteform .card-action-btns {
+    grid-template-columns: 1fr;
+  }
+
+  .scc-settings-premium-modal .scc-email-quote-fields .btn.btn-cards,
+  .scc-settings-premium-modal .btn.btn-cards.btn-plus,
+  .scc-settings-premium-modal .scc-settings-toggle-row {
+    width: 100%;
+  }
+}
+
 
 #editFieldModal .df-scc-euiOverlayMask {
   z-index: 1000;
@@ -9785,7 +9997,35 @@ button.btn.btn-cond-saved {
 
 .tooltip-img>.tooltip-inner {
   background-color: #007cba;
-  max-width: unset;
+  max-width: min(520px, calc(100vw - 32px));
+  overflow: hidden;
+}
+
+.tooltip.tooltip-img-dark,
+.tooltip.backed-tooltip,
+.tooltip-img {
+  max-width: min(520px, calc(100vw - 32px));
+}
+
+.tooltip.tooltip-img-dark .tooltip-inner,
+.tooltip.backed-tooltip .tooltip-inner {
+  max-width: min(520px, calc(100vw - 32px));
+  overflow: hidden;
+}
+
+.tooltip.tooltip-img-dark img,
+.tooltip.backed-tooltip img,
+.tooltip-img img,
+.tooltip-element img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: min(380px, calc(100vh - 180px));
+  height: auto;
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+  border-radius: 6px;
+  object-fit: contain;
 }
 
 .tooltip-img.show {
@@ -10554,19 +10794,21 @@ div#dfscc_tab_translations_ {
 }
 
 .card-body.tooltip-inner {
-  max-width: 600px;
+  max-width: min(520px, calc(100vw - 32px));
   background-color: unset;
   color: rgb(255, 255, 255);
   padding: 20px;
+  overflow: hidden;
 }
 
 .card.tooltip-element {
   border: none;
-  max-width: 430px;
+  max-width: min(430px, calc(100vw - 32px));
+  overflow: hidden;
 }
 
 .card.tooltip-element.has-image {
-  max-width: 600px;
+  max-width: min(520px, calc(100vw - 32px));
 }
 
 .slider-setup-body,
@@ -10591,6 +10833,10 @@ div#dfscc_tab_translations_ {
   width: 100%;
   max-width: 100%;
   min-width: 0;
+  padding-right: 2.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .scc-field-label-with-tooltip {
@@ -10705,6 +10951,51 @@ div#dfscc_tab_translations_ {
 
 .image_container {
   position: relative;
+}
+
+.dd-item-field-container .scc-element-box-content > .row {
+  align-items: flex-start;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.dd-item-field-container .scc-element-box-content > .row > .col-md-2 {
+  flex: 0 0 112px;
+  max-width: 112px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.dd-item-field-container .scc-element-box-content > .row > .col-md-10 {
+  flex: 1 1 0;
+  max-width: calc(100% - 128px);
+  min-width: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.dd-item-field-container .image_container {
+  display: block;
+  width: 100px;
+}
+
+.dd-item-field-container .scc-dropdown-image-remove {
+  right: -8px;
+}
+
+@media (max-width: 575.98px) {
+  .dd-item-field-container .scc-element-box-content > .row {
+    flex-wrap: wrap;
+  }
+
+  .dd-item-field-container .scc-element-box-content > .row > .col-md-2,
+  .dd-item-field-container .scc-element-box-content > .row > .col-md-10 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
 }
 
 .dd-item-field-container:not(:last-child), .scc-item-field-container:not(:last-child) {
@@ -11649,6 +11940,7 @@ svg.scc-tooltip-icon {
   background: var(--scc-input-field-background);
   border: 1px solid var(--scc-input-field-border-color) !important;
   max-width: 25rem;
+  padding-right: 2.5rem;
   transition: all 0.15s;
 }
 .scc-secondary-buttons-select .ts-control:has(input:focus), .scc-enable-tom-select-settings .ts-control:has(input:focus){
@@ -11790,6 +12082,7 @@ svg.scc-tooltip-icon {
   background-position: right 0.75rem center;
   background-size: 11px;
   min-height: 38px !important;
+  padding-right: 2.5rem !important;
 
   color: #727272 !important;
   background-color: var(--scc-input-field-background) !important;
@@ -11798,6 +12091,15 @@ svg.scc-tooltip-icon {
   -moz-appearance: none !important;
   border-radius: 0.25rem !important;
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+}
+.scc-enable-tom-select-settings .ts-control .item,
+.scc-ts-simple-settings .ts-control .item,
+.scc-unit-price-counter-ts .ts-control .item {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .scc-left-pane .ts-wrapper.first-conditional-step.single .ts-control input,
 .scc-left-pane .ts-wrapper.second-conditional-step.single .ts-control input,
@@ -14070,6 +14372,8 @@ select.scc-woo-commerce-product-selector{
   margin-top: 10px;
   font-weight: 700;
   border-radius:10px;
+  display: flex;
+  align-items: center;
 }
 .scc-ai-wizard-option:hover, .scc-ai-wizard-option:focus{
   background: var(--scc-ai-wizard-gradient);

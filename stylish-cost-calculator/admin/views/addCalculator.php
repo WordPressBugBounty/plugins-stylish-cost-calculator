@@ -45,7 +45,7 @@ wp_localize_script( 'scc-backend', 'pageAddCalculator', [ 'nonce' => wp_create_n
 					<button class="scc-new-calculator-action-btn" type="button" data-btn-action="backToHome"><span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['chevron-left'] ); ?></span> Back</button>
 				</div>
 				<div class="head">
-					<div class="text-muted text-uppercase">Option D</div>
+					<div class="text-muted text-uppercase">Option C</div>
 					<strong>Start from scratch</strong>
 				</div>
 				<div class="body">
@@ -83,6 +83,18 @@ include 'partials/template-loader-page.php';
 		display: flex;
 		flex-direction: column;
 		width: 50%;
+	}
+
+	#new-calc-creator-section .action-btn {
+		width: 50%;
+	}
+
+	#new-calc-creator-section .action-btn .scc-btn-primary {
+		align-items: center;
+		display: inline-flex;
+		justify-content: center;
+		text-align: center;
+		width: 100%;
 	}
 
 	.backdropped-swal {
@@ -142,6 +154,10 @@ include 'partials/template-loader-page.php';
 	@media (max-width: 768px) {
 		.action-btn {
 			width: 80%;
+		}
+		#new-calc-creator-section .action-btn,
+		#new-calc-creator-section .action-btn .scc-btn-primary {
+			width: 100%;
 		}
 		label.card {
 			padding: 0.7em 0.5em 1em;

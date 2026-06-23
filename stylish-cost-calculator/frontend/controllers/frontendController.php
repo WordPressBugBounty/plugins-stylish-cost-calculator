@@ -153,18 +153,30 @@ class SccFrontendController {
             $current_key                           = array_keys( $formFieldsArray[ $i ] )[0];
             $formFieldsArray[ $i ][ $current_key ] = scc_parse_quote_form_fields( $current_key, $formFieldsArray[ $i ][ $current_key ] );
         }
-        $form->formFieldsArray  = $formFieldsArray;
-        $paypalConfigArray      = wp_parse_args(
+        $form->formFieldsArray    = $formFieldsArray;
+        $paypal_config_defaults   = [
+            'paypal_email'               => null,
+            'paypal_shopping_cart_name'  => null,
+            'paypal_checked'             => false,
+            'paypalSuccessURL'           => null,
+            'paypalCancelURL'            => null,
+            'objectTaxInclusionInPayPal' => false,
+            'paypal_currency'            => null,
+        ];
+        $paypalConfigArray        = wp_parse_args(
             json_decode( $form->paypalConfigArray, true ),
-            [
-                'paypal_email'               => null,
-                'paypal_shopping_cart_name'  => null,
-                'paypal_checked'             => false,
-                'paypalSuccessURL'           => null,
-                'paypalCancelURL'            => null,
-                'objectTaxInclusionInPayPal' => false,
-            ]
+            $paypal_config_defaults
         );
+
+        if ( $isSCCFreeVersion ) {
+            $form->isStripeEnabled                         = 'false';
+            $form->isWoocommerceCheckoutEnabled            = 'false';
+            $form->preCheckoutQuoteForm                    = 'false';
+            $form->combine_checkout_items                  = 0;
+            $form->combine_checkout_woocommerce_product_id = 0;
+            $paypalConfigArray                             = $paypal_config_defaults;
+        }
+
         $gdpr_acceptance_config = wp_parse_args(
             json_decode( wp_unslash( ! empty( $form->gdprAcceptanceConfigArray ) ? $form->gdprAcceptanceConfigArray : '' ), true ),
             [

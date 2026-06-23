@@ -34,6 +34,8 @@ const sccAiUtils = {
 		'Creating personalized optimization insights...',
 	],
 	loaderMessageInterval: null,
+	aiCreditsModalContinueCallback: null,
+	aiCreditsTooltipsSuppressed: false,
 	/*
 	* AI Wizard Page States
 	* ============================
@@ -692,6 +694,9 @@ const sccAiUtils = {
 				aiMessageText = aiResponseObject.ai_response.error;
 				sccAiUtils.enableInputsAiWizard( $this );
 				aiMessageClasses = 'scc-ai-chat-bubble-text scc-ai-chat-bubble-text-warning';
+				if ( sccAiUtils.isAiCreditErrorMessage( aiMessageText ) ) {
+					sccAiUtils.showAiCreditsExhaustedModal();
+				}
 			} else {
 				if ( optionType === 'suggest-elements' ) {
 					sccAiWizardThread = aiResponseObject.ai_response.thread;
@@ -722,6 +727,9 @@ const sccAiUtils = {
 
 				if ( aiResponseObject.ai_response.current_credits === 0 ) {
 					aiMessageClasses = 'scc-ai-chat-bubble-text scc-ai-chat-bubble-text-warning';
+					if ( sccAiUtils.isAiCreditErrorMessage( aiMessageText ) ) {
+						sccAiUtils.showAiCreditsExhaustedModal();
+					}
 				}
 			}
 		}
@@ -954,24 +962,245 @@ const sccAiUtils = {
 		}
 		document.body.removeChild( tempTextarea );
 	},
+	normalizeAiCredits( credits ) {
+		const creditsText = typeof credits?.credits === 'string' ? credits.credits : '';
+		const creditsParts = creditsText.split( '/' );
+		const remaining = parseInt( creditsParts[ 0 ], 10 );
+		const total = parseInt( creditsParts[ 1 ], 10 );
+
+		return {
+			creditsText,
+			remaining: Number.isFinite( remaining ) ? remaining : null,
+			total: Number.isFinite( total ) ? total : null,
+		};
+	},
+	isAiCreditErrorMessage( message ) {
+		if ( typeof message !== 'string' ) {
+			return false;
+		}
+		const normalizedMessage = message.toLowerCase();
+		return normalizedMessage.includes( 'credit' ) ||
+			normalizedMessage.includes( 'quota' ) ||
+			normalizedMessage.includes( 'not enough' ) ||
+			normalizedMessage.includes( 'exhausted' );
+	},
+	isAiCreditsExhausted( data ) {
+		if ( ! data ) {
+			return false;
+		}
+
+		const normalizedCredits = sccAiUtils.normalizeAiCredits( data );
+		if ( normalizedCredits.remaining === 0 ) {
+			return true;
+		}
+
+		if ( data?.ai_response?.current_credits === 0 ) {
+			return true;
+		}
+
+		return sccAiUtils.isAiCreditErrorMessage( data?.ai_response?.error ) ||
+			sccAiUtils.isAiCreditErrorMessage( data?.ai_response?.ai_message ) ||
+			sccAiUtils.isAiCreditErrorMessage( data?.data?.ai_raw_response ) ||
+			sccAiUtils.isAiCreditErrorMessage( data?.ai_raw_response );
+	},
+	refreshAiCreditCounters( page, root = document ) {
+		return sccAiUtils.checkAiCredits( page ).then( ( credits ) => {
+			const targetRoot = root && root.querySelectorAll ? root : document;
+			targetRoot.querySelectorAll( '.scc-ai-credit-count' ).forEach( ( creditIndicator ) => {
+				sccAiUtils.updateCreditsIndicator( credits, creditIndicator );
+			} );
+			return credits;
+		} );
+	},
+	getAiCreditsTooltipText( creditsText ) {
+		return `${ creditsText } AI credits remaining. AI credits are used when SCC retrieves business details or generates setup recommendations with AI. Free credits are limited; Premium includes more AI credits.`;
+	},
+	applyAiCreditsTooltip( creditIndicator, creditsText ) {
+		const tooltipText = sccAiUtils.getAiCreditsTooltipText( creditsText );
+
+		creditIndicator.setAttribute( 'title', tooltipText );
+		creditIndicator.setAttribute( 'data-bs-toggle', 'tooltip' );
+		creditIndicator.setAttribute( 'data-bs-placement', 'bottom' );
+		creditIndicator.setAttribute( 'data-bs-original-title', tooltipText );
+
+		if ( typeof bootstrap === 'undefined' || ! bootstrap.Tooltip ) {
+			return;
+		}
+
+		const existingTooltip = typeof bootstrap.Tooltip.getInstance === 'function'
+			? bootstrap.Tooltip.getInstance( creditIndicator )
+			: null;
+
+		if ( existingTooltip ) {
+			existingTooltip.dispose();
+		}
+
+		if ( sccAiUtils.aiCreditsTooltipsSuppressed ) {
+			return;
+		}
+
+		new bootstrap.Tooltip( creditIndicator, {
+			delay: { show: 300, hide: 150 },
+			trigger: 'hover focus',
+			placement: 'bottom',
+			title: tooltipText,
+		} );
+	},
+	hideAiCreditsTooltips() {
+		document.querySelectorAll( '.scc-ai-credit-count' ).forEach( ( creditIndicator ) => {
+			const activeTooltipId = creditIndicator.getAttribute( 'aria-describedby' );
+			if ( typeof bootstrap !== 'undefined' && bootstrap.Tooltip && typeof bootstrap.Tooltip.getInstance === 'function' ) {
+				const tooltip = bootstrap.Tooltip.getInstance( creditIndicator );
+				if ( tooltip ) {
+					tooltip.hide();
+					if ( typeof tooltip.disable === 'function' ) {
+						tooltip.disable();
+					}
+					tooltip.dispose();
+				}
+			}
+
+			if ( activeTooltipId ) {
+				document.getElementById( activeTooltipId )?.remove();
+				creditIndicator.removeAttribute( 'aria-describedby' );
+			}
+		} );
+
+		if ( document.activeElement?.classList?.contains( 'scc-ai-credit-count' ) ) {
+			document.activeElement.blur();
+		}
+	},
+	setAiCreditsTooltipsSuppressed( suppressed ) {
+		sccAiUtils.aiCreditsTooltipsSuppressed = suppressed;
+
+		if ( suppressed ) {
+			sccAiUtils.hideAiCreditsTooltips();
+			return;
+		}
+
+		document.querySelectorAll( '.scc-ai-credit-count' ).forEach( ( creditIndicator ) => {
+			const creditsText = creditIndicator.querySelector( '.scc-ai-credit-count-total' )?.textContent;
+			if ( creditsText ) {
+				sccAiUtils.applyAiCreditsTooltip( creditIndicator, creditsText );
+			}
+		} );
+	},
+	showAiSetupNotice( message, title = 'AI Setup' ) {
+		if ( typeof Swal !== 'undefined' ) {
+			Swal.fire( {
+				title,
+				text: message,
+				icon: 'warning',
+				confirmButtonText: 'OK',
+				background: 'white',
+			} );
+			return;
+		}
+
+		console.warn( message );
+	},
+	continueSetupWizardWithoutAi( focusDescriptionField = true ) {
+		const descriptionWrapper = document.getElementById( 'businessDescriptionWrapper' );
+		const descriptionTextarea = document.getElementById( 'scc-ai-assisted-setup-wiz-business-description' );
+		const loader = descriptionWrapper?.querySelector( '.scc-ai-assisted-setup-wiz-business-description-loader' );
+
+		if ( descriptionWrapper ) {
+			descriptionWrapper.classList.remove( 'd-none' );
+		}
+
+		if ( loader ) {
+			loader.classList.add( 'scc-hidden' );
+		}
+
+		const editTab = document.getElementById( 'edit-tab' );
+		if ( editTab && typeof bootstrap !== 'undefined' && bootstrap.Tab ) {
+			bootstrap.Tab.getOrCreateInstance( editTab ).show();
+		}
+
+		if ( typeof sccAiAssistedSetupWizUpdateProgress === 'function' ) {
+			sccAiAssistedSetupWizUpdateProgress();
+		}
+
+		if ( focusDescriptionField && descriptionTextarea ) {
+			descriptionTextarea.scrollIntoView( { behavior: 'smooth', block: 'center' } );
+			descriptionTextarea.focus();
+		}
+	},
+	showAiCreditsExhaustedModal( options = {} ) {
+		sccAiUtils.setAiCreditsTooltipsSuppressed( true );
+		sccAiUtils.continueSetupWizardWithoutAi( false );
+
+		const modalNode = document.getElementById( 'scc-ai-credits-exhausted-modal' );
+			const fallbackMessage = 'You have used all available AI credits for this site. Upgrade to Premium to unlock more AI credits, or continue without AI.';
+
+			if ( ! modalNode || typeof bootstrap === 'undefined' || ! bootstrap.Modal ) {
+				sccAiUtils.setAiCreditsTooltipsSuppressed( false );
+				sccAiUtils.showAiSetupNotice( fallbackMessage, 'AI credits exhausted' );
+				return;
+			}
+
+		sccAiUtils.aiCreditsModalContinueCallback = typeof options.onContinue === 'function'
+			? options.onContinue
+			: () => sccAiUtils.continueSetupWizardWithoutAi();
+
+		const continueButton = modalNode.querySelector( '[data-scc-ai-credits-continue]' );
+		if ( continueButton && ! continueButton.hasClickListener ) {
+			continueButton.addEventListener( 'click', () => {
+				if ( typeof sccAiUtils.aiCreditsModalContinueCallback === 'function' ) {
+					sccAiUtils.aiCreditsModalContinueCallback();
+				}
+			} );
+			continueButton.hasClickListener = true;
+		}
+
+		if ( ! modalNode.hasAiCreditsTooltipRestoreListener ) {
+			modalNode.addEventListener( 'hidden.bs.modal', () => {
+				sccAiUtils.setAiCreditsTooltipsSuppressed( false );
+			} );
+			modalNode.hasAiCreditsTooltipRestoreListener = true;
+		}
+
+		bootstrap.Modal.getOrCreateInstance( modalNode ).show();
+	},
 	updateCreditsIndicator( credits, creditIndicator ) {
 		const creditLoader = creditIndicator?.parentNode?.querySelector( '.scc-ai-credit-loader' );
 		if ( creditLoader ) {
 			creditLoader.classList.add( 'scc-hidden' );
 		}
 
-		creditIndicator.classList.remove( 'scc-hidden' );
-		creditIndicator.querySelector( '.scc-ai-credit-count-total' ).textContent = credits.credits;
-		const creditsParts = credits?.credits?.split( '/' );
-		const numerator = creditsParts ? parseInt( creditsParts[ 0 ] ) : 0;
-		const denominator = creditsParts ? parseInt( creditsParts[ 1 ] ) : 0;
+		if ( ! creditIndicator ) {
+			return;
+		}
 
-		if ( numerator / denominator <= 0.50 ) {
-			creditIndicator.querySelector( '.scc-ai-credit-count-circle-indicator' ).classList.add( 'scc-ai-count-orange' );
+		const normalizedCredits = sccAiUtils.normalizeAiCredits( credits );
+		if ( ! normalizedCredits.creditsText ) {
+			return;
 		}
-		if ( numerator / denominator <= 0 ) {
-			creditIndicator.querySelector( '.scc-ai-credit-count-circle-indicator' ).classList.add( 'scc-ai-count-red' );
+
+		const countTotal = creditIndicator.querySelector( '.scc-ai-credit-count-total' );
+		const statusIndicator = creditIndicator.querySelector( '.scc-ai-credit-count-circle-indicator' );
+		if ( ! countTotal || ! statusIndicator ) {
+			return;
 		}
+
+		creditIndicator.classList.remove( 'scc-hidden' );
+		countTotal.textContent = normalizedCredits.creditsText;
+		creditIndicator.setAttribute( 'aria-label', `${ normalizedCredits.creditsText } AI credits remaining` );
+		sccAiUtils.applyAiCreditsTooltip( creditIndicator, normalizedCredits.creditsText );
+
+		statusIndicator.classList.remove( 'scc-ai-count-green', 'scc-ai-count-orange', 'scc-ai-count-red' );
+
+		if ( normalizedCredits.remaining === 0 ) {
+			statusIndicator.classList.add( 'scc-ai-count-red' );
+			return;
+		}
+
+		if ( normalizedCredits.remaining !== null && normalizedCredits.total > 0 && normalizedCredits.remaining / normalizedCredits.total <= 0.50 ) {
+			statusIndicator.classList.add( 'scc-ai-count-orange' );
+			return;
+		}
+
+		statusIndicator.classList.add( 'scc-ai-count-green' );
 	},
 	getCalcId: () => {
 		const urlParams = new URLSearchParams( window.location.search );
@@ -1162,10 +1391,7 @@ const sccAiUtils = {
 		if ( panel.classList.contains( 'scc-hidden' ) ) {
 			panel.closest( '.scc-ai-wizard-panel-container' ).classList.add( 'scc-ai-wizard-overlap' );
 			sccAiUtils.closeSupportChat();
-			sccAiUtils.checkAiCredits( 'edit-calculator-page' ).then( ( credits ) => {
-				const creditIndicator = panel?.querySelector( '.scc-ai-credit-count' );
-				sccAiUtils.updateCreditsIndicator( credits, creditIndicator );
-			} ).catch( ( error ) => {
+			sccAiUtils.refreshAiCreditCounters( 'edit-calculator-page', panel ).catch( ( error ) => {
 				console.error( error );
 			} );
 		} else {

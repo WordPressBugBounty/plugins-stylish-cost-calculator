@@ -39,6 +39,7 @@ class SetupWizard {
         // require ai wizard model
         require_once SCC_DIR . '/admin/models/ai-wizard-model.php';
         $scc_ai_wizard_model = new \SCCAiWizardModel();
+        $upgrade_url         = 'https://stylishcostcalculator.com/pricing-plans/?utm_source=scc-free-plugin&utm_medium=ai-setup-modal&utm_campaign=ai-credits-exhausted';
 
         // return multiline html string
         ob_start();
@@ -54,6 +55,24 @@ class SetupWizard {
         <div class="modal fade quiz-modal" id="quizModal5" aria-hidden="true" aria-labelledby="quizModalLabel5" tabindex="-1">
         </div>
         <div class="modal fade quiz-modal" id="quizResult" aria-hidden="true" aria-labelledby="quizModalResult" tabindex="-1">
+        </div>
+        <div class="modal fade scc-ai-credits-modal" id="scc-ai-credits-exhausted-modal" aria-hidden="true" aria-labelledby="scc-ai-credits-exhausted-modal-title" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <button type="button" class="btn-close scc-ai-credits-modal__close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="scc-ai-credits-modal__body">
+                        <div class="scc-ai-credits-modal__icon">
+                            <i class="material-icons">auto_fix_high</i>
+                        </div>
+                        <h2 id="scc-ai-credits-exhausted-modal-title">AI credits exhausted</h2>
+                        <p>You have used all available AI credits for this site. Upgrade to Premium to unlock more AI credits, or continue without AI by entering the business details manually.</p>
+                        <div class="scc-ai-credits-modal__actions">
+                            <a class="btn scc-ai-wizard-option scc-ai-credits-modal__upgrade" href="<?php echo esc_url( $upgrade_url ); ?>" target="_blank" rel="noopener noreferrer"><span class="scc-ai-credits-modal__button-text">Upgrade to Premium</span></a>
+                            <button type="button" class="btn scc-ai-credits-modal__continue" data-scc-ai-credits-continue data-bs-dismiss="modal"><span class="scc-ai-credits-modal__button-text">Continue without AI</span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 		<?php
         return ob_get_clean();
@@ -84,6 +103,13 @@ class SetupWizard {
 				<# } #>
 				<h1 class="{{ data.currentStep === 'Result' ? 'mt-5 mb-4' : ''  }}">{{{data.title}}}</h1>
 				<p class="text-muted <# if ( data.currentStep == 'Result' ) { #> scc-text-black <# } #> scc-result-section-padding">{{{data.subtitle}}}</p>
+				<# if (data.currentStep !== 'Result') { #>
+					<div class="scc-ai-setup-credit-badge scc-ai-credit-count scc-hidden" tabindex="0" aria-live="polite" data-scc-ai-credit-tooltip="true">
+						<span class="material-icons-outlined scc-ai-setup-credit-help" aria-hidden="true">help_outline</span>
+						<span class="scc-ai-credit-count-circle-indicator scc-ai-count-green"></span>
+						<span class="scc-ai-credit-count-total"></span>
+					</div>
+				<# } #>
 			</div>
 			<div class="modal-body pt-0">
 				<# if (data.modalLead && data.modalLead.length) { #>
@@ -323,6 +349,41 @@ class SetupWizard {
                 font-size: 16px;
             }
 
+            .modal-head {
+                position: relative;
+            }
+
+            .scc-ai-setup-credit-badge.scc-ai-credit-count {
+                position: absolute;
+                top: 14px;
+                right: 14px;
+                width: fit-content;
+                margin: 0;
+                padding: 6px 10px;
+                gap: 5px;
+                background: var(--scc-wizard-quiz-card-color);
+                border: 1px solid rgba(109, 53, 242, 0.18);
+                color: #1f2937;
+                box-shadow: 0 1px 4px rgba(49, 74, 243, 0.08);
+                cursor: help;
+            }
+
+            .scc-ai-setup-credit-badge .scc-ai-setup-credit-help {
+                font-size: 18px;
+                line-height: 1;
+            }
+
+            .scc-ai-setup-credit-badge .scc-ai-credit-count-circle-indicator {
+                margin-right: 0;
+            }
+
+            @media (max-width: 575px) {
+                .scc-ai-setup-credit-badge.scc-ai-credit-count {
+                    position: static;
+                    margin: 0 auto 1rem;
+                }
+            }
+
             #wq_optin_for_comm {
                 margin: 0.25em 0 0 0.5em;
             }
@@ -397,6 +458,116 @@ class SetupWizard {
 
             .modal.fade .modal-dialog {
                 max-width: 780px !important;
+            }
+
+            #scc-ai-credits-exhausted-modal.modal.fade .modal-dialog {
+                max-width: 460px !important;
+            }
+
+            .scc-ai-credits-modal .modal-content {
+                border: 0;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 18px 45px rgba(21, 33, 108, 0.18);
+            }
+
+            .scc-ai-credits-modal__close {
+                position: absolute;
+                top: 14px;
+                right: 14px;
+                z-index: 2;
+            }
+
+            .scc-ai-credits-modal__body {
+                padding: 34px 30px 28px;
+                text-align: center;
+                background: #fff;
+            }
+
+            .scc-ai-credits-modal__icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 56px;
+                height: 56px;
+                margin-bottom: 16px;
+                border-radius: 50%;
+                color: #fff;
+                background: var(--scc-ai-wizard-gradient);
+            }
+
+            .scc-ai-credits-modal__icon .material-icons {
+                font-size: 28px;
+            }
+
+            .scc-ai-credits-modal h2 {
+                margin: 0 0 10px;
+                color: #111827;
+                font-size: 24px;
+                font-weight: 700;
+            }
+
+            .scc-ai-credits-modal p {
+                margin: 0;
+                color: #4b5563;
+                font-size: 15px;
+                line-height: 1.5;
+            }
+
+            .scc-ai-credits-modal__actions {
+                display: flex;
+                gap: 10px;
+                margin-top: 24px;
+            }
+
+            .scc-ai-credits-modal__upgrade,
+            .scc-ai-credits-modal__continue {
+                flex: 1;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                min-height: 44px;
+                margin-top: 0;
+                padding: 10px 16px !important;
+                border-radius: 10px;
+                font-weight: 700;
+                line-height: 1.2;
+                text-decoration: none;
+                white-space: normal;
+            }
+
+            .scc-ai-credits-modal__button-text {
+                display: block;
+                line-height: 1.2;
+            }
+
+            .scc-ai-credits-modal__continue {
+                border: 1px solid var(--scc-input-field-border-color);
+                background: #fff;
+                color: var(--scc-color-primary-dark);
+            }
+
+            .scc-ai-credits-modal__continue:hover,
+            .scc-ai-credits-modal__continue:focus {
+                background: var(--scc-wizard-quiz-card-color);
+                color: var(--scc-color-primary-dark);
+            }
+
+            @media (max-width: 575px) {
+                .scc-ai-credits-modal__actions {
+                    flex-direction: column;
+                }
+            }
+
+            #scc-retrieve-business-details-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                text-align: center;
+                line-height: 1.25;
+                white-space: normal;
             }
 
             .modal.fade .modal-title {

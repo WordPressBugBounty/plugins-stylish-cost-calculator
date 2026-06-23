@@ -84,22 +84,32 @@ if ( $calculatorCount > 2 ) {
 
     return;
 }
+$paypal_config_defaults = [
+    'paypal_email'               => null,
+    'paypal_shopping_cart_name'  => null,
+    'paypal_checked'             => false,
+    'paypalSuccessURL'           => null,
+    'paypalCancelURL'            => null,
+    'objectTaxInclusionInPayPal' => false,
+    'paypal_currency'            => null,
+];
 $paypalConfigArray       = wp_parse_args(
     json_decode( $form->paypalConfigArray, true ),
-    [
-        'paypal_email'               => null,
-        'paypal_shopping_cart_name'  => null,
-        'paypal_checked'             => null,
-        'paypal_checked'             => false,
-        'paypalSuccessURL'           => null,
-        'paypalCancelURL'            => null,
-        'objectTaxInclusionInPayPal' => false,
-    ]
+    $paypal_config_defaults
 );
 $stripeConfig            = [
     'pubKey'  => '',
     'enabled' => false,
 ];
+
+if ( $isSCCFreeVersion ) {
+    $form->isStripeEnabled                         = 'false';
+    $form->isWoocommerceCheckoutEnabled            = 'false';
+    $form->preCheckoutQuoteForm                    = 'false';
+    $form->combine_checkout_items                  = 0;
+    $form->combine_checkout_woocommerce_product_id = 0;
+    $paypalConfigArray                             = $paypal_config_defaults;
+}
 $webhookConfigArray      = $isSCCFreeVersion ? [] : json_decode( $form->webhookSettings, true );
 //handles error if webhook is not correct
 if ( ! is_array( $webhookConfigArray ) ) {
@@ -292,7 +302,6 @@ $sccConfig                                                            = [
 $calc_wrapper_max_width = isset( $form->wrapper_max_width ) ? $form->wrapper_max_width . 'px' : '800px';
 $wrapper_styles         = defined( 'DOING_AJAX' ) ? '' : "style=\"max-width:$calc_wrapper_max_width\"";
 $scc_format_date              = $sccConfig['pdf']['dateFormat'] ?? 'yyyy-mm-dd';
-$show_stripe_premium_teaser   = $isSCCFreeVersion && current_user_can( 'manage_options' );
 ?>
 <script id="scc-config-<?php echo intval( $form->id ); ?>" type="text/json">
 	<?php echo json_encode( $sccConfig ); ?>
@@ -1554,13 +1563,7 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 				</span>
 			</div>
 		<?php } ?>
-		<?php if ( $show_stripe_premium_teaser ) { ?>
-			<div class="scc-usr-act-btns-container no-ajaxy" style="padding:0px;">
-				<span class="scc-stripe-premium-teaser" title="<?php echo esc_attr__( 'Stripe checkout is available in Stylish Cost Calculator Premium.', 'scc' ); ?>" aria-label="<?php echo esc_attr__( 'Stripe checkout is available in Stylish Cost Calculator Premium.', 'scc' ); ?>">
-					<div class="scc-usr-act-btns btnStripe scc-premium-preview-button" style="background-image:url(<?php echo esc_url( SCC_ASSETS_URL . '/images/stripe.png' ); ?>)"></div>
-				</span>
-			</div>
-		<?php } elseif ( ! $isSCCFreeVersion && $stripeConfig['enabled'] == 'true' ) { ?>
+		<?php if ( ! $isSCCFreeVersion && $stripeConfig['enabled'] == 'true' ) { ?>
 			<div class="scc-usr-act-btns-container no-ajaxy" style="padding:0px;">
 				<span onclick="javascript:preCheckout(<?php echo intval( $form->id ); ?>, () => sccProcessCheckout(<?php echo intval( $form->id ); ?>));" style="color: white;">
 					<div class="scc-usr-act-btns btnStripe" style="background-image:url(<?php echo esc_url( SCC_ASSETS_URL . '/images/stripe.png' ); ?>)"></div>
@@ -2018,15 +2021,6 @@ margin:0px;padding:0px;margin-top:0px;line-height:20px;vertical-align:middle;">
 		.btPayPalButtonCustom:hover,
 		.btnStripe:hover {
 			box-shadow: <?php echo ( $form->turnoffborder != 'true' ) ? '2px 2px 3px 1px ' . esc_attr( $colorObject ) : ''; ?>;
-		}
-		.scc-stripe-premium-teaser {
-			display: inline-block;
-			cursor: not-allowed;
-		}
-		.scc-premium-preview-button {
-			opacity: 0.55;
-			filter: grayscale(0.25);
-			pointer-events: none;
 		}
 		/* paypal and stripe button  ends */
 		/* bootstrap inherit font-weight */

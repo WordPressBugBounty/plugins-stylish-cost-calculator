@@ -468,6 +468,12 @@ function triggerCheckboxChange( checkboxElement ) {
 	checkboxElement.dispatchEvent( event );
 }
 
+function getSetupWizardAiCreditsPage() {
+	return ( typeof pageAddCalculator !== 'undefined' && pageAddCalculator.nonce )
+		? 'add-calculator-page'
+		: 'edit-calculator-page';
+}
+
 const initiateIndustryChoices = () => {
 	const industryChoicesNode = document.querySelector( '#industryTypeWrapper input' );
 	if ( ! industryChoicesNode?.tomselect ) {
@@ -552,6 +558,11 @@ function showModal( modalElementSelector, modalContentData, isFirstModal = false
 	} );
 	choicesWrapper.append( choicesContent );
 	modalNode.append( modalContent );
+	if ( typeof sccAiUtils !== 'undefined' && typeof sccAiUtils.refreshAiCreditCounters === 'function' ) {
+		sccAiUtils.refreshAiCreditCounters( getSetupWizardAiCreditsPage(), modalNode[ 0 ] ).catch( ( error ) => {
+			console.error( error );
+		} );
+	}
 
 	if ( currentStep === 1 ) {
 		// Pre-fill Website URL
@@ -946,23 +957,7 @@ function startSetupWizard() {
 		wrapper.classList.add( 'scc-p-relative' );
 	}
 
-	sccAiUtils.checkAiCredits( 'add-calculator-page' ).then( ( credits ) => {
-		
-		// Parse credits string to check current credits
-		if (credits && credits.credits) {
-			const creditsString = credits.credits; // e.g., "15/25" or "0/25"
-			const currentCredits = parseInt(creditsString.split('/')[0]); // Get the first number
-			
-			if (currentCredits === 0) {
-				// Action to perform when credits are zero
-				console.warn('No AI credits remaining');
-				// Don't disable the button - let user click it to see the error message
-				// Alert will be shown in sccRetrieveBusinessDetails function when user clicks the button
-			} else {
-				console.log(`AI credits available: ${currentCredits}`);
-			}
-		}
-	} ).catch( ( error ) => {
+	sccAiUtils.refreshAiCreditCounters( getSetupWizardAiCreditsPage() ).catch( ( error ) => {
 		console.error( error );
 	} );
 	sccAiAssistedSetupWizUpdateProgress();
@@ -1034,7 +1029,7 @@ function sccRegenerateDescriptionFromUrl() {
 	const regenerateBtn = document.getElementById('scc-regenerate-description-btn');
 
 	if (!websiteUrl || !businessName) {
-		alert('Please enter both business name and website URL first');
+		sccAiUtils.showAiSetupNotice( 'Please enter both business name and website URL first.' );
 		return;
 	}
 
@@ -1055,14 +1050,18 @@ function sccRegenerateDescriptionFromUrl() {
 				quizAnswersStore.step1['business-description'] = response.description;
 				sccAiAssistedSetupWizUpdateProgress();
 			} else {
-				alert('Failed to generate description. Please try again.');
+				sccAiUtils.showAiSetupNotice( 'Failed to generate description. Please try again.' );
 			}
 		})
 		.catch(error => {
 			console.error('Error generating description:', error);
 			// Show the specific error message from the API response
 			const errorMessage = error.message || 'An error occurred. Please try again.';
-			alert(errorMessage);
+			if ( sccAiUtils.isAiCreditErrorMessage( errorMessage ) ) {
+				sccAiUtils.showAiCreditsExhaustedModal();
+			} else {
+				sccAiUtils.showAiSetupNotice( errorMessage );
+			}
 		})
 		.finally(() => {
 			// Re-enable the button and hide loader
@@ -1081,7 +1080,7 @@ function sccRetrieveBusinessDetails() {
 	const loader = descriptionWrapper.querySelector('.scc-ai-assisted-setup-wiz-business-description-loader'); // Get loader inside description wrapper
 
 	if (!websiteUrl || !businessName) {
-		alert('Please enter both business name and website URL first');
+		sccAiUtils.showAiSetupNotice( 'Please enter both business name and website URL first.' );
 		return;
 	}
 
@@ -1104,7 +1103,7 @@ function sccRetrieveBusinessDetails() {
 			
 			// Check if description exists before processing
 			if (!description) {
-				alert('Failed to retrieve business details. Please try again.');
+				sccAiUtils.showAiSetupNotice( 'Failed to retrieve business details. Please try again.' );
 				descriptionWrapper.classList.add('d-none'); // Hide wrapper if failed
 				return;
 			}
@@ -1132,18 +1131,16 @@ function sccRetrieveBusinessDetails() {
 			console.error('Error retrieving business details:', error);
 			// Check if the error is related to credits
 			const errorMessage = error.message || '';
-			const isCreditError = errorMessage.toLowerCase().includes('credit') || 
-								  errorMessage.toLowerCase().includes('quota') || 
-								  errorMessage.toLowerCase().includes('not enough');
+			const isCreditError = sccAiUtils.isAiCreditErrorMessage( errorMessage );
 			
 			// Show personalized message for credit errors, otherwise show the API error message
 			if (isCreditError) {
-				alert('You have no AI credits remaining. Purchase the premium version to earn credits and continue using AI features.');
+				sccAiUtils.showAiCreditsExhaustedModal();
 			} else {
 				const displayMessage = errorMessage || 'An error occurred. Please try again.';
-				alert(displayMessage);
+				sccAiUtils.showAiSetupNotice( displayMessage );
+				descriptionWrapper.classList.add('d-none'); // Hide wrapper if failed
 			}
-			descriptionWrapper.classList.add('d-none'); // Hide wrapper if failed
 		})
 		.finally(() => {
 			// Re-enable the button and hide loader

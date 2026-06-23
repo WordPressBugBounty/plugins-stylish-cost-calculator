@@ -1,3 +1,24 @@
+## 8.4.3 - 2026-06-23
+
+**Backend Changes:**
+- Improved: Security improvements.
+
+## 8.4.1 - 2026-06-23
+
+**Frontend Changes:**
+- Fixed: Payment checkout buttons and settings are no longer shown on free-version calculator forms when those checkout options are unavailable.
+
+**Dashboard Changes:**
+- Added: The AI setup wizard now shows remaining AI credits and provides a clear upgrade or manual-entry path when credits run out.
+- Improved: New calculator setup option labels and action button alignment are clearer and more consistent.
+
+**Editing Page Changes:**
+- Improved: Payment and email quote settings modals now have cleaner premium styling, clearer locked controls, and better mobile layout behavior.
+- Fixed: Admin item layout controls now keep image and field rows aligned more reliably.
+
+**Backend Changes:**
+- Fixed: Free-version calculator saves and imports now clear unavailable checkout settings so premium payment options cannot remain enabled unexpectedly.
+
 ## 8.3.10 - 2026-06-11
 
 **Frontend Changes:**
