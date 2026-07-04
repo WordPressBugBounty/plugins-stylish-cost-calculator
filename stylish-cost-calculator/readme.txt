@@ -1,12 +1,12 @@
 === Stylish Cost Calculator - Quote Generator, Lead Gen & Price Estimator ===
 Contributors: Designful
-Plugin URL: https://www.stylishcostcalculator.com?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=plugin-url
-Version: 8.4.3
+Plugin URL: https://www.stylishcostcalculator.com?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=plugin-url
+Version: 8.4.5
 Contributors: Designful
 Tags: sales funnel builder, lead generation, cost calculator, price calculator, quote calculator
 Requires at least: 4.0
 Tested up to: 7.0
-Stable tag: 8.4.3
+Stable tag: 8.4.5
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -154,24 +154,24 @@ Easily add tax or VAT calculations for your services/products. Customizable acco
 - **One-Click Templates** - Start fast with our pre-made templates.
 - **Customizable User Interface** - Styles, animations, drag-and-drop sorting and more!
 
-For an in-depth feature comparison between free and premium versions, [click here](https://stylishcostcalculator.com/pricing-plans/#compare-free-pro-1?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=compare-features).
+For an in-depth feature comparison between free and premium versions, [click here](https://stylishcostcalculator.com/pricing-plans/?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=compare-features#compare-free-pro-1).
 
 ### Designed For
 
 Explore our range of one-click templates. Each template comes with a live demo for your convenience:
 
-- [Web Developer](https://stylishcostcalculator.com/templates/web-developer-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=check-templates) (live demo)
-- [Cleaning Company](https://stylishcostcalculator.com/templates/cleaning-company-template/?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=check-templates) (live demo)
-- [Wedding Photographer](https://stylishcostcalculator.com/templates/wedding-photographer-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=check-templates) (live demo)
-- [T-Shirt Printing](https://stylishcostcalculator.com/templates/t-shirt-printing-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=check-templates) (live demo)
-- [Car Rental](https://stylishcostcalculator.com/templates/car-rental-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=check-templates) (live demo)
-- [Content Writing](https://stylishcostcalculator.com/templates/content-writing-template/?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=check-templates) (live demo)
-- [Venue Rental](https://stylishcostcalculator.com/templates/venue-rentals-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=check-templates) (live demo)
-- [Funeral Home](https://stylishcostcalculator.com/templates/funeral-home-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=check-templates) (live demo)
-- [Student Fees](https://stylishcostcalculator.com/templates/student-fees-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=check-templates) (live demo)
-- [Social Media Manager](https://stylishcostcalculator.com/templates/social-media-manager-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=check-templates) (live demo)
-- [Product/Service Quiz](https://stylishcostcalculator.com/templates/product-service-quiz-template/?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=check-templates) (live demo)
-- [Pricing Table](https://stylishcostcalculator.com/templates/pricing-table-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=check-templates) (live demo)
+- [Web Developer](https://stylishcostcalculator.com/templates/web-developer-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=templates) (live demo)
+- [Cleaning Company](https://stylishcostcalculator.com/templates/cleaning-company-template/?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=templates) (live demo)
+- [Wedding Photographer](https://stylishcostcalculator.com/templates/wedding-photographer-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=templates) (live demo)
+- [T-Shirt Printing](https://stylishcostcalculator.com/templates/t-shirt-printing-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=templates) (live demo)
+- [Car Rental](https://stylishcostcalculator.com/templates/car-rental-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=templates) (live demo)
+- [Content Writing](https://stylishcostcalculator.com/templates/content-writing-template/?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=templates) (live demo)
+- [Venue Rental](https://stylishcostcalculator.com/templates/venue-rentals-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=templates) (live demo)
+- [Funeral Home](https://stylishcostcalculator.com/templates/funeral-home-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=templates) (live demo)
+- [Student Fees](https://stylishcostcalculator.com/templates/student-fees-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=templates) (live demo)
+- [Social Media Manager](https://stylishcostcalculator.com/templates/social-media-manager-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=templates) (live demo)
+- [Product/Service Quiz](https://stylishcostcalculator.com/templates/product-service-quiz-template/?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=templates) (live demo)
+- [Pricing Table](https://stylishcostcalculator.com/templates/pricing-table-calculator/?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=templates) (live demo)
 
 Our plugin is also ideal for:
 - Printing Shops
@@ -180,7 +180,7 @@ Our plugin is also ideal for:
 - Spas, Salons, and Massage Studios
 - Retail & Small Businesses
 
-**Note:** This plugin is not designed for mortgage calculators. For specialized real estate calculators, please visit [Stylish Real Estate Leads](https://stylishcostcalculator.com/srel/?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=check-templates).
+**Note:** This plugin is not designed for mortgage calculators. For specialized real estate calculators, please visit [Stylish Real Estate Leads](https://stylishcostcalculator.com/srel/?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=templates).
 
 
 ### Videos
@@ -222,7 +222,7 @@ Yes, add Tax or VAT from the Calculator settings. Rename "tax" to "VAT" if neede
 Absolutely, use the Advanced Pricing Formula element for this. [Read Article](https://help.stylishcostcalculator.com/en/article/element-variable-math-1sydr0m/) or [Watch Video](https://www.youtube.com/watch?v=L5Gkb5PliCk)
 
 = What's Included in the Premium Version? =
-The premium version offers PDF generation, PayPal, and WooCommerce integration, among other features. [View Comparison](https://stylishcostcalculator.com/pricing-plans/#compare-free-pro-1?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=premium-comparison)
+The premium version offers PDF generation, PayPal, and WooCommerce integration, among other features. [View Comparison](https://stylishcostcalculator.com/pricing-plans/?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=premium-comparison#compare-free-pro-1)
 
 = Can I Use Negative Numbers? =
 Yes, negative numbers like -$3 are supported.
@@ -254,7 +254,7 @@ We've optimized for speed; it should add only around 0.6-1 seconds of load time 
 
 == Changelog ==
 
-Please read the changelogs in the changelogs.txt file.
+Please read the changelogs in the changelog.txt file.
 
 == Screenshots ==
 
@@ -278,16 +278,16 @@ Website quote generator, website quote calculator, website pricing calculator, w
 
 == Visit Our Site ==
 
-Click here to view our site dedicated to this <a href="https://www.stylishcostcalculator.com?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=site-link">WordPress Cost Generator plugin </a> <br>
+Click here to view our site dedicated to this <a href="https://www.stylishcostcalculator.com?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=site-link">WordPress Cost Generator plugin </a> <br>
 
 == Docs & Support ==
-Please do not use WordPress.org for support. Visit this page https://stylishcostcalculator.com/support/?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=support.
+Please do not use WordPress.org for support. Visit this page https://stylishcostcalculator.com/support/?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=support.
 
 == Recommended Plugins ==
 No plugins are necessary for this plugin to work.
 
 == Purchase A Premium License ==
-👉 <a href="https://stylishcostcalculator.com?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=readme">https://stylishcostcalculator.com</a>
+👉 <a href="https://stylishcostcalculator.com?utm_source=scc-free-readme&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=readme">https://stylishcostcalculator.com</a>
 
 == Other Plugins ==
 👉 <a href="https://stylishpricelist.com?utm_source=scc-free-readme&utm_medium=wordpress&utm_content=readme">https://stylishpricelist.com</a>

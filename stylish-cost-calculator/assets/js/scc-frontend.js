@@ -371,7 +371,7 @@ PrintDoc = function (enable, calcId) {
 	if (enable === 0) {
 		jQuery('.scc-alert').remove();
 		jQuery('body').find('.scc-detailed-list-head').each(function (index, ob) {
-			jQuery(ob).html(`<div class='alert alert-info scc-alert' role='alert'><button class='close' type='button' data-dismiss='alert'>×</button><p>This feature is only for Premium users. You can purchase the premium version at <a href='https://stylishcostcalculator.com/' class='alert-link'><strong>https://stylishcostcalculator.com</strong></a></p></div>`);
+			jQuery(ob).html(`<div class='alert alert-info scc-alert' role='alert'><button class='close' type='button' data-dismiss='alert'>×</button><p>This feature is only for Premium users. You can purchase the premium version at <a href='https://stylishcostcalculator.com/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=premium-feature-lock' class='alert-link'><strong>https://stylishcostcalculator.com</strong></a></p></div>`);
 		})
 		return;
 	}

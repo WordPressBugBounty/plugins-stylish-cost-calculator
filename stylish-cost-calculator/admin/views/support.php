@@ -194,7 +194,7 @@ class SCCSupportPage {
                         <div class="row m-0 mt-3">
                             <div style="">
                                 <div class="col-md-12 col-xs-12 custom-btn-scc-top" style="min-height:500px;">
-                                    <a class="scc-help-link-button" href="https://stylishcostcalculator.com/templates/" target="_blank">
+                                    <a class="scc-help-link-button" href="https://stylishcostcalculator.com/templates/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=live-demos" target="_blank">
                                         <span class="scc-icn-wrapper"><?php echo scc_get_kses_extended_ruleset( $this->scc_icons['monitor'] ); ?></span>
                                         Live Demos
                                     </a>

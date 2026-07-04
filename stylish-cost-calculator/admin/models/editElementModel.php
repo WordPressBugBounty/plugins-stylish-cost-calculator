@@ -326,7 +326,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 						<label for="<?php echo esc_attr( 'slider-starting-value-' . $el->id ); ?>" class="active form-label fw-bold">Starting value</label>
 					</div>
 					<div class="col-6 col-md-6 input-field">
-						<input id="<?php echo esc_attr( 'slider-steps-value-' . $el->id ); ?>" type="number" onchange="changeValue2(this)" onkeyup="changeValue2(this)" value="<?php echo esc_attr( $el->value2 ); ?>" style="margin-bottom: 0px;">
+						<input id="<?php echo esc_attr( 'slider-steps-value-' . $el->id ); ?>" data-slider-step-input type="number" min="1" onchange="changeValue2(this)" onkeyup="changeValue2(this)" value="<?php echo esc_attr( $el->value2 ); ?>" style="margin-bottom: 0px;">
 						<label for="<?php echo esc_attr( 'slider-steps-value-' . $el->id ); ?>" class="active form-label fw-bold">Slider steps</label>
 					</div>
 				</div>
@@ -492,7 +492,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 
                 if ( $el->type != 'checkbox'  ) {
                     ?>
-						<div class="text-scc-col d-flex scc-tooltip-option-field" style="font-size:13px;">
+						<div class="text-scc-col d-flex scc-tooltip-option-field" style="font-size:13px; margin-top:30px;">
 							<div class="col-md-12 input-field use-premium-tooltip">
 								<input onchange="changeTooltipText(this)" onkeyup="changeTooltipText(this)" id="<?php echo esc_attr( 'scc_tooltip_input-' . $el->id ); ?>" class="scc_title_column_mobl scc-tooltip-input" name="scc_title_column_mobl" type="text" value="<?php echo ( isset( $el->tooltiptext ) ) ? esc_attr( $el->tooltiptext ) : ''; ?>" disabled>
 								<label class="active form-label fw-bold use-tooltip" for="<?php echo esc_attr( 'scc_tooltip_input-' . $el->id ); ?>" title="On the frontend, display a tooltip icon and information next to element titles. Explain what this item is about while keeping the calculator form organized.">Tooltip</label>
@@ -2654,7 +2654,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 																">
 																<input data-range-id="<?php echo intval( $item->id ); ?>" type="text" class="id_element_slider_item" value="<?php echo intval( $item->id ); ?>" hidden>
 																<div class="col">
-																	<input class="form-control scc-input" 
+																		<input class="form-control scc-input" data-slider-range-field="from"
 																	<?php
                                                                     if ( $key > 0 ) {
                                                                         echo 'disabled';
@@ -2663,7 +2663,7 @@ class Stylish_Cost_Calculator_Edit_Page {
 																	type="number" min="0" value="<?php echo esc_attr( $item->value1 ); ?>">
 																</div>
 																<div class="col">
-																	<input class="form-control scc-input" value="<?php echo esc_attr( $item->value2 ); ?>" type="number" min="1">
+																		<input class="form-control scc-input" data-slider-range-field="to" value="<?php echo esc_attr( $item->value2 ); ?>" type="number" min="1">
 																</div>
 																<div class="col d-inline-flex scc-input-icon">
 																	<span class="input-group-text" style="height: fit-content;"><?php echo df_scc_get_currency_symbol_by_currency_code( $this->df_scc_form_currency ); ?></span>

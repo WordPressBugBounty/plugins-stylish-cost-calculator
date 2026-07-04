@@ -1,3 +1,10 @@
+## 8.4.5 - 2026-07-04
+
+**Editing Page Changes:**
+- Improved: Slider step and range controls now validate invalid configurations before saving.
+- Fixed: Slider range updates now show clearer errors when the step value is zero, exceeds the available range, or the To value is lower than the From value.
+- Fixed: Tooltip fields in the element editor now have more reliable spacing.
+
 ## 8.4.3 - 2026-06-23
 
 **Backend Changes:**

@@ -310,7 +310,7 @@ $scc_screen       = get_current_screen();
 	<div class="row align-items-center col-12 mx-auto ps-3 w-100">
 		<div class="col-12 col-md-5 col-lg-4">
 			<div class="scc-custom-version-info align-middle">
-				<a href="https://stylishcostcalculator.com/" class="scc-header">
+				<a href="https://stylishcostcalculator.com/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=admin-header-footer-link" class="scc-header">
 					<img src="
 						<?php
                         echo esc_url( SCC_URL . 'assets/images/scc-logo.png' );
@@ -388,9 +388,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<li><a target="_blank"
 									href="https://designful.freshdesk.com/support/solutions/folders/48000670797">Troubleshooting</a>
 							</li>
-							<li><a target="_blank" href="https://stylishcostcalculator.com/support/">Contact Support</a>
+							<li><a target="_blank" href="https://stylishcostcalculator.com/support/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=support">Contact Support</a>
 							</li>
-							<li><a target="_blank" href="https://members.stylishcostcalculator.com/">Member's Portal</a>
+							<li><a target="_blank" href="https://members.stylishcostcalculator.com/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=members-link">Member's Portal</a>
 							</li>
 						</ul>
 					</li>

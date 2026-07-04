@@ -8,7 +8,7 @@ $options = [
     [
         'title'       => 'Venue Rental',
         'description' => 'Streamline your venue rental process with our cost calculator template, enabling you to quickly estimate expenses and offer transparent pricing to your clients.',
-        'url'         => 'https://stylishcostcalculator.com/templates/venue-rentals-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/venue-rentals-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-0',
         'cover'       => 'template-cover-01',
         'type'        => '',
@@ -21,7 +21,7 @@ $options = [
     [
         'title'       => 'Website Designer',
         'description' => 'This cost calculator quote form is configured for web design agencies looking to streamline their sales process.',
-        'url'         => 'https://stylishcostcalculator.com/templates/web-developer-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/web-developer-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-01',
         'cover'       => 'template-cover-02',
         'type'        => '',
@@ -34,7 +34,7 @@ $options = [
     [
         'title'       => 'Wedding Photographer',
         'description' => 'Streamline your quote process with our Wedding Photographer template, enabling you to quickly provide accurate cost estimates for your photography services.',
-        'url'         => 'https://stylishcostcalculator.com/templates/wedding-photographer-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/wedding-photographer-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-02',
         'cover'       => 'template-cover-03',
         'type'        => '',
@@ -47,7 +47,7 @@ $options = [
     [
         'title'       => 'Car Rental',
         'description' => 'Our cost calculator quote form simplifies pricing for Car Rental companies. Customizable options, including additional services, easily calculate the cost',
-        'url'         => 'https://stylishcostcalculator.com/templates/car-rental-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/car-rental-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-03',
         'cover'       => 'template-cover-04',
         'type'        => '',
@@ -60,7 +60,7 @@ $options = [
     [
         'title'       => 'T-Shirt Printing',
         'description' => 'Effortlessly calculate the cost of custom t-shirt printing projects, ensuring you accurately price your services while meeting your clients\' unique needs.',
-        'url'         => 'https://stylishcostcalculator.com/templates/t-shirt-printing-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/t-shirt-printing-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-04',
         'cover'       => 'template-cover-05',
         'type'        => '',
@@ -73,7 +73,7 @@ $options = [
     [
         'title'       => 'Cleaning Company',
         'description' => 'Optimize your pricing strategy with our home cleaning cost calculator template, designed to help you provide competitive and fair quotes to your customers.',
-        'url'         => 'https://stylishcostcalculator.com/templates/cleaning-company-template/',
+        'url'         => 'https://stylishcostcalculator.com/templates/cleaning-company-template/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-05',
         'cover'       => 'template-cover-06',
         'type'        => '',
@@ -86,7 +86,7 @@ $options = [
     [
         'title'       => 'Funeral Home Company',
         'description' => 'Utilize our funeral home cost calculator template to compassionately and accurately provide estimates, helping families plan services within their budget.',
-        'url'         => 'https://stylishcostcalculator.com/templates/funeral-home-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/funeral-home-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-06',
         'cover'       => 'template-cover-07',
         'type'        => '',
@@ -99,7 +99,7 @@ $options = [
     [
         'title'       => 'Content Writing Agency',
         'description' => 'Enhance your content writing service by using our cost calculator template, making it simple to quote projects based on word count, complexity, and deadlines.',
-        'url'         => 'https://stylishcostcalculator.com/templates/content-writing-template/',
+        'url'         => 'https://stylishcostcalculator.com/templates/content-writing-template/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-07',
         'cover'       => 'template-cover-08',
         'type'        => '',
@@ -112,7 +112,7 @@ $options = [
     [
         'title'       => 'Audio Editing Services',
         'description' => 'Simplify your audio editing pricing with our cost calculator template, ensuring you accurately account for the complexity, duration, and specific requirements of each project.',
-        'url'         => 'https://stylishcostcalculator.com/templates/audio-editing-and-podcast-editing-calculculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/audio-editing-and-podcast-editing-calculculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-08',
         'cover'       => 'template-cover-09',
         'type'        => '',
@@ -125,7 +125,7 @@ $options = [
     [
         'title'       => 'Social Media Management',
         'description' => 'Streamline your social media management pricing with our cost calculator template, designed to tailor your services to various platforms and client needs efficiently.',
-        'url'         => 'https://stylishcostcalculator.com/templates/social-media-manager-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/social-media-manager-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-09',
         'cover'       => 'template-cover-10',
         'type'        => '',
@@ -138,7 +138,7 @@ $options = [
     [
         'title'       => 'Student Fees',
         'description' => 'Manage and calculate student fees effortlessly with our template, designed to help educational institutions provide clear and detailed breakdowns of costs.',
-        'url'         => 'https://stylishcostcalculator.com/templates/student-fees-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/student-fees-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-10',
         'cover'       => 'template-cover-11',
         'type'        => '',
@@ -164,7 +164,7 @@ $options = [
     [
         'title'       => 'Kitchens Renovations',
         'description' => 'Optimize kitchen renovation estimates with our template, ensuring accurate pricing for materials and labor.',
-        'url'         => 'https://stylishcostcalculator.com/templates/kitchen-renovation-company-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/kitchen-renovation-company-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-12',
         'cover'       => 'template-cover-13',
         'type'        => '',
@@ -190,7 +190,7 @@ $options = [
     [
         'title'       => 'Food Catering',
         'description' => 'Enhance your food catering quotes with our cost calculator template, designed for accurate pricing of menus, services, and event specifics.',
-        'url'         => 'https://stylishcostcalculator.com/templates/food-catering-template/',
+        'url'         => 'https://stylishcostcalculator.com/templates/food-catering-template/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-14',
         'cover'       => 'template-cover-15',
         'type'        => '',
@@ -243,7 +243,7 @@ $options = [
     [
         'title'       => 'Pricing Table (bronze)',
         'description' => 'Create dynamic pricing tables with our template, designed to showcase your service tiers, features, and costs clearly and effectively to customers.',
-        'url'         => 'https://stylishcostcalculator.com/templates/pricing-table-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/pricing-table-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-18',
         'cover'       => 'template-cover-18',
         'type'        => '',
@@ -256,7 +256,7 @@ $options = [
     [
         'title'       => 'Home Furniture Calculator',
         'description' => 'Use our home furniture calculator template to easily estimate the cost of furnishing homes, ensuring clients receive transparent and tailored pricing.',
-        'url'         => 'https://stylishcostcalculator.com/templates/home-furniture-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/home-furniture-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-19',
         'cover'       => 'template-cover-19',
         'type'        => '',
@@ -269,7 +269,7 @@ $options = [
     [
         'title'       => 'Vehicle Parts Calculator',
         'description' => 'Streamline your vehicle parts pricing with our calculator template, designed for quick, accurate cost estimations for parts and associated services.',
-        'url'         => 'https://stylishcostcalculator.com/templates/vehicle-parts-cost-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/vehicle-parts-cost-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-20',
         'cover'       => 'template-cover-20',
         'type'        => '',
@@ -282,7 +282,7 @@ $options = [
     [
         'title'       => 'Landscape & Patio Cost Calculator',
         'description' => 'Simplify your landscape and patio project quotes with our cost calculator template, enabling accurate estimates for materials, design, and labor.',
-        'url'         => 'https://stylishcostcalculator.com/templates/landscape-patio-cost-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/landscape-patio-cost-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-21',
         'cover'       => 'template-cover-21',
         'type'        => '',
@@ -295,7 +295,7 @@ $options = [
     [
         'title'       => 'Home Improvement',
         'description' => 'Streamline estimating costs for home renovations with our calculator template, ensuring precise quotes for materials, labor, and design services.',
-        'url'         => 'https://stylishcostcalculator.com/templates/home-renovation-cost-estimator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/home-renovation-cost-estimator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-22',
         'cover'       => 'template-cover-22',
         'type'        => '',
@@ -308,7 +308,7 @@ $options = [
     [
         'title'       => 'Flooring, Carpet & Hardwood Estimator',
         'description' => 'Efficiently calculate costs for flooring projects, including carpet and hardwood, with our estimator template, ensuring accurate pricing for materials and installation.',
-        'url'         => 'https://stylishcostcalculator.com/templates/flooring-carpet-hardwood-estimator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/flooring-carpet-hardwood-estimator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-23',
         'cover'       => 'template-cover-23',
         'type'        => '',
@@ -321,7 +321,7 @@ $options = [
     [
         'title'       => 'Engaging Product & Service Quiz',
         'description' => 'Create engaging quizzes for products and services with our template, designed to captivate your audience and tailor offerings to their preferences.',
-        'url'         => 'https://stylishcostcalculator.com/templates/product-service-quiz-template/',
+        'url'         => 'https://stylishcostcalculator.com/templates/product-service-quiz-template/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-24',
         'cover'       => 'template-cover-24',
         'type'        => '',
@@ -334,7 +334,7 @@ $options = [
     [
         'title'       => 'Bakery Template',
         'description' => 'Enhance your bakery\'s efficiency with our cost calculator template, perfect for accurately pricing baked goods, ingredients, and custom orders.',
-        'url'         => 'https://stylishcostcalculator.com/templates/bakery-template/',
+        'url'         => 'https://stylishcostcalculator.com/templates/bakery-template/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-25',
         'cover'       => 'template-cover-25',
         'type'        => '',
@@ -347,7 +347,7 @@ $options = [
     [
         'title'       => 'Grocery Store - Online Order Form',
         'description' => 'Streamline online grocery orders with our form template, designed for easy item selection and accurate cost calculations, improving customer experience.',
-        'url'         => 'https://stylishcostcalculator.com/templates/grocery-costs-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/grocery-costs-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-26',
         'cover'       => 'template-cover-26',
         'type'        => '',
@@ -360,7 +360,7 @@ $options = [
     [
         'title'       => 'Residential Painting',
         'description' => 'Calculate your residential painting services costs with ease using our template, ensuring accurate quotes for paint, labor, and square footage.',
-        'url'         => 'https://stylishcostcalculator.com/templates/residential-commercial-painting/',
+        'url'         => 'https://stylishcostcalculator.com/templates/residential-commercial-painting/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-27',
         'cover'       => 'template-cover-27',
         'type'        => '',
@@ -373,7 +373,7 @@ $options = [
     [
         'title'       => 'ROI Calculator',
         'description' => 'Efficiently assess project or investment ROI with our calculator template, simplifying financial performance analysis.',
-        'url'         => 'https://stylishcostcalculator.com/templates/roi-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/roi-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-28',
         'cover'       => 'template-cover-28',
         'type'        => '',
@@ -386,7 +386,7 @@ $options = [
     [
         'title'       => 'Medicine Calculation',
         'description' => 'Ensure accurate medicine dosages and costs with our calculator template, designed for healthcare professionals and pharmacies.',
-        'url'         => 'https://stylishcostcalculator.com/templates/medicine-dosage-calculation/',
+        'url'         => 'https://stylishcostcalculator.com/templates/medicine-dosage-calculation/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-29',
         'cover'       => 'template-cover-29',
         'type'        => '',
@@ -399,7 +399,7 @@ $options = [
     [
         'title'       => 'Lawn Care Calculator',
         'description' => 'Simplify your lawn care service quotes with our calculator template, allowing for precise pricing based on area size and service frequency.',
-        'url'         => 'https://stylishcostcalculator.com/templates/lawn-care-template/',
+        'url'         => 'https://stylishcostcalculator.com/templates/lawn-care-template/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-30',
         'cover'       => 'template-cover-30',
         'type'        => '',
@@ -412,7 +412,7 @@ $options = [
     [
         'title'       => 'Home Alarm System',
         'description' => 'Calculate the cost of home alarm systems with our template, ensuring you provide accurate quotes for installation and monitoring services.',
-        'url'         => 'https://stylishcostcalculator.com/templates/home-alarm-system-template/',
+        'url'         => 'https://stylishcostcalculator.com/templates/home-alarm-system-template/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-31',
         'cover'       => 'template-cover-31',
         'type'        => '',
@@ -425,7 +425,7 @@ $options = [
     [
         'title'       => 'Home Building Calculator',
         'description' => 'Estimate home building costs accurately with our calculator template, designed for clear pricing on materials, labor, and project timelines.',
-        'url'         => 'https://stylishcostcalculator.com/templates/home-building/',
+        'url'         => 'https://stylishcostcalculator.com/templates/home-building/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-32',
         'cover'       => 'template-cover-32',
         'type'        => '',
@@ -438,7 +438,7 @@ $options = [
     [
         'title'       => 'Air Conditioner Calculator',
         'description' => 'Streamline AC cost calculations with our template, ideal for unit sizing and expense estimation.',
-        'url'         => 'https://stylishcostcalculator.com/templates/air-conditioner/',
+        'url'         => 'https://stylishcostcalculator.com/templates/air-conditioner/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-33',
         'cover'       => 'template-cover-33',
         'type'        => '',
@@ -451,7 +451,7 @@ $options = [
     [
         'title'       => 'Beauty Quiz',
         'description' => 'Design beauty quizzes to connect clients with their ideal products, tailored to preferences and needs.',
-        'url'         => 'https://stylishcostcalculator.com/templates/beauty-quiz/',
+        'url'         => 'https://stylishcostcalculator.com/templates/beauty-quiz/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-34',
         'cover'       => 'template-cover-34',
         'type'        => '',
@@ -464,7 +464,7 @@ $options = [
     [
         'title'       => 'Moving Cost Calculator',
         'description' => 'Streamline inquiries and feedback with our concise contact form template.',
-        'url'         => 'https://stylishcostcalculator.com/templates/moving-cost-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/moving-cost-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-35',
         'cover'       => 'template-cover-35',
         'type'        => '',
@@ -477,7 +477,7 @@ $options = [
     [
         'title'       => 'Contact Form',
         'description' => 'Streamline inquiries and feedback with our concise contact form template.',
-        'url'         => 'https://stylishcostcalculator.com/templates/contact-form-template/',
+        'url'         => 'https://stylishcostcalculator.com/templates/contact-form-template/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-36',
         'cover'       => 'template-cover-36',
         'type'        => '',
@@ -490,7 +490,7 @@ $options = [
     [
         'title'       => 'Tree Removal Cost Calculator',
         'description' => 'Efficiently estimate the cost of tree removal services with our calculator template.',
-        'url'         => 'https://stylishcostcalculator.com/templates/tree-removal-cost',
+        'url'         => 'https://stylishcostcalculator.com/templates/tree-removal-cost?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-37',
         'cover'       => 'template-cover-37',
         'type'        => '',
@@ -503,7 +503,7 @@ $options = [
     [
         'title'       => 'Roof Replacement Cost',
         'description' => 'Our Roof Replacement Cost Calculator offers swift, precise estimates for homeowners considering a roof upgrade.',
-        'url'         => 'https://stylishcostcalculator.com/templates/roof-replacement-cost',
+        'url'         => 'https://stylishcostcalculator.com/templates/roof-replacement-cost?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-38',
         'cover'       => 'template-cover-38',
         'type'        => '',
@@ -516,7 +516,7 @@ $options = [
     [
         'title'       => 'Lawn Mowing Cost Calculator',
         'description' => 'This intuitive tool takes the guesswork out of pricing, ensuring you get a clear understanding of the expenses involved for maintaining a pristine lawn.',
-        'url'         => 'https://stylishcostcalculator.com/templates/lawn-mowing-cost-calculator',
+        'url'         => 'https://stylishcostcalculator.com/templates/lawn-mowing-cost-calculator?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-39',
         'cover'       => 'template-cover-39',
         'type'        => '',
@@ -529,7 +529,7 @@ $options = [
     [
         'title'       => 'Construction Cost Calculator',
         'description' => 'With this Construction Cost Calculator you can estimate the expenses of your construction project.',
-        'url'         => 'https://stylishcostcalculator.com/templates/construction-cost-calculator',
+        'url'         => 'https://stylishcostcalculator.com/templates/construction-cost-calculator?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-40',
         'cover'       => 'template-cover-40',
         'type'        => '',
@@ -542,7 +542,7 @@ $options = [
     [
         'title'       => 'Seller Closing Cost',
         'description' => 'Providing an accurate estimate of the fees and expenses incurred at the end of a real estate transaction.',
-        'url'         => 'https://stylishcostcalculator.com/templates/seller-closing-cost-calculator',
+        'url'         => 'https://stylishcostcalculator.com/templates/seller-closing-cost-calculator?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-41',
         'cover'       => 'template-cover-41',
         'type'        => '',
@@ -555,7 +555,7 @@ $options = [
     [
         'title'       => 'Concrete Cost Calculator',
         'description' => 'A Concrete Bag Calculator is a practical tool for construction professionals and DIY enthusiasts alike.',
-        'url'         => 'https://stylishcostcalculator.com/templates/concrete-cost-calculator',
+        'url'         => 'https://stylishcostcalculator.com/templates/concrete-cost-calculator?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-42',
         'cover'       => 'template-cover-42',
         'type'        => '',
@@ -568,7 +568,7 @@ $options = [
     [
         'title'       => 'Asphalt Driveway Cost',
         'description' => 'Calculate the cost of asphalt driveway installations and repairs with our template, considering factors like square footage, material costs, and labor.',
-        'url'         => 'https://stylishcostcalculator.com/templates/asphalt-driveway-cost-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/asphalt-driveway-cost-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-43',
         'cover'       => 'template-cover-43',
         'type'        => '',
@@ -581,7 +581,7 @@ $options = [
     [
         'title'       => 'Solar Panel Cost',
         'description' => 'With our solar panel cost calculator, you can get a quick and accurate estimate of the cost of a custom solar system for your home or business.',
-        'url'         => 'https://stylishcostcalculator.com/templates/solar-panel-cost-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/solar-panel-cost-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-44',
         'cover'       => 'template-cover-44',
         'type'        => '',
@@ -594,7 +594,7 @@ $options = [
     [
         'title'       => 'Fencing Cost Calculator',
         'description' => 'Attract more customers, boost sales, and streamline operations with a fence cost calculator on your website',
-        'url'         => 'https://stylishcostcalculator.com/templates/fencing-cost-calcualtor/',
+        'url'         => 'https://stylishcostcalculator.com/templates/fencing-cost-calcualtor/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-45',
         'cover'       => 'template-cover-45',
         'type'        => '',
@@ -607,7 +607,7 @@ $options = [
     [
         'title'       => 'Meal Plan Delivery Quote',
         'description' => 'This intuitive meal plan delivery calculator simplifies the process of planning and ordering your weekly meals',
-        'url'         => 'https://stylishcostcalculator.com/templates/meal-plan-delivery-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/meal-plan-delivery-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-46',
         'cover'       => 'template-cover-46',
         'type'        => '',
@@ -620,7 +620,7 @@ $options = [
     [
         'title'       => 'Fitness Supplements Calculator',
         'description' => 'The "Fitness Supplements Calculator" helps you discover the right supplements for your needs, letting you see options and costs immediately',
-        'url'         => 'https://stylishcostcalculator.com/templates/supplements-calculator/',
+        'url'         => 'https://stylishcostcalculator.com/templates/supplements-calculator/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-47',
         'cover'       => 'template-cover-47',
         'type'        => '',
@@ -633,7 +633,7 @@ $options = [
     [
         'title'       => 'Custom Shutter Quote',
         'description' => 'This custom shutter calculator will help you make the necessary calculations to offer a tailor-made service.',
-        'url'         => 'https://stylishcostcalculator.com/templates/design-your-dream-shutters/',
+        'url'         => 'https://stylishcostcalculator.com/templates/design-your-dream-shutters/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=template-gallery',
         'preview'     => 'template-preview-48',
         'cover'       => 'template-cover-48',
         'type'        => '',

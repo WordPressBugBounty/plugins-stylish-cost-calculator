@@ -20,7 +20,7 @@ import {
 	normalizeText,
 } from './utils';
 
-const PREMIUM_PRICING_URL = 'https://stylishcostcalculator.com/pricing-plans/';
+const PREMIUM_PRICING_URL = 'https://stylishcostcalculator.com/pricing-plans/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=settings-upgrade-link';
 const PREMIUM_CONTROL_IDENTIFIERS = [
 	'email_quote_recipients',
 	'include_quote_form_data',

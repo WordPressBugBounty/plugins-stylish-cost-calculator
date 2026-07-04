@@ -821,7 +821,7 @@ if ( '' === $scc_profile_initials ) {
 	<!-- PRIMARY NAVBAR -->
 	<div class="scc-primary-navbar col-12 mx-auto w-100">
 		<div class="scc-primary-nav-left">
-			<a href="https://stylishcostcalculator.com/" class="scc-header-logo-white" target="_blank" rel="noopener noreferrer" style="background-color: #ffffff; border-radius: 8px; padding: 5px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;">
+			<a href="https://stylishcostcalculator.com/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=admin-header-footer-link" class="scc-header-logo-white" target="_blank" rel="noopener noreferrer" style="background-color: #ffffff; border-radius: 8px; padding: 5px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;">
 				<img src="<?php echo esc_url( SCC_URL . 'assets/images/scc-icon.png' ); ?>" alt="Stylish Cost Calculator Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;">
 				<?php if ( $isSCCFreeVersion ) { ?>
 					<span class="scc-free-badge-header">FREE</span>
@@ -890,13 +890,13 @@ if ( '' === $scc_profile_initials ) {
 						<li><a class="dropdown-item" target="_blank" href="<?php echo esc_url( SCC_HELPDESK_LINKS['helpdesk-troubleshooting'] ); ?>">
 							<span class="scc-icn-wrapper me-2"><?php echo scc_get_kses_extended_ruleset( $scc_icons['tool'] ); ?></span>
 							Troubleshooting</a></li>
-						<li><a class="dropdown-item" target="_blank" href="https://stylishcostcalculator.com/support/">
+						<li><a class="dropdown-item" target="_blank" href="https://stylishcostcalculator.com/support/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=support">
 							<span class="scc-icn-wrapper me-2"><?php echo scc_get_kses_extended_ruleset( $scc_icons['life-buoy'] ); ?></span>
 							Contact Support</a></li>
 					</ul>
 				</li>
 				<li class="scc-profile-nav-item">
-					<a href="https://members.stylishcostcalculator.com/" class="scc-profile-button" aria-label="Open Members Portal" title="<?php echo esc_attr( $scc_profile_name ? $scc_profile_name : 'Members Portal' ); ?>" target="_blank" rel="noopener noreferrer">
+					<a href="https://members.stylishcostcalculator.com/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=members-link" class="scc-profile-button" aria-label="Open Members Portal" title="<?php echo esc_attr( $scc_profile_name ? $scc_profile_name : 'Members Portal' ); ?>" target="_blank" rel="noopener noreferrer">
 						<?php echo esc_html( $scc_profile_initials ); ?>
 					</a>
 				</li>

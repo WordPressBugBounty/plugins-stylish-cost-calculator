@@ -52,7 +52,7 @@ if ( get_current_screen()->base !== 'stylish-cost-calculator_page_scc-tabs' ) {
 	<div class="scc-footer">
 		<div class="scc-footer-left">
 			<div class="scc-footer-logo">
-				<a href="https://www.stylishcostcalculator.com/" class="scc-footer-logo-link" target="_blank">
+				<a href="https://www.stylishcostcalculator.com/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=admin-header-footer-link" class="scc-footer-logo-link" target="_blank">
 					<img src="<?php echo esc_url(SCC_URL . 'assets/images/scc-logo.png'); ?>" alt="Stylish Cost Calculator">
 				</a>
 			</div>
@@ -71,7 +71,7 @@ if ( get_current_screen()->base !== 'stylish-cost-calculator_page_scc-tabs' ) {
 				</li>
 				<li><a href="<?php echo esc_url( SCC_HELPDESK_LINKS['helpdesk-video-tutorials'] ); ?>"><i class="material-icons-outlined">support</i>
 				<span>Submit A Ticket</span></a></li>
-				<li><a href="https://stylishcostcalculator.com/pricing-plans/">
+				<li><a href="https://stylishcostcalculator.com/pricing-plans/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=pricing-link">
 					<i class="material-icons-outlined">diamond</i>
 					<span>Pricing</span>
 				</a></li>
@@ -112,9 +112,9 @@ if ( get_current_screen()->base !== 'stylish-cost-calculator_page_scc-tabs' ) {
 								aria-haspopup="true" aria-expanded="false"><i class="far fa-comment"></i>Feedback <span
 									class="caret"></span></a>
 							<ul class="dropdown-menu">
-								<li><a target="_blank" href="https://stylishcostcalculator.com/how-can-we-be-better/">Send
+								<li><a target="_blank" href="https://stylishcostcalculator.com/how-can-we-be-better/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=feedback-link">Send
 										Feedback</a></li>
-								<li><a target="_blank" href="https://stylishcostcalculator.com/poll/new-features/">Suggest
+								<li><a target="_blank" href="https://stylishcostcalculator.com/poll/new-features/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=feature-poll-link">Suggest
 										Feature</a></li>
 							</ul>
 						</li>
@@ -136,9 +136,9 @@ if ( get_current_screen()->base !== 'stylish-cost-calculator_page_scc-tabs' ) {
 								<li><a target="_blank"
 										href="<?php echo esc_url(SCC_HELPDESK_LINKS['helpdesk-troubleshooting']);?>">Troubleshooting</a>
 								</li>
-								<li><a target="_blank" href="https://stylishcostcalculator.com/support/">Contact Support</a>
+								<li><a target="_blank" href="https://stylishcostcalculator.com/support/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=support">Contact Support</a>
 								</li>
-								<li><a target="_blank" href="https://members.stylishcostcalculator.com/">Member's Portal</a>
+								<li><a target="_blank" href="https://members.stylishcostcalculator.com/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=members-link">Member's Portal</a>
 								</li>
 							</ul>
 						</li>
@@ -160,7 +160,7 @@ if ( get_current_screen()->base !== 'stylish-cost-calculator_page_scc-tabs' ) {
 								<a href="https://wordpress.org/plugins/smart-table-builder/" target="_blank" class="scc-footer-plugin-logos">
 									<img src="<?php echo esc_url(SCC_URL . 'assets/images/stb-logo.png'); ?>" alt="Smart Table Builder" title="Smart Table Builder">
 								</a>
-								<a href="https://stylishcostcalculator.com" target="_blank" class="scc-footer-plugin-logos">
+								<a href="https://stylishcostcalculator.com?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=admin-header-footer-link" target="_blank" class="scc-footer-plugin-logos">
 									<img src="<?php echo esc_url(SCC_URL . 'assets/images/scc-logo.png'); ?>" alt="Stylish Cost Calculator" title="Stylish Cost Calculator">
 								</a>
 							</div>

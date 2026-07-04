@@ -39,7 +39,7 @@ class SetupWizard {
         // require ai wizard model
         require_once SCC_DIR . '/admin/models/ai-wizard-model.php';
         $scc_ai_wizard_model = new \SCCAiWizardModel();
-        $upgrade_url         = 'https://stylishcostcalculator.com/pricing-plans/?utm_source=scc-free-plugin&utm_medium=ai-setup-modal&utm_campaign=ai-credits-exhausted';
+        $upgrade_url         = 'https://stylishcostcalculator.com/pricing-plans/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=ai_setup_upgrade&utm_content=ai-credits-exhausted';
 
         // return multiline html string
         ob_start();

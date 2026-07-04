@@ -3,7 +3,7 @@
  * Plugin Name: Stylish Cost Calculator
  * Plugin URI:  https://stylishcostcalculator.com
  * Description: A Stylish Cost Calculator / Price Estimate Form for your site.
- * Version:     8.4.3
+ * Version:     8.4.5
  * Author:      Designful
  * Author URI:  https://stylishcostcalculator.com
  * License:     GPL2
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'STYLISH_COST_CALCULATOR_VERSION', '8.4.3' );
+define( 'STYLISH_COST_CALCULATOR_VERSION', '8.4.5' );
 define( 'SCC_URL', plugin_dir_url( __FILE__ ) );
 define( 'SCC_DIR', __DIR__ );
 define( 'SCC_LIB_DIR', __DIR__ . '/lib' );
@@ -997,9 +997,9 @@ class df_scc_plugin {
             [
                 '<a href="' . admin_url( 'admin.php' ) . '?page=scc-tabs' . '">' . __( 'Add Calculator', 'textdomain' ) . '</a>',
                 '<a href="' . admin_url( 'admin.php' ) . '?page=scc-list-all-calculator-forms' . '">' . __( 'Edit Existing', 'textdomain' ) . '</a>',
-                '<a href="https://stylishcostcalculator.com/?utm_source=inside-plugin&utm_medium=wordpress&utm_content=buy-premium-cta-banner">Buy Now</a>',
-                '<a target="_blank" href="https://stylishcostcalculator.com/">' . __( 'Website', 'textdomain' ) . '</a>',
-                '<a target="_blank" href="https://stylishcostcalculator.com/support">' . __( 'Support', 'textdomain' ) . '</a>',
+                '<a href="https://stylishcostcalculator.com/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=buy-premium-cta-banner">Buy Now</a>',
+                '<a target="_blank" href="https://stylishcostcalculator.com/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=buy-premium-cta-banner">' . __( 'Website', 'textdomain' ) . '</a>',
+                '<a target="_blank" href="https://stylishcostcalculator.com/support?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=support">' . __( 'Support', 'textdomain' ) . '</a>',
                 '<a href="' . admin_url( 'admin.php' ) . '?page=scc-global-settings' . '">' . __( 'Global Settings', 'textdomain' ) . '</a>',
             ],
             $links

@@ -1408,7 +1408,7 @@ class Stylish_Cost_Calculator_Settings {
 				<input class="sccbutton scc_save_emdl" style="width:100%;height:45px;font-size:18px" type="submit" name="Save" value="SAVE FOOTER SETTINGS" onclick="saveSCCEmailSetting(this)">
 			</div>
 			<?php if ( $this->isSCCFreeVersion ) { ?>
-			<div class="blocked" style="width: 100%; padding: 5px; background-color: black; opacity: 0.85; display: inline-block; position: relative;"><div style="position:absolute;left:0px;right:0px;top:0px;bottom:0px;z-index:99999;opacity:1">	<center><h5 style="color:white;margin-top:50px">THIS FEATURE IS AVAILABLE IN THE PREMIUM VERSION</h5></center>	<div style="margin-left:40%;margin-top:20px;background-color:#314af3;padding:5px;max-width:100px;text-align:center">		<a target="_blank" href="https://stylishcostcalculator.com/" style="z-index:99999;opacity:1; color: white">BUY NOW		</a>	</div></div>
+			<div class="blocked" style="width: 100%; padding: 5px; background-color: black; opacity: 0.85; display: inline-block; position: relative;"><div style="position:absolute;left:0px;right:0px;top:0px;bottom:0px;z-index:99999;opacity:1">	<center><h5 style="color:white;margin-top:50px">THIS FEATURE IS AVAILABLE IN THE PREMIUM VERSION</h5></center>	<div style="margin-left:40%;margin-top:20px;background-color:#314af3;padding:5px;max-width:100px;text-align:center">		<a target="_blank" href="https://stylishcostcalculator.com/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=global-settings-link" style="z-index:99999;opacity:1; color: white">BUY NOW		</a>	</div></div>
 			<?php } ?>
 			<div class="scc-form-field" style="padding: 5px;border: 2px solid #2271b1;">
 				<label style="margin-bottom: 15px;">

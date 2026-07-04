@@ -809,33 +809,103 @@ const sccBackendUtils = {
 		nextBtn.setAttribute( 'data-event-listener-attached', 1 );
 	},
 	getSliderRangeData: (originInputField, rangeDataRows) => {
-	  return [...rangeDataRows].map(rangeSet => {
-		let rangeData = rangeSet.querySelectorAll('.col input');
-		let rangeId = rangeSet.querySelector('[data-range-id]').getAttribute('data-range-id');
+		return [...rangeDataRows].map(rangeSet => {
+			const rangeData = rangeSet.querySelectorAll('.col input');
+			const fromInput = rangeSet.querySelector('[data-slider-range-field="from"]') || rangeData[0];
+			const toInput = rangeSet.querySelector('[data-slider-range-field="to"]') || rangeData[1];
+			const rangeId = rangeSet.querySelector('[data-range-id]').getAttribute('data-range-id');
+			return {
+				rangeId,
+				from: { value: fromInput.value, inputControl: fromInput, isOriginInputField: originInputField == fromInput },
+				to: { value: toInput.value, inputControl: toInput, isOriginInputField: originInputField == toInput },
+				ppu: { value: rangeData[2].value, inputControl: rangeData[2], isOriginInputField: originInputField == rangeData[2] }
+			};
+		});
+	},
+	getVisibleSliderRangeRows: rangeDataRows => {
+		return [...rangeDataRows].filter(rangeSet => !rangeSet.classList.contains('d-none'));
+	},
+	getSliderRangeBounds: rangeDataRows => {
+		const visibleRangeRows = sccBackendUtils.getVisibleSliderRangeRows(rangeDataRows);
+		if (!visibleRangeRows.length) {
+			return null;
+		}
+		const firstRangeInputs = visibleRangeRows[0].querySelectorAll('.col input');
+		const lastRangeInputs = visibleRangeRows[visibleRangeRows.length - 1].querySelectorAll('.col input');
+		const fromInput = visibleRangeRows[0].querySelector('[data-slider-range-field="from"]') || firstRangeInputs[0];
+		const toInput = visibleRangeRows[visibleRangeRows.length - 1].querySelector('[data-slider-range-field="to"]') || lastRangeInputs[1];
+		const fromValue = Number(fromInput.value);
+		const toValue = Number(toInput.value);
+		if (!Number.isFinite(fromValue) || !Number.isFinite(toValue)) {
+			return null;
+		}
 		return {
-		  rangeId,
-		  from: {value: rangeData[0].value, inputControl: rangeData[0], isOriginInputField: originInputField == rangeData[0]},
-		  to: {value: rangeData[1].value, inputControl: rangeData[1], isOriginInputField: originInputField == rangeData[1]},
-		  ppu: {value: rangeData[2].value, inputControl: rangeData[2], isOriginInputField: originInputField == rangeData[2]}
+			from: fromValue,
+			to: toValue,
+			size: toValue - fromValue
 		};
-	  });
+	},
+	getSliderStepRangeValidationMessage: elementSetupBox => {
+		if (!elementSetupBox) {
+			return '';
+		}
+		const stepInput = elementSetupBox.querySelector('[data-slider-step-input]');
+		const rangeRows = elementSetupBox.querySelectorAll('[data-slider-range-setup]');
+		if (!stepInput || !rangeRows.length) {
+			return '';
+		}
+		const sliderStep = Number(stepInput.value);
+		if (!Number.isFinite(sliderStep) || sliderStep <= 0) {
+			return 'Slider steps must be greater than 0.';
+		}
+		const sliderRangeBounds = sccBackendUtils.getSliderRangeBounds(rangeRows);
+		if (!sliderRangeBounds) {
+			return '';
+		}
+		if (sliderRangeBounds.size < 0) {
+			return 'The slider To value must be greater than or equal to the From value.';
+		}
+		if (sliderStep > sliderRangeBounds.size) {
+			return `Slider steps must be less than or equal to the From-To range (${sliderRangeBounds.size}).`;
+		}
+		return '';
+	},
+	validateSliderStepRange: elementSetupBox => {
+		const stepInput = elementSetupBox?.querySelector('[data-slider-step-input]');
+		const validationMessage = sccBackendUtils.getSliderStepRangeValidationMessage(elementSetupBox);
+		if (validationMessage) {
+			if (stepInput) {
+				stepInput.setCustomValidity(validationMessage);
+			}
+			showSweet(false, validationMessage);
+			return false;
+		}
+		if (stepInput) {
+			stepInput.setCustomValidity('');
+		}
+		return true;
 	},
 	updateSliderRangeValues: (originInputField, rangeDataRows) => {
-	  let ranges = sccBackendUtils.getSliderRangeData(originInputField, rangeDataRows)
-	  let elementId = originInputField.closest('.elements_added')?.querySelector('.input_id_element')?.value
-	  for (let index = 0; index < ranges.length; index++) {
-		const rangeItem = ranges[index];
-		const nextRangeItem = ranges[index + 1];
-		if ((Number(rangeItem.from.value) > Number(rangeItem.to.value))) {
-			rangeItem.to.value = Number(rangeItem.from.value);
-			rangeItem.to.inputControl.value = Number(rangeItem.from.value);
+		const ranges = sccBackendUtils.getSliderRangeData(originInputField, rangeDataRows);
+		const elementSetupBox = originInputField.closest('.elements_added');
+		const elementId = elementSetupBox?.querySelector('.input_id_element')?.value;
+		for (let index = 0; index < ranges.length; index++) {
+			const rangeItem = ranges[index];
+			const nextRangeItem = ranges[index + 1];
+			if (Number(rangeItem.from.value) > Number(rangeItem.to.value)) {
+				rangeItem.to.value = Number(rangeItem.from.value);
+				rangeItem.to.inputControl.value = Number(rangeItem.from.value);
+			}
+			if (typeof(nextRangeItem) !== 'undefined' && Number(nextRangeItem.from.value) !== (Number(rangeItem.to.value) + 1)) {
+				nextRangeItem.from.value = Number(rangeItem.to.value) + 1;
+				nextRangeItem.from.inputControl.value = Number(rangeItem.to.value) + 1;
+			}
 		}
-		if (typeof(nextRangeItem) !== 'undefined' && (Number(nextRangeItem.from.value) !== ( Number(rangeItem.to.value) + 1 ) )) {
-		  nextRangeItem.from.value = Number(rangeItem.to.value) + 1;
-		  nextRangeItem.from.inputControl.value = Number(rangeItem.to.value) + 1;
+		if (!sccBackendUtils.validateSliderStepRange(elementSetupBox)) {
+			sccBackendUtils.disableSaveBtnAjax(false, elementSetupBox);
+			return;
 		}
-	  }
-	  updateSliderRangesWithDebounce( ranges, elementId );
+		updateSliderRangesWithDebounce(ranges, elementId);
 	},
 	changeNumberInputCommaFormat: (element) => {
 		const elementSettingsWrapper = jQuery(element).closest(".elements_added");
@@ -886,15 +956,14 @@ const sccBackendUtils = {
 			//showLoadingChanges();
 		  }
 		})
-		.complete(function() {
+		.done(function() {
 		  sccBackendUtils.disableSaveBtnAjax(false);
-		  showSweet(true, "The changes have been saved.");
-
-		  
+		  sccBackendUtils.handleSavingAlert({passed: true}, true);
 		})
 		.fail(function (xhr, textStatus, e) {
 		  sccBackendUtils.disableSaveBtnAjax(false);
-		  showSweet(false, "There was an error.");
+		  let errorMessage = xhr?.responseJSON?.data || "There was an error.";
+		  showSweet(false, errorMessage);
 		});
 	},
 	triggerChangeEvent: (element) => {
@@ -2742,7 +2811,7 @@ window.checkBannerNoticeWithDebounce = checkBannerNoticeWithDebounce;
 
 
 /* Message for premium options tooltips (used in settingTooltips) */
-const premiumMessage = '<span class="scc-premium-msg"><i class="material-icons scc-icon-tooltips pe-1">info_outline</i> You need to purchase a <b><a class="scc-text-orange px-1" href="https://stylishcostcalculator.com/pricing-plans/" >premium license</a></b> to use this feature.</span>'
+const premiumMessage = '<span class="scc-premium-msg"><i class="material-icons scc-icon-tooltips pe-1">info_outline</i> You need to purchase a <b><a class="scc-text-orange px-1" href="https://stylishcostcalculator.com/pricing-plans/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=premium-feature-lock" >premium license</a></b> to use this feature.</span>'
 /* Tool Tip for added Settings*/
 const settingTooltips = {
 	'download-backup-tt': {
@@ -3370,7 +3439,7 @@ const settingTooltips = {
 					  <p><strong>Free version: </strong>25 credits one time only</p>
 					  <a href="${ sccHelpdeskLinks[ 'feature-scc-ai-wizard' ] }" target="_blank"><div class="btn btn-primary btn-lg">Learn More</div></a>
 				  <br>
-				  <span class="scc-premium-msg"><i class="material-icons scc-icon-tooltips pe-1">info_outline</i> Increase your credits with the <b><a class="scc-text-orange px-1" href="https://stylishcostcalculator.com/" >premium license</a></b> </span>
+				  <span class="scc-premium-msg"><i class="material-icons scc-icon-tooltips pe-1">info_outline</i> Increase your credits with the <b><a class="scc-text-orange px-1" href="https://stylishcostcalculator.com/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=premium-feature-lock" >premium license</a></b> </span>
 				  </div>`
 	},
 	'show-customize-payment-options-tt': {
@@ -4120,7 +4189,7 @@ const elementTooltips = {
 		},
 }
 
-const needLicenseKeyTooltip = `You need to purchase a <a href="https://stylishcostcalculator.com/" target="_blank">premium license</a> to use this feature.`
+const needLicenseKeyTooltip = `You need to purchase a <a href="https://stylishcostcalculator.com/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=premium-feature-lock" target="_blank">premium license</a> to use this feature.`
 
 // Upload button click
 var handleDropdownLogoSetup = function ($this) {
@@ -4550,8 +4619,30 @@ function settings_scc_() {
 	menuclass?.prepend(settings_el())
 
 }
+function sccBuildTrackedUrl(url, params) {
+	if (!url || typeof url !== 'string') {
+		return url || ''
+	}
+
+	const [base, fragment] = url.split('#')
+	const [path, query = ''] = base.split('?')
+	const searchParams = new URLSearchParams(query)
+	const trackingParams = new URLSearchParams(params)
+
+	trackingParams.forEach((value, key) => {
+		searchParams.set(key, value)
+	})
+
+	const queryString = searchParams.toString()
+	return `${path}${queryString ? `?${queryString}` : ''}${fragment ? `#${fragment}` : ''}`
+}
 function settings_el() {
-	let u = document.querySelector('.scc-footer-logo-link').getAttribute('href') + '?utm_source=inside-plugin&utm_medium=wordpress&utm_content=buy-premium-cta-banner'
+	const footerLogoLink = document.querySelector('.scc-footer-logo-link')
+	const href = footerLogoLink ? footerLogoLink.getAttribute('href') : 'https://www.stylishcostcalculator.com/'
+	let u = sccBuildTrackedUrl(
+		href,
+		'utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=buy-premium-cta-banner'
+	)
 	let cont = document.createElement('li')
 	let p = document.createElement('span')
 	p.classList.add('free_version')
@@ -4598,9 +4689,12 @@ function disableGlobalSettingsSection(sectionTargets) {
 	}
 
 	let footerLogoLink = document.querySelector('.scc-footer-logo-link')
-	let premiumUrl = 'https://www.stylishcostcalculator.com/?utm_source=inside-plugin&utm_medium=wordpress&utm_content=buy-premium-cta-banner'
+	let premiumUrl = 'https://www.stylishcostcalculator.com/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=buy-premium-cta-banner'
 	if (footerLogoLink?.getAttribute('href')) {
-		premiumUrl = footerLogoLink.getAttribute('href') + '?utm_source=inside-plugin&utm_medium=wordpress&utm_content=buy-premium-cta-banner'
+		premiumUrl = sccBuildTrackedUrl(
+			footerLogoLink.getAttribute('href'),
+			'utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=buy-premium-cta-banner'
+		)
 	}
 	sectionTargets.forEach(target => {
 		let cont = null
@@ -4922,7 +5016,7 @@ function toolPrem() {
 		let p = ''
 		let inner = ''
 		e.classList.add('premium-tooltips2')
-		e.setAttribute('title', `You need to purchase a <a href="https://stylishcostcalculator.com/">premium license</a> to use this feature. <a target="_blank" href="${p}">${inner}</a>`)
+		e.setAttribute('title', `You need to purchase a <a href="https://stylishcostcalculator.com/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=premium-feature-lock">premium license</a> to use this feature. <a target="_blank" href="${p}">${inner}</a>`)
 		e.removeAttribute('onclick')
 		jQuery(e).tooltip({
 			placement: 'right',

@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php
 		$opt = get_option( 'df_scclk_opt' );
 		if ( empty( $opt ) ) {
-			echo '<button class="btn btn-primary"><a aref="https://stylishcostcalculator.com/?utm_source=inside-plugin&utm_medium=buy-premium-cta-banner">Buy Premium</a></button>';
+			echo '<button class="btn btn-primary"><a href="https://stylishcostcalculator.com/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=admin-notice-upgrade">Buy Premium</a></button>';
 		}
 		?>
 	</div>

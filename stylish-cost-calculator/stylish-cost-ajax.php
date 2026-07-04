@@ -97,6 +97,73 @@ class ajaxRequest {
         add_action( 'wp_ajax_sccUpdateUrlStats', [ $this, 'sccUpdateUrlStats' ] );
     }
 
+    private function scc_get_slider_range_value_for_validation( $range, $field ) {
+        if ( is_array( $range ) && isset( $range[ $field ]['value'] ) ) {
+            return is_numeric( $range[ $field ]['value'] ) ? floatval( $range[ $field ]['value'] ) : null;
+        }
+
+        if ( is_object( $range ) ) {
+            $property = ( $field === 'from' ) ? 'value1' : 'value2';
+            if ( isset( $range->{$property} ) ) {
+                return is_numeric( $range->{$property} ) ? floatval( $range->{$property} ) : null;
+            }
+        }
+
+        return null;
+    }
+
+    private function scc_format_slider_range_size_for_validation( $range_size ) {
+        return rtrim( rtrim( number_format( $range_size, 4, '.', '' ), '0' ), '.' );
+    }
+
+    private function scc_get_slider_step_validation_message( $slider_step, $ranges, $pricing_mode = '' ) {
+        if ( ! is_numeric( $slider_step ) || floatval( $slider_step ) <= 0 ) {
+            return 'Slider steps must be greater than 0.';
+        }
+
+        if ( ! is_array( $ranges ) || empty( $ranges ) ) {
+            return '';
+        }
+
+        $effective_ranges = array_values( $ranges );
+        if ( in_array( $pricing_mode, [ '', 'default', 'quantity_mod' ], true ) && count( $effective_ranges ) > 1 ) {
+            $effective_ranges = [ $effective_ranges[0] ];
+        }
+
+        $range_from = null;
+        $range_to   = null;
+
+        foreach ( $effective_ranges as $range ) {
+            $current_from = $this->scc_get_slider_range_value_for_validation( $range, 'from' );
+            $current_to   = $this->scc_get_slider_range_value_for_validation( $range, 'to' );
+
+            if ( null === $current_from || null === $current_to ) {
+                continue;
+            }
+
+            $range_from = ( null === $range_from || $current_from < $range_from ) ? $current_from : $range_from;
+            $range_to   = ( null === $range_to || $current_to > $range_to ) ? $current_to : $range_to;
+        }
+
+        if ( null === $range_from || null === $range_to ) {
+            return '';
+        }
+
+        $range_size = $range_to - $range_from;
+        if ( $range_size < 0 ) {
+            return 'The slider To value must be greater than or equal to the From value.';
+        }
+
+        if ( floatval( $slider_step ) > $range_size ) {
+            return sprintf(
+                'Slider steps must be less than or equal to the From-To range (%s).',
+                $this->scc_format_slider_range_size_for_validation( $range_size )
+            );
+        }
+
+        return '';
+    }
+
     public function sccUpElementOrder() {
         check_ajax_referer( 'edit-calculator-page', 'nonce' );
         require_once __DIR__ . '/admin/controllers/elementController.php';
@@ -1991,6 +2058,23 @@ class ajaxRequest {
 
         if ( isset( $_GET['value2'] ) ) {
             $el['value2'] = ( isset( $_GET['tt'] ) && $_GET['tt'] == 'texthtml' ) ? wp_kses( $_GET['value2'], SCC_ALLOWTAGS ) : sanitize_text_field( $_GET['value2'] );
+            $existing_element = $elementC->read( $el['id'] );
+
+            if ( $existing_element && $existing_element->type === 'slider' ) {
+                require_once __DIR__ . '/admin/controllers/elementitemController.php';
+                $elementitemC     = new elementitemController();
+                $validation_error = $this->scc_get_slider_step_validation_message( $el['value2'], $elementitemC->readOfElement( $el['id'] ), $existing_element->value1 );
+
+                if ( $validation_error ) {
+                    echo json_encode(
+                        [
+                            'msj'    => $validation_error,
+                            'passed' => false,
+                        ]
+                    );
+                    die();
+                }
+            }
         }
 
         if ( isset( $_GET['value3'] ) ) {
@@ -2576,10 +2660,24 @@ class ajaxRequest {
         check_ajax_referer( 'edit-calculator-page' );
         $new_range = json_decode( file_get_contents( 'php://input' ), 1 );
         require_once __DIR__ . '/admin/controllers/elementitemController.php';
+        require_once __DIR__ . '/admin/controllers/elementController.php';
         $elementitemC = new elementitemController();
+        $elementC     = new elementController();
         $query_status = [];
+        $element_id   = isset( $new_range['elementId'] ) ? intval( $new_range['elementId'] ) : 0;
+        $range_items  = isset( $new_range['cleanRangeCollection'] ) && is_array( $new_range['cleanRangeCollection'] ) ? $new_range['cleanRangeCollection'] : [];
+        $element      = $elementC->read( $element_id );
 
-        foreach ( $new_range['cleanRangeCollection'] as $key => $range ) {
+        if ( ! $element || $element->type !== 'slider' ) {
+            wp_send_json_error( 'Invalid slider element.', 400 );
+        }
+
+        $validation_error = $this->scc_get_slider_step_validation_message( $element->value2, $range_items, $element->value1 );
+        if ( $validation_error ) {
+            wp_send_json_error( $validation_error, 400 );
+        }
+
+        foreach ( $range_items as $key => $range ) {
             $eli['id']     = intval( $range['rangeId'] );
             $eli['value1'] = floatval( $range['from']['value'] );
             $eli['value2'] = floatval( $range['to']['value'] );
@@ -2587,10 +2685,10 @@ class ajaxRequest {
             $request       = $elementitemC->update( $eli );
             array_push( $query_status, $request );
         }
-        $saved_range_data = $elementitemC->readOfElement( $new_range['elementId'] );
+        $saved_range_data = $elementitemC->readOfElement( $element_id );
         // reading the database records and comparing the incoming range value
         foreach ( $saved_range_data as $key => $range ) {
-            $found_incoming_range = array_values( array_filter( $new_range['cleanRangeCollection'], function ( $d ) use ( $range ) {
+            $found_incoming_range = array_values( array_filter( $range_items, function ( $d ) use ( $range ) {
                 return $d['rangeId'] == $range->id;
             } ) );
             $matched_ranges = [$found_incoming_range[0]['from']['value'] == $range->value1,

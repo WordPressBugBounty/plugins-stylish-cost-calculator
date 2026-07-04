@@ -953,7 +953,7 @@ $scc_json_encode_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_
 
                                         if ( $el->type == 'slider' ) {
                                             ?>
-											<div class="elements_added">
+											<div class="elements_added" data-element="slider">
 
 												<input type="text" class="input_id_element" value="<?php echo intval( $el->id ); ?>" hidden>
 												<div class="elements_added_v2">
@@ -1072,7 +1072,7 @@ $scc_json_encode_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_
 										<br>
 										<p style="font-size:13px;margin-top:5px;">Add 1 or more elements to this subsection</p>
 										<input class="scc_custom_math_checkbox" type="checkbox" style="display:none;" />
-										<a href="https://stylishcostcalculator.com/test-drive-premium/" target="_blank">Test Drive The Premium Feature today on the Playground</a>
+										<a href="https://stylishcostcalculator.com/test-drive-premium/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=test-drive-premium" target="_blank">Test Drive The Premium Feature today on the Playground</a>
 									</div>
 								</div>
 							</div>
@@ -2205,10 +2205,10 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 			var item2 = `<div data-slider-range-setup class="row g-3 price-slider-item ">
 				<input data-range-id="${idnewElement}" type="text" class="id_element_slider_item" value="${idnewElement}" hidden="">
 				<div class="col">
-					<input class="form-control scc-input" disabled type="number" min="0" value="${previousNumber}">
+					<input class="form-control scc-input" data-slider-range-field="from" disabled type="number" min="0" value="${previousNumber}">
 				</div>
 				<div class="col">
-					<input class="form-control scc-input" value="${ previousNumber + 1 }" type="number" min="0">
+					<input class="form-control scc-input" data-slider-range-field="to" value="${ previousNumber + 1 }" type="number" min="0">
 				</div>
 				<div class="col d-inline-flex scc-input-icon">
 					<span class="input-group-text" style="height: fit-content;"><?php echo df_scc_get_currency_symbol_by_currency_code( $df_scc_form_currency ); ?></span>
@@ -2594,7 +2594,15 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 	 * @param element_id
 	 */
 	function changeValue2(element) {
-		var id_element = jQuery(element).closest('.elements_added').find(".input_id_element").css("background-color", "red").val()
+		var elementContainer = jQuery(element).closest('.elements_added')
+		if (
+			element.matches('[data-slider-step-input]') &&
+			typeof sccBackendUtils !== 'undefined' &&
+			! sccBackendUtils.validateSliderStepRange(elementContainer[0])
+		) {
+			return;
+		}
+		var id_element = elementContainer.find(".input_id_element").css("background-color", "red").val()
 		var value = jQuery(element).val()
 		var tt = jQuery(element).attr('data-type')
 		sccBackendUtils.disableSaveBtnAjax(true, element);
@@ -2611,6 +2619,9 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				},
 				success: function(data) {
 					var datajson = JSON.parse(data)
+					if (datajson.passed === false && datajson.msj) {
+						showSweet(false, datajson.msj);
+					}
 
 					sccBackendUtils.handleSavingAlert(datajson, false);
 				},
@@ -3944,7 +3955,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 		subs += '                                      <br>'
 		subs += '                                      <p style="font-size:13px;margin-top:5px;">Add 1 or more elements to this subsection</p>'
 		subs += '                                      <input class="scc_custom_math_checkbox" type="checkbox" style="display:none;" />'
-		subs += '                                      <a href="https://stylishcostcalculator.com/test-drive-premium/" target="_blank">Test Drive The Premium Feature today on the Playground</a>  '
+		subs += '                                      <a href="https://stylishcostcalculator.com/test-drive-premium/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=test-drive-premium" target="_blank">Test Drive The Premium Feature today on the Playground</a>  '
 		subs += '                                  </div>'
 		subs += '                                </div>'
 		subs += '                            </div>'
@@ -4260,7 +4271,7 @@ ${insertSubSection(idsubsection)}
 			</div>
 			<?php echo scc_output_editing_page_element_actions_js_template( 'slider-element' ); ?>
 		</div>`;
-		var element = '<div class="elements_added" style="outline: 2px solid var(--scc-input-field-border-color-focus);outline-style: dashed;">'
+		var element = '<div class="elements_added" data-element="slider" style="outline: 2px solid var(--scc-input-field-border-color-focus);outline-style: dashed;">'
 		element += '    <input type="text" class="input_id_element" value="' + idnewElement + '" hidden="">'
 		element += elementHead
 		element += elementDOM['slider_body']

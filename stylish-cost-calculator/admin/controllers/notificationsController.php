@@ -131,11 +131,11 @@ class SCC_Notifications {
                     <div class="message-container w-100">
                         <div class="text-center mx-auto">
                             <p class="cta d-inline fw-bold">Try The <span class="link-primary">Premium Version</span> Now. Access Our Demo Site In Seconds.</p>
-                            <a href="https://stylishcostcalculator.com/test-drive-premium" target="_blank" class="btn btn-primary">
+                            <a href="https://stylishcostcalculator.com/test-drive-premium?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=test-drive-premium" target="_blank" class="btn btn-primary">
                                 <span>Try The Calculator Builder</span>
                                 <i class="scc-element-action-icon material-icons-outlined align-middle">arrow_forward</i>
                             </a>
-                            <a class="ms-2" href="https://stylishcostcalculator.com/features/" target="_blank">
+                            <a class="ms-2" href="https://stylishcostcalculator.com/features/?utm_source=scc-free-plugin&utm_medium=wordpress&utm_campaign=free_to_premium&utm_content=features-link" target="_blank">
                                 <span>Explore All Features</span>
                             </a>
                         </div>
