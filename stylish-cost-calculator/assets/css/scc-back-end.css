@@ -9359,6 +9359,10 @@ button.scc_button.btn-backend.ed-btn-disabled::after,
   font-size: 11px;
 }
 
+.scc-premium-mark-over-button {
+  position: relative;
+}
+
 .btn-backend {
   background-color: #f8f9ff;
   color: #fff !important;

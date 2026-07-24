@@ -50,7 +50,7 @@ function BetaIcon( { label } ) {
 					<circle cx="13.8" cy="11" r="1.1" fill="currentColor" />
 				</SettingsNavIcon>
 			);
-		case 'Details List & PDF':
+		case 'Detailed List & PDF':
 			return (
 				<SettingsNavIcon>
 					<path d="M6 3.8H11.5L15 7.3V16.2H6V3.8Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />

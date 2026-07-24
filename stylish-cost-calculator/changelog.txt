@@ -1,3 +1,9 @@
+## 8.4.7 - 2026-07-24
+
+**Editing Page Changes:**
+- Improved: Premium indicators now display consistently on the Show Section Total and Activate Multi-Step Form controls in section settings.
+- Fixed: The calculator settings menu now uses the correct Detailed List & PDF label.
+
 ## 8.4.5 - 2026-07-04
 
 **Editing Page Changes:**

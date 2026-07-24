@@ -4,7 +4,7 @@ export const SETTINGS_SCHEMA_ID = 'scc-settings-modal-schema';
 
 export const GROUP_LABELS = {
 	'FRONTEND OPTIONS': 'General',
-	'DETAILS LIST & PDF SETTINGS': 'Details List & PDF',
+	'DETAILS LIST & PDF SETTINGS': 'Detailed List & PDF',
 	'CURRENCY & TAX SETTINGS': 'Currency & Tax',
 	'EMAIL SETTINGS': 'Email Settings',
 	'WEBHOOK EVENTS TRIGGER': 'Webhook Events',

@@ -305,7 +305,7 @@ $scc_json_encode_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_
 									</label>
 									Accordion
 								</p>
-								<p class="scc-opacity-05 tool-premium">
+								<p class="scc-opacity-05 tool-premium scc-premium-mark-over-button">
 									<label class="scc-accordion_switch_button use-premium-tooltip" data-tooltip-image="<?php echo esc_url( SCC_TOOLTIP_BASEURL . '/section-total.png' ); ?>">
 										<input class="scc-section-total" onchange="changeShowSectionTotal(this)" name="scc-section-total" type="checkbox" disabled>
 										<span class="scc-accordion_toggle_button round"></span>
@@ -325,7 +325,7 @@ $scc_json_encode_flags = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_
 									</label>
 									Show Section Total on PDF/Detail View
 								</p>
-								<p class="section-split-to-page scc-opacity-05 tool-premium">
+								<p class="section-split-to-page scc-opacity-05 tool-premium scc-premium-mark-over-button">
 									<label class="scc-accordion_switch_button">
 										<input disabled onchange="changeSectionToPage(this)" name="section-split-to-page" type="checkbox" 
 										<?php
@@ -3986,7 +3986,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				</label>
 				Accordion
 			</p>
-			<p class="scc-opacity-05 tool-premium">
+			<p class="scc-opacity-05 tool-premium scc-premium-mark-over-button">
 				<label class="scc-accordion_switch_button use-premium-tooltip" data-tooltip-image="<?php echo esc_url( SCC_TOOLTIP_BASEURL . '/section-total.png' ); ?>">
 					<input class="scc-section-total" onchange="changeShowSectionTotal(this)" name="scc-section-total" type="checkbox" disabled>
 					<span class="scc-accordion_toggle_button round"></span>
@@ -4000,7 +4000,7 @@ echo $scc_ai_wizard_model->get_ai_wizard_button( intval( $f1->id ) );
 				</label>
 				Show Section Total on PDF/Detail View
 			</p>
-			<p class="section-split-to-page scc-opacity-05 tool-premium">
+			<p class="section-split-to-page scc-opacity-05 tool-premium scc-premium-mark-over-button">
 				<label class="scc-accordion_switch_button">
 					<input disabled onchange="changeSectionToPage(this)" name="section-split-to-page" type="checkbox">
 					<span class="scc-accordion_toggle_button round"></span>
