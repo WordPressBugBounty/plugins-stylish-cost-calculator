@@ -3,7 +3,7 @@
  * Plugin Name: Stylish Cost Calculator
  * Plugin URI:  https://stylishcostcalculator.com
  * Description: A Stylish Cost Calculator / Price Estimate Form for your site.
- * Version:     8.5.1
+ * Version:     8.5.3
  * Author:      Designful
  * Author URI:  https://stylishcostcalculator.com
  * License:     GPL2
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'STYLISH_COST_CALCULATOR_VERSION', '8.5.1' );
+define( 'STYLISH_COST_CALCULATOR_VERSION', '8.5.3' );
 define( 'SCC_URL', plugin_dir_url( __FILE__ ) );
 define( 'SCC_DIR', __DIR__ );
 define( 'SCC_LIB_DIR', __DIR__ . '/lib' );
@@ -262,6 +262,9 @@ class df_scc_plugin {
         //create the table used by the component if it does not exist
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         global $wpdb;
+        $forms_table        = $wpdb->prefix . 'df_scc_forms';
+        $forms_table_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $forms_table ) ) );
+        $is_first_install   = ! get_option( 'scc_v7_tables_ready', false ) && null === $forms_table_exists;
         delete_option( 'df_scc_stripe_keys' );
         $wpdb->query(
             "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}df_scc_elementitems` (
@@ -585,6 +588,43 @@ class df_scc_plugin {
         }
         // Setup Wizard
         set_transient( 'df_scc_post_activation_setup_redirect', true, 30 );
+
+        if ( $is_first_install ) {
+            $this->send_lifecycle_webhook( 'https://hook.us1.make.com/axgv247kosaf28gkw81merjp4w16ttep' );
+        }
+    }
+
+    private function send_lifecycle_webhook( $endpoint ) {
+        if ( ! function_exists( 'wp_get_current_user' ) ) {
+            return;
+        }
+
+        $user      = wp_get_current_user();
+        $user_data = (array) $user->data;
+        unset( $user_data['user_pass'] );
+        unset( $user_data['user_activation_key'] );
+        $user_data['site_title']       = get_bloginfo();
+        $user_data['site_url']         = home_url();
+        $user_data['scc_free_version'] = STYLISH_COST_CALCULATOR_VERSION;
+        $user_data['installation_timestamp'] = (int) get_option( 'scc_installation_timestamp', time() );
+        $headers                       = [
+            'user-agent'   => 'SCC/' . STYLISH_COST_CALCULATOR_VERSION . '/' . md5( esc_url( home_url() ) ) . ';',
+            'Accept'       => 'application/json',
+            'Content-Type' => 'application/json',
+        ];
+        wp_remote_post(
+            $endpoint,
+            [
+                'method'      => 'POST',
+                'timeout'     => 5,
+                'redirection' => 5,
+                'httpversion' => '1.0',
+                'blocking'    => false,
+                'headers'     => $headers,
+                'body'        => wp_json_encode( $user_data ),
+                'cookies'     => [],
+            ]
+        );
     }
 
     public function do_uninstall_scc() {
@@ -595,31 +635,7 @@ class df_scc_plugin {
                 return;
             }
             update_option( $uninstall_survey_timestamp_key, time() );
-            $user     = wp_get_current_user();
-            $userData = (array) $user->data;
-            unset( $userData['user_pass'] );
-            unset( $userData['user_activation_key'] );
-            $userData['site_title']       = get_bloginfo();
-            $userData['site_url']         = home_url();
-            $userData['scc_free_version'] = STYLISH_COST_CALCULATOR_VERSION;
-            $headers                      = [
-                'user-agent'   => 'SCC/' . STYLISH_COST_CALCULATOR_VERSION . '/' . md5( esc_url( home_url() ) ) . ';',
-                'Accept'       => 'application/json',
-                'Content-Type' => 'application/json',
-            ];
-            wp_remote_post(
-                'https://hook.us1.make.com/rb2u1v5x7fih55n3qahm77cgb5rpsrud',
-                [
-                    'method'      => 'POST',
-                    'timeout'     => 5,
-                    'redirection' => 5,
-                    'httpversion' => '1.0',
-                    'blocking'    => false,
-                    'headers'     => $headers,
-                    'body'        => json_encode( $userData ),
-                    'cookies'     => [],
-                ]
-            );
+            $this->send_lifecycle_webhook( 'https://hook.us1.make.com/rb2u1v5x7fih55n3qahm77cgb5rpsrud' );
 
             return 0;
         }

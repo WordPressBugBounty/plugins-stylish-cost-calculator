@@ -386,7 +386,7 @@ define( 'DF_SCC_QUIZ_CHOICES', [
         ],
         [
             'choiceTitle'       => 'SMS',
-            'choiceDescription' => 'Send customer quotes vis SMS (and two-way messaging app)',
+            'choiceDescription' => 'Send customer quotes via SMS (and two-way messaging app)',
             'key'               => 'lead-gen-two-way-sms',
             'icon'              => 'sms',
             'helpLink'          => SCC_HELPDESK_LINKS['feature-sms-quote'],
