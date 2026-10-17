@@ -105,32 +105,12 @@ include 'partials/template-loader-page.php';
     	background: rgba(0, 0, 0, .85) !important;
 	}
 
-	#quiz-result-email-form .scc-wql-field-warnings input {
-		border: 1px solid #dc3545 !important;
-		border-radius: 0.25rem;
-	}
-
-	#quiz-result-email-form #wq_field_wrapper:not(.scc-wql-field-warnings) p.text-danger {
-		display: none;
-	}
-
 	.vh-95 {
 		height: 95vh;
 	}
 
 	.modal-head .text-muted {
 		font-size: 16px;
-	}
-
-	#wq_optin_for_comm {
-		margin: 0.25em 0 0 0.5em;
-	}
-
-	#wq-optin-checkbox-wrapper {
-		box-shadow: unset;
-		background-color: #fcfcfe;
-		padding: 10px 0;
-		border-radius: 5px;
 	}
 
 	.action-btn span.scc-icn-wrapper {
@@ -252,11 +232,6 @@ include 'partials/template-loader-page.php';
 		margin: auto 0;
 	}
 
-	#quiz-result-email-form {
-		padding: 1rem 1rem 1rem 1rem;
-		background: var(--scc-color-primary);
-		border-radius: 10px;
-	}
 	.scc-result-section-padding{
 		padding-left: 5rem !important;
 		padding-right: 5rem !important;
@@ -297,7 +272,6 @@ include 'partials/template-loader-page.php';
 	.question-desc-text::first-letter {
 		text-transform: capitalize;
 	}
-
 
 	@media (min-width: 1400px) {
 		.container-fluid.my-5 {

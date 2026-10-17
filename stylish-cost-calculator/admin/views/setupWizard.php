@@ -54,8 +54,6 @@ class SetupWizard {
         </div>
         <div class="modal fade quiz-modal" id="quizModal5" aria-hidden="true" aria-labelledby="quizModalLabel5" tabindex="-1">
         </div>
-        <div class="modal fade quiz-modal" id="quizResult" aria-hidden="true" aria-labelledby="quizModalResult" tabindex="-1">
-        </div>
         <div class="modal fade scc-ai-credits-modal" id="scc-ai-credits-exhausted-modal" aria-hidden="true" aria-labelledby="scc-ai-credits-exhausted-modal-title" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -79,18 +77,6 @@ class SetupWizard {
     }
 
     public function get_setup_wizard_templates() {
-        $opt_user_email = get_option( 'df_scc_emailsender', get_option( 'admin_email' ) );
-
-        if ( empty( $user_email ) ) {
-            $opt_user_email = get_option( 'admin_email' );
-        }
-        $logged_in_user     = wp_get_current_user();
-
-        if ( empty( $opt_user_full_name ) ) {
-            $opt_user_full_name = $logged_in_user->user_login;
-        }
-        $opt_user_full_name = apply_filters( 'scc_wq_user_full_name', $logged_in_user->display_name );
-        $opt_user_email     = apply_filters( 'scc_wq_user_email', $opt_user_email );
         // return multiline html string
         ob_start();
         ?>
@@ -266,62 +252,6 @@ class SetupWizard {
     </div>
 	<button type="submit" id="scc-setup-wizard-first-step-next-btn" data-max-steps="5" data-next-step="2" class="btn btn-primary w-100 d-none">Continue</button>
   <# } #>
-  <# if (data.step == 'Result') { #>
-	<# if (data.elementSuggestions?.length) { #>
-  <div class="mt-3 d-none">
-	<p class="mb-0">Recommended <b>Elements</b></p>
-	<div class="row row-cols-3 g-0">
-		<# data.elementSuggestions.forEach( (choice, i) => {
-			let currentKey = UUIDv4.generate();
-			let choiceCardClasses = [];
-			let icon = typeof(choice.icon) == 'string' ? svgCollection[choice.icon] : choice.icon.map(z => svgCollection[z]).join('');
-			if (choice.helpLink) {
-				choiceCardClasses.push('has-help-article');
-			}
-			let title = choice?.choiceSimpleTitle ? choice.choiceSimpleTitle : choice.choiceTitle;
-			let hasHelpLink = choice.helpLink && choice.helpLink !== '#';
-            if ( ! Boolean(quizAnswersStore['step' + data.step]) ) {
-                return;
-            }
-		#>
-		<div class="col d-flex flex-column g-3">
-			<input type="checkbox" {{ quizAnswersStore['step' + data.step][choice.key] == true ? 'checked' : '' }} data-element-suggestion="1" class="d-none" name="{{ choice.key }}" id={{currentKey}}>
-			<label class="card {{ choiceCardClasses.join( ' ' ) }} single-row-btn text-center mt-0 py-0 flex-sm-grow-1" role="button" for={{currentKey}}>
-				<span class="btn-content">
-					<span class="scc-icn-wrapper">{{{ icon }}}</span>
-					<p class="mb-0 mt-2 result-card me-1">{{ title }}</p>
-					<# if ( hasHelpLink ) { #>
-						<a href="{{{ choice.helpLink }}}" target="_blank" class="card-help-icn" title="Click to learn more"></a>
-					<# } #>
-				</span>
-			</label>
-		</div>
-		<# }) #>
-	</div>
-  </div>
-  <# } #>
-  <form class="mt-4 scc-result-section-margin" id="quiz-result-email-form">
-	<div id="wq_field_wrapper">
-		<div class="mt-3">
-			<label for="wq_your_name" class="form-label text-white">Your Name</label>
-			<input type="text" class="form-control" value="<?php echo esc_attr( $opt_user_full_name ); ?>" id="wq_your_name">
-		</div>
-		<p class="m-0 text-danger">Please fill out the field above</p>
-		<div class="mt-3">
-			<label for="wq_your_email" class="form-label text-white">Your Email</label>
-			<input type="email" class="form-control" value="<?php echo esc_attr( $opt_user_email ); ?>" id="wq_your_email">
-		</div>
-		<p class="m-0 text-danger">Please fill out the field above</p>
-
-		<button class="btn scc-setup-wizard-button scc-backend-wizard-button mt-4 w-100" data-max-steps="5" data-next-step="0" data-result-action="email" type="button">	
-			Email Setup Steps & Open Builder
-			<div class="scc-liquid-shape"></div>
-		</button>
-  </div>
-</form>
-<div class="text-center pt-4 mt-4 mb-3 pb-4 scc-backend-wizard-text"><strong>Or</strong></div>
-<div class="text-center"><a href="#" class="scc-text-black scc-setup-wizard-button scc-font-size-normal" data-max-steps="5" data-next-step="0" data-result-action="pdf" ><strong>Download Step-by-Step PDF & Open Builder</strong></a></div>
-  <# } #>
 </script>
         <?php
         return ob_get_clean();
@@ -332,14 +262,6 @@ class SetupWizard {
         ?>
 
         <style>
-            #quiz-result-email-form .scc-wql-field-warnings input {
-                border: 1px solid #dc3545 !important;
-                border-radius: 0.25rem;
-            }
-
-            #quiz-result-email-form #wq_field_wrapper:not(.scc-wql-field-warnings) p.text-danger {
-                display: none;
-            }
 
             .vh-95 {
                 height: 95vh;
@@ -382,17 +304,6 @@ class SetupWizard {
                     position: static;
                     margin: 0 auto 1rem;
                 }
-            }
-
-            #wq_optin_for_comm {
-                margin: 0.25em 0 0 0.5em;
-            }
-
-            #wq-optin-checkbox-wrapper {
-                box-shadow: unset;
-                background-color: #fcfcfe;
-                padding: 10px 0;
-                border-radius: 5px;
             }
 
             .modal .card .scc-icn-wrapper {
@@ -603,13 +514,6 @@ class SetupWizard {
             .single-row-btn .btn-content {
                 margin: auto 0;
             }
-
-            #quiz-result-email-form {
-                padding: 1rem 1rem 1rem 1rem;
-                background: var(--scc-color-primary);
-                border-radius: 10px;
-            }
-
 
             .modal input[type=checkbox]:not(.form-check-input), .modal input[type=radio] {
                 margin: .25em 0 0 0;

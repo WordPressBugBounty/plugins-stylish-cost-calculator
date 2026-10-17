@@ -72,80 +72,58 @@ function scc_create_new_calculator() {
  * @param _quizAnswersStore
  */
 function scc_create_new_calculator_by_quiz_results( results, _quizAnswersStore ) {
-	showWizardQuizResultEmailLoadingAlert( results.resultsEmailFormData?.optin );
+	showWizardQuizCreationLoadingAlert();
 	const wizardData = { ...results, ...{ __quizAnswersStore: _quizAnswersStore }, ...suggestionsByStep };
+	const errorMessage = 'An error occurred creating the calculator. Please try again.';
 	jQuery.ajax( {
 		url: wp.ajax.settings.url + '?nonce=' + pageAddCalculator.nonce + '&action=sccCalculatorOp' + '&op=load_by_params' + '&calculator_name=' + 'New Stylish Calculator',
-		// set payload type to json
 		contentType: 'application/json',
 		method: 'POST',
 		data: JSON.stringify( wizardData ),
 		success: async ( data ) => {
-			const response = JSON.parse( data );
-			if ( results.resultsEmailFormData?.optin ) {
-				if ( response.data ) {
-					const { data: calcId, quizAnswersRecordId } = response;
-					await updateWizardQuizStorageData( { ...wizardData, quizAnswersRecordId }, calcId );
-					window.location.href = window.location.pathname + '?page=scc_edit_items&id_form=' + calcId + '&new';
-				} else {
-					showSweet( false, 'An error occurred, please try again' );
-				}
-			} else if ( response.pdfData ) {
-				const { data: calcId, quizAnswersRecordId, pdfData } = response;
-				await updateWizardQuizStorageData( { ...wizardData, quizAnswersRecordId }, calcId );
-				//downloadPDF( pdfData, calcId );
-				window.location.href = window.location.pathname + '?page=scc_edit_items&id_form=' + calcId + '&new';
-			} else {
-				showSweet( false, 'An error occurred generating the PDF' );
+			let response;
+			try {
+				response = typeof data === 'string' ? JSON.parse( data ) : data;
+			} catch ( error ) {
+				showSweet( false, errorMessage );
+				return;
 			}
+			if ( ! response || response.passed !== true || ! response.data ) {
+				showSweet( false, errorMessage );
+				return;
+			}
+
+			const { data: calcId, quizAnswersRecordId } = response;
+			try {
+				await updateWizardQuizStorageData( { ...wizardData, quizAnswersRecordId }, calcId );
+			} catch ( error ) {
+				console.warn( 'SCC: Could not save the setup wizard recommendations in this browser.' );
+			}
+			window.location.href = window.location.pathname + '?page=scc_edit_items&id_form=' + calcId + '&new';
+		},
+		error: () => {
+			showSweet( false, errorMessage );
 		},
 	} );
 }
 
-const downloadPDF = ( data, calcId, type = 'application/pdf' ) => {
-	let blob = null;
-	const filename = 'your-tailored-setup-guide-' + calcId + '-sylish-cost-calculator';
-	blob = b64toBlob( data, type );
-	const blobURL = URL.createObjectURL( blob );
-	const tempLink = document.createElement( 'a' );
-	tempLink.href = blobURL;
-	tempLink.download = filename;
-	tempLink.click();
-};
-const printPreview = ( data, type = 'application/pdf' ) => {
-	let blob = null;
-	const filename = 'your-tailored-setup-guide-sylish-cost-calculator';
-	blob = b64toBlob( data, type );
-	const blobURL = URL.createObjectURL( blob );
-	const theWindow = window.open( blobURL );
-	const theDoc = theWindow.document;
-	const theScript = document.createElement( 'script' );
-	function injectThis() {
-		window.print();
+function showWizardQuizCreationLoadingAlert() {
+	const modalShown = document.querySelector( '.modal.show' );
+	if ( modalShown ) {
+		bootstrap.Modal.getInstance( modalShown )?.hide();
 	}
-	theScript.innerHTML = `window.onload = ${ injectThis.toString() };`;
-	theDoc.body.appendChild( theScript );
-};
-const b64toBlob = ( content, contentType ) => {
-	contentType = contentType || '';
-	const sliceSize = 512;
-	// method which converts base64 to binary
-	const byteCharacters = window.atob( content );
-	const byteArrays = [];
-	for ( let offset = 0; offset < byteCharacters.length; offset += sliceSize ) {
-		const slice = byteCharacters.slice( offset, offset + sliceSize );
-		const byteNumbers = new Array( slice.length );
-		for ( let i = 0; i < slice.length; i++ ) {
-			byteNumbers[ i ] = slice.charCodeAt( i );
-		}
-		const byteArray = new Uint8Array( byteNumbers );
-		byteArrays.push( byteArray );
-	}
-	const blob = new Blob( byteArrays, {
-		type: contentType,
-	} ); // statement which creates the blob
-	return blob;
-};
+	Swal.fire( {
+		title: 'Creating your calculator',
+		html: 'Please wait while we build your calculator based on your answers.',
+		showConfirmButton: false,
+		allowOutsideClick: false,
+		allowEscapeKey: false,
+		willOpen: () => {
+			Swal.showLoading();
+		},
+	} );
+}
+
 /**
  * *Creates calculator with template
  */
@@ -175,19 +153,6 @@ function loadExample( element ) {
 			}
 		},
 	} );
-}
-
-function isElementInView( scrollableDiv, targetElement ) {
-	// Get dimensions and position for the scrollable div
-	const divTop = scrollableDiv.scrollTop;
-	const divBottom = divTop + scrollableDiv.clientHeight;
-
-	// Get dimensions and position for the target element
-	const elemTop = targetElement.offsetTop;
-	const elemBottom = elemTop + targetElement.clientHeight;
-
-	// Check if the element is fully within the view of the scrollable div
-	return elemTop >= divTop && elemBottom <= divBottom;
 }
 
 function sccGetOffset( el ) {
@@ -257,30 +222,6 @@ function backToHome() {
 	templateSelectorSection.classList.add( 'd-none' );
 }
 
-function handleEmailOptInForWQ( $this ) {
-	const shownModalActionBtn = document.querySelector( '.modal.show .scc-setup-wizard-button' );
-	if ( $this.checked ) {
-		document.querySelector( '#wq_field_wrapper' ).classList.remove( 'd-none' );
-		shownModalActionBtn.textContent = 'Send My Recommendations';
-	} else {
-		document.querySelector( '#wq_field_wrapper' ).classList.add( 'd-none' );
-		shownModalActionBtn.textContent = 'Build My Calculator';
-	}
-	emailResultsFormScrollToView();
-}
-
-function emailResultsFormScrollToView( showBorder = false ) {
-	const modalVisibleContent = document.querySelector( '.modal.show .modal-body' );
-	const formEmailFields = document.querySelector( '#wq_field_wrapper input[type="email"]' );
-	modalVisibleContent.scrollTo( 0, sccGetOffset( formEmailFields ).top - 100 );
-	if ( showBorder ) {
-		formEmailFields.classList.add( 'scc-wql-field-warnings' );
-		setTimeout( () => {
-			formEmailFields.classList.remove( 'scc-wql-field-warnings' );
-		}, 2000 );
-	}
-}
-
 chooseATemplate?.addEventListener( 'change', ( evt ) => {
 	const selectedValue = evt.target.value;
 	if ( selectedValue !== 'null' ) {
@@ -330,27 +271,4 @@ function showSweet( respuesta, message ) {
 			background: 'white',
 		} );
 	}
-}
-
-function showWizardQuizResultEmailLoadingAlert( emailOptIn = false ) {
-    const modalShown = document.querySelector( '.modal.show' );
-    // Hide the modal if it is shown
-    if ( modalShown ) {
-        const modalInstance = bootstrap.Modal.getInstance( modalShown );
-        modalInstance.hide();
-    }
-    Swal.fire( {
-        title: 'Success',
-        width: 600,
-        padding: '3em',
-        showConfirmButton: false,
-        html: `<div style="color: #716add;">${ emailOptIn ? 'We sent your email instructions.' : '' } <b>Please wait</b> while we build your calculator form based on your answers.</div>`,
-        willOpen: () => {
-            Swal.showLoading();
-        },
-        backdrop: `
-          left top no-repeat rgba(0, 0, 0, .85)
-          no-repeat
-        `,
-    } );
 }

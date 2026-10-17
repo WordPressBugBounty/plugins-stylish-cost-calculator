@@ -1,3 +1,14 @@
+## 8.5.5 - 2026-10-16
+
+**Dashboard Changes:**
+- Removed: Obsolete setup-guide email and PDF options from the setup wizard.
+- Improved: Clearer progress messages while the setup wizard creates your calculator.
+- Fixed: Newly created calculators now open in the editor even when recommendations cannot be saved in your browser.
+- Fixed: Failed calculator creation now shows a clear error message.
+
+**Backend Changes:**
+- Improved: Reduced plugin size by removing unused PDF-generation components.
+
 ## 8.5.3 - 2026-09-23
 
 **Dashboard Changes:**

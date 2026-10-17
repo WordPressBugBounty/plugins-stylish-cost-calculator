@@ -701,45 +701,6 @@ function handleQuizBtnClick( evt ) {
 	if ( ! isNaN( currentStep ) ) {
 		modalInstance.hide();
 	}
-	if ( currentStep == 0 ) {
-		const resultAction = nextBtn.getAttribute( 'data-result-action' );
-		const formEmailFields = document.querySelector( '#wq_field_wrapper input[type="email"]' );
-		const isEmailOptInEnabled = ( resultAction === 'email' ) ? true : false;
-		// check if the `formEmailFields` is visible
-		if ( ( ! isElementInView( document.querySelector( '.modal.show .modal-body' ), formEmailFields ) ) && isEmailOptInEnabled ) {
-			emailResultsFormScrollToView( true );
-			return;
-		}
-		// if the `wq_your_name` and the `wq_your_email` fields are empty, show the error message
-		if ( isEmailOptInEnabled && ( ! document.querySelector( '#wq_field_wrapper input[type="text"]' ).value || ! document.querySelector( '#wq_field_wrapper input[type="email"]' ).value ) ) {
-			emailResultsFormScrollToView( true );
-			document.querySelector( '#wq_field_wrapper' ).classList.add( 'scc-wql-field-warnings' );
-			return;
-		}
-		const buildCalculatorActionBtn = nextBtn;
-		let templateData = {
-			step: 'Result',
-		};
-		templateData = {
-			...templateData,
-			allFeatureSuggestions: getChoicesByStep( 'Result' ),
-			allElementSuggestions: (choicesData && Array.isArray(choicesData.elementSuggestions)) ? choicesData.elementSuggestions : [],
-		};
-		const filteredFeaturesAndSuggestions = filterResultPageSuggestions( templateData );
-		filteredFeaturesAndSuggestions.elementSuggestions.forEach( ( element ) => {
-			quizAnswersStore.elementSuggestions[ element.key ] = true;
-		} );
-		filteredFeaturesAndSuggestions.choices.forEach( ( feature ) => {
-			quizAnswersStore.stepResult[ feature.key ] = true;
-		} );
-		const resultsEmailFormData = {
-			optin: isEmailOptInEnabled,
-			email: document.querySelector( '#wq_field_wrapper input[type="email"]' ).value,
-			name: document.querySelector( '#wq_field_wrapper input[type="text"]' ).value,
-		};
-		send_setup_wizard_data_and_build( buildCalculatorActionBtn, { elementsByChoice: filteredFeaturesAndSuggestions.elementsByChoice, featuresByChoice: filteredFeaturesAndSuggestions.featuresByChoice, resultsEmailFormData } );
-		return;
-	}
 	if ( isNaN( currentStep ) && ( typeof ( isInsideEditingPage ) !== 'undefined' && isInsideEditingPage() ) ) {
 		const { currentCalculatorSetupWizardData } = sccBackendStore;
 		let templateData = {
@@ -836,20 +797,6 @@ function handleQuizBtnClick( evt ) {
 		send_setup_wizard_data_and_build( buildCalculatorActionBtn, { elementsByChoice: filteredFeaturesAndSuggestions.elementsByChoice, featuresByChoice: filteredFeaturesAndSuggestions.featuresByChoice } );
 		return;
 	}
-	/* if ( isNaN( currentStep ) ) {
-		// currentStep is 'Result', thus was evaluated as NaN
-		currentStep = nextBtn.getAttribute( 'data-next-step' );
-		showModal( 'quizResult', {
-			title: 'AI-Powered Setup: Final Step',
-			subtitle: `For a seamless setup, get your instructions via <strong>Email</strong> to gide you as you build, or <strong>Download a PDF</strong> to keep a permanent guide on hand. Both provide clear, step-by-step directions to perfect your calculator form.`,
-			modalLead: '',
-			currentStep,
-			actionBtnTitle: 'Send My Recommendations',
-			quizNextStep: 0,
-			isFinalStep: true,
-		} );
-		return;
-	} */
 	showModal( 'quizModal' + currentStep, {
 		title: 'AI-Powered Setup',
 		subtitle: `Step ${ currentStep } of 5`,
