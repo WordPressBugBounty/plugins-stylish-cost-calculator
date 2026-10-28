@@ -26,7 +26,7 @@ class PageEditTabs extends PagesBreadcrumbs {
 		wp_enqueue_style( 'wp-color-picker' );
 		wp_enqueue_script( 'wp-color-picker' );
 
-		wp_register_script( 'scc-sortable', SCC_URL . 'lib/sortable/sortable.min.js', array( 'jquery' ), STYLISH_COST_CALCULATOR_VERSION, true );
+		wp_register_script( 'scc-sortable', SCC_URL . 'lib/sortable/sortable.min.js', array( 'jquery' ), '1.15.7', true );
 		wp_enqueue_script( 'scc-sortable' );
 		wp_enqueue_script( 'jquery-effects-core' );
 		wp_enqueue_script( 'jquery-ui-autocomplete' );

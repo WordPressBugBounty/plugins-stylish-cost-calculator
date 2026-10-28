@@ -1,9 +1,10 @@
 <?php
+
 /**
  * Plugin Name: Stylish Cost Calculator
  * Plugin URI:  https://stylishcostcalculator.com
  * Description: A Stylish Cost Calculator / Price Estimate Form for your site.
- * Version:     8.5.5
+ * Version:     8.5.7
  * Author:      Designful
  * Author URI:  https://stylishcostcalculator.com
  * License:     GPL2
@@ -15,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'STYLISH_COST_CALCULATOR_VERSION', '8.5.5' );
+define( 'STYLISH_COST_CALCULATOR_VERSION', '8.5.7' );
 define( 'SCC_URL', plugin_dir_url( __FILE__ ) );
 define( 'SCC_DIR', __DIR__ );
 define( 'SCC_LIB_DIR', __DIR__ . '/lib' );
@@ -34,6 +35,7 @@ require SCC_DIR . '/admin/controllers/initialSetupWizardController.php';
 require SCC_DIR . '/cron/notifications.php';
 require SCC_DIR . '/admin/views/partials/notificationBox.php';
 require SCC_DIR . '/utils/class-cache-plugins-exclusion-hook.php';
+
 // Load admin classes
 if ( is_admin() ) {
     require SCC_DIR . '/admin/views/setupWizard.php';
@@ -87,14 +89,17 @@ define(
 if ( ! defined( 'SCC_TELEMETRY_ENDPOINT' ) ) {
     define( 'SCC_TELEMETRY_ENDPOINT', 'https://telemetry.stylishcostcalculator.com' );
 }
-class df_scc_plugin {
+class df_scc_plugin
+{
 
-     // Add static property to store shared data
+    // Add static property to store shared data
     private static $shared_data = [];
-    public function __construct() {
-        $cache_plugin_exclusion = new \DF_SCC\Utils\CachePluginExclusionHook();
+    public function __construct()
+    {
+        $cache_plugin_exclusion = new DF_SCC\Utils\CachePluginExclusionHook();
         //?Handles ajax requests
         add_action( 'init', [ $this, 'df_scc_load_ajax' ] );
+
         //?creates/upgrades tables, but only when the stored schema version is behind
         if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] !== 'activate' ) {
             $this->maybe_check_tables();
@@ -129,8 +134,8 @@ class df_scc_plugin {
         add_action(
             'plugins_loaded',
             function () use ( $cache_plugin_exclusion ) {
-                $block            = new \DF_SCC\GutenbergBlock\SCC_Gutenberg_Block();
-                $elementor_widget = new \DF_SCC\ElementorIntegration\SCC_Elementor_Widget_Init();
+                $block            = new DF_SCC\GutenbergBlock\SCC_Gutenberg_Block();
+                $elementor_widget = new DF_SCC\ElementorIntegration\SCC_Elementor_Widget_Init();
                 $cache_plugin_exclusion->register_hooks();
 
                 if ( $elementor_widget->allow_load() ) {
@@ -150,7 +155,8 @@ class df_scc_plugin {
      * @param string $key   The key to store the data under
      * @param mixed  $value The value to store
      */
-    public static function set_shared_data( $key, $value ) {
+    public static function set_shared_data( $key, $value )
+    {
         self::$shared_data[$key] = $value;
     }
 
@@ -162,7 +168,8 @@ class df_scc_plugin {
      *
      * @return mixed The stored value or default
      */
-    public static function get_shared_data( $key, $default = null ) {
+    public static function get_shared_data( $key, $default = null )
+    {
         return isset( self::$shared_data[$key] ) ? self::$shared_data[$key] : $default;
     }
 
@@ -177,14 +184,16 @@ class df_scc_plugin {
      * (options are autoloaded once at bootstrap). The migration still also runs
      * on activation (do_install_scc) and on plugin update (post_upgrade_tasks).
      */
-    private function maybe_check_tables() {
+    private function maybe_check_tables()
+    {
         if ( get_option( 'scc_db_schema_version' ) === STYLISH_COST_CALCULATOR_VERSION ) {
             return;
         }
         $this->checkTablesExists();
         update_option( 'scc_db_schema_version', STYLISH_COST_CALCULATOR_VERSION );
     }
-    public function checkTablesExists() {
+    public function checkTablesExists()
+    {
         global $wpdb;
         $res = $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->prefix}df_scc_forms'" );
 
@@ -197,7 +206,8 @@ class df_scc_plugin {
         }
         $this->scc_alter_tables();
     }
-    public function scc_alter_tables() {
+    public function scc_alter_tables()
+    {
         global $wpdb;
         $forms_table_cols = $wpdb->get_col( "DESC {$wpdb->prefix}df_scc_forms", 0 );
 
@@ -248,7 +258,8 @@ class df_scc_plugin {
             $wpdb->query( "ALTER TABLE `{$wpdb->prefix}df_scc_elements` ADD value6 text COLLATE utf8mb4_unicode_ci DEFAULT NULL" );
         }
     }
-    public function scc_bar_menu( $adminBar ) {
+    public function scc_bar_menu( $adminBar )
+    {
         $args = [
             'id'       => 'scc-edit-calculator',
             'title'    => 'Edit SCC Calculator',
@@ -258,7 +269,8 @@ class df_scc_plugin {
         ];
         $adminBar->add_node( $args );
     }
-    public function do_install_scc() {
+    public function do_install_scc()
+    {
         //create the table used by the component if it does not exist
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         global $wpdb;
@@ -583,6 +595,7 @@ class df_scc_plugin {
         }
         update_option( 'scc_v7_tables_ready', true );
         $installation_timestamp = get_option( 'scc_installation_timestamp', false );
+
         if ( ! $installation_timestamp ) {
             update_option( 'scc_installation_timestamp', time() );
         }
@@ -594,7 +607,8 @@ class df_scc_plugin {
         }
     }
 
-    private function send_lifecycle_webhook( $endpoint ) {
+    private function send_lifecycle_webhook( $endpoint )
+    {
         if ( ! function_exists( 'wp_get_current_user' ) ) {
             return;
         }
@@ -603,11 +617,11 @@ class df_scc_plugin {
         $user_data = (array) $user->data;
         unset( $user_data['user_pass'] );
         unset( $user_data['user_activation_key'] );
-        $user_data['site_title']       = get_bloginfo();
-        $user_data['site_url']         = home_url();
-        $user_data['scc_free_version'] = STYLISH_COST_CALCULATOR_VERSION;
+        $user_data['site_title']             = get_bloginfo();
+        $user_data['site_url']               = home_url();
+        $user_data['scc_free_version']       = STYLISH_COST_CALCULATOR_VERSION;
         $user_data['installation_timestamp'] = (int) get_option( 'scc_installation_timestamp', time() );
-        $headers                       = [
+        $headers                             = [
             'user-agent'   => 'SCC/' . STYLISH_COST_CALCULATOR_VERSION . '/' . md5( esc_url( home_url() ) ) . ';',
             'Accept'       => 'application/json',
             'Content-Type' => 'application/json',
@@ -627,10 +641,12 @@ class df_scc_plugin {
         );
     }
 
-    public function do_uninstall_scc() {
+    public function do_uninstall_scc()
+    {
         if ( function_exists( 'wp_get_current_user' ) ) {
             $uninstall_survey_timestamp_key  = 'df_scc_uninstall_survey_timestamp';
             $uninstall_survey_timestamp      = get_option( $uninstall_survey_timestamp_key, false );
+
             if ( $uninstall_survey_timestamp ) {
                 return;
             }
@@ -641,12 +657,14 @@ class df_scc_plugin {
         }
     }
 
-    public function df_scc_load_ajax() {
+    public function df_scc_load_ajax()
+    {
         require __DIR__ . '/stylish-cost-ajax.php';
         require SCC_DIR . '/admin/views/uninstallSurveyModal.php';
-        ( new \SCC\Admin\Controllers\InitialSetupWizardController() )->hooks();
+        (new SCC\Admin\Controllers\InitialSetupWizardController())->hooks();
     }
-    public function scc_shortcode1( $atts ) {
+    public function scc_shortcode1( $atts )
+    {
         if ( ! is_admin() ) {
             add_action(
                 'wp_footer',
@@ -681,7 +699,8 @@ class df_scc_plugin {
         wp_add_inline_script( 'scc-frontend', $currencies_array ); */
 
         if ( ! function_exists( 'scc_currency_array_script' ) ) {
-            function scc_currency_array_script() {
+            function scc_currency_array_script()
+            {
                 $currencies_array = 'window["scc_currencies"] = ' . json_encode( require SCC_DIR . '/lib/currency_data.php' );
                 echo '<script type="text/javascript">' . $currencies_array . '</script>';
             }
@@ -705,10 +724,10 @@ class df_scc_plugin {
         // identical; the difference is it is cached per form and shared across
         // page views (invalidated on edits via formController::flush_relations_cache).
         require_once SCC_DIR . '/admin/controllers/formController.php';
-        $form = ( new formController() )->getFrontendForm( intval( $idvalue ) );
+        $form = (new formController())->getFrontendForm( intval( $idvalue ) );
 
         if ( ! $form ) {
-            return "<h4 style='color:red'>Invalid calculator with ID " . intval( $atts['idvalue'] ) . "</h4>";
+            return "<h4 style='color:red'>Invalid calculator with ID " . intval( $atts['idvalue'] ) . '</h4>';
         }
         $allfonts2                  = json_decode( $scc_googlefonts_var->gf_get_local_fonts() );
         $allfonts2i                 = isset( $allfonts2->items ) && is_array( $allfonts2->items ) ? $allfonts2->items : [];
@@ -767,7 +786,8 @@ class df_scc_plugin {
      *
      * @return void
      */
-    public function create_scc_total_tag( $attributes ) {
+    public function create_scc_total_tag( $attributes )
+    {
         // parse the attribute, if not supplied, default value is set
         $attributes = shortcode_atts(
             [
@@ -783,6 +803,7 @@ class df_scc_plugin {
         // $prefixText and $mathParams holds the array data to a variable
         $prefixText = sanitize_text_field( $attributes['prefix-text'] );
         $mathParams = $attributes['apply-math'] ? wp_json_encode( array_map( 'sanitize_text_field', explode( ':', $attributes['apply-math'] ) ) ) : '["add","0"]';
+
         // if combine attribute is there, idvalue does not work
         if ( $attributes['idvalue'] && ! ( $attributes['combine'] ) ) {
             $calculatorId = absint( $attributes['idvalue'] );
@@ -793,6 +814,7 @@ class df_scc_plugin {
                 esc_html( $prefixText )
             );
         }
+
         // if there is combine attribute, this html is printed
         if ( $attributes['combine'] ) {
             $ourFormula     = sanitize_text_field( $attributes['combine'] );
@@ -819,7 +841,8 @@ class df_scc_plugin {
         return $html;
     }
     // START OF Hide Admin Notices At Top //
-    public function scc_admin_hide_notices() {
+    public function scc_admin_hide_notices()
+    {
         $exclusionPages = [ 'scc_edit_items', 'scc-list-all-calculator-forms', 'scc-diagnostics', 'scc-quote-management-screen', 'scc-tabs', 'scc-help', 'scc-license-help', 'scc-global-settings', 'scc-coupons-management', 'Stylish_Cost_Calculator_Migration', 'stylish_cost_calculator_premium_settings' ];
 
         if ( empty( $_REQUEST['page'] ) || ! in_array( $_REQUEST['page'], $exclusionPages ) ) {
@@ -867,16 +890,17 @@ class df_scc_plugin {
     }
     // END OF Hide Admin Notices At Top //
     // *register scripts style for calculator shortcode
-    public function scc_register_shortcode_calculator() {
+    public function scc_register_shortcode_calculator()
+    {
         wp_register_script( 'scc-bootstrap-min3', SCC_URL . 'lib/bootstrap/bootstrap.bundle.min.js', [ 'jquery' ], '5.1.3', false );
 
         wp_register_style( 'scc-admin-style', SCC_URL . 'assets/css/scc-front-end.css', [], STYLISH_COST_CALCULATOR_VERSION );
         wp_register_style( 'scc-checkbox1', SCC_URL . 'assets/css/checkboxes/checkboxes.css', [], STYLISH_COST_CALCULATOR_VERSION );
-        wp_register_script( 'scc-tom-select', SCC_URL . 'lib/tom-select/tom-select.base.min.js', [], STYLISH_COST_CALCULATOR_VERSION, true );
-        wp_register_style( 'scc-tom-select', SCC_URL . 'lib/tom-select/tom-select.css', [], STYLISH_COST_CALCULATOR_VERSION );
+        wp_register_script( 'scc-tom-select', SCC_URL . 'lib/tom-select/tom-select.base.min.js', [], '2.6.2', true );
+        wp_register_style( 'scc-tom-select', SCC_URL . 'lib/tom-select/tom-select.css', [], '2.6.2' );
         wp_register_script( 'scc-flatpickr', SCC_URL . 'lib/flatpickr/js/flatpickr.min.js', [], STYLISH_COST_CALCULATOR_VERSION, true );
         wp_register_style( 'scc-flatpickr', SCC_URL . 'lib/flatpickr/css/flatpickr.min.css', [], STYLISH_COST_CALCULATOR_VERSION );
-        wp_register_script( 'scc-frontend', SCC_URL . 'assets/js/scc-frontend.js', [ 'jquery', 'wp-util', 'scc-flatpickr', 'scc-nouislider' ], STYLISH_COST_CALCULATOR_VERSION, true );
+        wp_register_script( 'scc-frontend', SCC_URL . 'assets/js/scc-frontend.js', [ 'jquery', 'wp-util', 'scc-flatpickr', 'scc-nouislider' ], STYLISH_COST_CALCULATOR_VERSION . '-tom-select-2.6.2', true );
         wp_register_script( 'scc-bootstrapslider-js', SCC_URL . 'lib/bootstrap-slider/js/bootstrap-slider.js', [ 'jquery' ], STYLISH_COST_CALCULATOR_VERSION, false );
         wp_register_script( 'scc-translate-js', SCC_URL . 'lib/translate/jquery.translate.js', [ 'jquery' ], STYLISH_COST_CALCULATOR_VERSION, false );
         wp_register_script( 'scc-nouislider', SCC_URL . 'lib/nouislider/nouislider.min.js', [], STYLISH_COST_CALCULATOR_VERSION );
@@ -888,7 +912,8 @@ class df_scc_plugin {
         if ( is_admin() && get_current_screen()->base == 'stylish-cost-calculator_page_scc_edit_items' ) {
         }
     }
-    public function ensure_admin_page_title() {
+    public function ensure_admin_page_title()
+    {
         if ( ! is_admin() ) {
             return;
         }
@@ -900,9 +925,9 @@ class df_scc_plugin {
         }
 
         $page_titles = [
-            'scc_edit_items'                   => 'Edit Calculator Form',
-            'scc-quote-management-screen'      => 'Quote Viewer',
-            'scc-coupons-management'           => 'Coupon Codes',
+            'scc_edit_items'                    => 'Edit Calculator Form',
+            'scc-quote-management-screen'       => 'Quote Viewer',
+            'scc-coupons-management'            => 'Coupon Codes',
             'Stylish_Cost_Calculator_Migration' => 'Migrate',
         ];
 
@@ -917,7 +942,8 @@ class df_scc_plugin {
         }
     }
 
-    public function admin_menu() {
+    public function admin_menu()
+    {
         if ( ! class_exists( 'migrateController' ) ) {
             require __DIR__ . '/admin/controllers/migrateController.php';
         }
@@ -948,12 +974,13 @@ class df_scc_plugin {
         add_submenu_page( '', 'Migçrate your database', 'Migrate', 'manage_options', 'Stylish_Cost_Calculator_Migration', 'ssc_test_data', null );
         // SUPPORT
         add_submenu_page( 'scc-tabs', 'Support', 'Support & Help', 'manage_options', 'scc-support', 'ssc_test_data', null );
-        
+
         // Note: Removed early loading of scc-wizard-quiz script to fix null forEach error during activation
         // The script is now loaded in individual page controllers after HTML generation
         // to ensure the choices-data element exists when the script runs
-        
-        function ssc_test_data() {
+
+        function ssc_test_data()
+        {
             // $template = dirname(__DIR__,1) . '/formController.php';
             $template = __DIR__ . '/admin/controllers/dealer.php';
             // if (file_exists($template)) {
@@ -961,7 +988,8 @@ class df_scc_plugin {
             // }
         }
     }
-    public function post_upgrade_tasks( $upgrader_object, $options ) {
+    public function post_upgrade_tasks( $upgrader_object, $options )
+    {
         $current_plugin_path_name = plugin_basename( __FILE__ );
 
         if ( ! isset( $options['action'], $options['type'] ) || $options['action'] !== 'update' || $options['type'] !== 'plugin' ) {
@@ -982,7 +1010,7 @@ class df_scc_plugin {
                 if ( ! class_exists( 'SCC_Notifications_Cron' ) ) {
                     require plugin_dir_path( __FILE__ ) . '/cron/notifications.php';
                 }
-                $cache_plugin_exclusion = new \DF_SCC\Utils\CachePluginExclusionHook();
+                $cache_plugin_exclusion = new DF_SCC\Utils\CachePluginExclusionHook();
                 $cache_plugin_exclusion->exclude_sg_optimizer();
                 $this->scc_alter_tables();
                 update_option( 'scc_db_schema_version', STYLISH_COST_CALCULATOR_VERSION );
@@ -1001,14 +1029,16 @@ class df_scc_plugin {
      * todo: scc_currency_style (default, comma)
      * todo: scc_currency_conversion_mode (manual_selection,auto_detect,off)
      */
-    public function scc_wpoption_add() {
+    public function scc_wpoption_add()
+    {
         add_option( 'df_scc_currency', 'USD' );
         add_option( 'df_scc_currencytext', 'U.S. Dollar' );
         add_option( 'df_scc_currency_style', 'default' );
         add_option( 'df_scc_currency_coversion_mode', 'off' );
         add_option( 'df_scc_currency_coversion_manual_selection', 'CAD' );
     }
-    public function my_plugin_action_links( $links ) {
+    public function my_plugin_action_links( $links )
+    {
         $links = array_merge(
             [
                 '<a href="' . admin_url( 'admin.php' ) . '?page=scc-tabs' . '">' . __( 'Add Calculator', 'textdomain' ) . '</a>',

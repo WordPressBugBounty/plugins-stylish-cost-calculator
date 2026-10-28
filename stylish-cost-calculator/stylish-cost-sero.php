@@ -5,6 +5,7 @@ class SccSero {
     private $str;
     private $a1;
     private $a2;
+    private $serverSts;
 
     public function __construct() {
         add_filter( 'cron_schedules', [ $this, 'add_three_hour_cron_schedule' ] );

@@ -1,3 +1,20 @@
+## 8.5.7 - 2026-10-27
+
+**Frontend Changes:**
+- Updated: Calculator dropdown controls, including searchable option lists and keyboard navigation.
+- Fixed: Calculators with empty saved translation or payment settings now load without PHP deprecation warnings.
+
+**Dashboard Changes:**
+- Improved: Quote-column selectors now use current dropdown styling.
+- Fixed: PHP deprecation warnings when loading quote views.
+
+**Editing Page Changes:**
+- Updated: Drag-and-drop controls for reordering fields and moving them between subsections.
+- Fixed: Dropdowns and date picker pricing choices remain selectable when the search field is hidden.
+
+**Backend Changes:**
+- Improved: Compatibility with PHP 8.3, 8.4, and 8.5.
+
 ## 8.5.5 - 2026-10-16
 
 **Dashboard Changes:**

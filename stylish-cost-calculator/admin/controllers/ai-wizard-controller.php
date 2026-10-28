@@ -646,15 +646,7 @@ class AiWizardController {
     }
 
     public function sanitize_text_or_array_field( $data ) {
-        if ( is_array( $data ) ) {
-            foreach ( $data as $key => $value ) {
-                $data[$key] = filter_var( $value, FILTER_SANITIZE_STRING );
-            }
-        } else {
-            $data = filter_var( $data, FILTER_SANITIZE_STRING );
-        }
-
-        return $data;
+        return sanitize_text_or_array_field( $data );
     }
     public function get_base_url() {
         $scheme = isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http';

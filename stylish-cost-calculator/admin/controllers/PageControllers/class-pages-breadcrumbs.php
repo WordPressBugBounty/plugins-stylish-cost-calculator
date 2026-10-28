@@ -20,7 +20,7 @@ class PagesBreadcrumbs {
             wp_register_script( 'scc-marked', SCC_URL . 'lib/marked/marked.min.js', [], STYLISH_COST_CALCULATOR_VERSION, true );
             wp_enqueue_script( 'scc-marked' );
             wp_register_style( 'scc-back-end', SCC_URL . 'assets/css/scc-back-end.css', [], STYLISH_COST_CALCULATOR_VERSION );
-            wp_register_style( 'scc-tom-select', SCC_URL . 'assets/css/tom-select.css', [], STYLISH_COST_CALCULATOR_VERSION );
+            wp_register_style( 'scc-tom-select', SCC_URL . 'assets/css/tom-select.css', [], '2.6.2' );
             wp_register_script( 'scc-sweet-alert', SCC_URL . 'lib/sweetalert2/sweetalert2.min.js', [ 'jquery' ], STYLISH_COST_CALCULATOR_VERSION, true );
             wp_register_style( 'scc-sweet-alert', SCC_URL . 'lib/sweetalert2/sweetalert2.min.css', [], STYLISH_COST_CALCULATOR_VERSION );
             wp_register_script( 'scc-wizard-quiz', SCC_URL . '/assets/js/scc-wizard-quiz.js', [ 'jquery' ], STYLISH_COST_CALCULATOR_VERSION, true );
@@ -49,7 +49,7 @@ class PagesBreadcrumbs {
             wp_register_script( 'scc-modal-controller', SCC_URL . 'assets/js/modals/controller.js', [ 'scc-modal-view' ], STYLISH_COST_CALCULATOR_VERSION, true );
             wp_register_script( 'scc-modal-init', SCC_URL . 'assets/js/modals/init.js', [ 'scc-modal-controller' ], STYLISH_COST_CALCULATOR_VERSION, true );
             wp_enqueue_script( 'scc-modal-init' );
-            wp_register_script( 'scc-backend', SCC_URL . 'assets/js/scc-backend.js', [ 'jquery', 'scc-modal-init' ], STYLISH_COST_CALCULATOR_VERSION, true );
+            wp_register_script( 'scc-backend', SCC_URL . 'assets/js/scc-backend.js', [ 'jquery', 'scc-modal-init' ], STYLISH_COST_CALCULATOR_VERSION . '-tom-select-2.6.2', true );
             wp_localize_script(
                 'scc-backend',
                 'df_scc_resources',
@@ -65,8 +65,8 @@ class PagesBreadcrumbs {
             wp_register_style( 'scc-tour', SCC_URL . 'lib/introjs/css/introjs.min.css', [], STYLISH_COST_CALCULATOR_VERSION );
             wp_enqueue_style( 'scc-tour' );
             wp_enqueue_script( 'scc-tour' );
-            wp_register_script( 'scc-tom-select-backend', SCC_URL . 'lib/tom-select/tom-select.base.js', [ 'jquery' ], STYLISH_COST_CALCULATOR_VERSION, true );
-            wp_register_style( 'scc-tom-select-backend', SCC_URL . 'lib/tom-select/tom-select.css', [], STYLISH_COST_CALCULATOR_VERSION );
+            wp_register_script( 'scc-tom-select-backend', SCC_URL . 'lib/tom-select/tom-select.base.js', [ 'jquery' ], '2.6.2', true );
+            wp_register_style( 'scc-tom-select-backend', SCC_URL . 'lib/tom-select/tom-select.css', [], '2.6.2' );
             wp_enqueue_script( 'scc-tom-select-backend' );
             wp_enqueue_style( 'scc-tom-select-backend' );
             wp_register_script( 'scc-ai-utils', SCC_URL . 'assets/js/scc-ai-utils.js', [], STYLISH_COST_CALCULATOR_VERSION, true );

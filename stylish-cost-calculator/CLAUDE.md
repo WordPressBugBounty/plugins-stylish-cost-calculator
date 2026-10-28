@@ -7,12 +7,15 @@
 - The setup wizard creates calculators through `sccCalculatorOp` / `load_by_params`, using the `passed` / `data` response and saving recommendations in browser `wizardQuizData` before opening the editor. It has no PDF setup-guide export or bundled PDF engine.
 
 ## Setup And Commands
-- Install dev tools with `npm install`. The package postinstall runs `composer install` and installs Husky.
-- Format staged PHP the same way the pre-commit hook does: `npm run lint-staged`, or run directly: `php ./tools/php-cs-fixer.phar fix --config ./.php-cs-fixer.php --verbose --allow-risky=yes`.
+- Use Node.js 24 LTS (`nvm use`) and PHP 8.2+ for development tools. These development requirements do not change the plugin's PHP 7.0 runtime minimum; Composer resolves dev packages against PHP 8.2.
+- Install locked dev tools with `npm ci`. The postinstall runs `composer install --no-interaction`; prepare installs Husky. CI sets `HUSKY=0` to skip hook installation.
+- The tracked `.husky/pre-commit` runs `npm run lint-staged`; its script uses `--hide-unstaged` to preserve unrelated work. Staged PHP is formatted and then checked, because PHP-CS-Fixer's `fix` command alone does not fail on invalid syntax. Format PHP directly with `php ./vendor/bin/php-cs-fixer fix --config ./.php-cs-fixer.php --verbose --allow-risky=yes`; never format the whole legacy repo as part of a tooling update.
 - Run the CI compatibility check, when Composer deps are installed, with `./vendor/bin/phpcs -q --ignore=*/*.js --standard=./phpcs.backwards-compat.xml .`.
 - Run the broader local PHP sniff, when needed, with `./vendor/bin/phpcs --standard=./phpcs.xml .`.
-- `npm test` is a placeholder that exits with failure; do not cite it as a passing test.
-- Run `node tests/run-wizard-regression.js` to check wizard creation, recommendation storage and failures using isolated PHP/JS fixtures without WordPress, a database or network requests.
+- Run `npm test` for wizard checks, owned-PHP syntax/compile diagnostics, strict runtime fixtures and bundled UI-library browser-global/plugin API checks. It needs only Node.js and PHP on PATH; no dependency install, WordPress, database or network requests are needed. Run `npm run test:php` for PHP checks alone; set `PHP_BINARY` to select a PHP executable.
+- `.github/workflows/run-backwards-compatibility-phpcs.yml` runs PHP regression/WordPress integration on PHP 8.2, 8.3, 8.4 and 8.5, alongside the PHP 7.0+ compatibility scan and production build/audit. Build tools use PHP 8.2 and Node.js from `.nvmrc`.
+- WordPress integration uses only CI's disposable `scc_php_compat` MySQL database with `SCC_WP_COMPAT_FIXTURE=1`; its MU fixture blocks HTTP/mail and fails on plugin diagnostics. Never run that fixture against an existing site/database.
+- Bundled Sortable and Tom Select come from pinned official npm distributions; provenance is in each library's `README.md`. Historical Tom Select `base` paths contain the Popular bundle because SCC requires `dropdown_input` and `remove_button`. Keep library and caller asset versions synchronized for cache invalidation. Use `controlInput: null` for non-searchable controls; disabling `control_input` prevents dropdown focus.
 
 ## Coding Rules
 - Prefer existing WordPress APIs, hooks, filters, escaping/sanitization, nonce, options, cron, upload, mail, HTTP, and `$wpdb` helpers over generic PHP alternatives.

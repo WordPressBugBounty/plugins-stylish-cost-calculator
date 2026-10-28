@@ -164,7 +164,7 @@ class SccFrontendController {
             'paypal_currency'            => null,
         ];
         $paypalConfigArray        = wp_parse_args(
-            json_decode( $form->paypalConfigArray, true ),
+            json_decode( $form->paypalConfigArray ?? '', true ),
             $paypal_config_defaults
         );
 
@@ -269,7 +269,7 @@ class SccFrontendController {
          * *Translates Preview
          * ?Form translate array if column is empty
          */
-        $translateArray = $form->translation;
+        $translateArray = $form->translation ?? '';
         $translateArray = json_decode( stripslashes( $translateArray ) );
 
         if ( ! function_exists( 'getTranslatables' ) ) {

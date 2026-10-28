@@ -10,6 +10,9 @@ class SCCQuoteListView {
 
 	public $quotes_from_id;
 	public $quote_status;
+	public $formFields;
+	public $formFieldsToShow;
+	public $crm_table;
 	private $disableIPandBrowserColumn;
 	public function get_calculator_name() {
 		global $wpdb;
@@ -27,8 +30,8 @@ class SCCQuoteListView {
 		$this->page();
 	}
 	function page() {
-		wp_register_style( 'scc-select2', SCC_URL . 'lib/tom-select/tom-select-quotes.css', array(), STYLISH_COST_CALCULATOR_VERSION );
-		wp_register_script( 'scc-select2', SCC_URL . 'lib/tom-select/tom-select.complete.min.js', array(), STYLISH_COST_CALCULATOR_VERSION );
+		wp_register_style( 'scc-select2', SCC_URL . 'lib/tom-select/tom-select-quotes.css', array(), '2.6.2' );
+		wp_register_script( 'scc-select2', SCC_URL . 'lib/tom-select/tom-select.complete.min.js', array(), '2.6.2' );
 
 		wp_enqueue_style( 'scc-select2' );
 		wp_enqueue_script( 'scc-select2' );
@@ -105,7 +108,7 @@ class SCCQuoteListView {
 				font-size: 1.575rem !important;
 			}
 
-			.swal2-content .items.ts-input.full.has-items {
+			.swal2-html-container .ts-wrapper.full.has-items .ts-control {
 				text-align: left;
 			}
 

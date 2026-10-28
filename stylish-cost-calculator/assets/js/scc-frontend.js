@@ -1244,15 +1244,12 @@ function dfsccLoaded() {
 			var tomSelectInstance = new TomSelect("#byjson" + elementId, {
 				/*create: true,*/
 				plugins,
+				// A disabled input cannot receive the focus needed to open newer Tom Select controls.
+				...(shouldEnableSearchInput ? {} : { controlInput: null }),
 				searchField: [{ field: 'text', weight: 2 }, { field: 'text2', weight: 0.5 }],
 				hidePlaceholder: true,
 				hideSelected: true,
 				placeholder: sccGetTranslationByKey(formId, 'Search for an option...'),
-				onInitialize: function () {
-					if (!shouldEnableSearchInput) {
-						this.control_input.setAttribute('disabled', '');
-					}
-				},
 				render: {
 						option: function (data, escape) {
 							const isChooseAnOption = data.$option.classList.contains('scc-pick-an-option');

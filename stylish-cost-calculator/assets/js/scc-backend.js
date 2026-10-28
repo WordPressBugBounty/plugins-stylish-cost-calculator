@@ -1051,6 +1051,7 @@ const sccBackendUtils = {
 		];
 		try {
 			new TomSelect( pricingModeSelect, {
+				controlInput: null,
 				maxItems: 1,
 				create: false,
 				options,
@@ -1063,8 +1064,6 @@ const sccBackendUtils = {
 					},
 				},
 				onInitialize() {  
-					// disabling the search input cursor, since only 2 options are there
-					this.control_input.setAttribute( 'disabled', '' );
 					this.quantityRelatedOptionsSwitcher = ( enable, disabledReason = null ) => {
 						if ( enable ) {
 							this.updateOption( 'quantity_mod', { ...options[ 1 ], disabled: false } );
@@ -1079,7 +1078,7 @@ const sccBackendUtils = {
 					this.elementId = elementId;
 					this.subsectionId = parentSubSectionId;
 					const adjustAvailablePricingModesBySlider = () => {
-						parentSubSectionNode = this.control_input.closest( '.subsection-area' );
+						parentSubSectionNode = this.wrapper.closest( '.subsection-area' );
 						const isSliderAvailable = parentSubSectionNode.querySelector( '[data-element-setup-type="slider"]' );
 						this.quantityRelatedOptionsSwitcher( ! isSliderAvailable, ( isSliderAvailable ? 'slider_available' : null ) );
 					};
