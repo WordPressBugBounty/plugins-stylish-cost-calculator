@@ -189,12 +189,18 @@ class ajaxRequest {
      * @param $migration migration controller instance
      */
     public static function migrate_coupon( $migration ) {
+        global $wpdb;
         require_once __DIR__ . '/admin/controllers/couponController.php';
-        $cc  = new \couponController();
-        $ccc = $migration->getAllOldCoupons();
+        $controller = new \couponController();
 
-        foreach ( $ccc as $c ) {
-            $cc->create( (array) $c );
+        foreach ( $migration->getAllOldCoupons() as $coupon ) {
+            $existing = $controller->findByCode( $coupon->code );
+            if ( $wpdb->last_error ) {
+                throw new \RuntimeException( 'Unable to read current coupons.' );
+            }
+            if ( ! $existing ) {
+                self::require_migration_insert( $controller->create( (array) $coupon ) );
+            }
         }
     }
     /**
@@ -204,14 +210,51 @@ class ajaxRequest {
      * @param $migration migration controller instance
      */
     public function scc_migrateAuto2() {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_send_json( [ 'passed' => false ], 403 );
+        }
+        if ( ( $_SERVER['REQUEST_METHOD'] ?? '' ) !== 'POST' ) {
+            wp_send_json( [ 'passed' => false ], 405 );
+        }
+        if ( ! isset( $_POST['nonce'] ) || ! is_string( $_POST['nonce'] ) ) {
+            wp_send_json( [ 'passed' => false ], 403 );
+        }
+        check_ajax_referer( 'scc-redo-migration', 'nonce' );
+
+        wp_send_json( [ 'passed' => self::scc_migrateAuto() ] );
+    }
+
+    private static function require_migration_insert( $id ) {
+        if ( ! is_numeric( $id ) || (int) $id <= 0 ) {
+            throw new \RuntimeException( 'Unable to import a legacy record.' );
+        }
+        return $id;
+    }
+
+    private static function migration_tables_are_transactional() {
         global $wpdb;
-        $wpdb->query( "DELETE FROM {$wpdb->prefix}df_scc_forms" );
-        self::scc_migrateAuto();
+        $tables       = array_map( function ( $table ) use ( $wpdb ) {
+            return $wpdb->prefix . $table;
+        }, DF_SCC_TABLES );
+        $placeholders = implode( ', ', array_fill( 0, count( $tables ), '%s' ) );
+        $engines      = $wpdb->get_results( $wpdb->prepare(
+            "SELECT TABLE_NAME, ENGINE FROM information_schema.TABLES
+             WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME IN ($placeholders)",
+            $tables
+        ), OBJECT_K );
+
+        foreach ( $tables as $table ) {
+            if ( ! isset( $engines[ $table ]->ENGINE ) || 'InnoDB' !== $engines[ $table ]->ENGINE ) {
+                return false;
+            }
+        }
+        return true;
     }
     public static function migrate_global( $migration ) {
         $migration::update_wpOptions();
     }
-    public static function scc_migrateAuto() {
+    private static function scc_migrateAuto() {
+        global $wpdb;
         require_once __DIR__ . '/admin/controllers/migrateController.php';
         require_once __DIR__ . '/admin/controllers/formController.php';
         require_once __DIR__ . '/admin/controllers/conditionController.php';
@@ -220,24 +263,70 @@ class ajaxRequest {
         require_once __DIR__ . '/admin/controllers/elementController.php';
         require_once __DIR__ . '/admin/controllers/elementitemController.php';
         require_once __DIR__ . '/admin/controllers/quoteSubmissionsController.php';
-        $calculatorC  = new formController();
-        $conditionalC = new conditionController();
-        $sectionC     = new sectionController();
-        $subsectionC  = new subsectionController();
-        $elementC     = new elementController();
-        $elementitemC = new elementitemController();
-        $quoteC       = new quoteSubmissionsController();
-        $m            = new migrateController();
-        $cals         = $m->getAllOldCalulator();
+        $calculatorC     = new formController();
+        $conditionalC    = new conditionController();
+        $sectionC        = new sectionController();
+        $subsectionC     = new subsectionController();
+        $elementC        = new elementController();
+        $elementitemC    = new elementitemController();
+        $quoteC          = new quoteSubmissionsController();
+        $migration       = new migrateController();
+        $transaction     = false;
+        $previous_errors = $wpdb->suppress_errors();
+        $reconnect_retries = $wpdb->reconnect_retries ?? null;
 
-        foreach ( $cals as $c ) {
-            $json_data_ = $m->getCalculatorData( $c->id );
-            self::migrate_to( $json_data_, $calculatorC, $conditionalC, $sectionC, $subsectionC, $elementC, $elementitemC, true, $quoteC, false );
+        try {
+            $source = [];
+            foreach ( $migration->getAllOldCalulator() as $calculator ) {
+                $source[ $calculator->id ] = $migration->getCalculatorData( $calculator->id );
+            }
+            if ( ! $source || ! self::migration_tables_are_transactional() ) {
+                return false;
+            }
+            // WordPress may replay a failed query after reconnecting outside the transaction.
+            if ( null !== $reconnect_retries ) {
+                $wpdb->reconnect_retries = 0;
+            }
+            if ( false === $wpdb->query( 'START TRANSACTION' ) ) {
+                return false;
+            }
+            $transaction = true;
+            $current_ids = $wpdb->get_col( "SELECT id FROM {$wpdb->prefix}df_scc_forms FOR UPDATE" );
+            if ( $wpdb->last_error || false === $wpdb->query( "DELETE FROM {$wpdb->prefix}df_scc_forms" ) ) {
+                return false;
+            }
+            // The replacement depends on cascading deletes of the current calculators' records.
+            foreach ( array_diff( DF_SCC_TABLES, [ 'df_scc_forms', 'df_scc_coupons' ] ) as $table ) {
+                if ( $wpdb->get_var( "SELECT 1 FROM {$wpdb->prefix}{$table} LIMIT 1" ) || $wpdb->last_error ) {
+                    return false;
+                }
+            }
+            foreach ( $source as $calculator ) {
+                if ( ! self::migrate_to( $calculator, $calculatorC, $conditionalC, $sectionC, $subsectionC, $elementC, $elementitemC, true, $quoteC, false ) ) {
+                    return false;
+                }
+            }
+            self::migrate_coupon( $migration );
+            if ( false === $wpdb->query( 'COMMIT' ) ) {
+                return false;
+            }
+            $transaction = false;
+        } catch ( \Throwable $error ) {
+            return false;
+        } finally {
+            if ( $transaction ) {
+                $wpdb->query( 'ROLLBACK' );
+            }
+            if ( null !== $reconnect_retries ) {
+                $wpdb->reconnect_retries = $reconnect_retries;
+            }
+            $wpdb->suppress_errors( $previous_errors );
         }
-        self::migrate_coupon( $m );
-        // self::migrate_global($m);
-        wp_send_json( [ 'passed' => true ] );
-        die();
+
+        foreach ( array_unique( array_merge( $current_ids, array_keys( $source ) ) ) as $id ) {
+            formController::flush_relations_cache( (int) $id );
+        }
+        return true;
     }
     /**
      * *Handles migration
@@ -374,10 +463,13 @@ class ajaxRequest {
                 $c['webhookSettings'] = json_encode( json_decode( stripslashes( $json_data['scc_form_parameters']['parameters']['webhookSettings'] ) ) );
             }
             $c['translation'] = json_encode( $json_data['scc_form']['formtranslate'] );
-            $id_c             = $calculatorC->create( $c );
+            $id_c             = self::require_migration_insert( $calculatorC->create( $c ) );
 
             foreach ( $json_data['scc_form']['formstored'] as $section ) {
                 $section           = json_decode( json_encode( $section ), true );
+                if ( ! isset( $section['value'] ) || ! is_array( $section['value'] ) ) {
+                    return false;
+                }
                 $sc['name']        = sanitize_text_field( $section['name'] );
                 $sc['description'] = sanitize_text_field( $section['desc'] );
                 $sc['order']       = intval( $section['section'] );
@@ -390,16 +482,19 @@ class ajaxRequest {
                     $sc['showSectionTotal'] = 'true';
                 }
                 $sc['form_id'] = intval( $id_c );
-                $id_sec        = $sectionC->create( $sc );
+                $id_sec        = self::require_migration_insert( $sectionC->create( $sc ) );
 
                 foreach ( $section['value'] as $subsection ) {
+                    if ( ! is_array( $subsection ) || ( isset( $subsection['Nooptions'] ) && ! is_array( $subsection['Nooptions'] ) ) ) {
+                        return false;
+                    }
                     $sb['order']      = intval( $subsection['subsection'] );
                     $sb['section_id'] = intval( $id_sec );
-                    $id_sub           = $subsectionC->create( $sb );
+                    $id_sub           = self::require_migration_insert( $subsectionC->create( $sb ) );
 
                     if ( isset( $subsection['minmax'] ) && count( $subsection['minmax'] ) > 0 ) {
                         $e['type']          = 'slider';
-                        $e['orden']         = count( $subsection['Nooptions'] ) + 1;
+                        $e['orden']         = count( $subsection['Nooptions'] ?? [] ) + 1;
                         $e['titleElement']  = wp_kses( $subsection['minmax'][0]['title'], SCC_ALLOWTAGS );
                         $e['mandatory']     = sanitize_text_field( $subsection['minmax'][0]['mandatory'] );
                         $e['value2']        = intval( $subsection['step'] );
@@ -420,7 +515,7 @@ class ajaxRequest {
                         ( $subsection['isSlidingScale'] ) ? $e['value1'] = 'sliding' : $e['value1'] = 'bulk';
 
                         $e['subsection_id'] = $id_sub;
-                        $id_eemin           = $elementC->create( $e );
+                        $id_eemin           = self::require_migration_insert( $elementC->create( $e ) );
 
                         foreach ( $subsection['minmax'] as $minmax ) {
                             $mi['orden']  = sanitize_text_field( $minmax['No'] );
@@ -432,11 +527,14 @@ class ajaxRequest {
                                 $e['woocomerce_product_id'] = intval( $minmax['scc_woo_commerce_product_id'] );
                             }
                             $mi['element_id'] = $id_eemin;
-                            $elementitemC->create( $mi );
+                            self::require_migration_insert( $elementitemC->create( $mi ) );
                         }
                     }
 
-                    foreach ( $subsection['Nooptions'] as  $element ) {
+                    foreach ( ( $subsection['Nooptions'] ?? [] ) as $element ) {
+                        if ( ! isset( $element['type'], $element['value'][0] ) || ! is_array( $element['value'][0] ) ) {
+                            return false;
+                        }
                         //!add conditions
                         $el['orden'] = intval( $element['element'] );
                         switch ( $element['type'] ) {
@@ -507,7 +605,7 @@ class ajaxRequest {
                             $el['titleColumnMobile'] = sanitize_text_field( $element['value'][0]['column_mobl'] );
                         }
                         $el['subsection_id'] = $id_sub;
-                        $ell_id              = $elementC->create( $el );
+                        $ell_id              = self::require_migration_insert( $elementC->create( $el ) );
 
                         foreach ( $element['value'] as $items ) {
                             if ( $element['type'] === 'selectoption' ) {
@@ -524,7 +622,7 @@ class ajaxRequest {
                                     $eli['value1'] = urldecode( $items['dropdownLogo'] );
                                 }
                                 $eli['element_id'] = $ell_id;
-                                $elementitemC->create( $eli );
+                                self::require_migration_insert( $elementitemC->create( $eli ) );
                             }
 
                             if ( $element['type'] === 'switchoption' ) {
@@ -536,18 +634,21 @@ class ajaxRequest {
                                 $eli['price']                                             = sanitize_text_field( $items['value1'] );
                                 ( $items['opt_default'] == 'true' ) ? $eli['opt_default'] = '1' : $eli['opt_default'] = '0';
                                 $eli['element_id']                                        = $ell_id;
-                                $elementitemC->create( $eli );
+                                self::require_migration_insert( $elementitemC->create( $eli ) );
                             }
                         }
                     }
                 }
             }
             //!Recently done, must be tested
-            if ( isset( $json_data['scc_form_parameters']['parameters']['conditionObject'] ) ) {
+            if ( ! empty( $json_data['scc_form_parameters']['parameters']['conditionObject'] ) ) {
                 $conditonObj = json_decode( stripslashes( stripslashes( $json_data['scc_form_parameters']['parameters']['conditionObject'] ) ), true );
+                if ( JSON_ERROR_NONE !== json_last_error() || ( null !== $conditonObj && ! is_array( $conditonObj ) ) ) {
+                    return false;
+                }
                 $conditonals = [];
 
-                foreach ( $conditonObj as $key => $con ) {
+                foreach ( ( $conditonObj ?? [] ) as $key => $con ) {
                     $result = $elementC->getByUniqueId( $key . $id_c );
 
                     foreach ( $con[0] as $key22 => $ccc ) {
@@ -602,14 +703,14 @@ class ajaxRequest {
                 }
 
                 foreach ( $conditonals as $i ) {
-                    $conditionalC->create( (array) $i );
+                    self::require_migration_insert( $conditionalC->create( (array) $i ) );
                 }
             }
 
             if ( $quote ) {
                 foreach ( $json_data['scc_form']['quotes'] as $q ) {
                     $q['calc_id'] = $id_c;
-                    $quoteC->create( (array) $q );
+                    self::require_migration_insert( $quoteC->create( (array) $q ) );
                 }
             }
 

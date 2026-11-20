@@ -4,7 +4,7 @@
  * Plugin Name: Stylish Cost Calculator
  * Plugin URI:  https://stylishcostcalculator.com
  * Description: A Stylish Cost Calculator / Price Estimate Form for your site.
- * Version:     8.5.9
+ * Version:     8.6.1
  * Author:      Designful
  * Author URI:  https://stylishcostcalculator.com
  * License:     GPL2
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'STYLISH_COST_CALCULATOR_VERSION', '8.5.9' );
+define( 'STYLISH_COST_CALCULATOR_VERSION', '8.6.1' );
 define( 'SCC_URL', plugin_dir_url( __FILE__ ) );
 define( 'SCC_DIR', __DIR__ );
 define( 'SCC_LIB_DIR', __DIR__ . '/lib' );
@@ -900,7 +900,7 @@ class df_scc_plugin
         wp_register_style( 'scc-tom-select', SCC_URL . 'lib/tom-select/tom-select.css', [], '2.6.2' );
         wp_register_script( 'scc-flatpickr', SCC_URL . 'lib/flatpickr/js/flatpickr.min.js', [], STYLISH_COST_CALCULATOR_VERSION, true );
         wp_register_style( 'scc-flatpickr', SCC_URL . 'lib/flatpickr/css/flatpickr.min.css', [], STYLISH_COST_CALCULATOR_VERSION );
-        wp_register_script( 'scc-frontend', SCC_URL . 'assets/js/scc-frontend.js', [ 'jquery', 'wp-util', 'scc-flatpickr', 'scc-nouislider' ], STYLISH_COST_CALCULATOR_VERSION . '-tom-select-2.6.2', true );
+        wp_register_script( 'scc-frontend', SCC_URL . 'assets/js/scc-frontend.js', [ 'jquery', 'wp-util', 'scc-flatpickr', 'scc-nouislider' ], STYLISH_COST_CALCULATOR_VERSION . '-tom-select-2.6.2-2', true );
         wp_register_script( 'scc-bootstrapslider-js', SCC_URL . 'lib/bootstrap-slider/js/bootstrap-slider.js', [ 'jquery' ], STYLISH_COST_CALCULATOR_VERSION, false );
         wp_register_script( 'scc-translate-js', SCC_URL . 'lib/translate/jquery.translate.js', [ 'jquery' ], STYLISH_COST_CALCULATOR_VERSION, false );
         wp_register_script( 'scc-nouislider', SCC_URL . 'lib/nouislider/nouislider.min.js', [], STYLISH_COST_CALCULATOR_VERSION );

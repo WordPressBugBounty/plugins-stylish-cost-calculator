@@ -72,22 +72,32 @@ function sccSyncEditingPreviewLayout() {
  
 
 async function initializeScc() {
-    
+	if (typeof window.sccData === 'undefined') {
+		window.sccData = [];
+	}
+
 	jQuery('.calc-wrapper').each((index, element) => {
+		const match = /^scc_form_([1-9]\d*)$/.exec(element.id);
+		if (!match) return;
 
-		let formId = element.getAttribute('id').replace('scc_form_', '');
+		const formId = match[1];
+		const configNode = document.querySelector('script[type="text/json"]#scc-config-' + formId);
+		if (!configNode) return;
 
-		if (typeof (window.sccData) == "undefined") {
-			window.sccData = []
+		let sccConfig;
+		try {
+			sccConfig = JSON.parse(configNode.textContent);
+		} catch (error) {
+			return;
 		}
-		if (typeof (window.sccData[formId]) == "undefined") {
-			window.sccData[formId] = {}
+		if (!sccConfig || String(sccConfig.form_id) !== formId || !Array.isArray(sccConfig.sections)) {
+			return;
 		}
-        
-		let sccConfig = JSON.parse( document.getElementById( 'scc-config-' + formId ).textContent );
 
-		// parse and store config to data object
-	    sccData[ formId ].config = sccConfig;
+		if (!window.sccData[formId]) {
+			window.sccData[formId] = {};
+		}
+		window.sccData[formId].config = sccConfig;
 
 	    jQuery(function () {
 		    sccInitTimePicker( formId );
@@ -3097,9 +3107,11 @@ function getTranslation_(calculatorID) {
 function sccUslStats() {
 	if (typeof sccData == "undefined") return
 	Object.keys(sccData).forEach(function (calcId) {
+		if (!/^[1-9]\d*$/.test(calcId)) return;
 		checkConditions(calcId)
-		// detect if calculator form is rendered in a not editing page then trigger the dashboard url stats records
-		// if (!window.location.href.match('&id_form')) {
+		const nonce = window['pageCalcFront' + calcId]?.nonce;
+		if (typeof nonce !== 'string' || !nonce) return;
+
 		jQuery.ajax({
 			url: wp.ajax.settings.url,
 			method: 'POST',
@@ -3107,10 +3119,9 @@ function sccUslStats() {
 				action: 'sccUpdateUrlStats',
 				url: window.location.href,
 				calcId,
-				nonce: eval('pageCalcFront' + calcId).nonce
+				nonce
 			}
 		});
-		// }
 	})
 }
 

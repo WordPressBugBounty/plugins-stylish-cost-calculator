@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="scc_title_bar" >Redo Migration</div>
 </div>
 <div class="row ms-2">
-	<p>Using this view you can <span style="color:#314af3;font-weight:bold;">migrate</span> your old database and global settings.</p>
+	<p>Use this screen to import calculators and related records from an older version of Stylish Cost Calculator.</p>
 </div>
 <div class="row ms-2" style="min-height: 300px;">
 	<div id="scc-migration-selection" class="col-6">
@@ -33,14 +33,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<h4>Notice:</h4>
 			<p style="font-size: 15px;">You have to consider the following aspects:</p>
 			<ol>
-				<li>Each time you run this migration you will loose the calculators you have created in v.7</li>
-				<li>Each time you run this migration you will overwrite the global settings to the previous global settings</li>
+				<li>A successful migration replaces your current calculators and their related records with the legacy data.</li>
+				<li>Back up your database before continuing.</li>
 			</ol>
 		</div>
 	</div>
 </div>
 <script>
 	jQuery("#scc-migrate-auto").on("click", function() {
+		const button = jQuery(this);
 		var selected = jQuery("#inputGroupSelect01").val()
 		if (selected == "1") {
 			Swal.fire({
@@ -50,25 +51,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 				showCancelButton: true,
 				confirmButtonColor: '#3085d6',
 				cancelButtonColor: '#d33',
-				confirmButtonText: 'Yes, delete it!'
+				confirmButtonText: 'Replace current calculators'
 			}).then((result) => {
 				if (result.isConfirmed) {
+					button.prop('disabled', true);
 					var sp = showProgress(120000)
 					jQuery.ajax({
 						url: ajaxurl,
+						method: 'POST',
 						cache: false,
 						timeout: 120000,
 						data: {
 							action: 'sccMigrateAuto2',
-							automatic: true,
+						nonce: <?php echo wp_json_encode( wp_create_nonce( 'scc-redo-migration' ) ); ?>,
 						},
 						success: function(data) {
-							sp.close();
 							if (data.passed == true) {
 								show_message('green', 'scc-migration-selection', 'Your database was migrated successfully...')
 							} else {
-								show_message('red', 'scc-migration-selection', 'An error occurred while migrating the database...')
+								show_message('red', 'scc-migration-selection', 'Migration could not be completed. Check that valid legacy calculators are available.')
 							}
+						},
+						error: function() {
+							show_message('red', 'scc-migration-selection', 'The migration request failed. Refresh the page and check your calculators before retrying.')
+						},
+						complete: function() {
+							sp.close();
+							button.prop('disabled', false);
 						}
 					})
 				}

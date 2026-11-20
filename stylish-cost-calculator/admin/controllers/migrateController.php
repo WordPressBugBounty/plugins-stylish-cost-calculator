@@ -21,55 +21,70 @@ class migrateController {
 	 */
 
 	function getCalculatorData( int $id ) {
-		$scc_form            = $this->db->get_results( $this->db->prepare( "SELECT id, formname,description,formstored,formtranslate  FROM {$this->db->prefix}scc_forms where id = %d", array( $id ) ) );
-		$scc_form_parameters = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->db->prefix}scc_form_parameters where form_id = %d ", array( $id ) ) );
-		$quote               = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->db->prefix}scc_quote_submissions where calc_id = %d ", array( $id ) ) );
-
-		$data_response                    = array();
-		$scc_form[0]->formstored          = (array) json_decode( stripslashes( stripslashes( $scc_form[0]->formstored ) ) );
-		$scc_form[0]->formtranslate       = (array) json_decode( stripslashes( stripslashes( $scc_form[0]->formtranslate ) ) );
-		( $quote ) ? $scc_form[0]->quotes = (array) $quote : $scc_form[0]->quotes = array();
-		$scc_calc_params                  = (array) json_decode( stripslashes( stripslashes( $scc_form_parameters[0]->parameters ) ) );
-		// if parameters return null, try less stripslashing
-		if ( empty( $scc_calc_params ) ) {
-			$scc_calc_params = (array) json_decode( stripslashes( $scc_form_parameters[0]->parameters ) );
+		$form   = $this->db->get_row( $this->db->prepare( "SELECT id, formname, description, formstored, formtranslate FROM {$this->db->prefix}scc_forms WHERE id = %d", $id ) );
+		$params = $this->db->get_row( $this->db->prepare( "SELECT * FROM {$this->db->prefix}scc_form_parameters WHERE form_id = %d", $id ) );
+		if ( ! $form || ! $params ) {
+			throw new \RuntimeException( 'Missing legacy calculator data.' );
 		}
-		$scc_form_parameters[0]->parameters = (array) $scc_calc_params;
+		$form->formstored   = $this->decode_legacy_array( $form->formstored );
+		$params->parameters = $this->decode_legacy_array( $params->parameters );
+		if ( null === $form->formstored || ! $params->parameters ) {
+			throw new \RuntimeException( 'Invalid legacy calculator data.' );
+		}
 
-		$data_response['scc_form']            = (array) $scc_form[0];
-		$data_response['scc_form_parameters'] = (array) $scc_form_parameters[0];
-		return $data_response;
+		$form->formtranslate = $this->decode_legacy_array( $form->formtranslate ) ?? [];
+		$form->quotes        = [];
+		if ( $this->legacy_table_exists( 'scc_quote_submissions' ) ) {
+			$form->quotes = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->db->prefix}scc_quote_submissions WHERE calc_id = %d", $id ) );
+			if ( $this->db->last_error ) {
+				throw new \RuntimeException( 'Unable to read legacy quotes.' );
+			}
+		}
+		return [ 'scc_form' => (array) $form, 'scc_form_parameters' => (array) $params ];
 	}
 
-	/**
-	 * @return array of calculatos to loop and migrate
-	 */
+	private function decode_legacy_array( $value ) {
+		$value     = (string) $value;
+		$unslashed = stripslashes( $value );
+		foreach ( [ $value, $unslashed, stripslashes( $unslashed ) ] as $json ) {
+			$decoded = json_decode( $json );
+			if ( is_array( $decoded ) || is_object( $decoded ) ) {
+				return (array) $decoded;
+			}
+		}
+		return null;
+	}
+
+	private function legacy_table_exists( $name ) {
+		$table = $this->db->prefix . $name;
+		$match = $this->db->get_var( $this->db->prepare( 'SHOW TABLES LIKE %s', $this->db->esc_like( $table ) ) );
+		if ( $this->db->last_error ) {
+			throw new \RuntimeException( 'Unable to check the legacy tables.' );
+		}
+		return $table === $match;
+	}
 
 	function getAllOldCalulator() {
-		$query = $this->db->prepare( 'SHOW TABLES LIKE %s', $this->db->esc_like( $this->db->prefix . 'scc_forms' ) );
-		if ( ! $this->db->get_var( $query ) == $this->db->prefix . 'scc_forms' ) {
-			return array();
+		if ( ! $this->legacy_table_exists( 'scc_forms' ) ) {
+			return [];
 		}
-		$scc_form = $this->db->get_results( $this->db->prepare( "SELECT id,formname FROM {$this->db->prefix}scc_forms ", array() ) );
-		if ( $scc_form ) {
-			return $scc_form;
-		} else {
-			return array();
+		$forms = $this->db->get_results( "SELECT id, formname FROM {$this->db->prefix}scc_forms" );
+		if ( $this->db->last_error ) {
+			throw new \RuntimeException( 'Unable to read legacy calculators.' );
 		}
+		return $forms;
 	}
 
-	/**
-	 * @return array coupons
-	 */
 	function getAllOldCoupons() {
-		$scc_coupons = $this->db->get_results( $this->db->prepare( "SELECT * FROM {$this->db->prefix}scc_coupons ;" ) );
-		if ( $scc_coupons ) {
-			return $scc_coupons;
-		} else {
-			return array();
+		if ( ! $this->legacy_table_exists( 'scc_coupons' ) ) {
+			return [];
 		}
+		$coupons = $this->db->get_results( "SELECT * FROM {$this->db->prefix}scc_coupons" );
+		if ( $this->db->last_error ) {
+			throw new \RuntimeException( 'Unable to read legacy coupons.' );
+		}
+		return $coupons;
 	}
-
 
 	/**
 	 * *Check if old database exists
